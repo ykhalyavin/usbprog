@@ -53,16 +53,16 @@ void USBNDecodeClassRequest(DeviceRequest *req);
 #define USB_CTRL_DDR		DDRD
 
 /// The pin address of the chip select signal
-#define  PF_CS    0x08
+#define  PF_CS   	PB1 
 
 /// The pin address of the Address enable signal
-#define  PF_A0    0x40
+#define  PF_A0   	PD6 
 
 /// The pin address of the write strobe signal
-#define  PF_WR    0x20
+#define  PF_WR   	PD7 
 
 /// The pin address of the read strobe signal
-#define  PF_RD    0x10
+#define  PF_RD   	PB0 
 
 //#define  PF_RESET    0x10
 

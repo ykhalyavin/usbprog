@@ -29,13 +29,18 @@
 
 void USBNInitMC(void)
 {
-  MCUCR |=  (1 << ISC01); // fallende flanke
-   GICR |= (1 << INT0);
+	MCUCR |=  (1 << ISC01); // fallende flanke
+   	GICR |= (1 << INT0);
 
-  USB_CTRL_DDR = 0xf8;
-  //USB_CTRL_DDR = 0xff;
-  //USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS | PF_RESET) & ~(PF_A0));
-  USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS) & ~(PF_A0));
+  
+  	USB_CTRL_DDR = 0xf8;
+	/* data directions */
+	DDRB |= (PF_CS|PF_RD);	
+	DDRD |= (PF_WR|PF_A0);	
+
+	/* inital values  (PORTB RD 1, CS 1), (PORTD = WR 1, A0 0)*/
+  	PORTD |= (PF_WR) & ~(PF_A0);
+  	PORTB |= (PF_RD | PF_CS);
 }
 
 
@@ -44,25 +49,43 @@ unsigned char USBNBurstRead(void)
 {
   //unsigned char result;
                                                                                 
-  USB_CTRL_PORT ^= (PF_CS | PF_RD);
+  PORTB ^= (PF_CS | PF_RD);
   asm("nop");              // pause for data to get to bus
   asm("nop"); 
-  //result = USB_DATA_IN;
-  USB_CTRL_PORT ^= (PF_CS | PF_RD);
-  return USB_DATA_IN;
-  //return result;
+  PORTB ^= (PF_CS | PF_RD);
+
+  /* collect result */
+  return (PINC)|((PIND & 0x18) << 3);
 }
+
 
 unsigned char USBNRead(unsigned char Adr)
 {
-  USB_DATA_DDR = 0xff;        // set for output
-  USB_DATA_OUT = Adr;        // load address
+  
+  	// set as output
+  	DDRC |= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
+  	DDRD |= 0x18;        // set for output D0 - D5 pin3 and c on D
 
-  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
-  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
-  asm("nop");              // pause for data to get to bus
-  USB_DATA_DDR = 0x00;       // set PortD for input
-  return (USBNBurstRead());// get data off the bus
+	// load address
+	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
+ 	PORTC |= (0x3f & Adr); 
+	PORTD |= (0xC0 & Adr) << 3;	/* move complete term 3 steps to left */
+
+
+  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
+  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
+ 
+  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
+  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
+  	
+
+  	asm("nop");              // pause for data to get to bus
+  
+  	// set as input
+	DDRC ^= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
+  	DDRD ^= 0x18;        // set for output D0 - D5 pin3 and c on D
+
+  	return (USBNBurstRead());// get data off the bus
 }
 
 
