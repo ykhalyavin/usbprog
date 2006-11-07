@@ -17,7 +17,7 @@
 */
 
 #include <avr/io.h>
-#include "usbn2mc_spi.h"
+#include "usbn2mc.h"
 #include "uart.h"
 
 // ********************************************************************
@@ -25,66 +25,44 @@
 // ********************************************************************
 
 
-char USBNSPITransmit(char data)
-{
-	/* start transmission */
-	SPDR = data;
-	/* wait for transmission complete */
-	while(!(SPSR & (1<<SPIF)));
-	return SPDR;
-}
-
-void USBNSPIMasterInit()
-{
-	/* set mosi and sck output, all others input */
-	DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK);
-
-	/* enable spi, master set clockrate fck/16*/
-	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
-}
-
-#if 0
-char USBNSPIReceive()
-{
-	/* wait for transmission complete */
-	while(!(SPSR & (1<<SPIF)));
-
-	/* return data */
-	return SPDR ;
-
-}
-void USBNSPISlaveInit()
-{
-	/* set mosi and sck output, all others input */
-	DDR_SPI = (1<<DD_MISO);
-
-	/* enable spi*/
-	SPCR = (1<<SPE);
-}
-#endif
-
 // Read data from usbn96x register
 
 void USBNInitMC(void)
 {
-  	MCUCR |=  (1 << ISC01); // fallende flanke
-  	GICR |= (1 << INT0);
+  MCUCR |=  (1 << ISC01); // fallende flanke
+   GICR |= (1 << INT0);
 
-	USBNSPIMasterInit();
+  USB_CTRL_DDR = 0xf8;
+  //USB_CTRL_DDR = 0xff;
+  //USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS | PF_RESET) & ~(PF_A0));
+  USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS) & ~(PF_A0));
 }
-
 
 
 
 unsigned char USBNBurstRead(void)
 {
-  	return 0;
+  //unsigned char result;
+                                                                                
+  USB_CTRL_PORT ^= (PF_CS | PF_RD);
+  asm("nop");              // pause for data to get to bus
+  asm("nop"); 
+  //result = USB_DATA_IN;
+  USB_CTRL_PORT ^= (PF_CS | PF_RD);
+  return USB_DATA_IN;
+  //return result;
 }
 
 unsigned char USBNRead(unsigned char Adr)
 {
-	Adr &= 0x3F;
-	return USBNSPITransmit(Adr);
+  USB_DATA_DDR = 0xff;        // set for output
+  USB_DATA_OUT = Adr;        // load address
+
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  asm("nop");              // pause for data to get to bus
+  USB_DATA_DDR = 0x00;       // set PortD for input
+  return (USBNBurstRead());// get data off the bus
 }
 
 
@@ -92,17 +70,25 @@ unsigned char USBNRead(unsigned char Adr)
 // Write data to usbn96x register
 void USBNWrite(unsigned char Adr, unsigned char Data)
 {
+  USB_DATA_OUT = Adr;        // put the address on the bus
+  USB_DATA_DDR = 0xff;         // set for output
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  USBNBurstWrite(Data);
 }
 
 
 inline void USBNBurstWrite(unsigned char Data)
 {
+   USB_DATA_OUT = Data;       // put data on the bus
+   USB_CTRL_PORT ^= (PF_CS | PF_WR);
+   USB_CTRL_PORT ^= (PF_CS | PF_WR);
 }
 
 
 
 void USBNDebug(char *msg)
 {
-  	UARTWrite(msg);
+  UARTWrite(msg);
 }
 

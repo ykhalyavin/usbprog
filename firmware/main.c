@@ -11,7 +11,7 @@
 
 
 #include "uart.h"
-#include "../usbn2mc/usbn2mc_spi.h"
+#include "../usbn2mc/usbn2mc.h"
 
 //void Terminal(char cmd);
 

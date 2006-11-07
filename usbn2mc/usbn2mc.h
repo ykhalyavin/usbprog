@@ -19,10 +19,7 @@
 #define _MCIFACE_H_
 
 
-#include "usbnapi.h"
-
-char USBNSPITransmit(char data);
-void USBNSPIMasterInit();
+#include "../../firmware/usbn960xtiny/usbnapi.h"
 
 unsigned char USBNRead(unsigned char Adr);
 unsigned char USBNBurstRead(void);
@@ -38,15 +35,6 @@ void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep);
 
 void USBNDecodeVendorRequest(DeviceRequest *req);
 void USBNDecodeClassRequest(DeviceRequest *req);
-
-
-
-#define DDR_SPI	DDRB
-
-
-#define DD_MOSI PB3
-#define DD_SCK	PB5
-
 
 
 /// The Atmega register used to send data/address to the USBN9604
