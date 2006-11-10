@@ -33,10 +33,10 @@ void USBNInitMC(void)
    	GICR |= (1 << INT0);
 
   
-  	USB_CTRL_DDR = 0xf8;
+  	//USB_CTRL_DDR = 0xf8;
 	/* data directions */
-	DDRB |= (PF_CS|PF_RD);	
-	DDRD |= (PF_WR|PF_A0);	
+	DDRB |= (1<<PF_CS)|(1<<PF_RD);	
+	DDRD |= (1<<PF_WR)|(1<<PF_A0);	
 
 	/* inital values  (PORTB RD 1, CS 1), (PORTD = WR 1, A0 0)*/
   	PORTD |= (PF_WR) & ~(PF_A0);
@@ -48,7 +48,7 @@ void USBNInitMC(void)
 unsigned char USBNBurstRead(void)
 {
   //unsigned char result;
-                                                                                
+                                                                            
   PORTB ^= (PF_CS | PF_RD);
   asm("nop");              // pause for data to get to bus
   asm("nop"); 
@@ -69,7 +69,7 @@ unsigned char USBNRead(unsigned char Adr)
 	// load address
 	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
  	PORTC |= (0x3f & Adr); 
-	PORTD |= (0xC0 & Adr) << 3;	/* move complete term 3 steps to left */
+	PORTD |= ((0xC0 & Adr) >> 3);	/* move complete term 3 steps to left */
 
 
   	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
@@ -78,10 +78,9 @@ unsigned char USBNRead(unsigned char Adr)
   	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
   	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
   	
-
   	asm("nop");              // pause for data to get to bus
-  
-  	// set as input
+  	
+	// set as input
 	DDRC ^= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
   	DDRD ^= 0x18;        // set for output D0 - D5 pin3 and c on D
 
@@ -93,19 +92,48 @@ unsigned char USBNRead(unsigned char Adr)
 // Write data to usbn96x register
 void USBNWrite(unsigned char Adr, unsigned char Data)
 {
-  USB_DATA_OUT = Adr;        // put the address on the bus
-  USB_DATA_DDR = 0xff;         // set for output
-  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
-  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
-  USBNBurstWrite(Data);
+  	//USB_DATA_OUT = Adr;        // put the address on the bus
+  	//USB_DATA_DDR = 0xff;         // set for output
+  	// set as output
+  	DDRC |= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
+  	DDRD |= 0x18;        // set for output D0 - D5 pin3 and c on D
+
+	// load address
+	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
+ 	PORTC |= (0x3f & Adr); 
+	PORTD |= ((0xC0 & Adr) >> 3);	/* move complete term 3 steps to left */
+
+  	//USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  	//USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+
+  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
+  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
+ 
+  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
+  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
+  	
+
+  	USBNBurstWrite(Data);
 }
 
 
 inline void USBNBurstWrite(unsigned char Data)
 {
-   USB_DATA_OUT = Data;       // put data on the bus
-   USB_CTRL_PORT ^= (PF_CS | PF_WR);
-   USB_CTRL_PORT ^= (PF_CS | PF_WR);
+    // load address
+	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
+ 	PORTC |= (0x3f & Data); 
+	PORTD |= ((0xC0 & Data) >> 3);	/* move complete term 3 steps to left */
+
+	//USB_DATA_OUT = Data;       // put data on the bus
+   	//USB_CTRL_PORT ^= (PF_CS | PF_WR);
+   	//USB_CTRL_PORT ^= (PF_CS | PF_WR);
+
+  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
+  	PORTD ^= (PF_WR);  // strobe the CS, WR, and A0 pins
+ 
+  	PORTD ^= (PF_WR);  // strobe the CS, WR, and A0 pins
+  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
+  	
 }
 
 

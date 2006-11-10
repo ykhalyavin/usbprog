@@ -18,8 +18,9 @@
 SIGNAL(SIG_UART_RECV)
 {
   //Terminal(UARTGetChar());
-  //UARTGetChar();
-  //UARTWrite("usbn>");
+  UARTGetChar();
+  UARTWrite("usbn>");
+  //SendHex(0x05);
 }
 
 SIGNAL(SIG_INTERRUPT0)
@@ -91,16 +92,15 @@ int main(void)
     0x00,0x08,  // fifo size
     0x00	      // polling intervall in ms
   };
-
   UARTInit();
 
+  sei(); 
   USBNInit(usbprogDevice,usbprogConf);   
 
-  UARTWrite("usbn>");
   //USBNCallbackFIFORX1(&BootLoader);
 
-  //MCUCR |=  (1 << ISC01); // fallende flanke
-  //GICR |= (1 << INT0);
+  MCUCR |=  (1 << ISC01); // fallende flanke
+  GICR |= (1 << INT0);
 
   USBNInitMC();
 
@@ -108,9 +108,9 @@ int main(void)
   USBNStart();
   
   while(1){
- 		SendHex(USBNRead(0x03)); // revision
+ 		//SendHex(USBNRead(0x03)); // revision
   }
-  
+
 }
 
 
