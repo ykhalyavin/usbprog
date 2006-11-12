@@ -29,18 +29,13 @@
 
 void USBNInitMC(void)
 {
-	MCUCR |=  (1 << ISC01); // fallende flanke
-   	GICR |= (1 << INT0);
+  MCUCR |=  (1 << ISC01); // fallende flanke
+   GICR |= (1 << INT0);
 
-  
-  	//USB_CTRL_DDR = 0xf8;
-	/* data directions */
-	DDRB |= (1<<PF_CS)|(1<<PF_RD);	
-	DDRD |= (1<<PF_WR)|(1<<PF_A0);	
-
-	/* inital values  (PORTB RD 1, CS 1), (PORTD = WR 1, A0 0)*/
-  	PORTD |= (PF_WR) & ~(PF_A0);
-  	PORTB |= (PF_RD | PF_CS);
+  USB_CTRL_DDR = 0xf8;
+  //USB_CTRL_DDR = 0xff;
+  //USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS | PF_RESET) & ~(PF_A0));
+  USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS) & ~(PF_A0));
 }
 
 
@@ -48,43 +43,26 @@ void USBNInitMC(void)
 unsigned char USBNBurstRead(void)
 {
   //unsigned char result;
-                                                                            
-  PORTB ^= (PF_CS | PF_RD);
+                                                                                
+  USB_CTRL_PORT ^= (PF_CS | PF_RD);
   asm("nop");              // pause for data to get to bus
   asm("nop"); 
-  PORTB ^= (PF_CS | PF_RD);
-
-  /* collect result */
-  return (PINC)|((PIND & 0x18) << 3);
+  //result = USB_DATA_IN;
+  USB_CTRL_PORT ^= (PF_CS | PF_RD);
+  return USB_DATA_IN;
+  //return result;
 }
-
 
 unsigned char USBNRead(unsigned char Adr)
 {
-  
-  	// set as output
-  	DDRC |= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
-  	DDRD |= 0x18;        // set for output D0 - D5 pin3 and c on D
+  USB_DATA_DDR = 0xff;        // set for output
+  USB_DATA_OUT = Adr;        // load address
 
-	// load address
-	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
- 	PORTC |= (0x3f & Adr); 
-	PORTD |= ((0xC0 & Adr) >> 3);	/* move complete term 3 steps to left */
-
-
-  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
-  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
- 
-  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
-  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
-  	
-  	asm("nop");              // pause for data to get to bus
-  	
-	// set as input
-	DDRC ^= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
-  	DDRD ^= 0x18;        // set for output D0 - D5 pin3 and c on D
-
-  	return (USBNBurstRead());// get data off the bus
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  asm("nop");              // pause for data to get to bus
+  USB_DATA_DDR = 0x00;       // set PortD for input
+  return (USBNBurstRead());// get data off the bus
 }
 
 
@@ -92,48 +70,19 @@ unsigned char USBNRead(unsigned char Adr)
 // Write data to usbn96x register
 void USBNWrite(unsigned char Adr, unsigned char Data)
 {
-  	//USB_DATA_OUT = Adr;        // put the address on the bus
-  	//USB_DATA_DDR = 0xff;         // set for output
-  	// set as output
-  	DDRC |= 0x3f;        // set for output D0 - D5 pin 0 -5 on C
-  	DDRD |= 0x18;        // set for output D0 - D5 pin3 and c on D
-
-	// load address
-	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
- 	PORTC |= (0x3f & Adr); 
-	PORTD |= ((0xC0 & Adr) >> 3);	/* move complete term 3 steps to left */
-
-  	//USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
-  	//USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
-
-  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
-  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
- 
-  	PORTD ^= (PF_WR | PF_A0);  // strobe the CS, WR, and A0 pins
-  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
-  	
-
-  	USBNBurstWrite(Data);
+  USB_DATA_OUT = Adr;        // put the address on the bus
+  USB_DATA_DDR = 0xff;         // set for output
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  USB_CTRL_PORT ^= (PF_CS | PF_WR | PF_A0);
+  USBNBurstWrite(Data);
 }
 
 
 inline void USBNBurstWrite(unsigned char Data)
 {
-    // load address
-	// alle alten werte muessen bleiben nur pin 0 bis 5 muessen geaendert werden
- 	PORTC |= (0x3f & Data); 
-	PORTD |= ((0xC0 & Data) >> 3);	/* move complete term 3 steps to left */
-
-	//USB_DATA_OUT = Data;       // put data on the bus
-   	//USB_CTRL_PORT ^= (PF_CS | PF_WR);
-   	//USB_CTRL_PORT ^= (PF_CS | PF_WR);
-
-  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
-  	PORTD ^= (PF_WR);  // strobe the CS, WR, and A0 pins
- 
-  	PORTD ^= (PF_WR);  // strobe the CS, WR, and A0 pins
-  	PORTB ^= (PF_CS);  // strobe the CS, WR, and A0 pins
-  	
+   USB_DATA_OUT = Data;       // put data on the bus
+   USB_CTRL_PORT ^= (PF_CS | PF_WR);
+   USB_CTRL_PORT ^= (PF_CS | PF_WR);
 }
 
 

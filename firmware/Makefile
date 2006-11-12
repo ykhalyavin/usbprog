@@ -38,11 +38,11 @@
 
 
 # MCU name
-MCU = atmega8
+MCU = atmega32
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
-F_OSC = 4000000 
+F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -52,7 +52,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../usbn2mc/usbn960x.c usbn2mc.c ../usbn2mc/usbnapi.c uart.c
+SRC = $(TARGET).c ../usbn2mc/usbn960x.c usbn2mc.c ../usbn2mc/usbnapi.c uart.c usbnterm.c
 
 
 # List Assembler source files here.
