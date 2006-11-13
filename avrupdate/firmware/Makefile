@@ -47,11 +47,11 @@ F_OSC =16000000
 FORMAT = ihex
 
 # Target file name (without extension).
-TARGET = avrupdate
+TARGET = main 
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../usbn2mc/usbn960x.c usbn2mc.c ../usbn2mc/tiny/usbnapi.c uart.c
+SRC = $(TARGET).c ../../usbn2mc/usbn960x.c usbn2mc.c ../../usbn2mc/tiny/usbnapi.c uart.c
 
 
 # List Assembler source files here.
