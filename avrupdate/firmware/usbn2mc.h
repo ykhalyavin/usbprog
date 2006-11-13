@@ -32,7 +32,6 @@ void USBNInitMC(void);
 void USBNDebug(char *msg);
 
 void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep);
-
 void USBNDecodeVendorRequest(DeviceRequest *req);
 void USBNDecodeClassRequest(DeviceRequest *req);
 

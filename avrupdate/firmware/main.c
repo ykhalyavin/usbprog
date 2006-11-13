@@ -13,12 +13,12 @@
 #include "uart.h"
 #include "usbn2mc.h"
 
-void Terminal(char cmd);
+//void Terminal(char cmd);
 
 SIGNAL(SIG_UART_RECV)
 {
-  Terminal(UARTGetChar());
-  UARTWrite("usbn>");
+  //Terminal(UARTGetChar());
+  //UARTWrite("usbn>");
 }
 
 SIGNAL(SIG_INTERRUPT0)
@@ -38,6 +38,11 @@ uint8_t collect128;
 #define STARTAPP    0x01
 #define WRITEPAGE   0x02
 #define READCHKSUM  0x03
+
+void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
+void USBNDecodeVendorRequest(DeviceRequest *req){}
+void USBNDecodeClassRequest(DeviceRequest *req){}
+
 
 
 // pointer to the beginning of application code
