@@ -51,7 +51,7 @@ TARGET = avrupdate
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../usbn2mc_tiny/usbn960x.c usbn2mc.c ../usbn2mc_tiny/usbnapi.c uart.c
+SRC = $(TARGET).c ../usbn2mc/usbn960x.c usbn2mc.c ../usbn2mc/tiny/usbnapi.c uart.c
 
 
 # List Assembler source files here.
