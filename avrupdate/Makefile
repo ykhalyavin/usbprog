@@ -47,7 +47,7 @@ F_OSC =16000000
 FORMAT = ihex
 
 # Target file name (without extension).
-TARGET = bootloader
+TARGET = avrupdate
 
 
 # List C source files here. (C dependencies are automatically generated.)
