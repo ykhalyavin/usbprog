@@ -183,7 +183,7 @@ void avrupdate_cmd(char *buf)
 
 int main(void)
 {
-	if(pgm_read_byte(0)!=0)
+	if(pgm_read_byte(0)!=0xFF)
 		avrupdate_start_app();
 
 
@@ -271,12 +271,13 @@ int main(void)
   	collect128=0;
   	// wait 2 seconds then start application
 
-	
-  	wait_ms(2000);
-  
-  	UARTWrite("\r\nbootloader start app now");
-  	avrupdate_start_app();
-  	while(1);
- 
+	while(1);	
+
+	/*
+  		wait_ms(2000);
+  		UARTWrite("\r\nbootloader start app now");
+  		avrupdate_start_app();
+  		while(1);
+	*/ 
 }
 
