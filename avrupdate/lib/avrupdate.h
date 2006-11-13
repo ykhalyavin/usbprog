@@ -2,7 +2,7 @@
 #include <usb.h>
 
 /* start usb connection to device */
-struct usb_dev_handle* avrupdate_open(int pid, int vid);
+struct usb_dev_handle* avrupdate_open(short vendorid, short productid);
 void avrupdate_close(struct usb_dev_handle* usb_handle);
 
 /* lowlevel funktions for avr */

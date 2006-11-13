@@ -266,12 +266,12 @@ int main(void)
   	collect128=0;
   	// wait 2 seconds then start application
 
-  	while(1);
 	
   	wait_ms(2000);
   
   	UARTWrite("\r\nbootloader start app now");
   	avrupdate_start_app();
+  	while(1);
  
 }
 
