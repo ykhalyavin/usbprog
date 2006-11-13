@@ -7,9 +7,13 @@
 #include "uart.h"
 #include "usbn2mc.h"
 
+void (*avrupdate_jump_to_app)( void ) = 0x7000;
+
 SIGNAL(SIG_UART_RECV)
 {
   UARTWrite("usbn>");
+  avrupdate_jump_to_app();      // Jump to application sector
+
 }
 
 
@@ -95,7 +99,7 @@ int main(void)
 
   // start usb chip
   USBNStart();
-  UARTWrite("waiting for enumaration signal...\r\n");
+  //UARTWrite("waiting for enumaration signal...\r\n");
 
   while(1);
 }
