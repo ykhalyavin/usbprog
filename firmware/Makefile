@@ -404,6 +404,7 @@ extcoff: $(TARGET).elf
 
 # Target: clean project.
 clean: begin clean_list finished end
+	rm main.bin
 
 clean_list :
 	@echo
