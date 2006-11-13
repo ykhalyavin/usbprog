@@ -11,21 +11,9 @@
 
 
 #include "uart.h"
-#include "usbn2mc.h"
 
-void Terminal(char cmd);
 
-SIGNAL(SIG_UART_RECV)
-{
-  //Terminal(UARTGetChar());
-  //UARTWrite("usbn>");
-}
-
-SIGNAL(SIG_INTERRUPT0)
-{
-  USBNInterrupt();
-}
-
+/* stage vars for avrupdate */
 
 uint8_t state;
 uint8_t page_addr;
@@ -39,21 +27,18 @@ uint8_t collect128;
 #define WRITEPAGE   0x02
 #define READCHKSUM  0x03
 
-void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
-
-void USBNDecodeVendorRequest(DeviceRequest *req){}
-void USBNDecodeClassRequest(DeviceRequest *req){}
 
 // pointer to the beginning of application code
 void (*jump_to_app)( void ) = 0x0000;
+
 void wait_ms(int ms)
 {
-  int i;
-  for(i=0;i<ms;i++)
-    _delay_ms(1);
+	int i;
+  	for(i=0;i<ms;i++)
+    	_delay_ms(1);
 }
 
-void BootProgramPage (uint32_t page)
+void avrupdate_program_page (uint32_t page)
 {
   uint16_t i;
   uint8_t sreg;
@@ -93,7 +78,7 @@ void BootProgramPage (uint32_t page)
 
 
 // start programm from application sector
-void BootLoaderRunApplication()
+void avrupdate_runapp()
 {
   //UARTWrite("start\r\n");
   if(collect128){
@@ -115,7 +100,7 @@ void BootLoaderRunApplication()
 }
 
 
-void BootLoader(char *buf)
+void avrupdate_update(char *buf)
 {
   int i;
   // check state first ist 
@@ -146,7 +131,7 @@ void BootLoader(char *buf)
 	  }
  
 	  // write page
-	  BootProgramPage (page_addr_w);
+	  avrupdate_program_page (page_addr_w);
 	  state = NONE;
 	}else
 	{
@@ -161,7 +146,7 @@ void BootLoader(char *buf)
       } else
       {
 	UARTWrite("64\r\n");
-	BootProgramPage (page_addr);
+	avrupdate_program_page (page_addr);
 	state = NONE;
       }
     break;
@@ -173,8 +158,7 @@ void BootLoader(char *buf)
 
       if(state==STARTAPP)
       {
-	//cli();
-	BootLoaderRunApplication();
+	avrupdate_runapp();
 	state = NONE;
       }
 
@@ -182,97 +166,4 @@ void BootLoader(char *buf)
 	
 }
 
-
-int main(void)
-{
-  // spm (bootloader mode from avr needs this, to use an own isr table)	
-  cli();
-  GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
-  GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
-  sei();
-
-
-  // bootloader application starts here
-
-  const unsigned char easyavrDevice[] =
-  { 0x12,	      // 18 length of device descriptor
-    0x01,       // descriptor type = device descriptor 
-    0x10,0x01,  // version of usb spec. ( e.g. 1.1) 
-    0x00,	      // device class
-    0x00,	      // device subclass
-    0x00,       // protocol code
-    0x08,       // deep of ep0 fifo in byte (e.g. 8)
-    0x00,0x04,  // vendor id
-    0x12,0x34,  // product id
-    0x03,0x01,  // revision id (e.g 1.02)
-    0x00,       // index of manuf. string
-    0x00,	      // index of product string
-    0x00,	      // index of ser. number
-    0x01        // number of configs
-  };
-
-  // ********************************************************************
-  // configuration descriptor          
-  // ********************************************************************
-
-  const unsigned char easyavrConf[] =
-  { 0x09,	      // 9 length of this descriptor
-    0x02,       // descriptor type = configuration descriptor 
-    0x20,0x00,  // total length with first interface ... 
-    0x01,	      // number of interfaces
-    0x01,	      // number if this config. ( arg for setconfig)
-    0x00,       // string index for config
-    0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
-    0x1A,        // power for this configuration in mA (e.g. 50mA)
-    //InterfaceDescriptor
-    0x09,	      // 9 length of this descriptor
-    0x04,       // descriptor type = interface descriptor 
-    0x00,	      // interface number 
-    0x00,	      // alternate setting for this interface 
-    0x02,	      // number endpoints without 0
-    0x00,       // class code 
-    0x00,       // sub-class code 
-    0x00,       // protocoll code
-    0x00,       // string index for interface
-    //EP1 Descriptor
-    0x07,	      // length of ep descriptor
-    0x05,	      // descriptor type= endpoint
-    0x81,	      // endpoint address (e.g. in ep1)
-    0x02,	      // transfer art ( bulk )
-    0x80,0x00,  // fifo size
-    0x00,	      // polling intervall in ms
-    //EP2 Descriptor
-    0x07,	      // length of ep descriptor
-    0x05,	      // descriptor type= endpoint
-    0x02,	      // endpoint address (e.g. out ep2)
-    0x02,	      // transfer art ( bulk )
-    0x00,0x08,  // fifo size
-    0x00	      // polling intervall in ms
-  };
-
-  //UARTInit();
-
-  USBNInit(easyavrDevice,easyavrConf);   
-
-  USBNCallbackFIFORX1(&BootLoader);
-
-  //MCUCR |=  (1 << ISC01); // fallende flanke
-  //GICR |= (1 << INT0);
-
-  USBNInitMC();
-
-  // start usb chip
-  USBNStart();
-  
-  //UARTWrite("\r\nbootloader is now active\r\n");
-
-  collect128=0;
-  // wait 2 seconds then start application
-
-  wait_ms(2000);
-  //UARTWrite("\r\nbootloader start app now");
-  BootLoaderRunApplication();
- 
-  while(1);
-}
 
