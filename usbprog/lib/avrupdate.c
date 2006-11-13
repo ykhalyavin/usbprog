@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <usb.h>
-
+#include "avrupdate.h"
 
 #define STARTAPP  0x01
 #define WRITEPAGE 0x02
 
-void booloader_flash_bin(struct usb_dev_handle* usb_handle,char *file)
+void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 {
   char buf[64];
   char cmd[64];
@@ -68,7 +68,7 @@ void booloader_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 }
 
 
-void bootloader_startapp(struct usb_dev_handle* usb_handle)
+void avrupdate_startapp(struct usb_dev_handle* usb_handle)
 {
   char buf[64];
   char *ptr = buf;
@@ -81,7 +81,7 @@ void bootloader_startapp(struct usb_dev_handle* usb_handle)
 }
 
 
-struct usb_dev_handle* bootloader_open()
+struct usb_dev_handle* avrupdate_open()
 {
   struct usb_bus *busses;
 
@@ -118,10 +118,11 @@ struct usb_dev_handle* bootloader_open()
 }
 
 
-void bootloader_close(struct usb_dev_handle* usb_handle)
+void avrupdate_close(struct usb_dev_handle* usb_handle)
 {
   usb_close(usb_handle);
 }
+
 /*
 
 int main(int argc, char **argv)
