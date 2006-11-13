@@ -183,6 +183,8 @@ void avrupdate_cmd(char *buf)
 
 int main(void)
 {
+
+	/* if is no program in flash start bootloader, else start programm */
 	if(pgm_read_byte(0)!=0xFF)
 		avrupdate_start_app();
 
