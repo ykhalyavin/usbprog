@@ -19,8 +19,8 @@
 #ifndef _USBNAPI_H
 #define _USBNAPI_H
 
-#include "usbn960x.h"
-#include "usbn960xreg.h"
+#include "../usbn960x.h"
+#include "../usbn960xreg.h"
 
 /// initial global data structures
 void USBNInit(unsigned char *_DeviceDescriptor,unsigned char *_ConfigurationDescriptor);
