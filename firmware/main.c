@@ -12,7 +12,6 @@ void (*avrupdate_jump_to_app)( void ) = 0x7000;
 SIGNAL(SIG_UART_RECV)
 {
   UARTWrite("usbn>");
-  avrupdate_jump_to_app();      // Jump to application sector
 
 }
 
@@ -101,6 +100,7 @@ int main(void)
   USBNStart();
   //UARTWrite("waiting for enumaration signal...\r\n");
 
+  avrupdate_jump_to_app();      // Jump to application sector
   while(1);
 }
 
