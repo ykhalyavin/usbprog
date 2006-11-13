@@ -1,13 +1,14 @@
 #include <stdlib.h>
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <avr/boot.h>
 #include <stdint.h>
 #include <avr/interrupt.h>
-#include <avr/signal.h>
+//#include <avr/signal.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #define F_CPU 16000000
-#include <avr/delay.h>
+#include <util/delay.h>
 
 
 #include "uart.h"
@@ -182,6 +183,10 @@ void avrupdate_cmd(char *buf)
 
 int main(void)
 {
+	if(pgm_read_byte(0)!=0)
+		avrupdate_start_app();
+
+
   	// spm (bootloader mode from avr needs this, to use an own isr table)	
   	cli();
   	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
