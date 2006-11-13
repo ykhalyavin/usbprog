@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "usbn960x.h"
-#include "fifo.h"
+#include "../fifo.h"
 
 
 EPInfo	EP0rx;

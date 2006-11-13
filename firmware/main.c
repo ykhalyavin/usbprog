@@ -7,11 +7,8 @@
 #include "uart.h"
 #include "usbn2mc.h"
 
-void Terminal(char cmd);
-
 SIGNAL(SIG_UART_RECV)
 {
-  Terminal(UARTGetChar());
   UARTWrite("usbn>");
 }
 
