@@ -17,8 +17,8 @@ void Terminal(char cmd);
 
 SIGNAL(SIG_UART_RECV)
 {
-  Terminal(UARTGetChar());
-  UARTWrite("usbn>");
+  //Terminal(UARTGetChar());
+  //UARTWrite("usbn>");
 }
 
 SIGNAL(SIG_INTERRUPT0)
@@ -39,6 +39,10 @@ uint8_t collect128;
 #define WRITEPAGE   0x02
 #define READCHKSUM  0x03
 
+void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
+
+void USBNDecodeVendorRequest(DeviceRequest *req){}
+void USBNDecodeClassRequest(DeviceRequest *req){}
 
 // pointer to the beginning of application code
 void (*jump_to_app)( void ) = 0x0000;
@@ -246,7 +250,7 @@ int main(void)
     0x00	      // polling intervall in ms
   };
 
-  UARTInit();
+  //UARTInit();
 
   USBNInit(easyavrDevice,easyavrConf);   
 
@@ -260,13 +264,13 @@ int main(void)
   // start usb chip
   USBNStart();
   
-  UARTWrite("\r\nbootloader is now active\r\n");
+  //UARTWrite("\r\nbootloader is now active\r\n");
 
   collect128=0;
   // wait 2 seconds then start application
 
   wait_ms(2000);
-  UARTWrite("\r\nbootloader start app now");
+  //UARTWrite("\r\nbootloader start app now");
   BootLoaderRunApplication();
  
   while(1);

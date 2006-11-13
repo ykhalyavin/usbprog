@@ -52,7 +52,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../usbn2mc/usbn960x.c usbn2mc.c ../usbn2mc/usbnapi.c uart.c usbnterm.c
+SRC = $(TARGET).c ../usbn2mc/usbn960x.c usbn2mc.c ../usbn2mc/usbnapi.c uart.c usbnterm.c ../usbn2mc/fifo.c
 
 
 # List Assembler source files here.
@@ -437,4 +437,7 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m8 -c bsd -U flash:w:main.hex -E noreset
+	avrdude -p m32 -c bsd -U flash:w:main.hex -E noreset
+
+reset:
+	avrdude -p m32 -c bsd -E noreset
