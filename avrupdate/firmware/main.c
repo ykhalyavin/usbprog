@@ -201,7 +201,7 @@ int main(void)
     0x00,       // protocol code
     0x08,       // deep of ep0 fifo in byte (e.g. 8)
     0x00,0x04,  // vendor id
-    0x12,0x34,  // product id
+    0x5d,0xc3,  // product id
     0x03,0x01,  // revision id (e.g 1.02)
     0x00,       // index of manuf. string
     0x00,	      // index of product string
