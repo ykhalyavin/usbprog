@@ -13,19 +13,11 @@
 #include "uart.h"
 #include "usbn2mc.h"
 
-//void Terminal(char cmd);
-
-SIGNAL(SIG_UART_RECV)
-{
-  //Terminal(UARTGetChar());
-  //UARTWrite("usbn>");
-}
-
+/* external interrupt from usbn9604 */
 SIGNAL(SIG_INTERRUPT0)
 {
   USBNInterrupt();
 }
-
 
 uint8_t state;
 uint8_t page_addr;
@@ -33,20 +25,22 @@ uint8_t page_addr_w;
 uint8_t pageblock[128];
 uint8_t collect128;
 
-
 #define NONE	    0x00
 #define STARTAPP    0x01
 #define WRITEPAGE   0x02
 #define READCHKSUM  0x03
 
+/* usbn2mc tiny needs this */
 void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
 void USBNDecodeVendorRequest(DeviceRequest *req){}
 void USBNDecodeClassRequest(DeviceRequest *req){}
 
 
 
-// pointer to the beginning of application code
-void (*jump_to_app)( void ) = 0x0000;
+/* pointer to the beginning of application code */
+void (*avrupdate_jump_to_app)( void ) = 0x0000;
+
+/*  wait function */
 void wait_ms(int ms)
 {
   int i;
@@ -54,7 +48,11 @@ void wait_ms(int ms)
     _delay_ms(1);
 }
 
-void BootProgramPage (uint32_t page)
+/* pogramm a page into flash 
+ *	@page = number of page
+ *	global pageblock = data
+ */
+void avrupdate_program_page (uint32_t page)
 {
   uint16_t i;
   uint8_t sreg;
@@ -87,20 +85,19 @@ void BootProgramPage (uint32_t page)
   boot_rww_enable ();
 
   // Re-enable interrupts (if they were ever enabled).
-
   SREG = sreg;
 }
 
 
 
 // start programm from application sector
-void BootLoaderRunApplication()
+void avrupdate_start_app()
 {
   //UARTWrite("start\r\n");
   if(collect128){
     //SendHex(page_addr);
     page_addr = page_addr/2;
-    BootProgramPage (page_addr);
+    avrupdate_program_page (page_addr);
     UARTWrite("programm rest\r\n"); 
   }
 
@@ -112,11 +109,11 @@ void BootLoaderRunApplication()
   GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
   GICR = 0x00; // Interrupts auf Application Section umschalten
 
-  jump_to_app();	  // Jump to application sector
+  avrupdate_jump_to_app();	  // Jump to application sector
 }
 
 
-void BootLoader(char *buf)
+void avrupdate_cmd(char *buf)
 {
   int i;
   // check state first ist 
@@ -147,7 +144,7 @@ void BootLoader(char *buf)
 	  }
  
 	  // write page
-	  BootProgramPage (page_addr_w);
+	  avrupdate_program_page (page_addr_w);
 	  state = NONE;
 	}else
 	{
@@ -162,7 +159,7 @@ void BootLoader(char *buf)
       } else
       {
 	UARTWrite("64\r\n");
-	BootProgramPage (page_addr);
+	avrupdate_program_page (page_addr);
 	state = NONE;
       }
     break;
@@ -175,7 +172,7 @@ void BootLoader(char *buf)
       if(state==STARTAPP)
       {
 	//cli();
-	BootLoaderRunApplication();
+	avrupdate_start_app();
 	state = NONE;
       }
 
@@ -195,7 +192,7 @@ int main(void)
 
   // bootloader application starts here
 
-  const unsigned char easyavrDevice[] =
+  const unsigned char avrupdateDevice[] =
   { 0x12,	      // 18 length of device descriptor
     0x01,       // descriptor type = device descriptor 
     0x10,0x01,  // version of usb spec. ( e.g. 1.1) 
@@ -216,7 +213,7 @@ int main(void)
   // configuration descriptor          
   // ********************************************************************
 
-  const unsigned char easyavrConf[] =
+  const unsigned char avrupdateConf[] =
   { 0x09,	      // 9 length of this descriptor
     0x02,       // descriptor type = configuration descriptor 
     0x20,0x00,  // total length with first interface ... 
@@ -252,13 +249,11 @@ int main(void)
   };
 
   UARTInit();
-
-  USBNInit(easyavrDevice,easyavrConf);   
-
-  USBNCallbackFIFORX1(&BootLoader);
-
-  //MCUCR |=  (1 << ISC01); // fallende flanke
-  //GICR |= (1 << INT0);
+  
+  
+  
+  USBNInit(avrupdateDevice,avrupdateConf);   
+  USBNCallbackFIFORX1(&avrupdate_cmd);
 
   USBNInitMC();
 
@@ -271,8 +266,9 @@ int main(void)
   // wait 2 seconds then start application
 
   wait_ms(2000);
+  
   UARTWrite("\r\nbootloader start app now");
-  BootLoaderRunApplication();
+  avrupdate_start_app();
  
   while(1);
 }

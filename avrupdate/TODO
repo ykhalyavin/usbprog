@@ -1,0 +1,29 @@
+
+1. bootloader aufspielen -> der muss pruefen ob eine anwendung im flash ist
+   falls nicht muss er auf bereitschaft sein
+
+Diese Parameter kann man immer angeben
+-p = product id, -v vendor id
+
+2. computer programm zum aufspielen -> 
+	avrupdate -f main.bin -i 1 (f = flash,  i = id/version)
+3. computer programm muss prog starten -> 
+	avrupdate -s (s = starten der anwendung)
+
+4. bootloader startet stellt fest das anwendung vorhanden ist und startet diese
+
+5. falls Anwendung den VendorRequest avrupdate start bekommt muss avrudate gestartet werden
+
+
+6. super befehl mit vendor request 
+	
+	avrupdate -a -u http://www.ixbat.de/test.vers (auto update)
+
+	( 1. schaut ob avrupdate schon laeuft sonst, 
+		schaltet mit vendor request in update mode, 
+    	2. prueft version mit der webseiten version
+	 3. laedt neue version, schreibt diese in den speicher)
+
+
+
+
