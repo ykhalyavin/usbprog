@@ -1,16 +1,17 @@
 
 1. bootloader aufspielen -> der muss pruefen ob eine anwendung im flash ist
-   falls nicht muss er auf bereitschaft sein
+   falls nicht muss er auf bereitschaft sein  // so das klappt
 
 Diese Parameter kann man immer angeben
 -p = product id, -v vendor id
 
 2. computer programm zum aufspielen -> 
-	avrupdate -f main.bin -i 1 (f = flash,  i = id/version)
-3. computer programm muss prog starten -> 
+	avrupdate -f main.bin -i 1 (f = flash,  i = id/version)	// klappt bis auf die versionsnummer
+
+3. computer programm muss prog starten -> 	// klappt
 	avrupdate -s (s = starten der anwendung)
 
-4. bootloader startet stellt fest das anwendung vorhanden ist und startet diese
+4. bootloader startet stellt fest das anwendung vorhanden ist und startet diese // klappt
 
 5. falls Anwendung den VendorRequest avrupdate start bekommt muss avrudate gestartet werden
 
