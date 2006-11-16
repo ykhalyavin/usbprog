@@ -67,7 +67,15 @@ void TransferISR()
 
   	USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
 }
+void wait_ms(int ms)
+{
+    int i;
+	    for(i=0;i<ms;i++)
+		        _delay_ms(1);
+				}
 
+
+uint8_t eeFooByte EEMEM = 1;	
 
 int main(void)
 {
@@ -112,12 +120,11 @@ int main(void)
 	
 	//cli();
   	UARTWrite("waiting for enumaration signal...\r\n");
-	_delay_ms(2000);
+	wait_ms(2000);
   	UARTWrite("2\r\n");
 
 	/* mann muss hier noch sicherstellen, dass sicher der bootloader startet! */	
 	//GICR |= _BV(IVSEL); //move interruptvectors to the Boot sector
-	uint8_t eeFooByte EEMEM = 1;	
 	eeprom_write_byte(&eeFooByte,0x77); // schreiben
 
   	avrupdate_jump_to_boot();      // Jump to application sector

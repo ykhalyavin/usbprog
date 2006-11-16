@@ -189,14 +189,15 @@ void avrupdate_cmd(char *buf)
 
 // __heap_start is declared in the linker script
 
-
+uint8_t eeFooByte EEMEM = 1;
 int main(void)
 {
 
 	/* if is no program in flash start bootloader, else start programm */
-	uint8_t eeFooByte EEMEM = 1;
 	uint8_t myByte;
 	myByte = eeprom_read_byte(&eeFooByte);
+	
+	eeprom_write_byte(&eeFooByte,0x00);
 
 	if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
 		avrupdate_start_app();
