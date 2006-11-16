@@ -100,9 +100,12 @@ int main(void)
 
   	// start usb chip
   	USBNStart();
-  	//UARTWrite("waiting for enumaration signal...\r\n");
 	
+	//cli();
+  	UARTWrite("waiting for enumaration signal...\r\n");
 	_delay_ms(2000);
+  	UARTWrite("2\r\n");
+
 	/* mann muss hier noch sicherstellen, dass sicher der bootloader startet! */	
 	GICR |= _BV(IVSEL); //move interruptvectors to the Boot sector
   	avrupdate_jump_to_boot();      // Jump to application sector

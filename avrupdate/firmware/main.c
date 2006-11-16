@@ -188,7 +188,6 @@ int main(void)
 	if(pgm_read_byte(0)!=0xFF)
 		avrupdate_start_app();
 
-
   	// spm (bootloader mode from avr needs this, to use an own isr table)	
   	cli();
   	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
