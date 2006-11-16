@@ -182,15 +182,13 @@ void avrupdate_cmd(char *buf)
 
 // __heap_start is declared in the linker script
 
-extern unsigned char __heap_start;
 
 int main(void)
 {
 
 	/* if is no program in flash start bootloader, else start programm */
-	uint16_t momentan_frei = SP - (uint16_t) &__heap_start;
 
-	if(pgm_read_byte(0)!=0xFF && momentan_frei==(uint16_t) &__heap_start)
+	if(pgm_read_byte(0)!=0xFF)
 		avrupdate_start_app();
 
   	// spm (bootloader mode from avr needs this, to use an own isr table)	
