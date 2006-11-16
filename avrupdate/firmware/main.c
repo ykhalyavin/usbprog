@@ -9,6 +9,7 @@
 #include <avr/pgmspace.h>
 #define F_CPU 16000000
 #include <util/delay.h>
+#include <avr/eeprom.h>
 
 
 #include "uart.h"
@@ -187,8 +188,11 @@ int main(void)
 {
 
 	/* if is no program in flash start bootloader, else start programm */
+	uint8_t eeFooByte EEMEM = 1;
+	uint8_t myByte;
+	myByte = eeprom_read_byte(&eeFooByte);
 
-	if(pgm_read_byte(0)!=0xFF)
+	if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
 		avrupdate_start_app();
 
   	// spm (bootloader mode from avr needs this, to use an own isr table)	

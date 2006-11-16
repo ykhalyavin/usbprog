@@ -4,6 +4,7 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 #include <util/delay.h>
+#include <avr/eeprom.h>
 
 #include "uart.h"
 #include "usbn2mc.h"
@@ -107,7 +108,10 @@ int main(void)
   	UARTWrite("2\r\n");
 
 	/* mann muss hier noch sicherstellen, dass sicher der bootloader startet! */	
-	GICR |= _BV(IVSEL); //move interruptvectors to the Boot sector
+	//GICR |= _BV(IVSEL); //move interruptvectors to the Boot sector
+	uint8_t eeFooByte EEMEM = 1;	
+	eeprom_write_byte(&eeFooByte,0x77); // schreiben
+
   	avrupdate_jump_to_boot();      // Jump to application sector
 
   	while(1);
