@@ -17,7 +17,7 @@ int avrupdate_uc_state();
 
 /* online functions */
 void avrupdate_net_version_list(char * url);
-void avrupdate_net_get_version();
+void avrupdate_net_get_version(int version);
 
 
 
@@ -25,4 +25,19 @@ void avrupdate_net_get_version();
 
 void avrupdate_flash_version(int version);
 
+
+
+
+
+/*
+ * avrupdate
+ * 	-P ProductID 
+ * 	-V VendorID 
+ * 	-f file to upload
+ * 	-v actual version in mc
+ * 	-U URL of version file
+ * 	-s show online versions
+ * 	-d version, download version
+ *
+ */
 
