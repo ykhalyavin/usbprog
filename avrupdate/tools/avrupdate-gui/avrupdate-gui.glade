@@ -139,7 +139,7 @@
 				  </child>
 
 				  <child>
-				    <widget class="GtkEntry" id="entry3">
+				    <widget class="GtkEntry" id="entryVID">
 				      <property name="width_request">40</property>
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
@@ -184,7 +184,7 @@
 				  </child>
 
 				  <child>
-				    <widget class="GtkEntry" id="entry4">
+				    <widget class="GtkEntry" id="entryPID">
 				      <property name="width_request">40</property>
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
@@ -280,7 +280,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkEntry" id="entry2">
+			    <widget class="GtkEntry" id="entryFile">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
@@ -391,32 +391,6 @@
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label23">
-				  <property name="width_request">112</property>
-				  <property name="height_request">16</property>
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">21234 Byte</property>
-				  <property name="use_underline">False</property>
-				  <property name="use_markup">False</property>
-				  <property name="justify">GTK_JUSTIFY_LEFT</property>
-				  <property name="wrap">False</property>
-				  <property name="selectable">False</property>
-				  <property name="xalign">0.5</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-				  <property name="width_chars">-1</property>
-				  <property name="single_line_mode">False</property>
-				  <property name="angle">0</property>
-				</widget>
-				<packing>
-				  <property name="x">88</property>
-				  <property name="y">40</property>
-				</packing>
-			      </child>
-
-			      <child>
 				<widget class="GtkLabel" id="label20">
 				  <property name="width_request">62</property>
 				  <property name="height_request">16</property>
@@ -444,7 +418,7 @@
 
 			      <child>
 				<widget class="GtkLabel" id="label19">
-				  <property name="width_request">72</property>
+				  <property name="width_request">56</property>
 				  <property name="height_request">16</property>
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Version:</property>
@@ -463,13 +437,13 @@
 				  <property name="angle">0</property>
 				</widget>
 				<packing>
-				  <property name="x">32</property>
+				  <property name="x">40</property>
 				  <property name="y">56</property>
 				</packing>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label22">
+				<widget class="GtkLabel" id="labelTitle">
 				  <property name="width_request">88</property>
 				  <property name="height_request">17</property>
 				  <property name="visible">True</property>
@@ -495,7 +469,33 @@
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label24">
+				<widget class="GtkLabel" id="labelSize">
+				  <property name="width_request">112</property>
+				  <property name="height_request">16</property>
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">21234 Byte</property>
+				  <property name="use_underline">False</property>
+				  <property name="use_markup">False</property>
+				  <property name="justify">GTK_JUSTIFY_LEFT</property>
+				  <property name="wrap">False</property>
+				  <property name="selectable">False</property>
+				  <property name="xalign">0.5</property>
+				  <property name="yalign">0.5</property>
+				  <property name="xpad">0</property>
+				  <property name="ypad">0</property>
+				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+				  <property name="width_chars">-1</property>
+				  <property name="single_line_mode">False</property>
+				  <property name="angle">0</property>
+				</widget>
+				<packing>
+				  <property name="x">88</property>
+				  <property name="y">40</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkLabel" id="labelVersion">
 				  <property name="width_request">46</property>
 				  <property name="height_request">17</property>
 				  <property name="visible">True</property>
@@ -558,7 +558,7 @@
 			      <property name="spacing">0</property>
 
 			      <child>
-				<widget class="GtkButton" id="button9">
+				<widget class="GtkButton" id="buttonVersion">
 				  <property name="visible">True</property>
 				  <property name="can_default">True</property>
 				  <property name="can_focus">True</property>
@@ -566,11 +566,12 @@
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_buttonVersion_clicked" last_modification_time="Sat, 18 Nov 2006 17:29:48 GMT"/>
 				</widget>
 			      </child>
 
 			      <child>
-				<widget class="GtkButton" id="button10">
+				<widget class="GtkButton" id="buttonQuick">
 				  <property name="visible">True</property>
 				  <property name="can_default">True</property>
 				  <property name="can_focus">True</property>
@@ -578,6 +579,7 @@
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">True</property>
+				  <signal name="clicked" handler="on_buttonQuick_clicked" last_modification_time="Sat, 18 Nov 2006 17:29:03 GMT"/>
 				</widget>
 			      </child>
 			    </widget>
@@ -779,7 +781,7 @@ Homepage: http://www.ixbat.de</property>
 			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 			  <child>
-			    <widget class="GtkIconView" id="iconview1">
+			    <widget class="GtkIconView" id="iconviewVersions">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="selection_mode">GTK_SELECTION_SINGLE</property>
@@ -805,7 +807,7 @@ Homepage: http://www.ixbat.de</property>
 			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 			  <child>
-			    <widget class="GtkTextView" id="textview1">
+			    <widget class="GtkTextView" id="textviewDescription">
 			      <property name="width_request">145</property>
 			      <property name="height_request">170</property>
 			      <property name="visible">True</property>
@@ -888,7 +890,7 @@ Homepage: http://www.ixbat.de</property>
 		      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 		      <child>
-			<widget class="GtkTextView" id="textview2">
+			<widget class="GtkTextView" id="textviewLog">
 			  <property name="height_request">116</property>
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
@@ -960,13 +962,14 @@ Homepage: http://www.ixbat.de</property>
 		      <property name="spacing">0</property>
 
 		      <child>
-			<widget class="GtkButton" id="button6">
+			<widget class="GtkButton" id="buttonDownload">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Download Version List</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
+			  <signal name="clicked" handler="on_buttonDownload_clicked" last_modification_time="Sat, 18 Nov 2006 17:27:49 GMT"/>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
@@ -976,13 +979,14 @@ Homepage: http://www.ixbat.de</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkButton" id="button7">
+			<widget class="GtkButton" id="buttonFLash">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Flash selected File</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
+			  <signal name="clicked" handler="on_buttonFLash_clicked" last_modification_time="Sat, 18 Nov 2006 17:27:08 GMT"/>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
@@ -992,13 +996,14 @@ Homepage: http://www.ixbat.de</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkButton" id="button8">
+			<widget class="GtkButton" id="buttonStart">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Start Application</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
+			  <signal name="clicked" handler="on_buttonStart_clicked" last_modification_time="Sat, 18 Nov 2006 17:27:28 GMT"/>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>

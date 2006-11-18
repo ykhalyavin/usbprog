@@ -41,30 +41,30 @@ create_window (void)
   GtkWidget *hbox11;
   GtkWidget *hbox19;
   GtkWidget *label28;
-  GtkWidget *entry3;
+  GtkWidget *entryVID;
   GtkWidget *label29;
-  GtkWidget *entry4;
+  GtkWidget *entryPID;
   GtkWidget *hbox16;
   GtkWidget *hseparator3;
   GtkWidget *hbox13;
   GtkWidget *label30;
-  GtkWidget *entry2;
+  GtkWidget *entryFile;
   GtkWidget *hbox15;
   GtkWidget *hseparator2;
   GtkWidget *hbox10;
   GtkWidget *label18;
   GtkWidget *fixed1;
   GtkWidget *label21;
-  GtkWidget *label23;
   GtkWidget *label20;
   GtkWidget *label19;
-  GtkWidget *label22;
-  GtkWidget *label24;
+  GtkWidget *labelTitle;
+  GtkWidget *labelSize;
+  GtkWidget *labelVersion;
   GtkWidget *hbox14;
   GtkWidget *hseparator1;
   GtkWidget *vbuttonbox2;
-  GtkWidget *button9;
-  GtkWidget *button10;
+  GtkWidget *buttonVersion;
+  GtkWidget *buttonQuick;
   GtkWidget *hbox17;
   GtkWidget *hseparator4;
   GtkWidget *hbox18;
@@ -77,19 +77,19 @@ create_window (void)
   GtkWidget *label15;
   GtkWidget *hbox2;
   GtkWidget *scrolledwindow4;
-  GtkWidget *iconview1;
+  GtkWidget *iconviewVersions;
   GtkWidget *scrolledwindow3;
-  GtkWidget *textview1;
+  GtkWidget *textviewDescription;
   GtkWidget *hbox7;
   GtkWidget *label16;
   GtkWidget *scrolledwindow5;
-  GtkWidget *textview2;
+  GtkWidget *textviewLog;
   GtkWidget *hbox8;
   GtkWidget *label17;
   GtkWidget *hbox3;
-  GtkWidget *button6;
-  GtkWidget *button7;
-  GtkWidget *button8;
+  GtkWidget *buttonDownload;
+  GtkWidget *buttonFLash;
+  GtkWidget *buttonStart;
   GtkWidget *label3;
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -144,19 +144,19 @@ create_window (void)
   gtk_widget_show (label28);
   gtk_box_pack_start (GTK_BOX (hbox19), label28, FALSE, FALSE, 0);
 
-  entry3 = gtk_entry_new ();
-  gtk_widget_show (entry3);
-  gtk_box_pack_start (GTK_BOX (hbox19), entry3, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (entry3, 40, -1);
+  entryVID = gtk_entry_new ();
+  gtk_widget_show (entryVID);
+  gtk_box_pack_start (GTK_BOX (hbox19), entryVID, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (entryVID, 40, -1);
 
   label29 = gtk_label_new (_("       Product ID: "));
   gtk_widget_show (label29);
   gtk_box_pack_start (GTK_BOX (hbox19), label29, FALSE, FALSE, 0);
 
-  entry4 = gtk_entry_new ();
-  gtk_widget_show (entry4);
-  gtk_box_pack_start (GTK_BOX (hbox19), entry4, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (entry4, 40, -1);
+  entryPID = gtk_entry_new ();
+  gtk_widget_show (entryPID);
+  gtk_box_pack_start (GTK_BOX (hbox19), entryPID, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (entryPID, 40, -1);
 
   hbox16 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox16);
@@ -175,9 +175,9 @@ create_window (void)
   gtk_box_pack_start (GTK_BOX (hbox13), label30, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label30), TRUE);
 
-  entry2 = gtk_entry_new ();
-  gtk_widget_show (entry2);
-  gtk_box_pack_start (GTK_BOX (vbox6), entry2, FALSE, FALSE, 0);
+  entryFile = gtk_entry_new ();
+  gtk_widget_show (entryFile);
+  gtk_box_pack_start (GTK_BOX (vbox6), entryFile, FALSE, FALSE, 0);
 
   hbox15 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox15);
@@ -205,11 +205,6 @@ create_window (void)
   gtk_fixed_put (GTK_FIXED (fixed1), label21, 32, 24);
   gtk_widget_set_size_request (label21, 48, 17);
 
-  label23 = gtk_label_new (_("21234 Byte"));
-  gtk_widget_show (label23);
-  gtk_fixed_put (GTK_FIXED (fixed1), label23, 88, 40);
-  gtk_widget_set_size_request (label23, 112, 16);
-
   label20 = gtk_label_new (_("Size:"));
   gtk_widget_show (label20);
   gtk_fixed_put (GTK_FIXED (fixed1), label20, 24, 40);
@@ -217,18 +212,23 @@ create_window (void)
 
   label19 = gtk_label_new (_("Version:"));
   gtk_widget_show (label19);
-  gtk_fixed_put (GTK_FIXED (fixed1), label19, 32, 56);
-  gtk_widget_set_size_request (label19, 72, 16);
+  gtk_fixed_put (GTK_FIXED (fixed1), label19, 40, 56);
+  gtk_widget_set_size_request (label19, 56, 16);
 
-  label22 = gtk_label_new (_("usbprog"));
-  gtk_widget_show (label22);
-  gtk_fixed_put (GTK_FIXED (fixed1), label22, 88, 24);
-  gtk_widget_set_size_request (label22, 88, 17);
+  labelTitle = gtk_label_new (_("usbprog"));
+  gtk_widget_show (labelTitle);
+  gtk_fixed_put (GTK_FIXED (fixed1), labelTitle, 88, 24);
+  gtk_widget_set_size_request (labelTitle, 88, 17);
 
-  label24 = gtk_label_new (_("9"));
-  gtk_widget_show (label24);
-  gtk_fixed_put (GTK_FIXED (fixed1), label24, 88, 56);
-  gtk_widget_set_size_request (label24, 46, 17);
+  labelSize = gtk_label_new (_("21234 Byte"));
+  gtk_widget_show (labelSize);
+  gtk_fixed_put (GTK_FIXED (fixed1), labelSize, 88, 40);
+  gtk_widget_set_size_request (labelSize, 112, 16);
+
+  labelVersion = gtk_label_new (_("9"));
+  gtk_widget_show (labelVersion);
+  gtk_fixed_put (GTK_FIXED (fixed1), labelVersion, 88, 56);
+  gtk_widget_set_size_request (labelVersion, 46, 17);
 
   hbox14 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox14);
@@ -243,15 +243,15 @@ create_window (void)
   gtk_box_pack_start (GTK_BOX (vbox6), vbuttonbox2, TRUE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox2), GTK_BUTTONBOX_SPREAD);
 
-  button9 = gtk_button_new_with_mnemonic (_("Read AVR Version"));
-  gtk_widget_show (button9);
-  gtk_container_add (GTK_CONTAINER (vbuttonbox2), button9);
-  GTK_WIDGET_SET_FLAGS (button9, GTK_CAN_DEFAULT);
+  buttonVersion = gtk_button_new_with_mnemonic (_("Read AVR Version"));
+  gtk_widget_show (buttonVersion);
+  gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonVersion);
+  GTK_WIDGET_SET_FLAGS (buttonVersion, GTK_CAN_DEFAULT);
 
-  button10 = gtk_button_new_with_mnemonic (_("Quick Auto Update"));
-  gtk_widget_show (button10);
-  gtk_container_add (GTK_CONTAINER (vbuttonbox2), button10);
-  GTK_WIDGET_SET_FLAGS (button10, GTK_CAN_DEFAULT);
+  buttonQuick = gtk_button_new_with_mnemonic (_("Quick Auto Update"));
+  gtk_widget_show (buttonQuick);
+  gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonQuick);
+  GTK_WIDGET_SET_FLAGS (buttonQuick, GTK_CAN_DEFAULT);
 
   hbox17 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox17);
@@ -307,20 +307,20 @@ create_window (void)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_SHADOW_IN);
 
-  iconview1 = gtk_icon_view_new ();
-  gtk_widget_show (iconview1);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow4), iconview1);
-  gtk_icon_view_set_orientation (GTK_ICON_VIEW (iconview1), GTK_ORIENTATION_HORIZONTAL);
+  iconviewVersions = gtk_icon_view_new ();
+  gtk_widget_show (iconviewVersions);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow4), iconviewVersions);
+  gtk_icon_view_set_orientation (GTK_ICON_VIEW (iconviewVersions), GTK_ORIENTATION_HORIZONTAL);
 
   scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow3);
   gtk_box_pack_start (GTK_BOX (hbox2), scrolledwindow3, TRUE, TRUE, 0);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_SHADOW_IN);
 
-  textview1 = gtk_text_view_new ();
-  gtk_widget_show (textview1);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow3), textview1);
-  gtk_widget_set_size_request (textview1, 145, 170);
+  textviewDescription = gtk_text_view_new ();
+  gtk_widget_show (textviewDescription);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow3), textviewDescription);
+  gtk_widget_set_size_request (textviewDescription, 145, 170);
 
   hbox7 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox7);
@@ -337,10 +337,10 @@ create_window (void)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
 
-  textview2 = gtk_text_view_new ();
-  gtk_widget_show (textview2);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow5), textview2);
-  gtk_widget_set_size_request (textview2, -1, 116);
+  textviewLog = gtk_text_view_new ();
+  gtk_widget_show (textviewLog);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow5), textviewLog);
+  gtk_widget_set_size_request (textviewLog, -1, 116);
 
   hbox8 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox8);
@@ -355,21 +355,37 @@ create_window (void)
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox3, FALSE, TRUE, 0);
 
-  button6 = gtk_button_new_with_mnemonic (_("Download Version List"));
-  gtk_widget_show (button6);
-  gtk_box_pack_start (GTK_BOX (hbox3), button6, FALSE, FALSE, 0);
+  buttonDownload = gtk_button_new_with_mnemonic (_("Download Version List"));
+  gtk_widget_show (buttonDownload);
+  gtk_box_pack_start (GTK_BOX (hbox3), buttonDownload, FALSE, FALSE, 0);
 
-  button7 = gtk_button_new_with_mnemonic (_("Flash selected File"));
-  gtk_widget_show (button7);
-  gtk_box_pack_start (GTK_BOX (hbox3), button7, FALSE, FALSE, 0);
+  buttonFLash = gtk_button_new_with_mnemonic (_("Flash selected File"));
+  gtk_widget_show (buttonFLash);
+  gtk_box_pack_start (GTK_BOX (hbox3), buttonFLash, FALSE, FALSE, 0);
 
-  button8 = gtk_button_new_with_mnemonic (_("Start Application"));
-  gtk_widget_show (button8);
-  gtk_box_pack_start (GTK_BOX (hbox3), button8, FALSE, FALSE, 0);
+  buttonStart = gtk_button_new_with_mnemonic (_("Start Application"));
+  gtk_widget_show (buttonStart);
+  gtk_box_pack_start (GTK_BOX (hbox3), buttonStart, FALSE, FALSE, 0);
 
   label3 = gtk_label_new (_("Online Versions"));
   gtk_widget_show (label3);
   gtk_frame_set_label_widget (GTK_FRAME (frame3), label3);
+
+  g_signal_connect ((gpointer) buttonVersion, "clicked",
+                    G_CALLBACK (on_buttonVersion_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) buttonQuick, "clicked",
+                    G_CALLBACK (on_buttonQuick_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) buttonDownload, "clicked",
+                    G_CALLBACK (on_buttonDownload_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) buttonFLash, "clicked",
+                    G_CALLBACK (on_buttonFLash_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) buttonStart, "clicked",
+                    G_CALLBACK (on_buttonStart_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (window, window, "window");
@@ -384,30 +400,30 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, hbox11, "hbox11");
   GLADE_HOOKUP_OBJECT (window, hbox19, "hbox19");
   GLADE_HOOKUP_OBJECT (window, label28, "label28");
-  GLADE_HOOKUP_OBJECT (window, entry3, "entry3");
+  GLADE_HOOKUP_OBJECT (window, entryVID, "entryVID");
   GLADE_HOOKUP_OBJECT (window, label29, "label29");
-  GLADE_HOOKUP_OBJECT (window, entry4, "entry4");
+  GLADE_HOOKUP_OBJECT (window, entryPID, "entryPID");
   GLADE_HOOKUP_OBJECT (window, hbox16, "hbox16");
   GLADE_HOOKUP_OBJECT (window, hseparator3, "hseparator3");
   GLADE_HOOKUP_OBJECT (window, hbox13, "hbox13");
   GLADE_HOOKUP_OBJECT (window, label30, "label30");
-  GLADE_HOOKUP_OBJECT (window, entry2, "entry2");
+  GLADE_HOOKUP_OBJECT (window, entryFile, "entryFile");
   GLADE_HOOKUP_OBJECT (window, hbox15, "hbox15");
   GLADE_HOOKUP_OBJECT (window, hseparator2, "hseparator2");
   GLADE_HOOKUP_OBJECT (window, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (window, label18, "label18");
   GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
   GLADE_HOOKUP_OBJECT (window, label21, "label21");
-  GLADE_HOOKUP_OBJECT (window, label23, "label23");
   GLADE_HOOKUP_OBJECT (window, label20, "label20");
   GLADE_HOOKUP_OBJECT (window, label19, "label19");
-  GLADE_HOOKUP_OBJECT (window, label22, "label22");
-  GLADE_HOOKUP_OBJECT (window, label24, "label24");
+  GLADE_HOOKUP_OBJECT (window, labelTitle, "labelTitle");
+  GLADE_HOOKUP_OBJECT (window, labelSize, "labelSize");
+  GLADE_HOOKUP_OBJECT (window, labelVersion, "labelVersion");
   GLADE_HOOKUP_OBJECT (window, hbox14, "hbox14");
   GLADE_HOOKUP_OBJECT (window, hseparator1, "hseparator1");
   GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
-  GLADE_HOOKUP_OBJECT (window, button9, "button9");
-  GLADE_HOOKUP_OBJECT (window, button10, "button10");
+  GLADE_HOOKUP_OBJECT (window, buttonVersion, "buttonVersion");
+  GLADE_HOOKUP_OBJECT (window, buttonQuick, "buttonQuick");
   GLADE_HOOKUP_OBJECT (window, hbox17, "hbox17");
   GLADE_HOOKUP_OBJECT (window, hseparator4, "hseparator4");
   GLADE_HOOKUP_OBJECT (window, hbox18, "hbox18");
@@ -420,19 +436,19 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, label15, "label15");
   GLADE_HOOKUP_OBJECT (window, hbox2, "hbox2");
   GLADE_HOOKUP_OBJECT (window, scrolledwindow4, "scrolledwindow4");
-  GLADE_HOOKUP_OBJECT (window, iconview1, "iconview1");
+  GLADE_HOOKUP_OBJECT (window, iconviewVersions, "iconviewVersions");
   GLADE_HOOKUP_OBJECT (window, scrolledwindow3, "scrolledwindow3");
-  GLADE_HOOKUP_OBJECT (window, textview1, "textview1");
+  GLADE_HOOKUP_OBJECT (window, textviewDescription, "textviewDescription");
   GLADE_HOOKUP_OBJECT (window, hbox7, "hbox7");
   GLADE_HOOKUP_OBJECT (window, label16, "label16");
   GLADE_HOOKUP_OBJECT (window, scrolledwindow5, "scrolledwindow5");
-  GLADE_HOOKUP_OBJECT (window, textview2, "textview2");
+  GLADE_HOOKUP_OBJECT (window, textviewLog, "textviewLog");
   GLADE_HOOKUP_OBJECT (window, hbox8, "hbox8");
   GLADE_HOOKUP_OBJECT (window, label17, "label17");
   GLADE_HOOKUP_OBJECT (window, hbox3, "hbox3");
-  GLADE_HOOKUP_OBJECT (window, button6, "button6");
-  GLADE_HOOKUP_OBJECT (window, button7, "button7");
-  GLADE_HOOKUP_OBJECT (window, button8, "button8");
+  GLADE_HOOKUP_OBJECT (window, buttonDownload, "buttonDownload");
+  GLADE_HOOKUP_OBJECT (window, buttonFLash, "buttonFLash");
+  GLADE_HOOKUP_OBJECT (window, buttonStart, "buttonStart");
   GLADE_HOOKUP_OBJECT (window, label3, "label3");
 
   return window;
