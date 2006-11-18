@@ -35,27 +35,41 @@ create_window (void)
   GtkWidget *frame1;
   GtkWidget *alignment1;
   GtkWidget *vbox3;
-  GtkWidget *label8;
-  GtkWidget *table1;
-  GtkWidget *label10;
-  GtkWidget *entry2;
-  GtkWidget *label11;
-  GtkWidget *entry3;
-  GtkWidget *label12;
-  GtkWidget *label13;
-  GtkWidget *button4;
-  GtkWidget *label9;
-  GtkWidget *vbox5;
-  GtkWidget *hbox5;
-  GtkWidget *label14;
-  GtkWidget *entry4;
-  GtkWidget *label1;
-  GtkWidget *frame2;
-  GtkWidget *alignment2;
   GtkWidget *vbox6;
-  GtkWidget *hbox6;
-  GtkWidget *button5;
-  GtkWidget *label2;
+  GtkWidget *hbox12;
+  GtkWidget *label25;
+  GtkWidget *hbox11;
+  GtkWidget *hbox19;
+  GtkWidget *label28;
+  GtkWidget *entry3;
+  GtkWidget *label29;
+  GtkWidget *entry4;
+  GtkWidget *hbox16;
+  GtkWidget *hseparator3;
+  GtkWidget *hbox13;
+  GtkWidget *label30;
+  GtkWidget *entry2;
+  GtkWidget *hbox15;
+  GtkWidget *hseparator2;
+  GtkWidget *hbox10;
+  GtkWidget *label18;
+  GtkWidget *fixed1;
+  GtkWidget *label21;
+  GtkWidget *label23;
+  GtkWidget *label20;
+  GtkWidget *label19;
+  GtkWidget *label22;
+  GtkWidget *label24;
+  GtkWidget *hbox14;
+  GtkWidget *hseparator1;
+  GtkWidget *vbuttonbox2;
+  GtkWidget *button9;
+  GtkWidget *button10;
+  GtkWidget *hbox17;
+  GtkWidget *hseparator4;
+  GtkWidget *hbox18;
+  GtkWidget *label27;
+  GtkWidget *label1;
   GtkWidget *frame3;
   GtkWidget *alignment3;
   GtkWidget *vbox2;
@@ -75,13 +89,12 @@ create_window (void)
   GtkWidget *hbox3;
   GtkWidget *button6;
   GtkWidget *button7;
+  GtkWidget *button8;
   GtkWidget *label3;
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request (window, 600, 300);
   gtk_window_set_title (GTK_WINDOW (window), _("avrupdate - AVR Online Update"));
   gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size (GTK_WINDOW (window), 600, 300);
 
   hbox1 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox1);
@@ -106,113 +119,159 @@ create_window (void)
   gtk_widget_show (vbox3);
   gtk_container_add (GTK_CONTAINER (alignment1), vbox3);
 
-  label8 = gtk_label_new (_("USB Settings"));
-  gtk_widget_show (label8);
-  gtk_box_pack_start (GTK_BOX (vbox3), label8, FALSE, FALSE, 0);
+  vbox6 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox6);
+  gtk_box_pack_start (GTK_BOX (vbox3), vbox6, TRUE, TRUE, 0);
 
-  table1 = gtk_table_new (3, 5, FALSE);
-  gtk_widget_show (table1);
-  gtk_box_pack_start (GTK_BOX (vbox3), table1, TRUE, TRUE, 0);
+  hbox12 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox12);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox12, FALSE, FALSE, 0);
 
-  label10 = gtk_label_new (_("Product ID: "));
-  gtk_widget_show (label10);
-  gtk_table_attach (GTK_TABLE (table1), label10, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label10), 0, 0.5);
+  label25 = gtk_label_new (_("<b>USB:</b>"));
+  gtk_widget_show (label25);
+  gtk_box_pack_start (GTK_BOX (hbox12), label25, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
 
-  entry2 = gtk_entry_new ();
-  gtk_widget_show (entry2);
-  gtk_table_attach (GTK_TABLE (table1), entry2, 2, 3, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_widget_set_size_request (entry2, 50, -1);
+  hbox11 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox11);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox11, TRUE, TRUE, 0);
 
-  label11 = gtk_label_new (_("Vendor ID: "));
-  gtk_widget_show (label11);
-  gtk_table_attach (GTK_TABLE (table1), label11, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label11), 0, 0.5);
+  hbox19 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox19);
+  gtk_box_pack_start (GTK_BOX (hbox11), hbox19, TRUE, TRUE, 0);
+
+  label28 = gtk_label_new (_("Vendor ID: "));
+  gtk_widget_show (label28);
+  gtk_box_pack_start (GTK_BOX (hbox19), label28, FALSE, FALSE, 0);
 
   entry3 = gtk_entry_new ();
   gtk_widget_show (entry3);
-  gtk_table_attach (GTK_TABLE (table1), entry3, 2, 3, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_widget_set_size_request (entry3, 50, -1);
+  gtk_box_pack_start (GTK_BOX (hbox19), entry3, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (entry3, 40, -1);
 
-  label12 = gtk_label_new (_("Version:"));
-  gtk_widget_show (label12);
-  gtk_table_attach (GTK_TABLE (table1), label12, 1, 2, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_widget_set_size_request (label12, -1, 28);
-  gtk_misc_set_alignment (GTK_MISC (label12), 0, 0.5);
-
-  label13 = gtk_label_new (_("12"));
-  gtk_widget_show (label13);
-  gtk_table_attach (GTK_TABLE (table1), label13, 2, 3, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (label13), 0, 0.5);
-
-  button4 = gtk_button_new_with_mnemonic (_("Get Version"));
-  gtk_widget_show (button4);
-  gtk_table_attach (GTK_TABLE (table1), button4, 3, 4, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  label9 = gtk_label_new (_("Network Settings"));
-  gtk_widget_show (label9);
-  gtk_box_pack_start (GTK_BOX (vbox3), label9, FALSE, FALSE, 0);
-
-  vbox5 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox5);
-  gtk_box_pack_start (GTK_BOX (vbox3), vbox5, TRUE, TRUE, 0);
-
-  hbox5 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox5);
-  gtk_box_pack_start (GTK_BOX (vbox5), hbox5, FALSE, FALSE, 0);
-
-  label14 = gtk_label_new (_("Version File URL:"));
-  gtk_widget_show (label14);
-  gtk_box_pack_start (GTK_BOX (hbox5), label14, FALSE, FALSE, 0);
+  label29 = gtk_label_new (_("       Product ID: "));
+  gtk_widget_show (label29);
+  gtk_box_pack_start (GTK_BOX (hbox19), label29, FALSE, FALSE, 0);
 
   entry4 = gtk_entry_new ();
   gtk_widget_show (entry4);
-  gtk_box_pack_start (GTK_BOX (vbox5), entry4, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox19), entry4, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (entry4, 40, -1);
 
-  label1 = gtk_label_new (_("Preferences"));
+  hbox16 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox16);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox16, TRUE, TRUE, 0);
+
+  hseparator3 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator3);
+  gtk_box_pack_start (GTK_BOX (hbox16), hseparator3, TRUE, TRUE, 0);
+
+  hbox13 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox13);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox13, FALSE, TRUE, 0);
+
+  label30 = gtk_label_new (_("<b>Version File</b> (http://www../version.conf)<b>:</b>"));
+  gtk_widget_show (label30);
+  gtk_box_pack_start (GTK_BOX (hbox13), label30, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label30), TRUE);
+
+  entry2 = gtk_entry_new ();
+  gtk_widget_show (entry2);
+  gtk_box_pack_start (GTK_BOX (vbox6), entry2, FALSE, FALSE, 0);
+
+  hbox15 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox15);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox15, TRUE, TRUE, 0);
+
+  hseparator2 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator2);
+  gtk_box_pack_start (GTK_BOX (hbox15), hseparator2, TRUE, TRUE, 0);
+
+  hbox10 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox10);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox10, FALSE, TRUE, 0);
+
+  label18 = gtk_label_new (_("<b>Application Info:</b>"));
+  gtk_widget_show (label18);
+  gtk_box_pack_start (GTK_BOX (hbox10), label18, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label18), TRUE);
+
+  fixed1 = gtk_fixed_new ();
+  gtk_widget_show (fixed1);
+  gtk_box_pack_start (GTK_BOX (vbox6), fixed1, TRUE, TRUE, 0);
+
+  label21 = gtk_label_new (_("Title:"));
+  gtk_widget_show (label21);
+  gtk_fixed_put (GTK_FIXED (fixed1), label21, 32, 24);
+  gtk_widget_set_size_request (label21, 48, 17);
+
+  label23 = gtk_label_new (_("21234 Byte"));
+  gtk_widget_show (label23);
+  gtk_fixed_put (GTK_FIXED (fixed1), label23, 88, 40);
+  gtk_widget_set_size_request (label23, 112, 16);
+
+  label20 = gtk_label_new (_("Size:"));
+  gtk_widget_show (label20);
+  gtk_fixed_put (GTK_FIXED (fixed1), label20, 24, 40);
+  gtk_widget_set_size_request (label20, 62, 16);
+
+  label19 = gtk_label_new (_("Version:"));
+  gtk_widget_show (label19);
+  gtk_fixed_put (GTK_FIXED (fixed1), label19, 32, 56);
+  gtk_widget_set_size_request (label19, 72, 16);
+
+  label22 = gtk_label_new (_("usbprog"));
+  gtk_widget_show (label22);
+  gtk_fixed_put (GTK_FIXED (fixed1), label22, 88, 24);
+  gtk_widget_set_size_request (label22, 88, 17);
+
+  label24 = gtk_label_new (_("9"));
+  gtk_widget_show (label24);
+  gtk_fixed_put (GTK_FIXED (fixed1), label24, 88, 56);
+  gtk_widget_set_size_request (label24, 46, 17);
+
+  hbox14 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox14);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox14, TRUE, TRUE, 0);
+
+  hseparator1 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator1);
+  gtk_box_pack_start (GTK_BOX (hbox14), hseparator1, TRUE, TRUE, 0);
+
+  vbuttonbox2 = gtk_vbutton_box_new ();
+  gtk_widget_show (vbuttonbox2);
+  gtk_box_pack_start (GTK_BOX (vbox6), vbuttonbox2, TRUE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox2), GTK_BUTTONBOX_SPREAD);
+
+  button9 = gtk_button_new_with_mnemonic (_("Read AVR Version"));
+  gtk_widget_show (button9);
+  gtk_container_add (GTK_CONTAINER (vbuttonbox2), button9);
+  GTK_WIDGET_SET_FLAGS (button9, GTK_CAN_DEFAULT);
+
+  button10 = gtk_button_new_with_mnemonic (_("Quick Auto Update"));
+  gtk_widget_show (button10);
+  gtk_container_add (GTK_CONTAINER (vbuttonbox2), button10);
+  GTK_WIDGET_SET_FLAGS (button10, GTK_CAN_DEFAULT);
+
+  hbox17 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox17);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox17, TRUE, TRUE, 0);
+
+  hseparator4 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator4);
+  gtk_box_pack_start (GTK_BOX (hbox17), hseparator4, TRUE, TRUE, 0);
+
+  hbox18 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox18);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox18, TRUE, TRUE, 0);
+
+  label27 = gtk_label_new (_("Author: Benedik Sauter <sauter@ixbat.de>\nHomepage: http://www.ixbat.de"));
+  gtk_widget_show (label27);
+  gtk_box_pack_start (GTK_BOX (hbox18), label27, FALSE, FALSE, 0);
+
+  label1 = gtk_label_new (_("AVR Board"));
   gtk_widget_show (label1);
   gtk_frame_set_label_widget (GTK_FRAME (frame1), label1);
-
-  frame2 = gtk_frame_new (NULL);
-  gtk_widget_show (frame2);
-  gtk_box_pack_start (GTK_BOX (vbox1), frame2, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (frame2), 3);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame2), GTK_SHADOW_OUT);
-
-  alignment2 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment2);
-  gtk_container_add (GTK_CONTAINER (frame2), alignment2);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment2), 10, 10, 10, 10);
-
-  vbox6 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox6);
-  gtk_container_add (GTK_CONTAINER (alignment2), vbox6);
-
-  hbox6 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox6);
-  gtk_box_pack_start (GTK_BOX (vbox6), hbox6, FALSE, FALSE, 0);
-
-  button5 = gtk_button_new_with_mnemonic (_("Auto Update"));
-  gtk_widget_show (button5);
-  gtk_box_pack_start (GTK_BOX (hbox6), button5, FALSE, FALSE, 0);
-
-  label2 = gtk_label_new (_("Auto Update"));
-  gtk_widget_show (label2);
-  gtk_frame_set_label_widget (GTK_FRAME (frame2), label2);
 
   frame3 = gtk_frame_new (NULL);
   gtk_widget_show (frame3);
@@ -233,9 +292,10 @@ create_window (void)
   gtk_widget_show (hbox4);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox4, FALSE, TRUE, 0);
 
-  label15 = gtk_label_new (_("Online"));
+  label15 = gtk_label_new (_("<b>Online:</b>"));
   gtk_widget_show (label15);
   gtk_box_pack_start (GTK_BOX (hbox4), label15, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label15), TRUE);
 
   hbox2 = gtk_hbox_new (FALSE, 4);
   gtk_widget_show (hbox2);
@@ -260,44 +320,52 @@ create_window (void)
   textview1 = gtk_text_view_new ();
   gtk_widget_show (textview1);
   gtk_container_add (GTK_CONTAINER (scrolledwindow3), textview1);
-  gtk_widget_set_size_request (textview1, 145, 166);
+  gtk_widget_set_size_request (textview1, 145, 170);
 
   hbox7 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox7);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox7, FALSE, FALSE, 0);
 
-  label16 = gtk_label_new (_("Log"));
+  label16 = gtk_label_new (_("<b>Log:</b>"));
   gtk_widget_show (label16);
   gtk_box_pack_start (GTK_BOX (hbox7), label16, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label16), TRUE);
 
   scrolledwindow5 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow5);
   gtk_box_pack_start (GTK_BOX (vbox2), scrolledwindow5, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow5), GTK_SHADOW_IN);
 
   textview2 = gtk_text_view_new ();
   gtk_widget_show (textview2);
   gtk_container_add (GTK_CONTAINER (scrolledwindow5), textview2);
+  gtk_widget_set_size_request (textview2, -1, 116);
 
   hbox8 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox8);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox8, TRUE, TRUE, 0);
 
-  label17 = gtk_label_new (_("Process"));
+  label17 = gtk_label_new (_("<b>Process:</b>"));
   gtk_widget_show (label17);
   gtk_box_pack_start (GTK_BOX (hbox8), label17, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label17), TRUE);
 
-  hbox3 = gtk_hbox_new (FALSE, 0);
+  hbox3 = gtk_hbox_new (TRUE, 0);
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox3, FALSE, TRUE, 0);
 
-  button6 = gtk_button_new_with_mnemonic (_("Download List"));
+  button6 = gtk_button_new_with_mnemonic (_("Download Version List"));
   gtk_widget_show (button6);
   gtk_box_pack_start (GTK_BOX (hbox3), button6, FALSE, FALSE, 0);
 
   button7 = gtk_button_new_with_mnemonic (_("Flash selected File"));
   gtk_widget_show (button7);
   gtk_box_pack_start (GTK_BOX (hbox3), button7, FALSE, FALSE, 0);
+
+  button8 = gtk_button_new_with_mnemonic (_("Start Application"));
+  gtk_widget_show (button8);
+  gtk_box_pack_start (GTK_BOX (hbox3), button8, FALSE, FALSE, 0);
 
   label3 = gtk_label_new (_("Online Versions"));
   gtk_widget_show (label3);
@@ -310,27 +378,41 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, frame1, "frame1");
   GLADE_HOOKUP_OBJECT (window, alignment1, "alignment1");
   GLADE_HOOKUP_OBJECT (window, vbox3, "vbox3");
-  GLADE_HOOKUP_OBJECT (window, label8, "label8");
-  GLADE_HOOKUP_OBJECT (window, table1, "table1");
-  GLADE_HOOKUP_OBJECT (window, label10, "label10");
-  GLADE_HOOKUP_OBJECT (window, entry2, "entry2");
-  GLADE_HOOKUP_OBJECT (window, label11, "label11");
-  GLADE_HOOKUP_OBJECT (window, entry3, "entry3");
-  GLADE_HOOKUP_OBJECT (window, label12, "label12");
-  GLADE_HOOKUP_OBJECT (window, label13, "label13");
-  GLADE_HOOKUP_OBJECT (window, button4, "button4");
-  GLADE_HOOKUP_OBJECT (window, label9, "label9");
-  GLADE_HOOKUP_OBJECT (window, vbox5, "vbox5");
-  GLADE_HOOKUP_OBJECT (window, hbox5, "hbox5");
-  GLADE_HOOKUP_OBJECT (window, label14, "label14");
-  GLADE_HOOKUP_OBJECT (window, entry4, "entry4");
-  GLADE_HOOKUP_OBJECT (window, label1, "label1");
-  GLADE_HOOKUP_OBJECT (window, frame2, "frame2");
-  GLADE_HOOKUP_OBJECT (window, alignment2, "alignment2");
   GLADE_HOOKUP_OBJECT (window, vbox6, "vbox6");
-  GLADE_HOOKUP_OBJECT (window, hbox6, "hbox6");
-  GLADE_HOOKUP_OBJECT (window, button5, "button5");
-  GLADE_HOOKUP_OBJECT (window, label2, "label2");
+  GLADE_HOOKUP_OBJECT (window, hbox12, "hbox12");
+  GLADE_HOOKUP_OBJECT (window, label25, "label25");
+  GLADE_HOOKUP_OBJECT (window, hbox11, "hbox11");
+  GLADE_HOOKUP_OBJECT (window, hbox19, "hbox19");
+  GLADE_HOOKUP_OBJECT (window, label28, "label28");
+  GLADE_HOOKUP_OBJECT (window, entry3, "entry3");
+  GLADE_HOOKUP_OBJECT (window, label29, "label29");
+  GLADE_HOOKUP_OBJECT (window, entry4, "entry4");
+  GLADE_HOOKUP_OBJECT (window, hbox16, "hbox16");
+  GLADE_HOOKUP_OBJECT (window, hseparator3, "hseparator3");
+  GLADE_HOOKUP_OBJECT (window, hbox13, "hbox13");
+  GLADE_HOOKUP_OBJECT (window, label30, "label30");
+  GLADE_HOOKUP_OBJECT (window, entry2, "entry2");
+  GLADE_HOOKUP_OBJECT (window, hbox15, "hbox15");
+  GLADE_HOOKUP_OBJECT (window, hseparator2, "hseparator2");
+  GLADE_HOOKUP_OBJECT (window, hbox10, "hbox10");
+  GLADE_HOOKUP_OBJECT (window, label18, "label18");
+  GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
+  GLADE_HOOKUP_OBJECT (window, label21, "label21");
+  GLADE_HOOKUP_OBJECT (window, label23, "label23");
+  GLADE_HOOKUP_OBJECT (window, label20, "label20");
+  GLADE_HOOKUP_OBJECT (window, label19, "label19");
+  GLADE_HOOKUP_OBJECT (window, label22, "label22");
+  GLADE_HOOKUP_OBJECT (window, label24, "label24");
+  GLADE_HOOKUP_OBJECT (window, hbox14, "hbox14");
+  GLADE_HOOKUP_OBJECT (window, hseparator1, "hseparator1");
+  GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
+  GLADE_HOOKUP_OBJECT (window, button9, "button9");
+  GLADE_HOOKUP_OBJECT (window, button10, "button10");
+  GLADE_HOOKUP_OBJECT (window, hbox17, "hbox17");
+  GLADE_HOOKUP_OBJECT (window, hseparator4, "hseparator4");
+  GLADE_HOOKUP_OBJECT (window, hbox18, "hbox18");
+  GLADE_HOOKUP_OBJECT (window, label27, "label27");
+  GLADE_HOOKUP_OBJECT (window, label1, "label1");
   GLADE_HOOKUP_OBJECT (window, frame3, "frame3");
   GLADE_HOOKUP_OBJECT (window, alignment3, "alignment3");
   GLADE_HOOKUP_OBJECT (window, vbox2, "vbox2");
@@ -350,6 +432,7 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, hbox3, "hbox3");
   GLADE_HOOKUP_OBJECT (window, button6, "button6");
   GLADE_HOOKUP_OBJECT (window, button7, "button7");
+  GLADE_HOOKUP_OBJECT (window, button8, "button8");
   GLADE_HOOKUP_OBJECT (window, label3, "label3");
 
   return window;
