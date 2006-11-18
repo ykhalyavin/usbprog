@@ -26,10 +26,10 @@ private:
 
 protected:
     // begin wxGlade: MyFrame::attributes
+    wxMenuBar* menubar;
+    wxStatusBar* frame_1_statusbar;
     wxStaticLine* static_line_1;
     wxPanel* panel_1;
-    wxStatusBar* frame_1_statusbar;
-    wxMenuBar* menubar;
     // end wxGlade
 }; // wxGlade: end class
 

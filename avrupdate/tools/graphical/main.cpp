@@ -7,14 +7,14 @@ MyFrame::MyFrame(wxWindow* parent, int id, const wxString& title, const wxPoint&
     wxFrame(parent, id, title, pos, size, wxDEFAULT_FRAME_STYLE)
 {
     // begin wxGlade: MyFrame::MyFrame
-    static_line_1 = new wxStaticLine(this, -1);
-    panel_1 = new wxPanel(this, -1);
-    frame_1_statusbar = CreateStatusBar(1, 0);
     menubar = new wxMenuBar();
     SetMenuBar(menubar);
     wxMenu* File = new wxMenu();
     File->Append(wxNewId(), wxT("About"), wxT(""), wxITEM_NORMAL);
     menubar->Append(File, wxT("File"));
+    frame_1_statusbar = CreateStatusBar(1, 0);
+    static_line_1 = new wxStaticLine(this, -1);
+    panel_1 = new wxPanel(this, -1);
 
     set_properties();
     do_layout();
@@ -70,6 +70,10 @@ bool avrupdate::OnInit()
     frame_1->Show();
     return true;
 }
+
+
+
+
 
 
 
