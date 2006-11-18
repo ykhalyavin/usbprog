@@ -4,8 +4,8 @@ SUBDIRS = src po
 
 EXTRA_DIST = \
 	autogen.sh \
-	graphical.glade \
-	graphical.gladep
+	avrupdate-gui.glade \
+	avrupdate-gui.gladep
 
 install-data-local:
 	@$(NORMAL_INSTALL)

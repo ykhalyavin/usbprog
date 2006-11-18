@@ -2,7 +2,7 @@
 <!DOCTYPE glade-project SYSTEM "http://glade.gnome.org/glade-project-2.0.dtd">
 
 <glade-project>
-  <name>Graphical</name>
-  <program_name>graphical</program_name>
+  <name>avrupdate-gui</name>
+  <program_name>avrupdate-gui</program_name>
   <gnome_support>FALSE</gnome_support>
 </glade-project>

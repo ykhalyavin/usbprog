@@ -5,13 +5,13 @@ INCLUDES = \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	@PACKAGE_CFLAGS@
 
-bin_PROGRAMS = graphical
+bin_PROGRAMS = avrupdate-gui
 
-graphical_SOURCES = \
+avrupdate_gui_SOURCES = \
 	main.c \
 	support.c support.h \
 	interface.c interface.h \
 	callbacks.c callbacks.h
 
-graphical_LDADD = @PACKAGE_LIBS@ $(INTLLIBS)
+avrupdate_gui_LDADD = @PACKAGE_LIBS@ $(INTLLIBS)
 
