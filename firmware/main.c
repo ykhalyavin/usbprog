@@ -4,21 +4,24 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 #include <util/delay.h>
-#include <avr/eeprom.h>
 
+#include "../avrupdate/firmwarelib/avrupdate.h"
+
+/*
+#include <avr/eeprom.h>
 // EEMEM wird bei aktuellen Versionen der avr-lib in eeprom.h definiert
 // hier: definiere falls noch nicht bekannt ("alte" avr-libc)
 #ifndef EEMEM
 // alle Textstellen EEMEM im Quellcode durch __attribute__ ... ersetzen
 #define EEMEM  __attribute__ ((section (".eeprom")))
 #endif
-
+*/
 
 #include "uart.h"
 #include "usbn2mc.h"
 
 //void (*avrupdate_jump_to_boot)( void ) = 0x7000;
-void (*avrupdate_jump_to_boot)( void ) = (void *) 0x7000;
+//void (*avrupdate_jump_to_boot)( void ) = (void *) 0x7000;
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -67,15 +70,27 @@ void TransferISR()
 
   	USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
 }
+
 void wait_ms(int ms)
 {
     int i;
-	    for(i=0;i<ms;i++)
-		        _delay_ms(1);
-				}
+	for(i=0;i<ms;i++)
+   _delay_ms(1);
+}
 
+void USBNDecodeVendorRequest(DeviceRequest *req)
+{
+	UARTWrite("vendor request check ");
+	SendHex(req->bRequest);
+	switch(req->bRequest)
+	{
+		case STARTAVRUPDATE:
+			avrupdate_start();
+		break;
+	}
+}
 
-uint8_t eeFooByte EEMEM = 1;	
+//uint8_t eeFooByte EEMEM = 1;	
 
 int main(void)
 {
@@ -119,15 +134,16 @@ int main(void)
   	USBNStart();
 	
 	//cli();
-  	UARTWrite("waiting for enumaration signal...\r\n");
-	wait_ms(2000);
-  	UARTWrite("2\r\n");
+  	//UARTWrite("waiting for enumaration signal...\r\n");
+	//wait_ms(2000);
+  	//UARTWrite("2\r\n");
 
 	/* mann muss hier noch sicherstellen, dass sicher der bootloader startet! */	
 	//GICR |= _BV(IVSEL); //move interruptvectors to the Boot sector
-	eeprom_write_byte(&eeFooByte,0x77); // schreiben
+	//eeprom_write_byte(&eeFooByte,0x77); // schreiben
 
-  	avrupdate_jump_to_boot();      // Jump to application sector
+  	//avrupdate_jump_to_boot();      // Jump to application sector
+	//avrupdate_start();
 
   	while(1);
 }
