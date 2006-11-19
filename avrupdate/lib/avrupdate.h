@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <usb.h>
 
+
+void avrupdate_start_with_vendor_request(short vendorid, short productid);
+
+
 /* start usb connection to device */
 struct usb_dev_handle* avrupdate_open(short vendorid, short productid);
 void avrupdate_close(struct usb_dev_handle* usb_handle);

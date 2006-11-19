@@ -84,6 +84,43 @@ void avrupdate_startapp(struct usb_dev_handle* usb_handle)
 }
 
 
+
+void avrupdate_start_with_vendor_request(short vendorid, short productid)
+{
+	struct usb_bus *busses;
+
+  	usb_set_debug(2);
+  	usb_init();
+  	usb_find_busses();
+  	usb_find_devices();
+
+  	busses = usb_get_busses();
+
+ 	struct usb_dev_handle* usb_handle;
+  	struct usb_bus *bus;
+
+
+  	unsigned char send_data=0xff;
+
+  	for (bus = busses; bus; bus = bus->next)
+  	{
+    	struct usb_device *dev;
+
+    	for (dev = bus->devices; dev; dev = dev->next){
+      		if (dev->descriptor.idVendor == vendorid){
+        		int i,stat;
+        		printf("vendor: %i\n",dev->descriptor.idVendor);
+        		usb_handle = usb_open(dev);
+        		stat = usb_set_configuration (usb_handle,1);
+				usb_control_msg(usb_handle, 0xA0, 0x01, 0, 0, NULL,8, 100);
+				usb_close(usb_handle);
+
+				return usb_handle;
+      		}
+    	}	
+  	}
+}
+
 struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
 {
 	struct usb_bus *busses;
@@ -111,7 +148,7 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
         		printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
         		stat = usb_set_configuration (usb_handle,1);
-				return usb_handle;
+				return usb_handle;	
       		}
     	}	
   	}
