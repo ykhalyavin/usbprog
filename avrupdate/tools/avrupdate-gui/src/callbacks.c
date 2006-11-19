@@ -89,6 +89,7 @@ void
 on_buttonFLash_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
+	//avrupdate_net_flash_version(char * url,int number);
 
 }
 
@@ -97,7 +98,10 @@ void
 on_buttonStart_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
-
+	struct usb_dev_handle* usb_handle;
+    usb_handle = avrupdate_open(0x0400,0x5dc3);
+	avrupdate_startapp(usb_handle);
+	avrupdate_close(usb_handle);
 }
 
 
@@ -106,5 +110,6 @@ on_buttonStartAU_clicked               (GtkButton       *button,
                                         gpointer         user_data)
 {
 
+	avrupdate_start_with_vendor_request(0x400, 0x9876);
 }
 
