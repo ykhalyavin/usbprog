@@ -15,9 +15,19 @@ void avrupdate_set_version(char version);
 int avrupdate_uc_state();
 
 
+
+struct avrupdate_info {
+	char *title;
+	char *version;
+	char *file;
+	char *description;
+};
+
 /* online functions */
-void avrupdate_net_version_list(char * url);
-void avrupdate_net_get_version(int version);
+int avrupdate_net_get_versionfile(char * url, char **buffer);
+int avrupdate_net_versions(char * url);
+void avrupdate_net_flash_version(char * url,int number);
+struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number);
 
 
 

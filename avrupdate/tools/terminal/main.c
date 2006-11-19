@@ -19,7 +19,7 @@ int main(int argc, char **argv)
   	avrupdate_close(usb_handle);
 	*/
 
-	const char *url = "http://www.ixbat.de/versions.conf";
+	char *url = "http://www.ixbat.de/versions.conf";
 	printf("Found %i version(s)\n",avrupdate_net_versions(url));	
 
 	struct avrupdate_info *tmp = avrupdate_net_get_version_info(url,1);

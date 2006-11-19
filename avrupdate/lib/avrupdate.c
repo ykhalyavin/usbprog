@@ -1,6 +1,10 @@
 #include <stdio.h>
+#include <string.h>
 #include <usb.h>
+
 #include "avrupdate.h"
+#include <curl/curl.h>
+#include "http_fetcher.h"
 
 #define STARTAPP  0x01
 #define WRITEPAGE 0x02
@@ -114,7 +118,114 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
 }
 
 
+
+char avrupdate_get_version()
+{
+
+}
+
+
+void avrupdate_set_version(char version)
+{
+
+}
+
+
+
 void avrupdate_close(struct usb_dev_handle* usb_handle)
 {
   	usb_close(usb_handle);
 }
+
+size_t _write_data(void *data, size_t size, size_t nmemb, void *userp)
+{
+	strcpy(userp,data);
+	return size*nmemb;
+}
+
+
+int avrupdate_net_get_versionfile(char * url, char **buffer)
+{
+	return http_fetch(url, buffer); 
+}
+
+int avrupdate_net_versions(char * url)
+{
+	char *buffer;
+	int size = avrupdate_net_get_versionfile(url,&buffer);
+	printf("data %i\n",size);
+	int i; int star=0;
+
+	// count semicollons
+	for(i=0;i<size;i++)
+	{
+		if(buffer[i]=='*')
+			star++;
+	}
+	return star;
+}
+
+
+void avrupdate_net_flash_version(char * url,int number)
+{
+	struct avrupdate_info * tmp = avrupdate_net_get_version_info(url,number);
+	
+	int ret;
+	char *buffer;
+	ret = http_fetch(tmp->file, &buffer);    /* Downloads page */
+	if(ret == -1)                       /* All HTTP Fetcher functions return */
+		http_perror("http_fetch");      /*  -1 on error. */
+	else {
+   		printf("Page successfully downloaded. (%s)\n", url);
+		FILE *fp;
+		fp = fopen("flash.bin", "w");
+		fprintf(fp,"%s",buffer);
+		fclose(fp);
+
+		remove("flash.bin");
+	}
+}
+
+
+void split_string(char *c_str, char **ret, char *delim)
+{
+	int i = 0;
+	char* tmp;    
+	char str[strlen(c_str)+1];
+	strcpy(str, c_str);
+
+	tmp = strtok(str, delim);
+	while (tmp) {
+		ret[i] = malloc(strlen(tmp) * sizeof(char) +1);
+		strcpy(ret[i++], tmp);
+		tmp = strtok(NULL, delim);
+	}
+}
+
+
+struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number)
+{
+	char *buffer;
+
+	avrupdate_net_get_versionfile(url,&buffer);
+	struct avrupdate_info * tmp = (struct avrupdate_info *)malloc(sizeof(struct avrupdate_info));
+
+	int rows = avrupdate_net_versions(url);
+
+	char **line = malloc(rows* sizeof(char*));
+    split_string(buffer, line, "*");
+
+	char **fields = malloc(4* sizeof(char*));
+    split_string(line[number],fields, ";");
+
+	tmp->title = fields[0];
+	tmp->version = fields[1];
+	tmp->file = fields[2];
+	tmp->description= fields[3];
+
+	
+	return tmp;
+}
+
+
+
