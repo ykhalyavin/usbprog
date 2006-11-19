@@ -3,7 +3,7 @@
 #include <usb.h>
 
 #include "avrupdate.h"
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include "http_fetcher.h"
 
 #define STARTAPP  0x01
@@ -114,8 +114,7 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
         		stat = usb_set_configuration (usb_handle,1);
 				usb_control_msg(usb_handle, 0xA0, 0x01, 0, 0, NULL,8, 100);
 				usb_close(usb_handle);
-
-				return usb_handle;
+				//return usb_handle;
       		}
     	}	
   	}
