@@ -45,12 +45,23 @@ create_window (void)
   GtkWidget *label29;
   GtkWidget *entryPID;
   GtkWidget *hbox16;
+  GtkWidget *hbox20;
+  GtkWidget *label31;
+  GtkWidget *hbox15;
+  GtkWidget *hbox21;
+  GtkWidget *label32;
+  GtkWidget *entryVIDa;
+  GtkWidget *label33;
+  GtkWidget *entryPIDa;
+  GtkWidget *hbox14;
+  GtkWidget *hbox22;
   GtkWidget *hseparator3;
   GtkWidget *hbox13;
   GtkWidget *label30;
   GtkWidget *entryFile;
-  GtkWidget *hbox15;
-  GtkWidget *hseparator2;
+  GtkWidget *hbox17;
+  GtkWidget *hbox23;
+  GtkWidget *hseparator4;
   GtkWidget *hbox10;
   GtkWidget *label18;
   GtkWidget *fixed1;
@@ -60,13 +71,13 @@ create_window (void)
   GtkWidget *labelTitle;
   GtkWidget *labelSize;
   GtkWidget *labelVersion;
-  GtkWidget *hbox14;
-  GtkWidget *hseparator1;
+  GtkWidget *hbox24;
+  GtkWidget *hseparator5;
   GtkWidget *vbuttonbox2;
   GtkWidget *buttonVersion;
   GtkWidget *buttonQuick;
-  GtkWidget *hbox17;
-  GtkWidget *hseparator4;
+  GtkWidget *hbox25;
+  GtkWidget *hseparator6;
   GtkWidget *hbox18;
   GtkWidget *label27;
   GtkWidget *label1;
@@ -127,7 +138,7 @@ create_window (void)
   gtk_widget_show (hbox12);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox12, FALSE, FALSE, 0);
 
-  label25 = gtk_label_new (_("<b>USB:</b>"));
+  label25 = gtk_label_new (_("<b>USB Device IDs:</b>"));
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (hbox12), label25, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
@@ -162,9 +173,52 @@ create_window (void)
   gtk_widget_show (hbox16);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox16, TRUE, TRUE, 0);
 
+  hbox20 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox20);
+  gtk_box_pack_start (GTK_BOX (hbox16), hbox20, TRUE, TRUE, 0);
+
+  label31 = gtk_label_new (_("<b>USB avrupdate IDs:</b>"));
+  gtk_widget_show (label31);
+  gtk_box_pack_start (GTK_BOX (hbox20), label31, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label31), TRUE);
+
+  hbox15 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox15);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox15, TRUE, TRUE, 0);
+
+  hbox21 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox21);
+  gtk_box_pack_start (GTK_BOX (hbox15), hbox21, TRUE, TRUE, 0);
+
+  label32 = gtk_label_new (_("Vendor ID: "));
+  gtk_widget_show (label32);
+  gtk_box_pack_start (GTK_BOX (hbox21), label32, FALSE, FALSE, 0);
+
+  entryVIDa = gtk_entry_new ();
+  gtk_widget_show (entryVIDa);
+  gtk_box_pack_start (GTK_BOX (hbox21), entryVIDa, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (entryVIDa, 40, -1);
+
+  label33 = gtk_label_new (_("       Product ID: "));
+  gtk_widget_show (label33);
+  gtk_box_pack_start (GTK_BOX (hbox21), label33, FALSE, FALSE, 0);
+
+  entryPIDa = gtk_entry_new ();
+  gtk_widget_show (entryPIDa);
+  gtk_box_pack_start (GTK_BOX (hbox21), entryPIDa, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (entryPIDa, 40, -1);
+
+  hbox14 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox14);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox14, TRUE, TRUE, 0);
+
+  hbox22 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox22);
+  gtk_box_pack_start (GTK_BOX (hbox14), hbox22, TRUE, TRUE, 0);
+
   hseparator3 = gtk_hseparator_new ();
   gtk_widget_show (hseparator3);
-  gtk_box_pack_start (GTK_BOX (hbox16), hseparator3, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox22), hseparator3, TRUE, TRUE, 0);
 
   hbox13 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox13);
@@ -179,13 +233,17 @@ create_window (void)
   gtk_widget_show (entryFile);
   gtk_box_pack_start (GTK_BOX (vbox6), entryFile, FALSE, FALSE, 0);
 
-  hbox15 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox15);
-  gtk_box_pack_start (GTK_BOX (vbox6), hbox15, TRUE, TRUE, 0);
+  hbox17 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox17);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox17, TRUE, TRUE, 0);
 
-  hseparator2 = gtk_hseparator_new ();
-  gtk_widget_show (hseparator2);
-  gtk_box_pack_start (GTK_BOX (hbox15), hseparator2, TRUE, TRUE, 0);
+  hbox23 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox23);
+  gtk_box_pack_start (GTK_BOX (hbox17), hbox23, TRUE, TRUE, 0);
+
+  hseparator4 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator4);
+  gtk_box_pack_start (GTK_BOX (hbox23), hseparator4, TRUE, TRUE, 0);
 
   hbox10 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox10);
@@ -230,13 +288,13 @@ create_window (void)
   gtk_fixed_put (GTK_FIXED (fixed1), labelVersion, 88, 56);
   gtk_widget_set_size_request (labelVersion, 46, 17);
 
-  hbox14 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox14);
-  gtk_box_pack_start (GTK_BOX (vbox6), hbox14, TRUE, TRUE, 0);
+  hbox24 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox24);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox24, TRUE, TRUE, 0);
 
-  hseparator1 = gtk_hseparator_new ();
-  gtk_widget_show (hseparator1);
-  gtk_box_pack_start (GTK_BOX (hbox14), hseparator1, TRUE, TRUE, 0);
+  hseparator5 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator5);
+  gtk_box_pack_start (GTK_BOX (hbox24), hseparator5, TRUE, TRUE, 0);
 
   vbuttonbox2 = gtk_vbutton_box_new ();
   gtk_widget_show (vbuttonbox2);
@@ -253,13 +311,13 @@ create_window (void)
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonQuick);
   GTK_WIDGET_SET_FLAGS (buttonQuick, GTK_CAN_DEFAULT);
 
-  hbox17 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox17);
-  gtk_box_pack_start (GTK_BOX (vbox6), hbox17, TRUE, TRUE, 0);
+  hbox25 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox25);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox25, TRUE, TRUE, 0);
 
-  hseparator4 = gtk_hseparator_new ();
-  gtk_widget_show (hseparator4);
-  gtk_box_pack_start (GTK_BOX (hbox17), hseparator4, TRUE, TRUE, 0);
+  hseparator6 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator6);
+  gtk_box_pack_start (GTK_BOX (hbox25), hseparator6, TRUE, TRUE, 0);
 
   hbox18 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox18);
@@ -404,12 +462,23 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, label29, "label29");
   GLADE_HOOKUP_OBJECT (window, entryPID, "entryPID");
   GLADE_HOOKUP_OBJECT (window, hbox16, "hbox16");
+  GLADE_HOOKUP_OBJECT (window, hbox20, "hbox20");
+  GLADE_HOOKUP_OBJECT (window, label31, "label31");
+  GLADE_HOOKUP_OBJECT (window, hbox15, "hbox15");
+  GLADE_HOOKUP_OBJECT (window, hbox21, "hbox21");
+  GLADE_HOOKUP_OBJECT (window, label32, "label32");
+  GLADE_HOOKUP_OBJECT (window, entryVIDa, "entryVIDa");
+  GLADE_HOOKUP_OBJECT (window, label33, "label33");
+  GLADE_HOOKUP_OBJECT (window, entryPIDa, "entryPIDa");
+  GLADE_HOOKUP_OBJECT (window, hbox14, "hbox14");
+  GLADE_HOOKUP_OBJECT (window, hbox22, "hbox22");
   GLADE_HOOKUP_OBJECT (window, hseparator3, "hseparator3");
   GLADE_HOOKUP_OBJECT (window, hbox13, "hbox13");
   GLADE_HOOKUP_OBJECT (window, label30, "label30");
   GLADE_HOOKUP_OBJECT (window, entryFile, "entryFile");
-  GLADE_HOOKUP_OBJECT (window, hbox15, "hbox15");
-  GLADE_HOOKUP_OBJECT (window, hseparator2, "hseparator2");
+  GLADE_HOOKUP_OBJECT (window, hbox17, "hbox17");
+  GLADE_HOOKUP_OBJECT (window, hbox23, "hbox23");
+  GLADE_HOOKUP_OBJECT (window, hseparator4, "hseparator4");
   GLADE_HOOKUP_OBJECT (window, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (window, label18, "label18");
   GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
@@ -419,13 +488,13 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, labelTitle, "labelTitle");
   GLADE_HOOKUP_OBJECT (window, labelSize, "labelSize");
   GLADE_HOOKUP_OBJECT (window, labelVersion, "labelVersion");
-  GLADE_HOOKUP_OBJECT (window, hbox14, "hbox14");
-  GLADE_HOOKUP_OBJECT (window, hseparator1, "hseparator1");
+  GLADE_HOOKUP_OBJECT (window, hbox24, "hbox24");
+  GLADE_HOOKUP_OBJECT (window, hseparator5, "hseparator5");
   GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
   GLADE_HOOKUP_OBJECT (window, buttonVersion, "buttonVersion");
   GLADE_HOOKUP_OBJECT (window, buttonQuick, "buttonQuick");
-  GLADE_HOOKUP_OBJECT (window, hbox17, "hbox17");
-  GLADE_HOOKUP_OBJECT (window, hseparator4, "hseparator4");
+  GLADE_HOOKUP_OBJECT (window, hbox25, "hbox25");
+  GLADE_HOOKUP_OBJECT (window, hseparator6, "hseparator6");
   GLADE_HOOKUP_OBJECT (window, hbox18, "hbox18");
   GLADE_HOOKUP_OBJECT (window, label27, "label27");
   GLADE_HOOKUP_OBJECT (window, label1, "label1");
