@@ -100,3 +100,11 @@ on_buttonStart_clicked                 (GtkButton       *button,
 
 }
 
+
+void
+on_buttonStartAU_clicked               (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+}
+

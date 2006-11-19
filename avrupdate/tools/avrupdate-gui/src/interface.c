@@ -76,6 +76,7 @@ create_window (void)
   GtkWidget *vbuttonbox2;
   GtkWidget *buttonVersion;
   GtkWidget *buttonQuick;
+  GtkWidget *buttonStartAU;
   GtkWidget *hbox25;
   GtkWidget *hseparator6;
   GtkWidget *hbox18;
@@ -308,6 +309,11 @@ create_window (void)
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonQuick);
   GTK_WIDGET_SET_FLAGS (buttonQuick, GTK_CAN_DEFAULT);
 
+  buttonStartAU = gtk_button_new_with_mnemonic (_("Start Update Mode (with Vendor Request)"));
+  gtk_widget_show (buttonStartAU);
+  gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonStartAU);
+  GTK_WIDGET_SET_FLAGS (buttonStartAU, GTK_CAN_DEFAULT);
+
   hbox25 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox25);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox25, TRUE, TRUE, 0);
@@ -418,6 +424,9 @@ create_window (void)
   g_signal_connect ((gpointer) buttonQuick, "clicked",
                     G_CALLBACK (on_buttonQuick_clicked),
                     NULL);
+  g_signal_connect ((gpointer) buttonStartAU, "clicked",
+                    G_CALLBACK (on_buttonStartAU_clicked),
+                    NULL);
   g_signal_connect ((gpointer) buttonDownload, "clicked",
                     G_CALLBACK (on_buttonDownload_clicked),
                     NULL);
@@ -476,6 +485,7 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
   GLADE_HOOKUP_OBJECT (window, buttonVersion, "buttonVersion");
   GLADE_HOOKUP_OBJECT (window, buttonQuick, "buttonQuick");
+  GLADE_HOOKUP_OBJECT (window, buttonStartAU, "buttonStartAU");
   GLADE_HOOKUP_OBJECT (window, hbox25, "hbox25");
   GLADE_HOOKUP_OBJECT (window, hseparator6, "hseparator6");
   GLADE_HOOKUP_OBJECT (window, hbox18, "hbox18");
