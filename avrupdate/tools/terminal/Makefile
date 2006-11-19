@@ -1,7 +1,9 @@
 all:
-	gcc -c ../lib/avrupdate.c
-	gcc -c main.c
-	gcc -o avrupdate avrupdate.o main.o -lusb -I ../lib/
+	gcc -g -c ../../lib/avrupdate.c
+	gcc -g -c ../../lib/http_error_codes.c
+	gcc -g -c ../../lib/http_fetcher.c
+	gcc -c main.c -I ../../lib/
+	gcc -g -o avrupdate avrupdate.o main.o http_error_codes.o http_fetcher.o -lusb -I ../../lib/ -lcurl
 
 install:
 	cp vlabc /usr/bin
