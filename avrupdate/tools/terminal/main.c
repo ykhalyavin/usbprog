@@ -1,4 +1,4 @@
-#include <stdio.h>
+#kinclude <stdio.h>
 #include <usb.h>
 #include "avrupdate.h"
 

@@ -86,11 +86,8 @@ create_window (void)
   GtkWidget *vbox2;
   GtkWidget *hbox4;
   GtkWidget *label15;
-  GtkWidget *hbox2;
-  GtkWidget *scrolledwindow4;
-  GtkWidget *iconviewVersions;
-  GtkWidget *scrolledwindow3;
-  GtkWidget *textviewDescription;
+  GtkWidget *listVersions;
+  GtkWidget *treeviewVersions;
   GtkWidget *hbox7;
   GtkWidget *label16;
   GtkWidget *scrolledwindow5;
@@ -323,7 +320,7 @@ create_window (void)
   gtk_widget_show (hbox18);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox18, TRUE, TRUE, 0);
 
-  label27 = gtk_label_new (_("Author: Benedik Sauter <sauter@ixbat.de>\nHomepage: http://www.ixbat.de"));
+  label27 = gtk_label_new (_("Author: Benedikt Sauter <sauter@ixbat.de>\nHomepage: http://www.ixbat.de"));
   gtk_widget_show (label27);
   gtk_box_pack_start (GTK_BOX (hbox18), label27, FALSE, FALSE, 0);
 
@@ -355,30 +352,16 @@ create_window (void)
   gtk_box_pack_start (GTK_BOX (hbox4), label15, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label15), TRUE);
 
-  hbox2 = gtk_hbox_new (FALSE, 4);
-  gtk_widget_show (hbox2);
-  gtk_box_pack_start (GTK_BOX (vbox2), hbox2, TRUE, TRUE, 1);
+  listVersions = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (listVersions);
+  gtk_box_pack_start (GTK_BOX (vbox2), listVersions, TRUE, TRUE, 1);
+  gtk_widget_set_size_request (listVersions, -1, 173);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (listVersions), GTK_SHADOW_IN);
 
-  scrolledwindow4 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow4);
-  gtk_box_pack_start (GTK_BOX (hbox2), scrolledwindow4, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_SHADOW_IN);
-
-  iconviewVersions = gtk_icon_view_new ();
-  gtk_widget_show (iconviewVersions);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow4), iconviewVersions);
-  gtk_icon_view_set_orientation (GTK_ICON_VIEW (iconviewVersions), GTK_ORIENTATION_HORIZONTAL);
-
-  scrolledwindow3 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow3);
-  gtk_box_pack_start (GTK_BOX (hbox2), scrolledwindow3, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_SHADOW_IN);
-
-  textviewDescription = gtk_text_view_new ();
-  gtk_widget_show (textviewDescription);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow3), textviewDescription);
-  gtk_widget_set_size_request (textviewDescription, 145, 170);
+  treeviewVersions = gtk_tree_view_new ();
+  gtk_widget_show (treeviewVersions);
+  gtk_container_add (GTK_CONTAINER (listVersions), treeviewVersions);
+  gtk_tree_view_set_hover_expand (GTK_TREE_VIEW (treeviewVersions), TRUE);
 
   hbox7 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox7);
@@ -503,11 +486,8 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, vbox2, "vbox2");
   GLADE_HOOKUP_OBJECT (window, hbox4, "hbox4");
   GLADE_HOOKUP_OBJECT (window, label15, "label15");
-  GLADE_HOOKUP_OBJECT (window, hbox2, "hbox2");
-  GLADE_HOOKUP_OBJECT (window, scrolledwindow4, "scrolledwindow4");
-  GLADE_HOOKUP_OBJECT (window, iconviewVersions, "iconviewVersions");
-  GLADE_HOOKUP_OBJECT (window, scrolledwindow3, "scrolledwindow3");
-  GLADE_HOOKUP_OBJECT (window, textviewDescription, "textviewDescription");
+  GLADE_HOOKUP_OBJECT (window, listVersions, "listVersions");
+  GLADE_HOOKUP_OBJECT (window, treeviewVersions, "treeviewVersions");
   GLADE_HOOKUP_OBJECT (window, hbox7, "hbox7");
   GLADE_HOOKUP_OBJECT (window, label16, "label16");
   GLADE_HOOKUP_OBJECT (window, scrolledwindow5, "scrolledwindow5");

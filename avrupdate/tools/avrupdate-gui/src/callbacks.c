@@ -8,6 +8,8 @@
 #include "interface.h"
 #include "support.h"
 
+#include "../../../lib/avrupdate.h"
+
 
 void
 on_buttonVersion_clicked               (GtkButton       *button,
@@ -43,8 +45,43 @@ void
 on_buttonDownload_clicked              (GtkButton       *button,
                                         gpointer         user_data)
 {
-	char * url = "http://www.ixbat.de/versions.conf";
-	avrupdate_net_versions(url);
+	GtkWidget *entryFile;
+	entryFile    = lookup_widget(GTK_WIDGET(button),  "entryFile");
+
+	gchar *url = gtk_entry_get_text(GTK_ENTRY(entryFile));
+	int versions = avrupdate_net_versions(url);
+
+	
+	/* update List */
+	GtkWidget *treeviewVersions;
+	GtkListStore *list;
+	GtkTreeIter iter;
+
+	treeviewVersions = lookup_widget(GTK_WIDGET(button),  "treeviewVersions");
+
+	/* create a two-column list */
+	list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_list_store_clear   (list);
+
+	int i;
+
+	struct avrupdate_info *tmp;
+	/* put some data into the list */
+	for (i = 0; i < versions; i++)
+	{
+		tmp = avrupdate_net_get_version_info(url,i);
+		/* remove linebreak */
+		g_strdelimit  (tmp->description,"\n",0x00);
+
+		gtk_list_store_append(list, &iter);
+		gtk_list_store_set(list, &iter,
+		0, tmp->title,
+		1, tmp->version,
+		2, tmp->description,
+		-1);
+	}
+
+	gtk_tree_view_set_model(treeviewVersions, list);
 }
 
 

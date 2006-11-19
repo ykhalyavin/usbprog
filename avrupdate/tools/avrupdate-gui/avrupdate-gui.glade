@@ -816,7 +816,7 @@
 			      <child>
 				<widget class="GtkLabel" id="label27">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Author: Benedik Sauter &lt;sauter@ixbat.de&gt;
+				  <property name="label" translatable="yes">Author: Benedikt Sauter &lt;sauter@ixbat.de&gt;
 Homepage: http://www.ixbat.de</property>
 				  <property name="use_underline">False</property>
 				  <property name="use_markup">False</property>
@@ -959,73 +959,27 @@ Homepage: http://www.ixbat.de</property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkHBox" id="hbox2">
+		    <widget class="GtkScrolledWindow" id="listVersions">
+		      <property name="height_request">173</property>
 		      <property name="visible">True</property>
-		      <property name="homogeneous">False</property>
-		      <property name="spacing">4</property>
+		      <property name="can_focus">True</property>
+		      <property name="hscrollbar_policy">GTK_POLICY_ALWAYS</property>
+		      <property name="vscrollbar_policy">GTK_POLICY_ALWAYS</property>
+		      <property name="shadow_type">GTK_SHADOW_IN</property>
+		      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 		      <child>
-			<widget class="GtkScrolledWindow" id="scrolledwindow4">
+			<widget class="GtkTreeView" id="treeviewVersions">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-			  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-			  <property name="shadow_type">GTK_SHADOW_IN</property>
-			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
-
-			  <child>
-			    <widget class="GtkIconView" id="iconviewVersions">
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="selection_mode">GTK_SELECTION_SINGLE</property>
-			      <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-			      <property name="reorderable">False</property>
-			    </widget>
-			  </child>
+			  <property name="headers_visible">True</property>
+			  <property name="rules_hint">False</property>
+			  <property name="reorderable">False</property>
+			  <property name="enable_search">True</property>
+			  <property name="fixed_height_mode">False</property>
+			  <property name="hover_selection">False</property>
+			  <property name="hover_expand">True</property>
 			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">True</property>
-			  <property name="fill">True</property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkScrolledWindow" id="scrolledwindow3">
-			  <property name="visible">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="hscrollbar_policy">GTK_POLICY_ALWAYS</property>
-			  <property name="vscrollbar_policy">GTK_POLICY_ALWAYS</property>
-			  <property name="shadow_type">GTK_SHADOW_IN</property>
-			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
-
-			  <child>
-			    <widget class="GtkTextView" id="textviewDescription">
-			      <property name="width_request">145</property>
-			      <property name="height_request">170</property>
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="editable">True</property>
-			      <property name="overwrite">False</property>
-			      <property name="accepts_tab">True</property>
-			      <property name="justification">GTK_JUSTIFY_LEFT</property>
-			      <property name="wrap_mode">GTK_WRAP_NONE</property>
-			      <property name="cursor_visible">True</property>
-			      <property name="pixels_above_lines">0</property>
-			      <property name="pixels_below_lines">0</property>
-			      <property name="pixels_inside_wrap">0</property>
-			      <property name="left_margin">0</property>
-			      <property name="right_margin">0</property>
-			      <property name="indent">0</property>
-			      <property name="text" translatable="yes"></property>
-			    </widget>
-			  </child>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">True</property>
-			  <property name="fill">True</property>
-			</packing>
 		      </child>
 		    </widget>
 		    <packing>
