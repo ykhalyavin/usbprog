@@ -85,6 +85,7 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 	switch(req->bRequest)
 	{
 		case STARTAVRUPDATE:
+			
 			avrupdate_start();
 		break;
 	}

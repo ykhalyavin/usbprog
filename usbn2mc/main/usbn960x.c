@@ -332,7 +332,7 @@ void _USBNReceiveFIFO0(void)
 	#if DEBUG
         USBNDebug("Vendor request\n\r");
 	#endif
-	//USBNDecodeVendorRequest(req);
+	USBNDecodeVendorRequest(req);
 	USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
       break;              
       default:					// unsupported req type    

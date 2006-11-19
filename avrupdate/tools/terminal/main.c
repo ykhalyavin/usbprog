@@ -1,11 +1,11 @@
-#kninclude <stdio.h>
+#include <stdio.h>
 #include <usb.h>
 #include "avrupdate.h"
 
 
 int main(int argc, char **argv)
 {
-	/*
+	
   	// start with the destination of your bin file
 	
   	struct usb_dev_handle* usb_handle;
@@ -17,8 +17,9 @@ int main(int argc, char **argv)
 
   	avrupdate_startapp(usb_handle);
   	avrupdate_close(usb_handle);
-	*/
 
+
+/*
 	char *url = "http://www.ixbat.de/versions.conf";
 	printf("Found %i version(s)\n",avrupdate_net_versions(url));	
 
@@ -31,7 +32,8 @@ int main(int argc, char **argv)
 
 
 	avrupdate_net_flash_version(url,0);
-	
+*/	
+//	avrupdate_start_with_vendor_request(0x0400,0x9876);
 
   	return 0;
 }

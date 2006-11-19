@@ -112,7 +112,7 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
         		printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
         		stat = usb_set_configuration (usb_handle,1);
-				usb_control_msg(usb_handle, 0xA0, 0x01, 0, 0, NULL,8, 100);
+				usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 100);
 				usb_close(usb_handle);
 				//return usb_handle;
       		}
