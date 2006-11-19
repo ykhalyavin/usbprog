@@ -14,7 +14,9 @@ void avrupdate_set_version(char version);
 /* check state of the controller -> ready for programming */
 int avrupdate_uc_state();
 
-
+char *logfile;
+char * avrupdate_log();
+void avrupdate_setlog(char *msg);
 
 struct avrupdate_info {
 	char *title;

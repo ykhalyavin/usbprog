@@ -11,6 +11,7 @@ avrupdate_gui_SOURCES = \
 	main.c \
 	support.c support.h \
 	interface.c interface.h \
+	avrupdate-gui.c avrupdate-gui.h \
 	callbacks.c callbacks.h
 
 avrupdate_gui_LDADD = @PACKAGE_LIBS@ $(INTLLIBS)

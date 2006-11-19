@@ -227,5 +227,16 @@ struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number)
 	return tmp;
 }
 
+void avrupdate_setlog(char *msg)
+{
+	logfile = msg;
+}
 
 
+char * avrupdate_log()
+{
+	if(logfile!=NULL)
+		logfile = NULL;
+	
+	return logfile;
+}

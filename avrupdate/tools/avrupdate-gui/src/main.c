@@ -11,6 +11,7 @@
 
 #include "interface.h"
 #include "support.h"
+#include "avrupdate-gui.h"
 
 int
 main (int argc, char *argv[])
@@ -34,6 +35,8 @@ main (int argc, char *argv[])
    * the project. Delete any components that you don't want shown initially.
    */
   window = create_window ();
+
+  InitAVRUpdate(window);
   gtk_widget_show (window);
 
   gtk_main ();
