@@ -202,7 +202,7 @@ int avrupdate_net_versions(char * url)
 }
 
 
-void avrupdate_net_flash_version(char * url,int number)
+void avrupdate_net_flash_version(char * url,int number, int vendorid, int productid)
 {
 	struct avrupdate_info * tmp = avrupdate_net_get_version_info(url,number);
 	
@@ -217,6 +217,10 @@ void avrupdate_net_flash_version(char * url,int number)
 		fp = fopen("flash.bin", "w");
 		fprintf(fp,"%s",buffer);
 		fclose(fp);
+
+		struct usb_dev_handle* usb_handle = avrupdate_open(vendorid,productid);
+		avrupdate_flash_bin(usb_handle,"flash.bin");
+		avrupdate_close(usb_handle);
 
 		remove("flash.bin");
 	}

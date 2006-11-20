@@ -9,7 +9,7 @@ void InitAVRUpdate(GtkWidget *parent)
 	//default values
 	GtkWidget *entryFile;
 	entryFile = lookup_widget(GTK_WIDGET(root),  "entryFile");
-	char * url = "http://www.ixbat.de/versions.conf";
+	char * url = "http://www.ixbat.de/avrupdate/versions.conf";
 	gtk_entry_set_text(GTK_ENTRY(entryFile), url);
 
 	GtkWidget *entryVID,*entryPID,*entryVIDa,*entryPIDa;
@@ -18,7 +18,7 @@ void InitAVRUpdate(GtkWidget *parent)
 	entryVID = lookup_widget(GTK_WIDGET(root),  "entryVID");
 	entryVIDa = lookup_widget(GTK_WIDGET(root),  "entryVIDa");
 
-	char *pid = "5dc3";
+	char *pid = "c35d";
 	char *pida = "9876";
 	char *vid = "0400";
 	char *vida = "0400";

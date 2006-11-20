@@ -99,8 +99,16 @@ on_buttonFLash_clicked                 (GtkButton       *button,
 	entryFile    = lookup_widget(GTK_WIDGET(button),  "entryFile");
 
 	gchar *url = gtk_entry_get_text(GTK_ENTRY(entryFile));
+	
+	GtkWidget *entryPIDa, *entryVIDa;
+	entryPIDa    = lookup_widget(GTK_WIDGET(button),  "entryPIDa");
+	entryVIDa    = lookup_widget(GTK_WIDGET(button),  "entryVIDa");
 
-	avrupdate_net_flash_version(url,selectedVersion);
+	int pid,vid;
+	pid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryPIDa)),4);
+	vid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryVIDa)),4);
+
+	avrupdate_net_flash_version(url,selectedVersion,vid,pid);
 
 }
 

@@ -32,7 +32,7 @@ struct avrupdate_info {
 /* online functions */
 int avrupdate_net_get_versionfile(char * url, char **buffer);
 int avrupdate_net_versions(char * url);
-void avrupdate_net_flash_version(char * url,int number);
+void avrupdate_net_flash_version(char * url,int number,int vendorid, int productid);
 struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number);
 
 
