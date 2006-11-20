@@ -24,3 +24,24 @@ on_buttonStart_clicked                 (GtkButton       *button,
 void
 on_buttonStartAU_clicked               (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_treeviewVersions_row_activated      (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data);
+
+gboolean
+on_treeviewVersions_select_cursor_row  (GtkTreeView     *treeview,
+                                        gboolean         start_editing,
+                                        gpointer         user_data);
+
+void
+on_treeviewVersions_cursor_changed     (GtkTreeView     *treeview,
+                                        gpointer         user_data);
+
+void
+on_treeviewVersions_row_activated      (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data);

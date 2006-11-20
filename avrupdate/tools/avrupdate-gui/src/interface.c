@@ -427,6 +427,12 @@ create_window (void)
   g_signal_connect ((gpointer) buttonStartAU, "clicked",
                     G_CALLBACK (on_buttonStartAU_clicked),
                     NULL);
+  g_signal_connect ((gpointer) treeviewVersions, "cursor_changed",
+                    G_CALLBACK (on_treeviewVersions_cursor_changed),
+                    NULL);
+  g_signal_connect ((gpointer) treeviewVersions, "row_activated",
+                    G_CALLBACK (on_treeviewVersions_row_activated),
+                    NULL);
   g_signal_connect ((gpointer) buttonDownload, "clicked",
                     G_CALLBACK (on_buttonDownload_clicked),
                     NULL);

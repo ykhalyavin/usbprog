@@ -13,4 +13,4 @@ char * LogBuffer;
 void Log(char *msg);
 void ClearLog();
 
-
+int GetHex(unsigned char *s, int n);
