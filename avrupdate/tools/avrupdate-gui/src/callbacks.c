@@ -186,8 +186,8 @@ on_treeviewVersions_row_activated      (GtkTreeView     *treeview,
                                         GtkTreeViewColumn *column,
                                         gpointer         user_data)
 {
-	g_print("flash file %i",selectedVersion);
-	//on_buttonFLash_clicked  (GTK_WIDGET_BUTTON(treeview),user_data);
+	//g_print("flash file %i",selectedVersion);
+	on_buttonFLash_clicked((GtkButton*)treeview,user_data);
 
 }
 

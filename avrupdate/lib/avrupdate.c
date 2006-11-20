@@ -89,7 +89,7 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
 {
 	struct usb_bus *busses;
 
-  	usb_set_debug(2);
+  	//usb_set_debug(2);
   	usb_init();
   	usb_find_busses();
   	usb_find_devices();
@@ -124,7 +124,7 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
 {
 	struct usb_bus *busses;
 
-  	usb_set_debug(2);
+  	//usb_set_debug(2);
   	usb_init();
   	usb_find_busses();
   	usb_find_devices();
@@ -189,7 +189,7 @@ int avrupdate_net_versions(char * url)
 {
 	char *buffer;
 	int size = avrupdate_net_get_versionfile(url,&buffer);
-	printf("data %i\n",size);
+	//printf("data %i\n",size);
 	int i; int star=0;
 
 	// count semicollons
@@ -223,9 +223,10 @@ void avrupdate_net_flash_version(char * url,int number, int vendorid, int produc
 
 		struct usb_dev_handle* usb_handle = avrupdate_open(vendorid,productid);
 		avrupdate_flash_bin(usb_handle,"flash.bin");
+		avrupdate_startapp(usb_handle);
 		avrupdate_close(usb_handle);
 
-		//remove("flash.bin");
+		remove("flash.bin");
 	}
 }
 
