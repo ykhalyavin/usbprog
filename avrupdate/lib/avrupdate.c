@@ -215,14 +215,17 @@ void avrupdate_net_flash_version(char * url,int number, int vendorid, int produc
    		printf("Page successfully downloaded. (%s)\n", url);
 		FILE *fp;
 		fp = fopen("flash.bin", "w");
-		fprintf(fp,"%s",buffer);
+		int i;
+		for(i=0;i<ret;i++)
+			fputc(buffer[i], fp);
+			//fprintf(fp,"%s",buffer);
 		fclose(fp);
 
 		struct usb_dev_handle* usb_handle = avrupdate_open(vendorid,productid);
 		avrupdate_flash_bin(usb_handle,"flash.bin");
 		avrupdate_close(usb_handle);
 
-		remove("flash.bin");
+		//remove("flash.bin");
 	}
 }
 
