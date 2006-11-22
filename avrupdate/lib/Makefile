@@ -9,3 +9,7 @@ clean:
 
 install:
 	cp libavrupdate.a /lib/libavrupdate.a
+	cat usb.usermap >> /etc/hotplug/usb.usermap
+	cp hotplug.avrupdate /etc/hotplug/usb/avrupdate
+	chmod o+x /etc/hotplug/usb/avrupdate
+
