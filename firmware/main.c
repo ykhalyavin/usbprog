@@ -67,8 +67,8 @@ int main(void)
 
   
   USBNDeviceManufacture ("Benedikt Sauter");
-  USBNDeviceProduct	("usbprog MC Programmer");
-  USBNDeviceSerialNumber("200611251");
+  USBNDeviceProduct	("usbprog USB Programmer");
+  USBNDeviceSerialNumber("200611253");
 
   conf = USBNAddConfiguration();
 

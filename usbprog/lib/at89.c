@@ -3,6 +3,7 @@
  *
  */
 
+#include "at89.h"
 
 void at89_reset(usb_dev_handle * usb_handle,char type)
 {

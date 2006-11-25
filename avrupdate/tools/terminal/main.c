@@ -9,7 +9,12 @@ int main(int argc, char **argv)
   	// start with the destination of your bin file
 	
   	struct usb_dev_handle* usb_handle;
-  	usb_handle = avrupdate_open(0x0400,0x5dc3);
+	
+	avrupdate_start_with_vendor_request(0x0400,0x5dc3);
+	
+	sleep(2);
+
+	usb_handle = avrupdate_open(0x0400,0x5dc3);
  
   	if(argc==2)
     	avrupdate_flash_bin(usb_handle,argv[1]);
@@ -33,7 +38,6 @@ int main(int argc, char **argv)
 
 	avrupdate_net_flash_version(url,0);
 */	
-//	avrupdate_start_with_vendor_request(0x0400,0x9876);
 
   	return 0;
 }
