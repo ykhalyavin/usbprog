@@ -26,6 +26,8 @@ SIGNAL(SIG_INTERRUPT0)
   USBNInterrupt();
 }
 
+/* id need for live update of firmware */
+
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
 	UARTWrite("vendor request check ");
@@ -39,20 +41,20 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 }
 
 
+/* central command parser */
 void USBFlash(char *buf)
 {
-
-  if(buf[0]==0x01)
-    At89FlashErase();
-  else if(buf[0]==0x02)
-    At89FlashWrite(buf);
-  else {}
+	SendHex(buf[0]);
+	SendHex(buf[1]);
+	SendHex(buf[2]);
 }
 
 int main(void)
 {
   int conf, interf;
   UARTInit();
+
+UARTWrite("check ");
   USBNInit();   
   
   // setup your usbn device
@@ -68,7 +70,7 @@ int main(void)
   
   USBNDeviceManufacture ("Benedikt Sauter");
   USBNDeviceProduct	("usbprog USB Programmer");
-  USBNDeviceSerialNumber("200611253");
+  USBNDeviceSerialNumber("3");
 
   conf = USBNAddConfiguration();
 
