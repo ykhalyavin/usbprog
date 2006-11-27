@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 	
   	struct usb_dev_handle* usb_handle;
 	
-	avrupdate_start_with_vendor_request(0x0400,0x5dc3);
+	avrupdate_start_with_vendor_request(0x03eb,0x2104);
 	
 	sleep(2);
 

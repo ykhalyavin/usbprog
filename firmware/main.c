@@ -57,9 +57,9 @@ int main(void)
   
   // setup your usbn device
 
-  USBNDeviceVendorID(0x0400);
-  USBNDeviceProductID(0x9876);
-  USBNDeviceBCDDevice(0x0201);
+  USBNDeviceVendorID(0x03EB);
+  USBNDeviceProductID(0x2104);
+  USBNDeviceBCDDevice(0x0200);
 
 
   char lang[]={0x09,0x04};
@@ -79,7 +79,7 @@ int main(void)
 
 
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
-  USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
 
   
   MCUCR |=  (1 << ISC01); // fallende flanke
