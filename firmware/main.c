@@ -18,7 +18,7 @@
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
-void CommandAnswer(char* buf, int length);
+void CommandAnswer(int length);
 volatile int datatogl=0;
 volatile int longpackage=0;
 
@@ -34,7 +34,9 @@ SIGNAL(SIG_UART_RECV)
 
 SIGNAL(SIG_INTERRUPT0)
 {
+  cli();
   USBNInterrupt();
+  sei();
 }
 
 /* id need for live update of firmware */
@@ -52,13 +54,13 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 }
 
 
-void CommandAnswer(char* buf, int length)
+void CommandAnswer(int length)
 {
 	int i;
 	USBNWrite(TXC1,FLUSH);
 
 	for(i=0;i<length;i++)
-		USBNWrite(TXD1,buf[i]);
+		USBNWrite(TXD1,answer[i]);
 
 	/* control togl bit */
 	if(datatogl==1) {
@@ -96,7 +98,7 @@ void USBFlash(char *buf)
 			answer[10] = 'M';
 			answer[11] = 'K';
 			answer[12] = '2';
-			CommandAnswer(answer,13);
+			CommandAnswer(13);
 		break;
 		case CMD_SET_PARAMETER:
 
