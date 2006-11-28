@@ -19,7 +19,6 @@
 #define CMD_FIRMWARE_UPGRADE                0x07
 #define CMD_RESET_PROTECTION                0x0A
 
-
 /*****************[ ISP command constants ]******************************/
 
 #define CMD_ENTER_PROGMODE_ISP              0x10
@@ -42,7 +41,7 @@
 // Success
 #define STATUS_CMD_OK                       0x00
 
- Warnings
+// Warnings
 #define STATUS_CMD_TOUT                     0x80
 #define STATUS_RDY_BSY_TOUT                 0x81
 #define STATUS_SET_PARAM_MISSING            0x82

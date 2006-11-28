@@ -8,11 +8,19 @@
 #include <util/delay.h>
 
 #include "../avrupdate/firmwarelib/avrupdate.h"
-
 #include "uart.h"
 #include "usbn2mc.h"
 
+/* command descriptions for mk2 */
+//#include "avr069.h"
+
 #include "devices/at89.h"
+
+
+/* send a command back to pc */
+void CommandAnswer(char* buf, int length);
+volatile int datatogl=0;
+
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -41,6 +49,25 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 }
 
 
+void CommandAnswer(char* buf, int length)
+{
+	int i;
+	USBNWrite(TXC1,FLUSH);
+
+	for(i=0;i<length;i++)
+		USBNWrite(TXD1,buf[i]);
+
+
+	if(datatogl==1) {
+		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
+		datatogl=0;
+	} else {
+		USBNWrite(TXC1,TX_LAST+TX_EN);
+		datatogl=1;
+	}
+}
+
+
 /* central command parser */
 void USBFlash(char *buf)
 {
@@ -54,7 +81,6 @@ int main(void)
   int conf, interf;
   UARTInit();
 
-UARTWrite("check ");
   USBNInit();   
   
   // setup your usbn device
