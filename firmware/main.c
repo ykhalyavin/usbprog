@@ -12,14 +12,17 @@
 #include "usbn2mc.h"
 
 /* command descriptions for mk2 */
-//#include "avr069.h"
+#include "avr069.h"
 
 #include "devices/at89.h"
 
-
+/*** prototypes and global vars ***/
 /* send a command back to pc */
 void CommandAnswer(char* buf, int length);
 volatile int datatogl=0;
+volatile int longpackage=0;
+
+char answer[64];
 
 
 SIGNAL(SIG_UART_RECV)
@@ -57,7 +60,7 @@ void CommandAnswer(char* buf, int length)
 	for(i=0;i<length;i++)
 		USBNWrite(TXD1,buf[i]);
 
-
+	/* control togl bit */
 	if(datatogl==1) {
 		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
 		datatogl=0;
@@ -71,9 +74,77 @@ void CommandAnswer(char* buf, int length)
 /* central command parser */
 void USBFlash(char *buf)
 {
-	SendHex(buf[0]);
-	SendHex(buf[1]);
-	SendHex(buf[2]);
+	if(longpackage) {
+
+	}
+	else {
+		
+		switch(buf[0]) {
+		
+		case CMD_SIGN_ON:
+			UARTWrite("sign\n");
+			answer[0] = CMD_SIGN_ON;
+			answer[1] = STATUS_CMD_OK;
+			answer[2] = 10; // length
+			answer[3] = 'A';
+			answer[4] = 'V';
+			answer[5] = 'R';
+			answer[6] = 'I';
+			answer[7] = 'S';
+			answer[8] = 'P';
+			answer[9] = '_';
+			answer[10] = 'M';
+			answer[11] = 'K';
+			answer[12] = '2';
+			CommandAnswer(answer,13);
+		break;
+		case CMD_SET_PARAMETER:
+
+		break;
+		case CMD_GET_PARAMETER:
+
+		break;
+		case CMD_OSCCAL:
+
+		break;
+		case CMD_LOAD_ADDRESS:
+
+		break;
+		case CMD_FIRMWARE_UPGRADE:
+
+		break;
+		case CMD_RESET_PROTECTION:
+
+		break;
+		case CMD_ENTER_PROGMODE_ISP:
+
+		break;
+		case CMD_LEAVE_PROGMODE_ISP:
+
+		break;
+		case CMD_CHIP_ERASE_ISP:
+
+		break;
+		case CMD_PROGRAM_FLASH_ISP:
+
+		break;
+		case CMD_READ_FLASH_ISP:
+
+		break;
+		case CMD_PROGRAM_EEPROM_ISP:
+
+		break;
+		case CMD_READ_EEPROM_ISP:
+
+		break;
+		case CMD_PROGRAM_FUSE_ISP:
+
+		break;
+		case CMD_READ_FUSE_ISP:
+
+		break;
+		}
+	}
 }
 
 int main(void)
