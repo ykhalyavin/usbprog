@@ -22,7 +22,7 @@ void CommandAnswer(int length);
 volatile int datatogl=0;
 volatile int longpackage=0;
 
-char answer[64];
+volatile char answer[64];
 
 
 SIGNAL(SIG_UART_RECV)
@@ -54,15 +54,49 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 }
 
 
+#define DDR_SPI DDRB
+#define DD_MOSI PB5
+#define DD_MISO PB6
+#define DD_SCK PB7
+
+
+void spi_out_init()
+{
+	DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK);
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+}
+
+void spi_out(char data)
+{
+  	SPDR = data;
+    while ( !(SPSR & (1<<SPIF)) ) ;
+}
+
+
+void spi_in_init()
+{
+	DDR_SPI = (1<<DD_MISO);
+	SPCR = (1<<SPE);
+}
+
+char spi_in()
+{
+	while(!(SPSR & (1<<SPIF)));
+	return SPDR;
+}
+
+
+
 void CommandAnswer(int length)
 {
 	int i;
-	USBNWrite(TXC1,FLUSH);
 
+  	USBNWrite(TXC1,FLUSH);
 	for(i=0;i<length;i++)
 		USBNWrite(TXD1,answer[i]);
 
 	/* control togl bit */
+
 	if(datatogl==1) {
 		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
 		datatogl=0;
@@ -76,15 +110,14 @@ void CommandAnswer(int length)
 /* central command parser */
 void USBFlash(char *buf)
 {
+	int i; 
 	if(longpackage) {
 
 	}
 	else {
 		
 		switch(buf[0]) {
-		
 		case CMD_SIGN_ON:
-			UARTWrite("sign\n");
 			answer[0] = CMD_SIGN_ON;
 			answer[1] = STATUS_CMD_OK;
 			answer[2] = 10; // length
@@ -119,7 +152,9 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
-
+			answer[0] = CMD_ENTER_PROGMODE_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 		break;
 		case CMD_LEAVE_PROGMODE_ISP:
 
@@ -144,6 +179,25 @@ void USBFlash(char *buf)
 		break;
 		case CMD_READ_FUSE_ISP:
 
+		break;
+		case CMD_SPI_MULTI:
+			/* send command */
+			spi_out_init();
+			for(i=0;i<buf[1];i++)
+				spi_out(buf[4+i]);
+
+
+			/* create answer */
+			answer[0] = CMD_SPI_MULTI;
+			answer[1] = STATUS_CMD_OK;
+
+			/* read answer */	
+			spi_in_init();
+			for(i=0;i<buf[2];i++)
+				answer[2+i] = spi_in();
+
+			answer[3+i] = STATUS_CMD_OK;
+			CommandAnswer(buf[2] + 3);
 		break;
 		}
 	}
@@ -178,17 +232,14 @@ int main(void)
   interf = USBNAddInterface(conf,0);
   USBNAlternateSetting(conf,interf,0);
 
-
+  USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
-  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
-
   
   MCUCR |=  (1 << ISC01); // fallende flanke
 
   GICR |= (1 << INT0);
   sei();
-  
-  USBNInitMC();
+    USBNInitMC();
 
   // start usb chip
   USBNStart();
