@@ -97,7 +97,7 @@ void _USBNReceiveEvent(void)
   char tmp;
   int i=0;
   
-  USBNDebug("rx event\r\n");
+  //USBNDebug("rx event\r\n");
   if(event & RX_FIFO0) _USBNReceiveFIFO0();
   
   // dynamic function call
@@ -157,7 +157,7 @@ void _USBNTransmitEvent(void)
   unsigned char event;
   void (*ptr)();
   event = USBNRead(TXEV);
-  USBNDebug("tx event\r\n");
+  //USBNDebug("tx event\r\n");
   if(event & TX_FIFO0) _USBNTransmitFIFO0();
   // dynamic function call
   

@@ -585,7 +585,7 @@ void USBNStart(void)
 
 void USBNInterrupt(void)
 {
-  UARTWrite("irq\r\n");
+  //UARTWrite("irq\r\n");
   unsigned char maev,mask;
   
   maev = USBNRead(MAEV);

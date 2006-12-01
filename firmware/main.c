@@ -14,6 +14,8 @@
 /* command descriptions for mk2 */
 #include "avr069.h"
 
+//#include "spi.h"
+
 #include "devices/at89.h"
 
 /*** prototypes and global vars ***/
@@ -58,11 +60,12 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 #define DD_MOSI PB5
 #define DD_MISO PB6
 #define DD_SCK PB7
+#define RESET PB0
 
 
 void spi_out_init()
 {
-	DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK);
+	DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK)|(1<<RESET);
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 }
 
@@ -75,7 +78,7 @@ void spi_out(char data)
 
 void spi_in_init()
 {
-	DDR_SPI = (1<<DD_MISO);
+	//DDR_SPI = (1<<DD_MISO);
 	SPCR = (1<<SPE);
 }
 
@@ -152,6 +155,13 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
+/*
+	    	PORTB=0x10;  // reset on led on and sck = low
+			wait_ms(5);
+			PORTB=0x00;  // reset on led on and sck = low
+			wait_ms(5);
+			PORTB=0x10;  // reset on led on and sck = low
+*/
 			answer[0] = CMD_ENTER_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
@@ -196,7 +206,7 @@ void USBFlash(char *buf)
 			for(i=0;i<buf[2];i++)
 				answer[2+i] = spi_in();
 
-			answer[3+i] = STATUS_CMD_OK;
+			answer[2+i] = STATUS_CMD_OK;
 			CommandAnswer(buf[2] + 3);
 		break;
 		}
@@ -239,7 +249,7 @@ int main(void)
 
   GICR |= (1 << INT0);
   sei();
-    USBNInitMC();
+  USBNInitMC();
 
   // start usb chip
   USBNStart();
