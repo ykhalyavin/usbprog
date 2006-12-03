@@ -23,6 +23,9 @@
 void CommandAnswer(int length);
 volatile int datatogl=0;
 volatile int longpackage=0;
+volatile int package=0;
+volatile char lastcmd;
+uint32_t loadaddress;
 
 volatile char answer[64];
 
@@ -122,10 +125,14 @@ void USBFlash(char *buf)
 	int i; 
 	char result;
 	if(longpackage) {
+		if(lastcmd == CMD_PROGRAM_FLASH_ISP)
+		{
+
+		}
 
 	}
 	else {
-		
+		lastcmd = buf[0];	
 		switch(buf[0]) {
 		case CMD_SIGN_ON:
 			answer[0] = CMD_SIGN_ON;
@@ -153,7 +160,13 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_LOAD_ADDRESS:
-
+			// save address
+			//buf[1],buf[2],buf[3],buf[4]
+			// msb first
+			loadaddress = (24<<buf[1])|(16<<buf[2])|(8<<buf[3])|(buf[4]);
+			answer[0] = CMD_LOAD_ADDRESS;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 		break;
 		case CMD_FIRMWARE_UPGRADE:
 
@@ -206,9 +219,36 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_CHIP_ERASE_ISP:
-
+			spi_out(buf[3]);		
+			spi_out(buf[4]);		
+			spi_out(0x00);		
+			spi_out(0x00);		
+			wait_ms(buf[1]);	// 9ms
+			answer[0] = CMD_CHIP_ERASE_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 		break;
 		case CMD_PROGRAM_FLASH_ISP:
+			short numberofbytes;
+			// buf[1] = msb number of bytes
+			// buf[2] = lsb number of bytes
+			numberofbytes = (8<<buf[1])|(buf[2]);
+
+			if(numberofbytes>54)
+				longpackage = 1;
+
+			package = 1;	// number of package
+			// 	-> set longpackage = 1 if greate than 54
+			// buf[3] = mode
+			// buf[4] = delay
+
+			// buf[5] = spi command for load page and write program memory
+			// buf[6] = spi command for write program memory page
+			// buf[7] = spi command for read program memory
+			
+			answer[0] = CMD_PROGRAM_FLASH_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 
 		break;
 		case CMD_READ_FLASH_ISP:
