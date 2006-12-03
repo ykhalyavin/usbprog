@@ -200,6 +200,7 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_LEAVE_PROGMODE_ISP:
+			PORTB |= (1<<RESET);	// give reset a positive pulse
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);

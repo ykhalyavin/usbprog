@@ -9,7 +9,7 @@ void InitAVRUpdate(GtkWidget *parent)
 	//default values
 	GtkWidget *entryFile;
 	entryFile = lookup_widget(GTK_WIDGET(root),  "entryFile");
-	char * url = "http://www.ixbat.de/avrupdate/versions.conf";
+	char * url = "http://www.ixbat.de/usbprog/versions.conf";
 	gtk_entry_set_text(GTK_ENTRY(entryFile), url);
 
 	GtkWidget *entryVID,*entryPID,*entryVIDa,*entryPIDa;
