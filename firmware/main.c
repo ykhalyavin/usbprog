@@ -1,4 +1,24 @@
+/*
+ * usbprog - A Downloader/Uploader for AVR device programmers
+ * Copyright (C) 2006 Benedikt Sauter 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include <stdlib.h>
+#include <stdint.h>
 #include <avr/io.h>
 #include <stdint.h>
 #include <avr/interrupt.h>
@@ -22,11 +42,14 @@
 /* send a command back to pc */
 void CommandAnswer(int length);
 volatile int datatogl=0;
+
 volatile int longpackage=0;
-volatile int package=0;
+volatile unsigned short bytesleft=0;
+
 volatile char lastcmd;
 uint32_t loadaddress;
 
+volatile char memory_cmd[3];	// type depend flash commands
 volatile char answer[64];
 
 
@@ -124,12 +147,25 @@ void USBFlash(char *buf)
 {
 	int i; 
 	char result;
+	uint16_t numberofbytes;
 	if(longpackage) {
 		if(lastcmd == CMD_PROGRAM_FLASH_ISP)
 		{
 
+			if(bytesleft > 54) {
+				bytesleft = bytesleft - 54;
+			}
+			else {
+				// write las max 54 bytes and finish
+
+				longpackage = 0;
+				answer[0] = CMD_PROGRAM_FLASH_ISP;
+				answer[1] = STATUS_CMD_OK;
+				CommandAnswer(2);
+			}
 		}
 
+		return;
 	}
 	else {
 		lastcmd = buf[0];	
@@ -217,6 +253,7 @@ void USBFlash(char *buf)
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
+			datatogl=0;	// to be sure that togl is on next session clear
 		break;
 		case CMD_CHIP_ERASE_ISP:
 			spi_out(buf[3]);		
@@ -229,27 +266,39 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_PROGRAM_FLASH_ISP:
-			short numberofbytes;
 			// buf[1] = msb number of bytes
 			// buf[2] = lsb number of bytes
-			numberofbytes = (8<<buf[1])|(buf[2]);
+			bytesleft = (8<<buf[1])|(buf[2]);
 
-			if(numberofbytes>54)
+			// 	-> set longpackage = 1 if greate than 54
+			if(bytesleft>54)
 				longpackage = 1;
 
-			package = 1;	// number of package
-			// 	-> set longpackage = 1 if greate than 54
 			// buf[3] = mode
 			// buf[4] = delay
 
-			// buf[5] = spi command for load page and write program memory
-			// buf[6] = spi command for write program memory page
+			// buf[5] = spi command for load page and write program memory (one byte at a time)
+			memory_cmd[0] = buf[5];
+			// buf[6] = spi command for write program memory page (one page at a time)
+			memory_cmd[1] = buf[6];
 			// buf[7] = spi command for read program memory
-			
-			answer[0] = CMD_PROGRAM_FLASH_ISP;
-			answer[1] = STATUS_CMD_OK;
-			CommandAnswer(2);
+			memory_cmd[2] = buf[7];
+	
+			if(longpackage) {
+				bytesleft = bytesleft-54;
+			}
+			else {
+				// write bytes
 
+				answer[0] = CMD_PROGRAM_FLASH_ISP;
+				answer[1] = STATUS_CMD_OK;
+				CommandAnswer(2);
+			}
+
+			// ok darf erst gesendet werden, wenn wirklich alle daten des aktuellen
+			// paketes geschrieben worden sind
+			
+		
 		break;
 		case CMD_READ_FLASH_ISP:
 
@@ -284,6 +333,15 @@ void USBFlash(char *buf)
 				// read hfuse and lock
 				case 0x58:
 					result = spi_in();
+				break;
+				// read eeprom memory
+				case 0xa0:
+					result = spi_in();
+				break;
+				//write eeprom
+				case 0xc0:
+					spi_out(buf[7]);
+					result = 0x00;
 				break;
 			}
 
@@ -322,9 +380,9 @@ int main(void)
   _USBNAddStringDescriptor(lang); // language descriptor
 
   
-  USBNDeviceManufacture ("Benedikt Sauter");
-  USBNDeviceProduct	("usbprog USB Programmer");
-  USBNDeviceSerialNumber("3");
+  USBNDeviceManufacture ("Benedikt Sauter - www.ixbat.de  ");
+  USBNDeviceProduct	("usbprog AVR Programmer");
+  USBNDeviceSerialNumber("200612031");
 
   conf = USBNAddConfiguration();
 
