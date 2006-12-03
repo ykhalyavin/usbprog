@@ -1,0 +1,1 @@
+avrdude-ser_win32.o avrdude-ser_win32.o: ser_win32.c

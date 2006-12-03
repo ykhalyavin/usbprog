@@ -19,7 +19,7 @@ void InitAVRUpdate(GtkWidget *parent)
 	entryVIDa = lookup_widget(GTK_WIDGET(root),  "entryVIDa");
 
 	char *pid = "c35d";
-	char *pida = "9876";
+	char *pida = "c35d";
 	char *vid = "0400";
 	char *vida = "0400";
 

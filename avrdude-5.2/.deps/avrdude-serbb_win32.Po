@@ -1,0 +1,1 @@
+avrdude-serbb_win32.o avrdude-serbb_win32.o: serbb_win32.c

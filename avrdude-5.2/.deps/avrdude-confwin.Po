@@ -1,0 +1,1 @@
+avrdude-confwin.o avrdude-confwin.o: confwin.c

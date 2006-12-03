@@ -1,0 +1,3 @@
+avrdude-ppiwin.o avrdude-ppiwin.o: ppiwin.c ac_cfg.h
+
+ac_cfg.h:
