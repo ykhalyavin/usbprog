@@ -203,7 +203,6 @@ void USBFlash(char *buf)
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
-
 		break;
 		case CMD_CHIP_ERASE_ISP:
 
@@ -227,21 +226,31 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_SPI_MULTI:
-
-
-			switch(buf[4]) {
+			spi_out(buf[4]);	
+			spi_out(buf[5]);	
+			spi_out(buf[6]);	
+			
+			// instruction
+			switch(buf[4]) {	
 				// read signature
 				case 0x30:
-					spi_out(0x30);	
-					spi_out(0x00);	
-					spi_out(buf[6]);	
 					result = spi_in();
-					answer[2]=0x00;
-					answer[3]=0x00;
-					answer[4]=0x00;
-					answer[5]=result;
+				break;
+				// read lfuse
+				case 0x50:
+					result = spi_in();
+				break;
+				// read hfuse and lock
+				case 0x58:
+					result = spi_in();
 				break;
 			}
+
+			answer[2]=0x00;
+			answer[3]=0x00;
+			answer[4]=0x00;
+			answer[5]=result;
+
 			answer[0] = CMD_SPI_MULTI;
 			answer[1] = STATUS_CMD_OK;
 
