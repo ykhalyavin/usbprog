@@ -196,33 +196,13 @@ void USBFlash(char *buf)
 
 			spi_out(0x00);
 
-			#if 0
-			// the kommt das wirklich vom target oder liegt das noch am register?
-			result = spi_in();	
-			spi_out(0x00);
-
-			answer[1] = result;
-
-			/*
-			//spi_in_init();
-			if(result == 0x53)
-			else
-				answer[1] = STATUS_CMD_FAILED;
-			*/	
-			//answer[1] = STATUS_CMD_OK;
-			#endif
-/*
-		spi_out(0x30);	
-		spi_out(0x00);	
-		spi_out(0x00);	
-		result = spi_in();
-		SendHex(result);
-*/
-
 			answer[0] = CMD_ENTER_PROGMODE_ISP;
 			CommandAnswer(2);
 		break;
 		case CMD_LEAVE_PROGMODE_ISP:
+			answer[0] = CMD_LEAVE_PROGMODE_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 
 		break;
 		case CMD_CHIP_ERASE_ISP:
@@ -248,47 +228,26 @@ void USBFlash(char *buf)
 		break;
 		case CMD_SPI_MULTI:
 
-		spi_out(0x30);	
-		spi_out(0x00);	
-		spi_out(0x01);	
-		result = spi_in();
-		SendHex(result);
 
-
-		#if 0
-			/* send command */
-			for(i=0;i<4;i++)
-				spi_out(buf[4+i]);
-
-			/* create answer */
+			switch(buf[4]) {
+				// read signature
+				case 0x30:
+					spi_out(0x30);	
+					spi_out(0x00);	
+					spi_out(buf[6]);	
+					result = spi_in();
+					answer[2]=0x00;
+					answer[3]=0x00;
+					answer[4]=0x00;
+					answer[5]=result;
+				break;
+			}
 			answer[0] = CMD_SPI_MULTI;
 			answer[1] = STATUS_CMD_OK;
 
-			/* read answer */	
-			// 2, 3 oder 4 da aendert sich was
-			for(i=0;i<4;i++){
-					if(i==3) {
-						//answer[2+i] = spi_in();
-/*
-if((int)buf[6]==0)
-	answer[2+i] =  spi_in();
-if((int)buf[6]==1)
-	answer[2+i] =  0x95;
-if((int)buf[6]==2)
-	answer[2+i] =  0x02;
-*/
-						//answer[2+i] = (int)buf[6];
-					}
-					else {
-						//answer[2+i] = spi_in();
-						spi_in();
-						answer[2+i] = 0;
-					}
-			}
+			answer[6] = STATUS_CMD_OK;
+			CommandAnswer(3+buf[2]);
 
-			answer[2+i] = STATUS_CMD_OK;
-			CommandAnswer(2+i);
-			#endif
 		break;
 		}
 	}
