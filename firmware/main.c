@@ -57,16 +57,22 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 
 
 #define DDR_SPI DDRB
-#define DD_MOSI PB5
-#define DD_MISO PB6
-#define DD_SCK PB7
+#define MOSI PB5
+#define MISO PB6
+#define SCK PB7
 #define RESET PB0
 
 
-void spi_out_init()
+void spi_init()
 {
-	DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK)|(1<<RESET);
-	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	
+	DDR_SPI &=~(1<<MISO);
+	//PORTB = (1<<MISO);
+
+	DDR_SPI = (1<<MOSI)|(1<<SCK)|(1<<RESET);
+	
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|3;
+    SPSR = (0<<SPI2X);
 }
 
 void spi_out(char data)
@@ -78,12 +84,12 @@ void spi_out(char data)
 
 void spi_in_init()
 {
-	//DDR_SPI = (1<<DD_MISO);
-	SPCR = (1<<SPE);
+	//SPCR = (1<<SPE);
 }
 
 char spi_in()
 {
+	SPDR = 0;
 	while(!(SPSR & (1<<SPIF)));
 	return SPDR;
 }
@@ -114,6 +120,7 @@ void CommandAnswer(int length)
 void USBFlash(char *buf)
 {
 	int i; 
+	char result;
 	if(longpackage) {
 
 	}
@@ -155,15 +162,64 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
+			//cbi	portb,SCK	; clear SCK
+			PORTB &= ~(1<<SCK);
+			
+			// set_reset		;	set RESET = 1
+			PORTB |= (1<<RESET);	// give reset a positive pulse
+			wait_ms(1);
+			// clr_reset		;	set RESET = 0
+			PORTB &= ~(1<<RESET);
+			wait_ms(20);
+	
+			spi_out(0xac);
+			spi_out(0x53);
+
+			int count = 32;
+			answer[1] = STATUS_CMD_FAILED;
+			do {
+				result = spi_in();
+				//SendHex(result);
+				if (result == 0x53) {
+					answer[1] = STATUS_CMD_OK;
+					break;
+				}
+				spi_out(0x00);
+				PORTB |= (1<<SCK);
+				asm("nop");
+				asm("nop");
+				asm("nop");
+				PORTB &= ~(1<<SCK);
+				spi_out(0xac);
+				spi_out(0x53);
+			} while(--count);
+
+			spi_out(0x00);
+
+			#if 0
+			// the kommt das wirklich vom target oder liegt das noch am register?
+			result = spi_in();	
+			spi_out(0x00);
+
+			answer[1] = result;
+
+			/*
+			//spi_in_init();
+			if(result == 0x53)
+			else
+				answer[1] = STATUS_CMD_FAILED;
+			*/	
+			//answer[1] = STATUS_CMD_OK;
+			#endif
 /*
-	    	PORTB=0x10;  // reset on led on and sck = low
-			wait_ms(5);
-			PORTB=0x00;  // reset on led on and sck = low
-			wait_ms(5);
-			PORTB=0x10;  // reset on led on and sck = low
+		spi_out(0x30);	
+		spi_out(0x00);	
+		spi_out(0x00);	
+		result = spi_in();
+		SendHex(result);
 */
+
 			answer[0] = CMD_ENTER_PROGMODE_ISP;
-			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
 		break;
 		case CMD_LEAVE_PROGMODE_ISP:
@@ -191,23 +247,48 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_SPI_MULTI:
-			/* send command */
-			spi_out_init();
-			for(i=0;i<buf[1];i++)
-				spi_out(buf[4+i]);
 
+		spi_out(0x30);	
+		spi_out(0x00);	
+		spi_out(0x01);	
+		result = spi_in();
+		SendHex(result);
+
+
+		#if 0
+			/* send command */
+			for(i=0;i<4;i++)
+				spi_out(buf[4+i]);
 
 			/* create answer */
 			answer[0] = CMD_SPI_MULTI;
 			answer[1] = STATUS_CMD_OK;
 
 			/* read answer */	
-			spi_in_init();
-			for(i=0;i<buf[2];i++)
-				answer[2+i] = spi_in();
+			// 2, 3 oder 4 da aendert sich was
+			for(i=0;i<4;i++){
+					if(i==3) {
+						//answer[2+i] = spi_in();
+/*
+if((int)buf[6]==0)
+	answer[2+i] =  spi_in();
+if((int)buf[6]==1)
+	answer[2+i] =  0x95;
+if((int)buf[6]==2)
+	answer[2+i] =  0x02;
+*/
+						//answer[2+i] = (int)buf[6];
+					}
+					else {
+						//answer[2+i] = spi_in();
+						spi_in();
+						answer[2+i] = 0;
+					}
+			}
 
 			answer[2+i] = STATUS_CMD_OK;
-			CommandAnswer(buf[2] + 3);
+			CommandAnswer(2+i);
+			#endif
 		break;
 		}
 	}
@@ -218,6 +299,7 @@ int main(void)
   int conf, interf;
   UARTInit();
 
+  spi_init();
   USBNInit();   
   
   // setup your usbn device
