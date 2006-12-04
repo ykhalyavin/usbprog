@@ -27,6 +27,8 @@
 #define F_CPU 16000000
 #include <util/delay.h>
 
+#include "wait.h"
+
 #include "../avrupdate/firmwarelib/avrupdate.h"
 #include "uart.h"
 #include "usbn2mc.h"
@@ -41,17 +43,27 @@
 /*** prototypes and global vars ***/
 /* send a command back to pc */
 void CommandAnswer(int length);
-volatile int datatogl=0;
 
-volatile int longpackage=0;
-volatile unsigned short bytesleft=0;
+volatile struct usbprog_t {
+	char lastcmd;
+	int longpackage;
+	int cmdpackage;
+	int datatogl;
+} usbprog;
 
-volatile char lastcmd;
-uint32_t loadaddress;
-
-volatile char memory_cmd[3];	// type depend flash commands
 volatile char answer[64];
 
+struct pgmmode_t {
+	unsigned short numbytes;
+	uint8_t mode;
+	uint8_t delay;
+	uint8_t cmd1;
+	uint8_t cmd2;
+	uint8_t cmd3;
+	uint8_t poll1;
+	uint8_t poll2;
+	uint32_t address;
+} pgmmode;
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -108,11 +120,6 @@ void spi_out(char data)
 }
 
 
-void spi_in_init()
-{
-	//SPCR = (1<<SPE);
-}
-
 char spi_in()
 {
 	SPDR = 0;
@@ -120,6 +127,201 @@ char spi_in()
 	return SPDR;
 }
 
+
+void spi_write_program_memory(char data)
+{
+
+
+}
+
+void spi_write_program_memory_page(unsigned short wordaddr,char wordl,char wordh)
+{
+
+	char addrh,addrl;
+
+	addrl = (char)wordaddr;
+	addrh = (char)(wordaddr>>8);
+/*
+	UARTWrite("\r\n write data low ");
+	SendHex(wordl);
+	UARTWrite(" high ");
+	SendHex(wordh);
+	UARTWrite(" addr ");
+	SendHex(addrh);
+	SendHex(addrl);
+	UARTWrite("\r\n");
+*/
+
+
+	// write low
+	spi_out(0x40);
+	spi_out(addrh);
+	spi_out(addrl);
+	spi_out(wordl);
+
+	// write high
+	spi_out(0x48);
+	spi_out(addrh);
+	spi_out(addrl);
+	spi_out(wordh);
+
+/*
+    geschrieben wird am ende der seite
+	// write
+	spi_out(0x4c);
+	spi_out(addrh);
+	spi_out(addrl);
+	spi_out(0x00);
+
+	wait_ms(20);
+*/
+	//SendHex((char)(pgmmode.address>>8));
+	//SendHex((char)pgmmode.address);
+	// Auto increment address
+	//pgmmode.address++;
+}
+
+/* programm finite state machine 
+ *
+ */
+void flash_program_fsm(char * buf)
+{
+	int bufindex=0,bytes=0;
+	
+	//if package is first one subtract 10 (control bytes overhead)
+	if (usbprog.cmdpackage == 1) {
+		bufindex = 10;
+		//usbprog.cmdpackage = 0;
+	}
+
+	// if page mode
+	if(pgmmode.mode && 0x01) {
+		if(usbprog.cmdpackage==1) {
+			UARTWrite("\r\ncmd");
+			// darf man nur max 54 bytes schreiben
+			if(pgmmode.numbytes > 54) {
+				bytes = 64;
+				pgmmode.numbytes = pgmmode.numbytes -54;
+			}
+			else {
+				bytes = pgmmode.numbytes;
+				pgmmode.numbytes =0;
+			}
+			
+			for(bufindex;bufindex < bytes;bufindex=bufindex+2){
+				// load low word
+				// load high word
+				//SendHex(pgmmode.address>>8);
+				//SendHex(pgmmode.address);
+				spi_write_program_memory_page(pgmmode.address,buf[bufindex],buf[bufindex+1]);
+				pgmmode.address++;
+				// inc pgmmode.address
+			}
+			usbprog.cmdpackage = 0;
+		}
+		else {
+			UARTWrite("\r\ndata");
+			// sonst max 64
+			if(pgmmode.numbytes > 64) {
+				bytes = 64;
+				pgmmode.numbytes = pgmmode.numbytes -64;
+			}
+			else {
+				bytes = pgmmode.numbytes;
+				pgmmode.numbytes =0;
+			}
+
+			for(bufindex=0;bufindex < bytes;bufindex=bufindex+2){
+				// load low word
+				// load high word
+				//SendHex(pgmmode.address>>8);
+				//SendHex(pgmmode.address);
+				spi_write_program_memory_page(pgmmode.address,buf[bufindex],buf[bufindex+1]);
+				// inc pgmmode.address
+				pgmmode.address++;
+			}
+
+		}
+
+		// falls numbytes ==0
+		if(pgmmode.numbytes==0) {
+			// write page
+			UARTWrite("\r\n write page at addr ");
+			uint16_t pageno;
+
+			pageno = ((pgmmode.address/0x40)-1)*0x40;
+			if((pgmmode.address % 0x40) > 0)
+				pageno = pageno + 0x40;
+
+			SendHex(pageno);
+			UARTWrite("\r\n");
+	
+			pgmmode.address - 0x40;
+			spi_out(0x4c);
+			spi_out((char)(pageno>>8));	//high
+			spi_out((char)(pageno));		//low
+			spi_out(0x00);
+			wait_ms(10);
+		
+			
+			// und usb answer
+			answer[0] = CMD_PROGRAM_FLASH_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
+			usbprog.longpackage=0;
+		}
+
+	}
+	// else word mode
+	else {
+			// spaeter
+	}
+#if 0
+--
+wenn logpackage und restbytes
+			if(pgmmode.numbytes > 64) {
+				UARTWrite("\r\nlong3\r\n");
+				pgmmode.numbytes = pgmmode.numbytes - 64;
+		
+				for(i=0;i<64;i++)
+				spi_write_program_memory(buf[i]);
+			}
+			else {
+				usbprog.longpackage = 0;
+				UARTWrite("\r\nlong4\r\n");
+
+				// write las max 54 bytes and finish
+				for(i=0;i<pgmmode.numbytes;i++)
+					spi_write_program_memory(buf[i]);
+
+				answer[0] = CMD_PROGRAM_FLASH_ISP;
+				answer[1] = STATUS_CMD_OK;
+				CommandAnswer(2);
+			}
+---
+1.
+			if(usbprog.longpackage) {
+				UARTWrite("\r\nlong1\r\n");
+				pgmmode.numbytes = pgmmode.numbytes-54;
+				for(i=10;i<64;i++)
+					spi_write_program_memory(buf[i]);
+			}
+			else {
+				// write bytes
+				UARTWrite("\r\nlong2(err)\r\n");
+				for(i=10;i<(pgmmode.numbytes+10);i++)		// 10 = length of control bytes in pkg
+					spi_write_program_memory(buf[i]);
+
+				answer[0] = CMD_PROGRAM_FLASH_ISP;
+				answer[1] = STATUS_CMD_OK;
+				CommandAnswer(2);
+			}
+
+			// ok darf erst gesendet werden, wenn wirklich alle daten des aktuellen
+			// paketes geschrieben worden sind
+
+#endif
+}
 
 
 void CommandAnswer(int length)
@@ -132,12 +334,12 @@ void CommandAnswer(int length)
 
 	/* control togl bit */
 
-	if(datatogl==1) {
+	if(usbprog.datatogl==1) {
 		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-		datatogl=0;
+		usbprog.datatogl=0;
 	} else {
 		USBNWrite(TXC1,TX_LAST+TX_EN);
-		datatogl=1;
+		usbprog.datatogl=1;
 	}
 }
 
@@ -148,27 +350,16 @@ void USBFlash(char *buf)
 	int i; 
 	char result;
 	uint16_t numberofbytes;
-	if(longpackage) {
-		if(lastcmd == CMD_PROGRAM_FLASH_ISP)
+	if(usbprog.longpackage) {
+		if(usbprog.lastcmd == CMD_PROGRAM_FLASH_ISP)
 		{
-
-			if(bytesleft > 54) {
-				bytesleft = bytesleft - 54;
-			}
-			else {
-				// write las max 54 bytes and finish
-
-				longpackage = 0;
-				answer[0] = CMD_PROGRAM_FLASH_ISP;
-				answer[1] = STATUS_CMD_OK;
-				CommandAnswer(2);
-			}
+			flash_program_fsm(buf);
 		}
 
 		return;
 	}
 	else {
-		lastcmd = buf[0];	
+		usbprog.lastcmd = buf[0];	
 		switch(buf[0]) {
 		case CMD_SIGN_ON:
 			answer[0] = CMD_SIGN_ON;
@@ -199,7 +390,16 @@ void USBFlash(char *buf)
 			// save address
 			//buf[1],buf[2],buf[3],buf[4]
 			// msb first
-			loadaddress = (24<<buf[1])|(16<<buf[2])|(8<<buf[3])|(buf[4]);
+			UARTWrite("\r\nla");
+			SendHex(buf[1]);
+			SendHex(buf[2]);
+			SendHex(buf[3]);
+			SendHex(buf[4]);
+			UARTWrite("\r\n");
+			//if(((buf[1]<<24)|(buf[2]<<16)|(buf[3]<<8)|(buf[4])) ==0)
+			//pgmmode.address = 0;
+			pgmmode.address = (buf[1]<<24)|(buf[2]<<16)|(buf[3]<<8)|(buf[4]);
+			//loadaddress = 0;
 			answer[0] = CMD_LOAD_ADDRESS;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
@@ -253,7 +453,7 @@ void USBFlash(char *buf)
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
-			datatogl=0;	// to be sure that togl is on next session clear
+			usbprog.datatogl=0;	// to be sure that togl is on next session clear
 		break;
 		case CMD_CHIP_ERASE_ISP:
 			spi_out(buf[3]);		
@@ -266,39 +466,31 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_PROGRAM_FLASH_ISP:
+			UARTWrite("\r\nfla");
 			// buf[1] = msb number of bytes
 			// buf[2] = lsb number of bytes
-			bytesleft = (8<<buf[1])|(buf[2]);
+			pgmmode.numbytes = (buf[1]<<8)|(buf[2]);
 
 			// 	-> set longpackage = 1 if greate than 54
-			if(bytesleft>54)
-				longpackage = 1;
+			if(pgmmode.numbytes>54)
+				usbprog.longpackage = 1;
 
 			// buf[3] = mode
+			pgmmode.mode = buf[3];
 			// buf[4] = delay
+			pgmmode.delay = buf[4];
 
 			// buf[5] = spi command for load page and write program memory (one byte at a time)
-			memory_cmd[0] = buf[5];
+			pgmmode.cmd1 = buf[5];
 			// buf[6] = spi command for write program memory page (one page at a time)
-			memory_cmd[1] = buf[6];
+			pgmmode.cmd2 = buf[6];
 			// buf[7] = spi command for read program memory
-			memory_cmd[2] = buf[7];
-	
-			if(longpackage) {
-				bytesleft = bytesleft-54;
-			}
-			else {
-				// write bytes
+			pgmmode.cmd3 = buf[7];
 
-				answer[0] = CMD_PROGRAM_FLASH_ISP;
-				answer[1] = STATUS_CMD_OK;
-				CommandAnswer(2);
-			}
-
-			// ok darf erst gesendet werden, wenn wirklich alle daten des aktuellen
-			// paketes geschrieben worden sind
+			usbprog.cmdpackage = 1;
+			flash_program_fsm(buf);
+			usbprog.cmdpackage = 0;
 			
-		
 		break;
 		case CMD_READ_FLASH_ISP:
 
@@ -369,6 +561,7 @@ int main(void)
   spi_init();
   USBNInit();   
   
+  usbprog.longpackage=0;
   // setup your usbn device
 
   USBNDeviceVendorID(0x03EB);
