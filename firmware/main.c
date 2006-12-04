@@ -165,20 +165,6 @@ void spi_write_program_memory_page(unsigned short wordaddr,char wordl,char wordh
 	spi_out(addrl);
 	spi_out(wordh);
 
-/*
-    geschrieben wird am ende der seite
-	// write
-	spi_out(0x4c);
-	spi_out(addrh);
-	spi_out(addrl);
-	spi_out(0x00);
-
-	wait_ms(20);
-*/
-	//SendHex((char)(pgmmode.address>>8));
-	//SendHex((char)pgmmode.address);
-	// Auto increment address
-	//pgmmode.address++;
 }
 
 /* programm finite state machine 
@@ -246,15 +232,16 @@ void flash_program_fsm(char * buf)
 		// falls numbytes ==0
 		if(pgmmode.numbytes==0) {
 			// write page
-			UARTWrite("\r\n write page at addr ");
+			//UARTWrite("\r\n write page at addr ");
 			uint16_t pageno;
 
+			// calculate page number
 			pageno = ((pgmmode.address/0x40)-1)*0x40;
 			if((pgmmode.address % 0x40) > 0)
 				pageno = pageno + 0x40;
 
-			SendHex(pageno);
-			UARTWrite("\r\n");
+			//SendHex(pageno);
+			//UARTWrite("\r\n");
 	
 			pgmmode.address - 0x40;
 			spi_out(0x4c);
@@ -276,51 +263,6 @@ void flash_program_fsm(char * buf)
 	else {
 			// spaeter
 	}
-#if 0
---
-wenn logpackage und restbytes
-			if(pgmmode.numbytes > 64) {
-				UARTWrite("\r\nlong3\r\n");
-				pgmmode.numbytes = pgmmode.numbytes - 64;
-		
-				for(i=0;i<64;i++)
-				spi_write_program_memory(buf[i]);
-			}
-			else {
-				usbprog.longpackage = 0;
-				UARTWrite("\r\nlong4\r\n");
-
-				// write las max 54 bytes and finish
-				for(i=0;i<pgmmode.numbytes;i++)
-					spi_write_program_memory(buf[i]);
-
-				answer[0] = CMD_PROGRAM_FLASH_ISP;
-				answer[1] = STATUS_CMD_OK;
-				CommandAnswer(2);
-			}
----
-1.
-			if(usbprog.longpackage) {
-				UARTWrite("\r\nlong1\r\n");
-				pgmmode.numbytes = pgmmode.numbytes-54;
-				for(i=10;i<64;i++)
-					spi_write_program_memory(buf[i]);
-			}
-			else {
-				// write bytes
-				UARTWrite("\r\nlong2(err)\r\n");
-				for(i=10;i<(pgmmode.numbytes+10);i++)		// 10 = length of control bytes in pkg
-					spi_write_program_memory(buf[i]);
-
-				answer[0] = CMD_PROGRAM_FLASH_ISP;
-				answer[1] = STATUS_CMD_OK;
-				CommandAnswer(2);
-			}
-
-			// ok darf erst gesendet werden, wenn wirklich alle daten des aktuellen
-			// paketes geschrieben worden sind
-
-#endif
 }
 
 
@@ -493,7 +435,11 @@ void USBFlash(char *buf)
 			
 		break;
 		case CMD_READ_FLASH_ISP:
+			//TODO FIXME
 
+			answer[0] = CMD_READ_FLASH_ISP;
+			answer[1] = STATUS_CMD_FAILED;
+			CommandAnswer(2);
 		break;
 		case CMD_PROGRAM_EEPROM_ISP:
 
@@ -564,8 +510,8 @@ int main(void)
   usbprog.longpackage=0;
   // setup your usbn device
 
-  USBNDeviceVendorID(0x03EB);
-  USBNDeviceProductID(0x2104);
+  USBNDeviceVendorID(0x0400);
+  USBNDeviceProductID(0xc35d);
   USBNDeviceBCDDevice(0x0200);
 
 

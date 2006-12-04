@@ -65,12 +65,7 @@ create_window (void)
   GtkWidget *hbox10;
   GtkWidget *label18;
   GtkWidget *fixed1;
-  GtkWidget *label21;
-  GtkWidget *label20;
-  GtkWidget *label19;
-  GtkWidget *labelTitle;
   GtkWidget *labelSize;
-  GtkWidget *labelVersion;
   GtkWidget *hbox24;
   GtkWidget *hseparator5;
   GtkWidget *vbuttonbox2;
@@ -256,35 +251,10 @@ create_window (void)
   gtk_widget_show (fixed1);
   gtk_box_pack_start (GTK_BOX (vbox6), fixed1, TRUE, TRUE, 0);
 
-  label21 = gtk_label_new (_("Title:"));
-  gtk_widget_show (label21);
-  gtk_fixed_put (GTK_FIXED (fixed1), label21, 32, 24);
-  gtk_widget_set_size_request (label21, 48, 17);
-
-  label20 = gtk_label_new (_("Size:"));
-  gtk_widget_show (label20);
-  gtk_fixed_put (GTK_FIXED (fixed1), label20, 24, 40);
-  gtk_widget_set_size_request (label20, 62, 16);
-
-  label19 = gtk_label_new (_("Version:"));
-  gtk_widget_show (label19);
-  gtk_fixed_put (GTK_FIXED (fixed1), label19, 40, 56);
-  gtk_widget_set_size_request (label19, 56, 16);
-
-  labelTitle = gtk_label_new (_("usbprog"));
-  gtk_widget_show (labelTitle);
-  gtk_fixed_put (GTK_FIXED (fixed1), labelTitle, 88, 24);
-  gtk_widget_set_size_request (labelTitle, 88, 17);
-
-  labelSize = gtk_label_new (_("21234 Byte"));
-  gtk_widget_show (labelSize);
+  labelSize = gtk_label_new ("");
   gtk_fixed_put (GTK_FIXED (fixed1), labelSize, 88, 40);
   gtk_widget_set_size_request (labelSize, 112, 16);
-
-  labelVersion = gtk_label_new (_("9"));
-  gtk_widget_show (labelVersion);
-  gtk_fixed_put (GTK_FIXED (fixed1), labelVersion, 88, 56);
-  gtk_widget_set_size_request (labelVersion, 46, 17);
+  gtk_misc_set_alignment (GTK_MISC (labelSize), 0.5, 0.53);
 
   hbox24 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox24);
@@ -300,7 +270,6 @@ create_window (void)
   gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox2), GTK_BUTTONBOX_SPREAD);
 
   buttonVersion = gtk_button_new_with_mnemonic (_("Read AVR Version"));
-  gtk_widget_show (buttonVersion);
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonVersion);
   GTK_WIDGET_SET_FLAGS (buttonVersion, GTK_CAN_DEFAULT);
 
@@ -480,12 +449,7 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (window, label18, "label18");
   GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
-  GLADE_HOOKUP_OBJECT (window, label21, "label21");
-  GLADE_HOOKUP_OBJECT (window, label20, "label20");
-  GLADE_HOOKUP_OBJECT (window, label19, "label19");
-  GLADE_HOOKUP_OBJECT (window, labelTitle, "labelTitle");
   GLADE_HOOKUP_OBJECT (window, labelSize, "labelSize");
-  GLADE_HOOKUP_OBJECT (window, labelVersion, "labelVersion");
   GLADE_HOOKUP_OBJECT (window, hbox24, "hbox24");
   GLADE_HOOKUP_OBJECT (window, hseparator5, "hseparator5");
   GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
