@@ -77,8 +77,8 @@ static int usbprog_open(char * port, long baud)
 	  udev = usb_open(dev);
 	  if (udev)
 	    {
-	      if (dev->descriptor.idVendor == USB_VENDOR_ATMEL &&
-		  dev->descriptor.idProduct == (unsigned short)baud)
+	      if (dev->descriptor.idVendor == USBPROG_VID &&
+		  dev->descriptor.idProduct == USBPROG_PID)
 		{
 
 		  if (dev->config == NULL)
