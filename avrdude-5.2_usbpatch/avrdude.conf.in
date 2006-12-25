@@ -362,6 +362,13 @@ programmer
 ;
 
 programmer
+  id    = "usbprog";
+  desc  = "usbprog, http://www.ixbat.de/usbprog/";
+  type  = usbprog;
+;
+
+
+programmer
   id    = "butterfly";
   desc  = "Atmel Butterfly Development Board";
   type  = butterfly;

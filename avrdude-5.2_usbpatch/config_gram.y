@@ -417,7 +417,7 @@ prog_parm :
 
   K_TYPE TKN_EQUAL K_USBPROG {
     {
-      usbprog_initpgm(current_prog);
+      stk500v2_jtagmkII_initpgm(current_prog);
     }
   } |
 

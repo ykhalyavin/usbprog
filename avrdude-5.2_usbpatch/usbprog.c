@@ -42,8 +42,8 @@
 
 #include <usb.h>
 
-#include "avr.h"
-#include "pgm.h"
+//#include "avr.h"
+//#include "pgm.h"
 
 #include "serial.h"
 #include "usbprog.h"
