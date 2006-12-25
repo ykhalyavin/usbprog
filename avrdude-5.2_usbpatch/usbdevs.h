@@ -26,20 +26,15 @@
 #ifndef usbdevs_h
 #define usbdevs_h
 
-#define USB_VENDOR_ATMEL 0x0400
-#define USB_DEVICE_JTAGICEMKII 0xc35d
-#define USB_DEVICE_AVRISPMKII  0xc35d
-
-#define USB_VENDOR_NATIONAL 0x0400
-#define USB_DEVICE_USBPROG 0xc53d
-
-
+#define USB_VENDOR_ATMEL 1003
+#define USB_DEVICE_JTAGICEMKII 0x2103
+#define USB_DEVICE_AVRISPMKII  0x2104
 /*
  * Should we query the endpoint number and max transfer size from USB?
  * After all, the JTAG ICE mkII docs document these values.
  */
 #define USBDEV_BULK_EP_WRITE 0x02
-#define USBDEV_BULK_EP_READ  0x83
+#define USBDEV_BULK_EP_READ  0x82
 #define USBDEV_MAX_XFER 64
 
 #endif  /* usbdevs_h */

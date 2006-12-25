@@ -1,6 +1,6 @@
 /*
  * avrdude - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Joerg Wunsch
+ * Copyright (C) 2000-2004  Brian S. Dean <bsd@bsdhome.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* $Id: usbdevs.h,v 1.1 2006/01/12 23:13:50 joerg_wunsch Exp $ */
+/* $Id: term.h,v 1.11 2005/09/21 00:20:32 bdean Exp $ */
 
-/*
- * defines for the USB interface
- */
+#ifndef __term_h__
+#define __term_h__
 
-#ifndef usbdevs_h
-#define usbdevs_h
+#include "avr.h"
+#include "pgm.h"
 
-#define USB_VENDOR_ATMEL 0x0400
-#define USB_DEVICE_JTAGICEMKII 0xc35d
-#define USB_DEVICE_AVRISPMKII  0xc35d
+int terminal_mode(PROGRAMMER * pgm, struct avrpart * p);
+char * terminal_get_input(const char *prompt);
 
-#define USB_VENDOR_NATIONAL 0x0400
-#define USB_DEVICE_USBPROG 0xc53d
-
-
-/*
- * Should we query the endpoint number and max transfer size from USB?
- * After all, the JTAG ICE mkII docs document these values.
- */
-#define USBDEV_BULK_EP_WRITE 0x02
-#define USBDEV_BULK_EP_READ  0x83
-#define USBDEV_MAX_XFER 64
-
-#endif  /* usbdevs_h */
+#endif

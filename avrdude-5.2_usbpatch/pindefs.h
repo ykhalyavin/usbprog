@@ -1,6 +1,6 @@
 /*
  * avrdude - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Joerg Wunsch
+ * Copyright (C) 2000-2004  Brian S. Dean <bsd@bsdhome.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* $Id: usbdevs.h,v 1.1 2006/01/12 23:13:50 joerg_wunsch Exp $ */
+/* $Id: pindefs.h,v 1.12 2005/09/18 20:12:23 joerg_wunsch Exp $ */
 
-/*
- * defines for the USB interface
- */
+#ifndef __pindefs_h__
+#define __pindefs_h__
 
-#ifndef usbdevs_h
-#define usbdevs_h
+enum {
+  PPI_AVR_VCC=1,
+  PPI_AVR_BUFF,
+  PIN_AVR_RESET,
+  PIN_AVR_SCK,
+  PIN_AVR_MOSI,
+  PIN_AVR_MISO,
+  PIN_LED_ERR,
+  PIN_LED_RDY,
+  PIN_LED_PGM,
+  PIN_LED_VFY,
+  N_PINS
+};
+#define PIN_INVERSE 0x80	/* flag for inverted pin in serbb */
+#define PIN_MASK    0x7f
 
-#define USB_VENDOR_ATMEL 0x0400
-#define USB_DEVICE_JTAGICEMKII 0xc35d
-#define USB_DEVICE_AVRISPMKII  0xc35d
+#define LED_ON(fd,pin)  ppi_setpin(fd,pin,0)
+#define LED_OFF(fd,pin) ppi_setpin(fd,pin,1)
 
-#define USB_VENDOR_NATIONAL 0x0400
-#define USB_DEVICE_USBPROG 0xc53d
-
-
-/*
- * Should we query the endpoint number and max transfer size from USB?
- * After all, the JTAG ICE mkII docs document these values.
- */
-#define USBDEV_BULK_EP_WRITE 0x02
-#define USBDEV_BULK_EP_READ  0x83
-#define USBDEV_MAX_XFER 64
-
-#endif  /* usbdevs_h */
+#endif
