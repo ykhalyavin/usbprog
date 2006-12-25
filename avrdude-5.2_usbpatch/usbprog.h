@@ -17,18 +17,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* $Id: usbasp.h,v 1.2 2006/09/17 20:35:36 joerg_wunsch Exp $ */
-
 #ifndef usbprog_h
 #define usbprog_h
+
+#include "avrpart.h"
 
 #define	USBPROG_VID  	0x1781 
 #define	USBPROG_PID 	0x0c62 
 
-#define USBPROG_BULK_EP_WRITE 0x02
-#define USBPROG_BULK_EP_READ  0x83
-#define USBPROG_MAX_XFER 64
+#define USBPROG_BULK_EP_WRITE 	0x02
+#define USBPROG_BULK_EP_READ  	0x83
+#define USBPROG_MAX_XFER 		64
 
 void usbprog_initpgm (PROGRAMMER * pgm);
-
 #endif /* usbprog_h */

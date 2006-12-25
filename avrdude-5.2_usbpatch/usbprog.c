@@ -26,7 +26,10 @@
  */
 
 #include "ac_cfg.h"
-#if defined(HAVE_LIBUSB)
+#include <unistd.h>
+
+#ifdef HAVE_LIBUSB
+#include <usb.h>
 
 
 #include <ctype.h>
@@ -39,13 +42,16 @@
 
 #include <usb.h>
 
+#include "avr.h"
+#include "pgm.h"
+
 #include "serial.h"
 #include "usbprog.h"
 
 extern char *progname;
 extern int verbose;
 
-static char usbbuf[USBDEV_MAX_XFER];
+static char usbbuf[USBPROG_MAX_XFER];
 static int buflen = -1, bufptr;
 
 static int usb_interface;
@@ -158,8 +164,8 @@ static int usbprog_send(int fd, unsigned char *bp, size_t mlen)
    * 0.
    */
   do {
-    tx_size = (mlen < USBDEV_MAX_XFER)? mlen: USBDEV_MAX_XFER;
-    rv = usb_bulk_write(udev, USBDEV_BULK_EP_WRITE, (char *)bp, tx_size, 5000);
+    tx_size = (mlen < USBPROG_MAX_XFER)? mlen: USBPROG_MAX_XFER;
+    rv = usb_bulk_write(udev, USBPROG_BULK_EP_WRITE, (char *)bp, tx_size, 5000);
     if (rv != tx_size)
     {
         fprintf(stderr, "%s: usbprog_send(): wrote %d out of %d bytes, err = %s\n",
@@ -168,7 +174,7 @@ static int usbprog_send(int fd, unsigned char *bp, size_t mlen)
     }
     bp += tx_size;
     mlen -= tx_size;
-  } while (tx_size == USBDEV_MAX_XFER);
+  } while (tx_size == USBPROG_MAX_XFER);
 
   if (verbose > 3)
   {
@@ -205,7 +211,7 @@ usb_fill_buf(usb_dev_handle *udev)
 {
   int rv;
 
-  rv = usb_bulk_read(udev, USBDEV_BULK_EP_READ, usbbuf, USBDEV_MAX_XFER, 5000);
+  rv = usb_bulk_read(udev, USBPROG_BULK_EP_READ, usbbuf, USBPROG_MAX_XFER, 5000);
   if (rv < 0)
     {
       if (verbose > 1)
@@ -283,8 +289,8 @@ static int usbprog_recv_frame(int fd, unsigned char *buf, size_t nbytes)
   n = 0;
   do
     {
-      rv = usb_bulk_read(udev, USBDEV_BULK_EP_READ, usbbuf,
-			 USBDEV_MAX_XFER, 10000);
+      rv = usb_bulk_read(udev, USBPROG_BULK_EP_READ, usbbuf,
+			 USBPROG_MAX_XFER, 10000);
       if (rv < 0)
 	{
 	  if (verbose > 1)
@@ -302,7 +308,7 @@ static int usbprog_recv_frame(int fd, unsigned char *buf, size_t nbytes)
       n += rv;
       nbytes -= rv;
     }
-  while (rv == USBDEV_MAX_XFER);
+  while (rv == USBPROG_MAX_XFER);
 
   if (nbytes < 0)
     return -1;
@@ -336,7 +342,7 @@ static int usbprog_drain(int fd, int display)
   int rv;
 
   do {
-    rv = usb_bulk_read(udev, USBDEV_BULK_EP_READ, usbbuf, USBDEV_MAX_XFER, 100);
+    rv = usb_bulk_read(udev, USBPROG_BULK_EP_READ, usbbuf, USBPROG_MAX_XFER, 100);
     if (rv > 0 && verbose >= 4)
       fprintf(stderr, "%s: usbprog_drain(): flushed %d characters\n",
 	      progname, rv);
@@ -346,22 +352,10 @@ static int usbprog_drain(int fd, int display)
 }
 
 /*
- * Device descriptor for the JTAG ICE mkII.
- */
-struct serial_device usb_serdev =
-{
-  .open = usbprog_open,
-  .setspeed = usbprog_setspeed,
-  .close = usbprog_close,
-  .send = usbprog_send,
-  .recv = usbprog_recv,
-  .drain = usbprog_drain,
-};
-
-/*
  * Device descriptor for the AVRISP mkII.
  */
-struct serial_device usb_serdev_frame =
+
+struct serial_device usb_serdev_frame_usbprog =
 {
   .open = usbprog_open,
   .setspeed = usbprog_setspeed,
@@ -370,5 +364,6 @@ struct serial_device usb_serdev_frame =
   .recv = usbprog_recv_frame,
   .drain = usbprog_drain,
 };
+
 
 #endif  /* HAVE_LIBUSB */
