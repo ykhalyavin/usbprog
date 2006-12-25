@@ -127,6 +127,7 @@ avrdude_SOURCES = \
 	term.h \
 	usbasp.c \
 	usbasp.h \
+	usbprog.h \
 	usbdevs.h \
 	usb_libusb.c
 
