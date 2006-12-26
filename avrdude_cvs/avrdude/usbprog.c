@@ -44,6 +44,24 @@
 #include "stk500_private.h"	// temp until all code converted
 #include "stk500v2_private.h"
 
+static int stk500v2_initialize(PROGRAMMER * pgm, AVRPART * p);
+
+static void stk500v2_display(PROGRAMMER * pgm, char * p);
+static void stk500v2_enable(PROGRAMMER * pgm);
+static void stk500v2_disable(PROGRAMMER * pgm);
+static int stk500v2_program_enable(PROGRAMMER * pgm, AVRPART * p);
+static int stk500v2_chip_erase(PROGRAMMER * pgm, AVRPART * p);
+static int stk500v2_cmd(PROGRAMMER * pgm, unsigned char cmd[4],
+                        unsigned char res[4]);
+static void stk500v2_close(PROGRAMMER * pgm);
+static int stk500v2_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+                              int page_size, int n_bytes);
+static int stk500v2_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+                             int page_size, int n_bytes);
+static void stk500v2_print_parms1(PROGRAMMER * pgm, char * p);
+static int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v);
+static int stk500v2_perform_osccal(PROGRAMMER * pgm);
+
 
 /*
  * Open usbprog in ISP mode.
