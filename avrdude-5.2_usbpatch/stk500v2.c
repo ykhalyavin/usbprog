@@ -946,10 +946,7 @@ static int stk500v2_open(PROGRAMMER * pgm, char * port)
    */
   if (strncmp(port, "usb", 3) == 0) {
 #if defined(HAVE_LIBUSB)
-	if(strncmp(pgm->type,"usbprog",7) == 0)
-    	serdev = &usb_serdev_frame_usbprog;
-	else
-    	serdev = &usb_serdev_frame;
+    serdev = &usb_serdev_frame;
     baud = USB_DEVICE_AVRISPMKII;
     pgmtype = PGMTYPE_AVRISP_MKII;
     pgm->set_sck_period = stk500v2_set_sck_period_mk2;

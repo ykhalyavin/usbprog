@@ -29,5 +29,8 @@
 #define USBPROG_BULK_EP_READ  	0x83
 #define USBPROG_MAX_XFER 		64
 
-//void usbprog_initpgm (PROGRAMMER * pgm);
-#endif /* usbprog_h */
+void usbprog_initpgm (PROGRAMMER * pgm);
+
+#endif
+
+
