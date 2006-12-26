@@ -76,7 +76,7 @@ extern char *progname;
 extern int verbose;
 
 static char usbbuf[USBPROG_MAX_XFER];
-static int buflen = -1, bufptr;
+//static int buflen = -1, bufptr;
 
 static int usb_interface;
 /*
@@ -85,13 +85,13 @@ static int usb_interface;
  */
 static void usbprog_open(char * port, long baud, union filedescriptor *fd)
 {
-  char string[256];
-  char product[256];
+  //char string[256];
+  //char product[256];
   struct usb_bus *bus;
   struct usb_device *dev;
   usb_dev_handle *udev;
-  char *serno, *cp2;
-  size_t x;
+  //char *serno, *cp2;
+  //size_t x;
 
   usb_init();
 
@@ -212,7 +212,7 @@ static int usbprog_send(union filedescriptor *fd, unsigned char *bp, size_t mlen
   }
   return 0;
 }
-
+#if 0
 /*
  * As calls to usb_bulk_read() result in exactly one USB request, we
  * have to buffer the read results ourselves, so the single-char read
@@ -240,7 +240,9 @@ usb_fill_buf(usb_dev_handle *udev)
 
   return 0;
 }
+#endif
 
+#if 0
 static int usbprog_recv(union filedescriptor *fd, unsigned char *buf, size_t nbytes)
 {
   usb_dev_handle *udev = (usb_dev_handle *)fd->pfd;
@@ -283,7 +285,7 @@ static int usbprog_recv(union filedescriptor *fd, unsigned char *buf, size_t nby
 
   return 0;
 }
-
+#endif
 /*
  * This version of recv keeps reading packets until we receive a short
  * packet.  Then, the entire frame is assembled and returned to the
@@ -433,6 +435,7 @@ static int stk500v2_usbprog_isp_open(PROGRAMMER * pgm, char * port)
     pgm->close(pgm);		/* sign off correctly */
     exit(1);
   }
+	return 0;
 }
 
 void usbprog_initpgm(PROGRAMMER * pgm)
