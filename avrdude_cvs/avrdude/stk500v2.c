@@ -51,6 +51,7 @@
 #include "pgm.h"
 #include "stk500_private.h"	// temp until all code converted
 #include "stk500v2_private.h"
+#include "stk500v2_headers.h"
 #include "serial.h"
 #include "usbdevs.h"
 
@@ -79,12 +80,6 @@
 #define DEBUGRECV(format,args...)
 #endif
 
-enum hvmode
-{
-  PPMODE, HVSPMODE
-};
-
-
 extern int    verbose;
 extern char * progname;
 extern int do_cycles;
@@ -93,17 +88,17 @@ extern int do_cycles;
  * See stk500pp_read_byte() for an explanation of the flash and
  * EEPROM page caches.
  */
-static unsigned char *flash_pagecache;
-static unsigned long flash_pageaddr;
-static unsigned int flash_pagesize;
+ unsigned char *flash_pagecache;
+ unsigned long flash_pageaddr;
+ unsigned int flash_pagesize;
 
-static unsigned char *eeprom_pagecache;
-static unsigned long eeprom_pageaddr;
-static unsigned int eeprom_pagesize;
+ unsigned char *eeprom_pagecache;
+ unsigned long eeprom_pageaddr;
+ unsigned int eeprom_pagesize;
 
-static unsigned char command_sequence = 1;
+ unsigned char command_sequence = 1;
 
-static enum
+ enum
 {
   PGMTYPE_UNKNOWN,
   PGMTYPE_STK500,
@@ -113,7 +108,7 @@ static enum
 }
 pgmtype;
 
-static const char *pgmname[] =
+ const char *pgmname[] =
 {
   "unknown",
   "STK500",
@@ -130,7 +125,7 @@ struct jtagispentry
 #define SZ_SPI_MULTI     (USHRT_MAX - 1)
 };
 
-static struct jtagispentry jtagispcmds[] = {
+ struct jtagispentry jtagispcmds[] = {
   /* generic */
   { CMD_SET_PARAMETER, 2 },
   { CMD_GET_PARAMETER, 3 },
@@ -183,17 +178,8 @@ static struct jtagispentry jtagispcmds[] = {
   { CMD_READ_OSCCAL_PP, 3 },
 };
 
-static int stk500v2_getparm(PROGRAMMER * pgm, unsigned char parm, unsigned char * value);
-static int stk500v2_setparm(PROGRAMMER * pgm, unsigned char parm, unsigned char value);
-static void stk500v2_print_parms1(PROGRAMMER * pgm, char * p);
-static int stk500v2_is_page_empty(unsigned int address, int page_size,
-                                  const unsigned char *buf);
 
-static unsigned int stk500v2_mode_for_pagesize(unsigned int pagesize);
-
-static int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v);
-
-static unsigned short
+ unsigned short
 b2_to_u16(unsigned char *b)
 {
   unsigned short l;
@@ -203,7 +189,7 @@ b2_to_u16(unsigned char *b)
   return l;
 }
 
-static int stk500v2_send_mk2(PROGRAMMER * pgm, unsigned char * data, size_t len)
+ int stk500v2_send_mk2(PROGRAMMER * pgm, unsigned char * data, size_t len)
 {
   if (serial_send(&pgm->fd, data, len) != 0) {
     fprintf(stderr,"%s: stk500_send_mk2(): failed to send command to serial port\n",progname);
@@ -213,7 +199,7 @@ static int stk500v2_send_mk2(PROGRAMMER * pgm, unsigned char * data, size_t len)
   return 0;
 }
 
-static unsigned short get_jtagisp_return_size(unsigned char cmd)
+ unsigned short get_jtagisp_return_size(unsigned char cmd)
 {
   int i;
 
@@ -230,7 +216,7 @@ static unsigned short get_jtagisp_return_size(unsigned char cmd)
  * response buffer prepended, and replies with RSP_SPI_DATA
  * if successful.
  */
-static int stk500v2_jtagmkII_send(PROGRAMMER * pgm, unsigned char * data, size_t len)
+ int stk500v2_jtagmkII_send(PROGRAMMER * pgm, unsigned char * data, size_t len)
 {
   unsigned char *cmdbuf;
   int rv;
@@ -272,7 +258,7 @@ static int stk500v2_jtagmkII_send(PROGRAMMER * pgm, unsigned char * data, size_t
   return rv;
 }
 
-static int stk500v2_send(PROGRAMMER * pgm, unsigned char * data, size_t len)
+ int stk500v2_send(PROGRAMMER * pgm, unsigned char * data, size_t len)
 {
   unsigned char buf[275 + 6];		// max MESSAGE_BODY of 275 bytes, 6 bytes overhead
   int i;
@@ -307,12 +293,12 @@ static int stk500v2_send(PROGRAMMER * pgm, unsigned char * data, size_t len)
 }
 
 
-static int stk500v2_drain(PROGRAMMER * pgm, int display)
+ int stk500v2_drain(PROGRAMMER * pgm, int display)
 {
   return serial_drain(&pgm->fd, display);
 }
 
-static int stk500v2_recv_mk2(PROGRAMMER * pgm, unsigned char msg[],
+ int stk500v2_recv_mk2(PROGRAMMER * pgm, unsigned char msg[],
 			     size_t maxsize)
 {
   int rv;
@@ -326,7 +312,7 @@ static int stk500v2_recv_mk2(PROGRAMMER * pgm, unsigned char msg[],
   return rv;
 }
 
-static int stk500v2_jtagmkII_recv(PROGRAMMER * pgm, unsigned char msg[],
+ int stk500v2_jtagmkII_recv(PROGRAMMER * pgm, unsigned char msg[],
                                   size_t maxsize)
 {
   int rv;
@@ -364,7 +350,7 @@ static int stk500v2_jtagmkII_recv(PROGRAMMER * pgm, unsigned char msg[],
   return rv;
 }
 
-static int stk500v2_recv(PROGRAMMER * pgm, unsigned char msg[], size_t maxsize) {
+ int stk500v2_recv(PROGRAMMER * pgm, unsigned char msg[], size_t maxsize) {
   enum states { sINIT, sSTART, sSEQNUM, sSIZE1, sSIZE2, sTOKEN, sDATA, sCSUM, sDONE }  state = sSTART;
   int msglen = 0;
   int curlen = 0;
@@ -476,7 +462,7 @@ static int stk500v2_recv(PROGRAMMER * pgm, unsigned char msg[], size_t maxsize) 
 
 
 
-static int stk500v2_getsync(PROGRAMMER * pgm) {
+ int stk500v2_getsync(PROGRAMMER * pgm) {
   int tries = 0;
   unsigned char buf[1], resp[32];
   int status;
@@ -556,7 +542,7 @@ retry:
   return 0;
 }
 
-static int stk500v2_command(PROGRAMMER * pgm, unsigned char * buf,
+ int stk500v2_command(PROGRAMMER * pgm, unsigned char * buf,
                             size_t len, size_t maxlen) {
   int i;
   int tries = 0;
@@ -606,7 +592,7 @@ retry:
   return 0;
 }
 
-static int stk500v2_cmd(PROGRAMMER * pgm, unsigned char cmd[4],
+ int stk500v2_cmd(PROGRAMMER * pgm, unsigned char cmd[4],
                         unsigned char res[4])
 {
   unsigned char buf[8];
@@ -646,7 +632,7 @@ static int stk500v2_cmd(PROGRAMMER * pgm, unsigned char cmd[4],
 /*
  * issue the 'chip erase' command to the AVR device
  */
-static int stk500v2_chip_erase(PROGRAMMER * pgm, AVRPART * p)
+ int stk500v2_chip_erase(PROGRAMMER * pgm, AVRPART * p)
 {
   int result;
   unsigned char buf[16];
@@ -675,7 +661,7 @@ static int stk500v2_chip_erase(PROGRAMMER * pgm, AVRPART * p)
 /*
  * issue the 'chip erase' command to the AVR device, generic HV mode
  */
-static int stk500hv_chip_erase(PROGRAMMER * pgm, AVRPART * p, enum hvmode mode)
+ int stk500hv_chip_erase(PROGRAMMER * pgm, AVRPART * p, enum hvmode mode)
 {
   int result;
   unsigned char buf[3];
@@ -703,7 +689,7 @@ static int stk500hv_chip_erase(PROGRAMMER * pgm, AVRPART * p, enum hvmode mode)
 /*
  * issue the 'chip erase' command to the AVR device, parallel mode
  */
-static int stk500pp_chip_erase(PROGRAMMER * pgm, AVRPART * p)
+ int stk500pp_chip_erase(PROGRAMMER * pgm, AVRPART * p)
 {
   return stk500hv_chip_erase(pgm, p, PPMODE);
 }
@@ -711,7 +697,7 @@ static int stk500pp_chip_erase(PROGRAMMER * pgm, AVRPART * p)
 /*
  * issue the 'chip erase' command to the AVR device, HVSP mode
  */
-static int stk500hvsp_chip_erase(PROGRAMMER * pgm, AVRPART * p)
+ int stk500hvsp_chip_erase(PROGRAMMER * pgm, AVRPART * p)
 {
   return stk500hv_chip_erase(pgm, p, HVSPMODE);
 }
@@ -719,7 +705,7 @@ static int stk500hvsp_chip_erase(PROGRAMMER * pgm, AVRPART * p)
 /*
  * issue the 'program enable' command to the AVR device
  */
-static int stk500v2_program_enable(PROGRAMMER * pgm, AVRPART * p)
+ int stk500v2_program_enable(PROGRAMMER * pgm, AVRPART * p)
 {
   unsigned char buf[16];
 
@@ -745,7 +731,7 @@ static int stk500v2_program_enable(PROGRAMMER * pgm, AVRPART * p)
 /*
  * issue the 'program enable' command to the AVR device, parallel mode
  */
-static int stk500pp_program_enable(PROGRAMMER * pgm, AVRPART * p)
+ int stk500pp_program_enable(PROGRAMMER * pgm, AVRPART * p)
 {
   unsigned char buf[16];
 
@@ -764,7 +750,7 @@ static int stk500pp_program_enable(PROGRAMMER * pgm, AVRPART * p)
 /*
  * issue the 'program enable' command to the AVR device, HVSP mode
  */
-static int stk500hvsp_program_enable(PROGRAMMER * pgm, AVRPART * p)
+ int stk500hvsp_program_enable(PROGRAMMER * pgm, AVRPART * p)
 {
   unsigned char buf[16];
 
@@ -786,7 +772,7 @@ static int stk500hvsp_program_enable(PROGRAMMER * pgm, AVRPART * p)
 /*
  * initialize the AVR device and prepare it to accept commands
  */
-static int stk500v2_initialize(PROGRAMMER * pgm, AVRPART * p)
+ int stk500v2_initialize(PROGRAMMER * pgm, AVRPART * p)
 {
 
   return pgm->program_enable(pgm, p);
@@ -796,7 +782,7 @@ static int stk500v2_initialize(PROGRAMMER * pgm, AVRPART * p)
 /*
  * initialize the AVR device and prepare it to accept commands, generic HV mode
  */
-static int stk500hv_initialize(PROGRAMMER * pgm, AVRPART * p, enum hvmode mode)
+ int stk500hv_initialize(PROGRAMMER * pgm, AVRPART * p, enum hvmode mode)
 {
   unsigned char buf[CTL_STACK_SIZE + 1];
   int result;
@@ -864,7 +850,7 @@ static int stk500hv_initialize(PROGRAMMER * pgm, AVRPART * p, enum hvmode mode)
 /*
  * initialize the AVR device and prepare it to accept commands, PP mode
  */
-static int stk500pp_initialize(PROGRAMMER * pgm, AVRPART * p)
+ int stk500pp_initialize(PROGRAMMER * pgm, AVRPART * p)
 {
   return stk500hv_initialize(pgm, p, PPMODE);
 }
@@ -872,12 +858,12 @@ static int stk500pp_initialize(PROGRAMMER * pgm, AVRPART * p)
 /*
  * initialize the AVR device and prepare it to accept commands, HVSP mode
  */
-static int stk500hvsp_initialize(PROGRAMMER * pgm, AVRPART * p)
+ int stk500hvsp_initialize(PROGRAMMER * pgm, AVRPART * p)
 {
   return stk500hv_initialize(pgm, p, HVSPMODE);
 }
 
-static void stk500v2_disable(PROGRAMMER * pgm)
+ void stk500v2_disable(PROGRAMMER * pgm)
 {
   unsigned char buf[16];
   int result;
@@ -900,7 +886,7 @@ static void stk500v2_disable(PROGRAMMER * pgm)
 /*
  * Leave programming mode, generic HV mode
  */
-static void stk500hv_disable(PROGRAMMER * pgm, enum hvmode mode)
+ void stk500hv_disable(PROGRAMMER * pgm, enum hvmode mode)
 {
   unsigned char buf[16];
   int result;
@@ -930,7 +916,7 @@ static void stk500hv_disable(PROGRAMMER * pgm, enum hvmode mode)
 /*
  * Leave programming mode, PP mode
  */
-static void stk500pp_disable(PROGRAMMER * pgm)
+ void stk500pp_disable(PROGRAMMER * pgm)
 {
   stk500hv_disable(pgm, PPMODE);
 }
@@ -938,18 +924,18 @@ static void stk500pp_disable(PROGRAMMER * pgm)
 /*
  * Leave programming mode, HVSP mode
  */
-static void stk500hvsp_disable(PROGRAMMER * pgm)
+ void stk500hvsp_disable(PROGRAMMER * pgm)
 {
   stk500hv_disable(pgm, HVSPMODE);
 }
 
-static void stk500v2_enable(PROGRAMMER * pgm)
+ void stk500v2_enable(PROGRAMMER * pgm)
 {
   return;
 }
 
 
-static int stk500v2_open(PROGRAMMER * pgm, char * port)
+ int stk500v2_open(PROGRAMMER * pgm, char * port)
 {
   long baud = 115200;
 
@@ -1009,7 +995,7 @@ static int stk500v2_open(PROGRAMMER * pgm, char * port)
 }
 
 
-static void stk500v2_close(PROGRAMMER * pgm)
+ void stk500v2_close(PROGRAMMER * pgm)
 {
   DEBUG("STK500V2: stk500v2_close()\n");
 
@@ -1018,7 +1004,7 @@ static void stk500v2_close(PROGRAMMER * pgm)
 }
 
 
-static int stk500v2_loadaddr(PROGRAMMER * pgm, unsigned int addr)
+ int stk500v2_loadaddr(PROGRAMMER * pgm, unsigned int addr)
 {
   unsigned char buf[16];
   int result;
@@ -1047,7 +1033,7 @@ static int stk500v2_loadaddr(PROGRAMMER * pgm, unsigned int addr)
 /*
  * Read a single byte, generic HV mode
  */
-static int stk500hv_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
+ int stk500hv_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 			      unsigned long addr, unsigned char * value,
 			      enum hvmode mode)
 {
@@ -1160,7 +1146,7 @@ static int stk500hv_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 /*
  * Read a single byte, PP mode
  */
-static int stk500pp_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
+ int stk500pp_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 			      unsigned long addr, unsigned char * value)
 {
   return stk500hv_read_byte(pgm, p, mem, addr, value, PPMODE);
@@ -1169,7 +1155,7 @@ static int stk500pp_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 /*
  * Read a single byte, HVSP mode
  */
-static int stk500hvsp_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
+ int stk500hvsp_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 				unsigned long addr, unsigned char * value)
 {
   return stk500hv_read_byte(pgm, p, mem, addr, value, HVSPMODE);
@@ -1178,7 +1164,7 @@ static int stk500hvsp_read_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 /*
  * Write one byte, generic HV mode
  */
-static int stk500hv_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
+ int stk500hv_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 			       unsigned long addr, unsigned char data,
 			       enum hvmode mode)
 {
@@ -1321,7 +1307,7 @@ static int stk500hv_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 /*
  * Write one byte, PP mode
  */
-static int stk500pp_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
+ int stk500pp_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 			       unsigned long addr, unsigned char data)
 {
   return stk500hv_write_byte(pgm, p, mem, addr, data, PPMODE);
@@ -1330,14 +1316,14 @@ static int stk500pp_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 /*
  * Write one byte, HVSP mode
  */
-static int stk500hvsp_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
+ int stk500hvsp_write_byte(PROGRAMMER * pgm, AVRPART * p, AVRMEM * mem,
 			       unsigned long addr, unsigned char data)
 {
   return stk500hv_write_byte(pgm, p, mem, addr, data, HVSPMODE);
 }
 
 
-static int stk500v2_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m, 
+ int stk500v2_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m, 
                               int page_size, int n_bytes)
 {
   unsigned int addr, block_size, last_addr, hiaddr, addrshift, use_ext_addr;
@@ -1473,7 +1459,7 @@ static int stk500v2_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 /*
  * Write pages of flash/EEPROM, generic HV mode
  */
-static int stk500hv_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500hv_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 				  int page_size, int n_bytes,
 				  enum hvmode mode)
 {
@@ -1571,7 +1557,7 @@ static int stk500hv_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 /*
  * Write pages of flash/EEPROM, PP mode
  */
-static int stk500pp_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500pp_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 				int page_size, int n_bytes)
 {
   return stk500hv_paged_write(pgm, p, m, page_size, n_bytes, PPMODE);
@@ -1580,13 +1566,13 @@ static int stk500pp_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 /*
  * Write pages of flash/EEPROM, HVSP mode
  */
-static int stk500hvsp_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500hvsp_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 				  int page_size, int n_bytes)
 {
   return stk500hv_paged_write(pgm, p, m, page_size, n_bytes, HVSPMODE);
 }
 
-static int stk500v2_is_page_empty(unsigned int address, int page_size,
+ int stk500v2_is_page_empty(unsigned int address, int page_size,
                                 const unsigned char *buf)
 {
     int i;
@@ -1601,7 +1587,7 @@ static int stk500v2_is_page_empty(unsigned int address, int page_size,
     return(1);
 }
 
-static int stk500v2_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500v2_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
                              int page_size, int n_bytes)
 {
   unsigned int addr, block_size, hiaddr, addrshift, use_ext_addr;
@@ -1694,7 +1680,7 @@ static int stk500v2_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 /*
  * Read pages of flash/EEPROM, generic HV mode
  */
-static int stk500hv_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500hv_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 			       int page_size, int n_bytes,
 			       enum hvmode mode)
 {
@@ -1772,7 +1758,7 @@ static int stk500hv_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 /*
  * Read pages of flash/EEPROM, PP mode
  */
-static int stk500pp_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500pp_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 			       int page_size, int n_bytes)
 {
   return stk500hv_paged_load(pgm, p, m, page_size, n_bytes, PPMODE);
@@ -1781,14 +1767,14 @@ static int stk500pp_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 /*
  * Read pages of flash/EEPROM, HVSP mode
  */
-static int stk500hvsp_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+ int stk500hvsp_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
 				 int page_size, int n_bytes)
 {
   return stk500hv_paged_load(pgm, p, m, page_size, n_bytes, HVSPMODE);
 }
 
 
-static int stk500v2_set_vtarget(PROGRAMMER * pgm, double v)
+ int stk500v2_set_vtarget(PROGRAMMER * pgm, double v)
 {
   unsigned char uaref, utarg;
 
@@ -1813,7 +1799,7 @@ static int stk500v2_set_vtarget(PROGRAMMER * pgm, double v)
 }
 
 
-static int stk500v2_set_varef(PROGRAMMER * pgm, double v)
+ int stk500v2_set_varef(PROGRAMMER * pgm, double v)
 {
   unsigned char uaref, utarg;
 
@@ -1837,11 +1823,11 @@ static int stk500v2_set_varef(PROGRAMMER * pgm, double v)
 }
 
 
-static int stk500v2_set_fosc(PROGRAMMER * pgm, double v)
+ int stk500v2_set_fosc(PROGRAMMER * pgm, double v)
 {
   int fosc;
   unsigned char prescale, cmatch;
-  static unsigned ps[] = {
+   unsigned ps[] = {
     1, 8, 32, 64, 128, 256, 1024
   };
   int idx, rc;
@@ -1911,7 +1897,7 @@ double avrispmkIIfreqs[] = {
 	65.0, 61.9, 59.0, 56.3, 53.6, 51.1
 };
 
-static int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v)
+ int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v)
 {
   int i;
 
@@ -1931,7 +1917,7 @@ static int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v)
  * Return the "mode" value for the parallel and HVSP modes that
  * corresponds to the pagesize.
  */
-static unsigned int stk500v2_mode_for_pagesize(unsigned int pagesize)
+ unsigned int stk500v2_mode_for_pagesize(unsigned int pagesize)
 {
   switch (pagesize)
     {
@@ -1957,7 +1943,7 @@ static unsigned int stk500v2_mode_for_pagesize(unsigned int pagesize)
    For small duration values, the actual SCK width is larger than
    expected.  As the duration value increases, the SCK width error
    diminishes. */
-static int stk500v2_set_sck_period(PROGRAMMER * pgm, double v)
+ int stk500v2_set_sck_period(PROGRAMMER * pgm, double v)
 {
   unsigned char dur;
   double min, max;
@@ -1982,7 +1968,7 @@ static int stk500v2_set_sck_period(PROGRAMMER * pgm, double v)
 }
 
 
-static int stk500v2_getparm(PROGRAMMER * pgm, unsigned char parm, unsigned char * value)
+ int stk500v2_getparm(PROGRAMMER * pgm, unsigned char parm, unsigned char * value)
 {
   unsigned char buf[32];
 
@@ -2000,7 +1986,7 @@ static int stk500v2_getparm(PROGRAMMER * pgm, unsigned char parm, unsigned char 
   return 0;
 }
 
-static int stk500v2_setparm_real(PROGRAMMER * pgm, unsigned char parm, unsigned char value)
+ int stk500v2_setparm_real(PROGRAMMER * pgm, unsigned char parm, unsigned char value)
 {
   unsigned char buf[32];
 
@@ -2017,7 +2003,7 @@ static int stk500v2_setparm_real(PROGRAMMER * pgm, unsigned char parm, unsigned 
   return 0;
 }
 
-static int stk500v2_setparm(PROGRAMMER * pgm, unsigned char parm, unsigned char value)
+ int stk500v2_setparm(PROGRAMMER * pgm, unsigned char parm, unsigned char value)
 {
   unsigned char current_value;
   int res;
@@ -2035,7 +2021,7 @@ static int stk500v2_setparm(PROGRAMMER * pgm, unsigned char parm, unsigned char 
   return stk500v2_setparm_real(pgm, parm, value);
 }
 
-static void stk500v2_display(PROGRAMMER * pgm, char * p)
+ void stk500v2_display(PROGRAMMER * pgm, char * p)
 {
   unsigned char maj, min, hdw, topcard;
   const char *topcard_name, *pgmname;
@@ -2075,7 +2061,7 @@ static void stk500v2_display(PROGRAMMER * pgm, char * p)
 }
 
 
-static void stk500v2_print_parms1(PROGRAMMER * pgm, char * p)
+ void stk500v2_print_parms1(PROGRAMMER * pgm, char * p)
 {
   unsigned char vtarget, vadjust, osc_pscale, osc_cmatch, sck_duration;
   unsigned char vtarget_jtag[4];
@@ -2135,12 +2121,12 @@ static void stk500v2_print_parms1(PROGRAMMER * pgm, char * p)
 }
 
 
-static void stk500v2_print_parms(PROGRAMMER * pgm)
+ void stk500v2_print_parms(PROGRAMMER * pgm)
 {
   stk500v2_print_parms1(pgm, "");
 }
 
-static int stk500v2_perform_osccal(PROGRAMMER * pgm)
+ int stk500v2_perform_osccal(PROGRAMMER * pgm)
 {
   unsigned char buf[32];
   int rv;
@@ -2168,7 +2154,7 @@ static int stk500v2_perform_osccal(PROGRAMMER * pgm)
 /*
  * Open a JTAG ICE mkII in ISP mode.
  */
-static int stk500v2_jtagmkII_open(PROGRAMMER * pgm, char * port)
+ int stk500v2_jtagmkII_open(PROGRAMMER * pgm, char * port)
 {
   long baud;
 
@@ -2235,7 +2221,7 @@ static int stk500v2_jtagmkII_open(PROGRAMMER * pgm, char * port)
 /*
  * Open an AVR Dragon in ISP mode.
  */
-static int stk500v2_dragon_isp_open(PROGRAMMER * pgm, char * port)
+ int stk500v2_dragon_isp_open(PROGRAMMER * pgm, char * port)
 {
   long baud;
 
@@ -2302,7 +2288,7 @@ static int stk500v2_dragon_isp_open(PROGRAMMER * pgm, char * port)
 /*
  * Open an AVR Dragon in HV mode (HVSP or parallel).
  */
-static int stk500v2_dragon_hv_open(PROGRAMMER * pgm, char * port)
+ int stk500v2_dragon_hv_open(PROGRAMMER * pgm, char * port)
 {
   long baud;
 

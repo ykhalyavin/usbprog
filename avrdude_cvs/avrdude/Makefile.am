@@ -123,6 +123,7 @@ avrdude_SOURCES = \
 	stk500v2.c \
 	stk500v2.h \
 	stk500v2_private.h \
+	stk500v2_headers.h \
 	stk500generic.c \
 	stk500generic.h \
 	term.c \
