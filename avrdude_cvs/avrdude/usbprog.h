@@ -27,7 +27,7 @@
 
 #define USBPROG_BULK_EP_WRITE 	0x02
 #define USBPROG_BULK_EP_READ  	0x83
-#define USBPROG_MAX_XFER 		64
+#define USBPROG_MAX_XFER 				64
 
 #include "pgm.h"
 void usbprog_initpgm (PROGRAMMER * pgm);

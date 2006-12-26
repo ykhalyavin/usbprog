@@ -36,6 +36,9 @@
  *
  */
 
+#ifndef __stk500v2_headers_h__
+#define __stk500v2_headers_h__
+
 #include "avr.h"
 #include "pgm.h"
 
@@ -44,6 +47,15 @@ enum hvmode
   PPMODE, HVSPMODE
 };
 
+enum
+{
+  PGMTYPE_UNKNOWN,
+  PGMTYPE_STK500,
+  PGMTYPE_AVRISP,
+  PGMTYPE_AVRISP_MKII,
+  PGMTYPE_JTAGICE_MKII,
+}
+pgmtype;
  int stk500v2_getparm(PROGRAMMER * pgm, unsigned char parm, unsigned char * value);
  int stk500v2_setparm(PROGRAMMER * pgm, unsigned char parm, unsigned char value);
  void stk500v2_print_parms1(PROGRAMMER * pgm, char * p);
@@ -150,3 +162,5 @@ b2_to_u16(unsigned char *b);
  int stk500v2_jtagmkII_open(PROGRAMMER * pgm, char * port);
  int stk500v2_dragon_isp_open(PROGRAMMER * pgm, char * port);
  int stk500v2_dragon_hv_open(PROGRAMMER * pgm, char * port);
+
+ #endif

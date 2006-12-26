@@ -80,6 +80,17 @@
 #define DEBUGRECV(format,args...)
 #endif
 
+
+const char *pgmname[] =
+{
+  "unknown",
+  "STK500",
+  "AVRISP",
+  "AVRISP mkII",
+  "JTAG ICE mkII",
+};
+
+
 extern int    verbose;
 extern char * progname;
 extern int do_cycles;
@@ -97,26 +108,6 @@ extern int do_cycles;
  unsigned int eeprom_pagesize;
 
  unsigned char command_sequence = 1;
-
- enum
-{
-  PGMTYPE_UNKNOWN,
-  PGMTYPE_STK500,
-  PGMTYPE_AVRISP,
-  PGMTYPE_AVRISP_MKII,
-  PGMTYPE_JTAGICE_MKII,
-}
-pgmtype;
-
- const char *pgmname[] =
-{
-  "unknown",
-  "STK500",
-  "AVRISP",
-  "AVRISP mkII",
-  "JTAG ICE mkII",
-};
-
 struct jtagispentry
 {
   unsigned char cmd;
@@ -189,7 +180,7 @@ b2_to_u16(unsigned char *b)
   return l;
 }
 
- int stk500v2_send_mk2(PROGRAMMER * pgm, unsigned char * data, size_t len)
+int stk500v2_send_mk2(PROGRAMMER * pgm, unsigned char * data, size_t len)
 {
   if (serial_send(&pgm->fd, data, len) != 0) {
     fprintf(stderr,"%s: stk500_send_mk2(): failed to send command to serial port\n",progname);
@@ -462,7 +453,7 @@ b2_to_u16(unsigned char *b)
 
 
 
- int stk500v2_getsync(PROGRAMMER * pgm) {
+int stk500v2_getsync(PROGRAMMER * pgm) {
   int tries = 0;
   unsigned char buf[1], resp[32];
   int status;

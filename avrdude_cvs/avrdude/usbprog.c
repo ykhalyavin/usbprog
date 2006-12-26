@@ -64,6 +64,7 @@ static void stk500v2_print_parms(PROGRAMMER * pgm, char * p);
 static int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v);
 static int stk500v2_perform_osccal(PROGRAMMER * pgm);
 */
+
 extern int    verbose;
 extern char * progname;
 extern int do_cycles;
@@ -105,7 +106,6 @@ static void usbprog_open(char * port, long baud, union filedescriptor *fd)
 		  		dev->descriptor.idProduct == USBPROG_PID){
 		  			/* yeah, we found something */
 		  
-		
 					/* check if device has an configuration like AVR069 */
 		  		if (dev->config == NULL){
 		      	fprintf(stderr,
@@ -411,7 +411,8 @@ static int stk500v2_usbprog_isp_open(PROGRAMMER * pgm, char * port)
   //if (strncmp(port, "usb", 3) == 0) {
 #if defined(HAVE_LIBUSB)
     serdev = &usb_serdev_usbprog;
-    baud = 0;
+    baud = 0x0c62;
+    pgmtype = PGMTYPE_AVRISP_MKII;
 #else
     fprintf(stderr, "avrdude was compiled without usb support.\n");
     return -1;
