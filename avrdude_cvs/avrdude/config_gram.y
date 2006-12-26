@@ -40,6 +40,7 @@
 #include "avr910.h"
 #include "butterfly.h"
 #include "usbasp.h"
+#include "usbprog.h"
 #include "avr.h"
 #include "jtagmkI.h"
 #include "jtagmkII.h"
@@ -419,6 +420,12 @@ prog_parm :
   K_TYPE TKN_EQUAL K_USBASP {
     {
       usbasp_initpgm(current_prog);
+    }
+  } |
+ 
+ K_TYPE TKN_EQUAL K_USBPROG {
+    {
+      usbprog_initpgm(current_prog);
     }
   } |
 

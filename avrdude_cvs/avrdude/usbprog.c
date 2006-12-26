@@ -38,6 +38,97 @@
 #include "serial.h"
 #include "usbprog.h"
 
+
+#include "avr.h"
+#include "pgm.h"
+#include "stk500_private.h"	// temp until all code converted
+#include "stk500v2_private.h"
+
+
+/*
+ * Open usbprog in ISP mode.
+ */
+static int stk500v2_usbprog_isp_open(PROGRAMMER * pgm, char * port)
+{
+  long baud;
+
+  if (verbose >= 2)
+    fprintf(stderr, "%s: stk500v2_usbprog_isp_open()\n", progname);
+
+  /*
+   * The JTAG ICE mkII always starts with a baud rate of 19200 Bd upon
+   * attaching.  If the config file or command-line parameters specify
+   * a higher baud rate, we switch to it later on, after establishing
+   * the connection with the ICE.
+   */
+  baud = 19200;
+
+  /*
+   * If the port name starts with "usb", divert the serial routines
+   * to the USB ones.  The serial_open() function for USB overrides
+   * the meaning of the "baud" parameter to be the USB device ID to
+   * search for.
+   */
+  //if (strncmp(port, "usb", 3) == 0) {
+#if defined(HAVE_LIBUSB)
+    serdev = &usb_serdev_usbprog;
+    baud = 0;
+#else
+    fprintf(stderr, "avrdude was compiled without usb support.\n");
+    return -1;
+#endif
+  //}
+
+  strcpy(pgm->port, port);
+  serial_open(port, baud, &pgm->fd);
+
+  /*
+   * drain any extraneous input
+   */
+  stk500v2_drain(pgm, 0);
+
+  if (stk500v2_getsync(pgm, EMULATOR_MODE_SPI) != 0) {
+    fprintf(stderr, "%s: failed to sync with the usbprog in ISP mode\n",
+            progname);
+    pgm->close(pgm);		/* sign off correctly */
+    exit(1);
+  }
+}
+
+void usbprog_initpgm(PROGRAMMER * pgm)
+{
+  strcpy(pgm->type, "USBPROG_ISP");
+
+  /*
+   * mandatory functions
+   */
+  pgm->initialize     = stk500v2_initialize;
+  pgm->display        = stk500v2_display;
+  pgm->enable         = stk500v2_enable;
+  pgm->disable        = stk500v2_disable;
+  pgm->program_enable = stk500v2_program_enable;
+  pgm->chip_erase     = stk500v2_chip_erase;
+  pgm->cmd            = stk500v2_cmd;
+  pgm->open           = stk500v2_usbprog_isp_open;
+  pgm->close          = stk500v2_close;
+  pgm->read_byte      = avr_read_byte_default;
+  pgm->write_byte     = avr_write_byte_default;
+
+  /*
+   * optional functions
+   */
+  pgm->paged_write    = stk500v2_paged_write;
+  pgm->paged_load     = stk500v2_paged_load;
+  pgm->print_parms    = stk500v2_print_parms;
+  pgm->set_sck_period = stk500v2_set_sck_period_mk2;
+  pgm->perform_osccal = stk500v2_perform_osccal;
+  pgm->page_size      = 256;
+}
+
+
+
+/********** serial device emulation *********************/
+
 extern char *progname;
 extern int verbose;
 
@@ -45,8 +136,6 @@ static char usbbuf[USBPROG_MAX_XFER];
 static int buflen = -1, bufptr;
 
 static int usb_interface;
-
-/********** serial device emulation *********************/
 
 /*
  * Device descriptor for the usbprog
