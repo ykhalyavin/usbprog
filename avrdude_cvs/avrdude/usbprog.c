@@ -136,21 +136,6 @@ static char usbbuf[USBPROG_MAX_XFER];
 static int buflen = -1, bufptr;
 
 static int usb_interface;
-
-/*
- * Device descriptor for the usbprog
- */
-
-struct serial_device usb_serdev_usbprog =
-{
-  .open = usbprog_open,
-  .close = usbprog_close,
-  .send = usbprog_send,
-  .recv = usbprog_recv_frame,
-  .drain = usbprog_drain,
-  .flags = SERDEV_FL_NONE,
-};
-
 /*
  * The "baud" parameter is meaningless for USB devices, so we reuse it
  * to pass the desired USB device ID.
@@ -437,4 +422,20 @@ static int usbprog_drain(union filedescriptor *fd, int display)
 
   return 0;
 }
+
+/*
+ * Device descriptor for the usbprog
+ */
+
+struct serial_device usb_serdev_usbprog =
+{
+  .open = usbprog_open,
+  .close = usbprog_close,
+  .send = usbprog_send,
+  .recv = usbprog_recv_frame,
+  .drain = usbprog_drain,
+  .flags = SERDEV_FL_NONE,
+};
+
+
 #endif  /* HAVE_LIBUSB */

@@ -137,6 +137,7 @@ static int parse_cmdbits(OPCODE * op);
 %token K_STK500GENERIC
 %token K_AVR910
 %token K_USBASP
+%token K_USBPROG
 %token K_BUTTERFLY
 %token K_TYPE
 %token K_VCC

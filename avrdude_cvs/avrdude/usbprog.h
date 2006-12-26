@@ -31,6 +31,28 @@
 
 void usbprog_initpgm (PROGRAMMER * pgm);
 
+#include "avr.h"
+#include "pgm.h"
+
+extern static int stk500v2_initialize(PROGRAMMER * pgm, AVRPART * p);
+extern static void stk500v2_display(PROGRAMMER * pgm, char * p);
+extern static void stk500v2_enable(PROGRAMMER * pgm);
+extern static void stk500v2_disable(PROGRAMMER * pgm);
+extern static int stk500v2_program_enable(PROGRAMMER * pgm, AVRPART * p);
+extern static int stk500v2_chip_erase(PROGRAMMER * pgm, AVRPART * p);
+extern static int stk500v2_cmd(PROGRAMMER * pgm, unsigned char cmd[4],
+                        unsigned char res[4]);
+extern static void stk500v2_close(PROGRAMMER * pgm);
+extern static int stk500v2_paged_write(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+                              int page_size, int n_bytes);
+extern static int stk500v2_paged_load(PROGRAMMER * pgm, AVRPART * p, AVRMEM * m,
+                             int page_size, int n_bytes);
+extern static void stk500v2_print_parms1(PROGRAMMER * pgm, char * p);
+extern static int stk500v2_set_sck_period_mk2(PROGRAMMER * pgm, double v);
+extern static int stk500v2_perform_osccal(PROGRAMMER * pgm);
+
+
+
 #endif
 
 
