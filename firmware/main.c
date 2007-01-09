@@ -510,8 +510,8 @@ int main(void)
   usbprog.longpackage=0;
   // setup your usbn device
 
-  USBNDeviceVendorID(0x0400);
-  USBNDeviceProductID(0xc35d);
+  USBNDeviceVendorID(0x2104);
+  USBNDeviceProductID(0x03EB);
   USBNDeviceBCDDevice(0x0200);
 
 
