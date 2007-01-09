@@ -510,8 +510,13 @@ int main(void)
   usbprog.longpackage=0;
   // setup your usbn device
 
+<<<<<<< .mine
+  USBNDeviceVendorID(0x1781);
+  USBNDeviceProductID(0x0c62);
+=======
   USBNDeviceVendorID(0x2104);
   USBNDeviceProductID(0x03EB);
+>>>>>>> .r133
   USBNDeviceBCDDevice(0x0200);
 
 
@@ -521,7 +526,7 @@ int main(void)
   
   USBNDeviceManufacture ("Benedikt Sauter - www.ixbat.de  ");
   USBNDeviceProduct	("usbprog AVR Programmer");
-  USBNDeviceSerialNumber("200612031");
+  USBNDeviceSerialNumber("200612261");
 
   conf = USBNAddConfiguration();
 
