@@ -510,13 +510,14 @@ int main(void)
   usbprog.longpackage=0;
   // setup your usbn device
 
-<<<<<<< .mine
+/* usbprog ids 
   USBNDeviceVendorID(0x1781);
   USBNDeviceProductID(0x0c62);
-=======
-  USBNDeviceVendorID(0x2104);
-  USBNDeviceProductID(0x03EB);
->>>>>>> .r133
+*/
+
+  USBNDeviceVendorID(0x2104);	//atmel ids
+  USBNDeviceProductID(0x03EB); // atmel ids
+  
   USBNDeviceBCDDevice(0x0200);
 
 
