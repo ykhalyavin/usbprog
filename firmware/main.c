@@ -513,11 +513,6 @@ int main(void)
 /* usbprog ids 
   USBNDeviceVendorID(0x1781);
   USBNDeviceProductID(0x0c62);
-*/
-
-  USBNDeviceVendorID(0x2104);	//atmel ids
-  USBNDeviceProductID(0x03EB); // atmel ids
-  
   USBNDeviceBCDDevice(0x0200);
 
 
@@ -528,6 +523,26 @@ int main(void)
   USBNDeviceManufacture ("Benedikt Sauter - www.ixbat.de  ");
   USBNDeviceProduct	("usbprog AVR Programmer");
   USBNDeviceSerialNumber("200612261");
+ 
+  USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
+  USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
+
+*/
+
+
+  USBNDeviceVendorID(0x003eb);	//atmel ids
+  USBNDeviceProductID(0x2104); // atmel ids
+  
+  USBNDeviceBCDDevice(0x0200);
+
+
+  char lang[]={0x09,0x04};
+  _USBNAddStringDescriptor(lang); // language descriptor
+
+  
+  USBNDeviceManufacture ("Benedikt Sauter - www.ixbat.de  ");
+  USBNDeviceProduct	("AVRISP mkII");
+  USBNDeviceSerialNumber("3");
 
   conf = USBNAddConfiguration();
 
@@ -536,7 +551,7 @@ int main(void)
   interf = USBNAddInterface(conf,0);
   USBNAlternateSetting(conf,interf,0);
 
-  USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
   
   MCUCR |=  (1 << ISC01); // fallende flanke

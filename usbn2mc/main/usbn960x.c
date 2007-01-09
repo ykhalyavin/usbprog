@@ -97,7 +97,7 @@ void _USBNReceiveEvent(void)
   char tmp;
   int i=0;
   
-  //USBNDebug("rx event\r\n");
+  USBNDebug("rx event\r\n");
   if(event & RX_FIFO0) _USBNReceiveFIFO0();
   
   // dynamic function call
@@ -610,7 +610,7 @@ void _USBNSetConfiguration(DeviceRequest *req)
   //
 
 USBNWrite(TXC1,FLUSH);
-USBNWrite(EPC1,EP_EN+0x03);      // enable EP1 at adr 1
+USBNWrite(EPC1,EP_EN+0x02);      // enable EP1 at adr 1
 
 
 USBNWrite(RXC1,FLUSH);
@@ -618,8 +618,8 @@ USBNWrite(EPC2,EP_EN+0x02);
 USBNWrite(RXC1,RX_EN);
 
 
-USBNWrite(TXC3,FLUSH);
-USBNWrite(EPC5,EP_EN+0x05); 
+//USBNWrite(TXC3,FLUSH);
+//USBNWrite(EPC5,EP_EN+0x05); 
 
 
 	

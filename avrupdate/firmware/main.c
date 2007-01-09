@@ -7,7 +7,7 @@
 //#include <avr/signal.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
-#define F_CPU 16000000
+#define F_CPU 8000000
 #include <util/delay.h>
 #include <avr/eeprom.h>
 
@@ -220,8 +220,8 @@ int main(void)
     0x00,	      // device subclass
     0x00,       // protocol code
     0x08,       // deep of ep0 fifo in byte (e.g. 8)
-    0x00,0x04,  // vendor id
-    0x5d,0xc3,  // product id
+    0x81,0x17,  // vendor id
+    0x0c,0x62,  // product id
     0x03,0x01,  // revision id (e.g 1.02)
     0x00,       // index of manuf. string
     0x00,	      // index of product string
