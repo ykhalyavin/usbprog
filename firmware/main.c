@@ -326,6 +326,16 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_GET_PARAMETER:
+			answer[0] = CMD_GET_PARAMETER;
+			answer[1] = STATUS_CMD_OK;
+		
+			switch(buf[1]){
+				case PARAM_STATUS_TGT_CONN:
+					answer[2] = STATUS_ISP_READY;
+				default:
+					answer[2] = 0x00; // FIXME all is not perfect!
+			}
+			CommandAnswer(3);
 
 		break;
 		case CMD_OSCCAL:
