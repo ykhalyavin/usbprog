@@ -363,7 +363,8 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_RESET_PROTECTION:
-
+			answer[0] = CMD_RESET_PROTECTION;
+			answer[1] = STATUS_CMD_OK;	// this command returns always ok!
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
 			//cbi	portb,SCK	; clear SCK
@@ -465,6 +466,18 @@ void USBFlash(char *buf)
 		break;
 		case CMD_READ_FUSE_ISP:
 
+		break;
+		case CMD_READ_SIGNATURE_ISP:
+			spi_out(buf[2]);	
+			spi_out(buf[3]);	
+			spi_out(buf[4]);	
+			result = spi_in();
+			
+			answer[0] = CMD_READ_SIGNATURE_ISP;
+			answer[1] = STATUS_CMD_OK;
+			answer[2] = result;
+			answer[3] = STATUS_CMD_OK;
+			CommandAnswer(4);
 		break;
 		case CMD_SPI_MULTI:
 			spi_out(buf[4]);	
