@@ -1,6 +1,7 @@
 /*
  * avrdude - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Joerg Wunsch
+ * Copyright (C) 2000, 2001, 2002, 2003  Brian S. Dean <bsd@bsdhome.com>
+ * Copyright (C) 2005 Michael Holzt <kju-avr@fqdn.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,30 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+/* $Id: serbb.h,v 1.1 2005/09/18 20:12:23 joerg_wunsch Exp $ */
 
-/* $Id: usbdevs.h,v 1.1 2006/01/12 23:13:50 joerg_wunsch Exp $ */
+#ifndef serbb_h
+#define serbb_h
 
-/*
- * defines for the USB interface
- */
+void serbb_initpgm        (PROGRAMMER * pgm);
 
-#ifndef usbdevs_h
-#define usbdevs_h
+int serbb_setpin(int fd, int pin, int value);
+int serbb_getpin(int fd, int pin);
+int serbb_highpulsepin(int fd, int pin);
 
-#define USB_VENDOR_ATMEL 0x1781
-#define USB_DEVICE_JTAGICEMKII 0x0c62
-#define USB_DEVICE_AVRISPMKII  0x0c62
-
-#define USB_VENDOR_NATIONAL 0x0400
-#define USB_DEVICE_USBPROG 0xc53d
+#endif
 
 
-/*
- * Should we query the endpoint number and max transfer size from USB?
- * After all, the JTAG ICE mkII docs document these values.
- */
-#define USBDEV_BULK_EP_WRITE 0x02
-#define USBDEV_BULK_EP_READ  0x83
-#define USBDEV_MAX_XFER 64
-
-#endif  /* usbdevs_h */

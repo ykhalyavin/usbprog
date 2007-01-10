@@ -1,6 +1,6 @@
 /*
  * avrdude - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Joerg Wunsch
+ * Copyright (C) 2000-2004  Brian S. Dean <bsd@bsdhome.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,38 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* $Id: usbdevs.h,v 1.1 2006/01/12 23:13:50 joerg_wunsch Exp $ */
+/* $Id: ppi.h,v 1.17 2006/12/11 12:47:35 joerg_wunsch Exp $ */
+
+#ifndef __ppi_h__
+#define __ppi_h__
 
 /*
- * defines for the USB interface
+ * PPI registers
  */
-
-#ifndef usbdevs_h
-#define usbdevs_h
-
-#define USB_VENDOR_ATMEL 0x1781
-#define USB_DEVICE_JTAGICEMKII 0x0c62
-#define USB_DEVICE_AVRISPMKII  0x0c62
-
-#define USB_VENDOR_NATIONAL 0x0400
-#define USB_DEVICE_USBPROG 0xc53d
+enum {
+  PPIDATA,
+  PPICTRL,
+  PPISTATUS
+};
 
 
-/*
- * Should we query the endpoint number and max transfer size from USB?
- * After all, the JTAG ICE mkII docs document these values.
- */
-#define USBDEV_BULK_EP_WRITE 0x02
-#define USBDEV_BULK_EP_READ  0x83
-#define USBDEV_MAX_XFER 64
 
-#endif  /* usbdevs_h */
+int ppi_get       (union filedescriptor *fdp, int reg, int bit);
+
+int ppi_set       (union filedescriptor *fdp, int reg, int bit);
+
+int ppi_clr       (union filedescriptor *fdp, int reg, int bit);
+
+int ppi_getall    (union filedescriptor *fdp, int reg);
+
+int ppi_setall    (union filedescriptor *fdp, int reg, int val);
+
+int ppi_toggle    (union filedescriptor *fdp, int reg, int bit);
+
+void ppi_open     (char * port, union filedescriptor *fdp);
+
+void ppi_close    (union filedescriptor *fdp);
+
+#endif
+
+

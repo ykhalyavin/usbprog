@@ -1,6 +1,6 @@
 /*
  * avrdude - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Joerg Wunsch
+ * Copyright (C) 2003-2004  Eric B. Weddington <eric@ecentral.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* $Id: usbdevs.h,v 1.1 2006/01/12 23:13:50 joerg_wunsch Exp $ */
-
-/*
- * defines for the USB interface
- */
-
-#ifndef usbdevs_h
-#define usbdevs_h
-
-#define USB_VENDOR_ATMEL 0x1781
-#define USB_DEVICE_JTAGICEMKII 0x0c62
-#define USB_DEVICE_AVRISPMKII  0x0c62
-
-#define USB_VENDOR_NATIONAL 0x0400
-#define USB_DEVICE_USBPROG 0xc53d
 
 
-/*
- * Should we query the endpoint number and max transfer size from USB?
- * After all, the JTAG ICE mkII docs document these values.
- */
-#define USBDEV_BULK_EP_WRITE 0x02
-#define USBDEV_BULK_EP_READ  0x83
-#define USBDEV_MAX_XFER 64
+#if defined(WIN32NATIVE)
 
-#endif  /* usbdevs_h */
+#include <limits.h>
+#include <windows.h>
+
+
+static char *filename;
+
+
+void win_sys_config_set(char sys_config[PATH_MAX])
+{
+    sys_config[0] = 0;
+    
+    /* Use Windows API call to search for the Windows default system config file.*/
+    SearchPath(NULL, "avrdude.conf", NULL, PATH_MAX, sys_config, &filename);
+    return;
+}
+
+
+void win_usr_config_set(char usr_config[PATH_MAX])
+{
+    usr_config[0] = 0;
+    
+    /* Use Windows API call to search for the Windows default user config file. */
+	SearchPath(NULL, "avrdude.rc", NULL, PATH_MAX, usr_config, &filename);
+    return;
+}
+
+
+#endif
+
+
