@@ -320,7 +320,10 @@ void USBFlash(char *buf)
 			CommandAnswer(13);
 		break;
 		case CMD_SET_PARAMETER:
-
+			// do we like, all commands are successfully
+			answer[0] = CMD_SET_PARAMETER;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 		break;
 		case CMD_GET_PARAMETER:
 
