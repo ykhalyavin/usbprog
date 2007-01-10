@@ -542,7 +542,7 @@ int main(void)
   
   USBNDeviceManufacture ("Benedikt Sauter - www.ixbat.de  ");
   USBNDeviceProduct	("AVRISP mkII");
-  USBNDeviceSerialNumber("3");
+  USBNDeviceSerialNumber("0000A0016461");
 
   conf = USBNAddConfiguration();
 
