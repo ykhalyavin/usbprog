@@ -24,7 +24,7 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define F_CPU 16000000
+#define F_CPU 8000000
 #include <util/delay.h>
 
 #include "wait.h"
@@ -65,18 +65,18 @@ struct pgmmode_t {
 	uint32_t address;
 } pgmmode;
 
+
 SIGNAL(SIG_UART_RECV)
 {
-  //Terminal(UARTGetChar());
-  //UARTWrite("usbn>");
+ //Terminal(UARTGetChar());
+ //UARTWrite("usbn>");
 }
 
 
 SIGNAL(SIG_INTERRUPT0)
 {
-  cli();
+  UARTWrite("i");
   USBNInterrupt();
-  sei();
 }
 
 /* id need for live update of firmware */
@@ -589,15 +589,15 @@ int main(void)
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
   
-  MCUCR |=  (1 << ISC01); // fallende flanke
+  //MCUCR |=  (1 << ISC01); // fallende flanke
 
-  GICR |= (1 << INT0);
-  sei();
+  //GICR |= (1 << INT0);
+
   USBNInitMC();
+  sei();
 
   // start usb chip
   USBNStart();
-
   while(1);
 }
 

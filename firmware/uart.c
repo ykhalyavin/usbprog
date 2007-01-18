@@ -20,7 +20,7 @@ void UARTInit(void)
 	//ATmega32 bei 16MHz und für 19200 Baud
 	// 4 mhz 9600 baud =25 
   	UBRRH  = 0;                                   // Highbyte ist 0
-  	UBRRL  = 26;                                  // Lowbyte ist 51 ( dezimal )
+  	UBRRL  = 51;                                  // Lowbyte ist 51 ( dezimal )
     // Flush Receive-Buffer
   
   	do
@@ -35,24 +35,30 @@ void UARTInit(void)
 
 void UARTPutChar(unsigned char sign)
 {
+	#if 0
   	// bei neueren AVRs steht der Status in UCSRA/UCSR0A/UCSR1A, hier z.B. fuer ATmega16:
   	while (!(UCSRA & (1<<UDRE))); /* warten bis Senden moeglich                   */
   		UDR = sign;                    /* schreibt das Zeichen x auf die Schnittstelle */
+	#endif
 }
 
 
 unsigned char UARTGetChar(void)
 {
+	#if 0
     while (!(UCSRA & (1<<RXC)));  // warten bis Zeichen verfuegbar
   		return UDR;                   // Zeichen aus UDR an Aufrufer zurueckgeben
+	#endif
 }
 
 void UARTWrite(char* msg)
 {
+	#if 0
   	while(*msg != '\0')
   	{
      	UARTPutChar (*msg++);
   	}
+	#endif
 }
 
 unsigned char AsciiToHex(unsigned char high,unsigned char low)

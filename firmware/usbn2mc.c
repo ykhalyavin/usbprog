@@ -30,7 +30,7 @@
 void USBNInitMC(void)
 {
   MCUCR |=  (1 << ISC01); // fallende flanke
-   GICR |= (1 << INT0);
+  GICR |= (1 << INT0);
 
   USB_CTRL_DDR = 0xf8;
   //USB_CTRL_DDR = 0xff;
