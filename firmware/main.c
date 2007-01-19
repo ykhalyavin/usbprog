@@ -75,7 +75,6 @@ SIGNAL(SIG_UART_RECV)
 
 SIGNAL(SIG_INTERRUPT0)
 {
-  UARTWrite("i");
   USBNInterrupt();
 }
 
