@@ -461,6 +461,15 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_PROGRAM_FUSE_ISP:
+			spi_out(buf[1]);	
+			spi_out(buf[2]);	
+			spi_out(buf[3]);	
+			spi_out(buf[4]);	
+	
+			answer[0] = CMD_PROGRAM_FUSE_ISP;
+			answer[1] = STATUS_CMD_OK;
+			answer[2] = STATUS_CMD_OK;
+			CommandAnswer(3);
 
 		break;
 		case CMD_READ_FUSE_ISP:
