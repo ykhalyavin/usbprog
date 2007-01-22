@@ -564,7 +564,7 @@ int main(void)
 */
 
 
-  USBNDeviceVendorID(0x003eb);	//atmel ids
+  USBNDeviceVendorID(0x03eb);	//atmel ids
   USBNDeviceProductID(0x2104); // atmel ids
   
   USBNDeviceBCDDevice(0x0200);
@@ -574,8 +574,8 @@ int main(void)
   _USBNAddStringDescriptor(lang); // language descriptor
 
   
-  USBNDeviceManufacture ("Benedikt Sauter - www.ixbat.de  ");
-  USBNDeviceProduct	("AVRISP mkII");
+  USBNDeviceManufacture ("B.Sauter");
+  USBNDeviceProduct	("AVRISPv2/usbprog");
   USBNDeviceSerialNumber("0000A0016461");
 
   conf = USBNAddConfiguration();
