@@ -1,0 +1,28 @@
+Partlist
+
+Exported from usbprog.sch at  1/22/2007 18:47:37 
+
+EAGLE Version 4.16r1 Copyright (c) 1988-2006 CadSoft
+
+Part     Value          Device          Package      Library        Sheet
+
+C6       100n           C-EUC1206       C1206        rcl            1
+C8       15p            C-EUC1206       C1206        rcl            1
+C9       15p            C-EUC1206       C1206        rcl            1
+C10      100n           C-EUC1206       C1206        rcl            1
+C11      1µ             C-EUC1206       C1206        rcl            1
+IC1      MEGA32-A       MEGA32-A        TQFP44       avr            1
+JP1                     JP2E            JP2          jumper         1
+JP2                     JP1E            JP1          jumper         1
+LED1                    LEDCHIP-LED0805 CHIP-LED0805 led            1
+LED2                    LEDCHIP-LED0805 CHIP-LED0805 led            1
+M1       USBN9604       USBN9604        SO28-3       bene           1
+Q1       24MHz          XTAL/S          QS           special        1
+R1       1M             R-EU_R1206      R1206        rcl            1
+R2                      R-EU_M1206      M1206        rcl            1
+R3                      R-EU_M1206      M1206        rcl            1
+R4       1,5K           R-EU_M1206      M1206        rcl            1
+R5       100K           R-EU_R1206      R1206        rcl            1
+R6       10k            R-EU_R1206      R1206        rcl            1
+SV2                     ML10L           ML10L        con-harting-ml 1
+X1                      PN61729         PN61729      con-berg       1
