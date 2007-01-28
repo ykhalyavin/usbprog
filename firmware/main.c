@@ -344,14 +344,12 @@ void USBFlash(char *buf)
 			// save address
 			//buf[1],buf[2],buf[3],buf[4]
 			// msb first
-			UARTWrite("\r\nla");
 			SendHex(buf[1]);
 			SendHex(buf[2]);
 			SendHex(buf[3]);
 			SendHex(buf[4]);
-			UARTWrite("\r\n");
-			//if(((buf[1]<<24)|(buf[2]<<16)|(buf[3]<<8)|(buf[4])) ==0)
-			//pgmmode.address = 0;
+			
+			//set given address
 			pgmmode.address = (buf[1]<<24)|(buf[2]<<16)|(buf[3]<<8)|(buf[4]);
 			//loadaddress = 0;
 			answer[0] = CMD_LOAD_ADDRESS;
@@ -449,6 +447,11 @@ void USBFlash(char *buf)
 		break;
 		case CMD_READ_FLASH_ISP:
 			//TODO FIXME
+			//pgmmode.numbytes = (buf[1]<<8)|(buf[2]);
+			//pgmmode.cmd3 = buf[3];
+			// collect max first 62 bytes
+			// then toggle send next read bytes
+			// and finish with status_cmd_ok
 
 			answer[0] = CMD_READ_FLASH_ISP;
 			answer[1] = STATUS_CMD_FAILED;
