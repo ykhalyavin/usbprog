@@ -2,15 +2,15 @@ Stueckliste/Partlist usbprog
 
 Part     Value          Device          Package      notice
 
-C6       100n           C-EUC1206       C1206        (gelb makiert, yellow marked)
-C8       15p            C-EUC1206       C1206        (blau makiert, blue marked) 
-C9       15p            C-EUC1206       C1206        (blau makiert, blue marked)
-C10      100n           C-EUC1206       C1206        (gelb makiert, yellow marked) 
+C6       100n           C-EUC1206       C1206        (gelb markiert, yellow marked)
+C8       15p            C-EUC1206       C1206        (blau markiert, blue marked) 
+C9       15p            C-EUC1206       C1206        (blau markiert, blue marked)
+C10      100n           C-EUC1206       C1206        (gelb markiert, yellow marked) 
 C11      1µ             C-EUC1206       C1206        
 IC1      MEGA32-A       MEGA32-A        TQFP44       
 JP1      3 Pins         JP2E            JP2          
 JP2      2 Pins         JP1E            JP1          jumper         1
-LED1     (green)        LEDCHIP-LED0805 CHIP-LED0805 (schwarz makiert, black marked) 
+LED1     (green)        LEDCHIP-LED0805 CHIP-LED0805 (schwarz markiert, black marked) 
 LED2     (red)          LEDCHIP-LED0805 CHIP-LED0805 
 M1       USBN9604       USBN9604        SO28-3       
 Q1       24MHz          XTAL/S          QS          
