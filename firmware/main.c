@@ -457,6 +457,20 @@ void USBFlash(char *buf)
 			answer[1] = STATUS_CMD_FAILED;
 			CommandAnswer(2);
 		break;
+
+		case CMD_READ_LOCK_ISP:
+			spi_out(buf[2]);	
+			spi_out(buf[3]);	
+			spi_out(buf[4]);	
+			result = spi_in();
+			
+			answer[0] = CMD_READ_LOCK_ISP;
+			answer[1] = STATUS_CMD_OK;
+			answer[2] = result;
+			answer[3] = STATUS_CMD_OK;
+			CommandAnswer(4);
+		break;
+
 		case CMD_PROGRAM_EEPROM_ISP:
 
 		break;
