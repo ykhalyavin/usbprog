@@ -12,15 +12,30 @@ Folders:
 
 
 avarice_corner
+++++++++++++++
+Server for the connection between GDB and the jtag interface of the target controller.
+
+	
+
+
 
 avrdude_corner
+++++++++++++++
+Here is a patched Version of avrdude for usbprog
+
 
 avrupdate
++++++++++
 
 board
++++++
+Schematic, Layout, Partlist
 
 firmware
+++++++++
+Actual firmware of usbprog
 
 ownflashtool
+++++++++++++
+I used this tool only for testing
 
-usbn2mc
