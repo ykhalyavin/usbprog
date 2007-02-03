@@ -1,0 +1,14 @@
+.deps
+Makefile
+Makefile.in
+aclocal.m4
+autoconf.h
+autoconf.hin
+autom4te.cache
+avarice
+config.log
+config.status
+configure
+stamp-h1
+TAGS
+tags

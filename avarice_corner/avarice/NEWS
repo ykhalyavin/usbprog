@@ -1,0 +1,68 @@
+# $Id: NEWS,v 1.6 2006/12/21 23:21:08 joerg_wunsch Exp $
+
+Summary of changes since AVaRICE 2.6
+=================================
+
+New CPU support added:
+----------------------
+
+. 
+
+New features added:
+-------------------
+
+. 
+
+Summary of important bug fixes:
+-------------------------------
+
+. 
+
+=====================================================================
+Summary of changes in AVaRICE 2.6
+=================================
+
+New CPU support added:
+----------------------
+
+. ATmega164P/324P (removed non-existing ATmega164/324)
+
+New features added:
+-------------------
+
+. Support of the AVR Dragon (both, JTAG and debugWire)
+
+Summary of important bug fixes:
+-------------------------------
+
+. Don't fork the USB daemon with the libusb handle open;
+  instead, re-open the connection in the child.  Fixes issues
+  with MacOS X and Cygwin.
+
+=====================================================================
+Summary of changes in AVaRICE 2.5
+=================================
+
+New CPU support added:
+----------------------
+
+. AT90USB1287
+. ATmega2560/2561
+. debugWIRE AVRs (ATmega48/88/168, ATtiny13, ATtiny2313, AT90PWM2/3,
+  ATtiny24/44, ATtiny25/45, ATtiny261/461/861)
+
+New features added:
+-------------------
+
+. JTAG daisy chainging
+. basic debugWIRE support (still limited to four breakpoints; known
+  to occasionally cause trouble over USB, works better over RS-232)
+
+Summary of important bug fixes:
+-------------------------------
+
+. fix ucAllowFullPageBitstream for ATmega640/1280/1281, AT90CAN128
+. fix device descriptors, in particular EEPROM access on recent AVRs
+
+=====================================================================
+[Versions up to AVaRICE 2.4 did not have a NEWS file entry.]

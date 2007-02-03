@@ -1,0 +1,3 @@
+ioreg.o ioreg.o: ioreg.cc ioreg.h
+
+ioreg.h:
