@@ -1,1 +1,26 @@
-usbprog is an avrisp mk2 compatible isp programmer
+usbprog is a developer kit for atmels avr controller
+
+	its supports:
+		- an ISP Interface (AVRISP mkII Klon)
+		- a JTAG Interface (JTAGICE mkII Klon)
+		- a seriell Interface (RS232 with an GNU/Linux kernelmodule to use it as /dev/ttyUSBx)
+
+
+
+
+Folders:
+
+
+avarice_corner
+
+avrdude_corner
+
+avrupdate
+
+board
+
+firmware
+
+ownflashtool
+
+usbn2mc
