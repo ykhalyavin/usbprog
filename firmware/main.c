@@ -568,7 +568,6 @@ int main(void)
   USBNInit();   
   
   usbprog.longpackage=0;
-  // setup your usbn device
 
 /* usbprog ids 
   USBNDeviceVendorID(0x1781);
@@ -614,10 +613,6 @@ int main(void)
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
   
-  //MCUCR |=  (1 << ISC01); // fallende flanke
-
-  //GICR |= (1 << INT0);
-
   USBNInitMC();
   sei();
 

@@ -309,9 +309,7 @@ void _USBNReceiveFIFO0(void)
 	  #if DEBUG
             USBNDebug("SET INTERFACE\n\r");	
 	  #endif
-            //if(EP0rx.Buf[2])
-            //   USBNWrite(EPC1,0);      // stall the endpoint
-	    USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+	    			USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           default:				// unsupported standard req
 	  #if DEBUG
