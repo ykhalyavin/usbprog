@@ -630,7 +630,7 @@ int main(void)
   
   USBNDeviceManufacture ("B.Sauter");
   USBNDeviceProduct	("usbprog ");
-  USBNDeviceSerialNumber("0000A0000252");
+  USBNDeviceSerialNumber("0000A00128255");
 
 	//0000A0016461 (aktuelle)
 	//0000A0019647
