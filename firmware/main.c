@@ -521,10 +521,15 @@ void USBFlash(char *buf)
 			
 			// instruction
 			switch(buf[4]) {	
-				// read flash
+				// read low flash byte
 				case 0x20:
 					result = spi_in();
 				break;
+				// read high flash byte
+				case 0x28:
+					result = spi_in();
+				break;
+
 				// read signature
 				case 0x30:
 					result = spi_in();
