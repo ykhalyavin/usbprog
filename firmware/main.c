@@ -331,6 +331,20 @@ void USBFlash(char *buf)
 			switch(buf[1]){
 				case PARAM_STATUS_TGT_CONN:
 					answer[2] = STATUS_ISP_READY;
+				break;
+
+				case PARAM_SW_MAJOR:	// avrisp mkII special 
+					answer[2] = 1;
+				break;
+
+				case PARAM_SW_MINOR:	// abrisp mkII special
+					answer[2] = 5;
+				break;
+
+				case PARAM_HW_VER:
+					answer[2] = 0;
+				break;
+
 				default:
 					answer[2] = 0x00; // FIXME all is not perfect!
 			}
