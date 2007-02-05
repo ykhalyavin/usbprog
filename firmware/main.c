@@ -518,6 +518,7 @@ void USBFlash(char *buf)
 			spi_out(buf[4]);	
 			spi_out(buf[5]);	
 			spi_out(buf[6]);	
+			wait_ms(4);
 			
 			// instruction
 			switch(buf[4]) {	
@@ -568,6 +569,7 @@ void USBFlash(char *buf)
 		}
 	}
 }
+
 
 int main(void)
 {
