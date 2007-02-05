@@ -427,7 +427,7 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 			usbprog.datatogl=0;	// to be sure that togl is on next session clear
 
-			PORTA &= ~(1<<PA4); //off
+			//PORTA &= ~(1<<PA4); //off
 		break;
 		case CMD_CHIP_ERASE_ISP:
 			spi_out(buf[3]);		
@@ -639,8 +639,8 @@ int main(void)
 */
 
 	DDRA = (1 << DDA4);
-  PORTA |= (1<<PA4);	//on
-	//PORTA &= ~(1<<PA4); //off
+  //PORTA |= (1<<PA4);	//on
+	PORTA &= ~(1<<PA4); //off
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
   USBNDeviceProductID(0x2104); // atmel ids
