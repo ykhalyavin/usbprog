@@ -24,7 +24,7 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define F_CPU 8000000
+#define F_CPU 16000000
 #include <util/delay.h>
 
 #include "wait.h"
@@ -108,8 +108,9 @@ void spi_init()
 
 	DDR_SPI = (1<<MOSI)|(1<<SCK)|(1<<RESET);
 	
-	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|3;
-    SPSR = (0<<SPI2X);
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);	//128tel
+	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|3;
+  //SPSR = (0<<SPI2X);
 }
 
 void spi_out(char data)
