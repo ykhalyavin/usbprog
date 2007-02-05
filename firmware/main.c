@@ -345,6 +345,10 @@ void USBFlash(char *buf)
 					answer[2] = 0;
 				break;
 
+				case PARAM_VTARGET:
+					answer[2] = 42;
+				break;
+	
 				default:
 					answer[2] = 0x00; // FIXME all is not perfect!
 			}
