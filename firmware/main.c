@@ -443,13 +443,14 @@ void USBFlash(char *buf)
 			usbprog.cmdpackage = 1;
 			flash_program_fsm(buf);
 			usbprog.cmdpackage = 0;
-			
 		break;
+
 		case CMD_READ_FLASH_ISP:
-			//TODO FIXME
-			//pgmmode.numbytes = (buf[1]<<8)|(buf[2]);
-			//pgmmode.cmd3 = buf[3];
+			
+			pgmmode.numbytes = (buf[1]<<8)|(buf[2]); // number of bytes
+			pgmmode.cmd3 = buf[3];	// read command
 			// collect max first 62 bytes
+			
 			// then toggle send next read bytes
 			// and finish with status_cmd_ok
 
@@ -520,6 +521,10 @@ void USBFlash(char *buf)
 			
 			// instruction
 			switch(buf[4]) {	
+				// read flash
+				case 0x20:
+					result = spi_in();
+				break;
 				// read signature
 				case 0x30:
 					result = spi_in();
