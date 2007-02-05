@@ -82,7 +82,7 @@ SIGNAL(SIG_INTERRUPT0)
 
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
-	UARTWrite("vendor request check ");
+	//UARTWrite("vendor request check ");
 	SendHex(req->bRequest);
 	switch(req->bRequest)
 	{
@@ -182,7 +182,7 @@ void flash_program_fsm(char * buf)
 	// if page mode
 	if(pgmmode.mode && 0x01) {
 		if(usbprog.cmdpackage==1) {
-			UARTWrite("\r\ncmd");
+			//UARTWrite("\r\ncmd");
 			// darf man nur max 54 bytes schreiben
 			if(pgmmode.numbytes > 54) {
 				bytes = 64;
@@ -205,7 +205,7 @@ void flash_program_fsm(char * buf)
 			usbprog.cmdpackage = 0;
 		}
 		else {
-			UARTWrite("\r\ndata");
+			//UARTWrite("\r\ndata");
 			// sonst max 64
 			if(pgmmode.numbytes > 64) {
 				bytes = 64;
@@ -290,6 +290,7 @@ void USBFlash(char *buf)
 {
 	int i; 
 	char result;
+	int count = 32;
 	uint16_t numberofbytes;
 	if(usbprog.longpackage) {
 		if(usbprog.lastcmd == CMD_PROGRAM_FLASH_ISP)
@@ -358,6 +359,21 @@ void USBFlash(char *buf)
 		case CMD_OSCCAL:
 
 		break;
+
+		case CMD_READ_OSCCAL_ISP:
+			spi_out(buf[2]);	
+			spi_out(buf[3]);	
+			spi_out(buf[4]);	
+			result = spi_in();
+			
+			answer[0] = CMD_READ_OSCCAL_ISP;
+			answer[1] = STATUS_CMD_OK;
+			answer[2] = result;
+			answer[3] = STATUS_CMD_OK;
+			CommandAnswer(4);
+
+		break;
+
 		case CMD_LOAD_ADDRESS:
 			// save address
 			//buf[1],buf[2],buf[3],buf[4]
@@ -391,12 +407,11 @@ void USBFlash(char *buf)
 			//PORTB |= (1<<RESET);	// give reset a positive pulse
 			// clr_reset		;	set RESET = 0
 			//PORTB &= ~(1<<RESET);
-			wait_ms(50);
+			wait_ms(100);
 	
 			spi_out(0xac);
 			spi_out(0x53);
 
-			int count = 32;
 			answer[1] = STATUS_CMD_FAILED;
 			do {
 				result = spi_in();
@@ -440,7 +455,7 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_PROGRAM_FLASH_ISP:
-			UARTWrite("\r\nfla");
+			//UARTWrite("\r\nfla");
 			// buf[1] = msb number of bytes
 			// buf[2] = lsb number of bytes
 			pgmmode.numbytes = (buf[1]<<8)|(buf[2]);
@@ -612,7 +627,7 @@ void USBFlash(char *buf)
 int main(void)
 {
   int conf, interf;
-  UARTInit();
+  //UARTInit();
 
   spi_init();
   USBNInit();   
