@@ -421,13 +421,13 @@ void USBFlash(char *buf)
 			CommandAnswer(2);
 		break;
 		case CMD_LEAVE_PROGMODE_ISP:
+			PORTA &= ~(1<<PA4); //off
 			PORTB |= (1<<RESET);	// give reset a positive pulse
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
 			usbprog.datatogl=0;	// to be sure that togl is on next session clear
 
-			//PORTA &= ~(1<<PA4); //off
 		break;
 		case CMD_CHIP_ERASE_ISP:
 			spi_out(buf[3]);		
