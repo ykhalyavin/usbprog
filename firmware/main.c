@@ -51,7 +51,7 @@ volatile struct usbprog_t {
 	int datatogl;
 } usbprog;
 
-volatile char answer[64];
+volatile char answer[300];
 
 struct pgmmode_t {
 	unsigned short numbytes;
@@ -450,6 +450,13 @@ void USBFlash(char *buf)
 			pgmmode.numbytes = (buf[1]<<8)|(buf[2]); // number of bytes
 			pgmmode.cmd3 = buf[3];	// read command
 			// collect max first 62 bytes
+			for(pgmmode.numbytes;pgmmode.numbytes > 0; pgmmode.numbytes--) {
+				spi_out(pgmmode.cmd3);
+				spi_out(pgmmode.address>>8);
+				spi_out(pgmmode.address);
+				answer[pgmmode.address+2]=spi_in();
+				pgmmode.address++;
+			}
 			
 			// then toggle send next read bytes
 			// and finish with status_cmd_ok
@@ -518,14 +525,15 @@ void USBFlash(char *buf)
 			spi_out(buf[4]);	
 			spi_out(buf[5]);	
 			spi_out(buf[6]);	
-			wait_ms(4);
 			
 			// instruction
 			switch(buf[4]) {	
+				
 				// read low flash byte
 				case 0x20:
 					result = spi_in();
 				break;
+				
 				// read high flash byte
 				case 0x28:
 					result = spi_in();
@@ -535,18 +543,27 @@ void USBFlash(char *buf)
 				case 0x30:
 					result = spi_in();
 				break;
+				
 				// read lfuse
 				case 0x50:
 					result = spi_in();
 				break;
+					
+			  // read lock
+				case 0x38:
+					result = spi_in();
+				break;
+
 				// read hfuse and lock
 				case 0x58:
 					result = spi_in();
 				break;
+				
 				// read eeprom memory
 				case 0xa0:
 					result = spi_in();
 				break;
+				
 				//write eeprom
 				case 0xc0:
 					spi_out(buf[7]);
@@ -612,8 +629,12 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("AVRISPv2/usbprog");
-  USBNDeviceSerialNumber("0000A0016461");
+  USBNDeviceProduct	("usbprog ");
+  USBNDeviceSerialNumber("0000A0000252");
+
+	//0000A0016461 (aktuelle)
+	//0000A0019647
+	//0000A0000252
 
   conf = USBNAddConfiguration();
 
