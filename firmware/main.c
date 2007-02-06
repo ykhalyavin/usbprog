@@ -270,7 +270,7 @@ void CommandAnswer(int length)
 {
 	int i;
 
-  	USBNWrite(TXC1,FLUSH);
+ 	USBNWrite(TXC1,FLUSH);
 	for(i=0;i<length;i++)
 		USBNWrite(TXD1,answer[i]);
 
