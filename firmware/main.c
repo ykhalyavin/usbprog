@@ -351,6 +351,10 @@ void USBFlash(char *buf)
 					answer[2] = 42;
 				break;
 	
+				case PARAM_SCK_DURATION:
+					answer[2] = 3; // 1MHz
+				break;	
+
 				default:
 					answer[2] = 0x00; // FIXME all is not perfect!
 			}
