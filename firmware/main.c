@@ -414,10 +414,11 @@ void USBFlash(char *buf)
 			spi_out(0x53);
 
 			answer[1] = STATUS_CMD_FAILED;
-			do {
+			int syncloops = buf[4];
+			for (syncloops;syncloops>0;syncloops--) {
 				result = spi_in();
 				//SendHex(result);
-				if (result == 0x53) {
+				if (result == buf[6]) {	//0x53 for avr
 					answer[1] = STATUS_CMD_OK;
 					break;
 				}
@@ -429,7 +430,7 @@ void USBFlash(char *buf)
 				PORTB &= ~(1<<SCK);
 				spi_out(0xac);
 				spi_out(0x53);
-			} while(--count);
+			};
 
 			spi_out(0x00);
 
