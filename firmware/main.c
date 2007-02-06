@@ -409,15 +409,14 @@ void USBFlash(char *buf)
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
 			PORTA |= (1<<PA4);	//on
-			PORTB &= ~(1<<RESET); //on
+			//PORTB &= ~(1<<RESET); //on
 			//cbi	portb,SCK	; clear SCK
-			PORTB &= ~(1<<SCK);
+			//PORTB &= ~(1<<SCK); //bum
 			
 			// set_reset		;	set RESET = 1
-			//PORTB |= (1<<RESET);	// give reset a positive pulse
-			// clr_reset		;	set RESET = 0
-			//PORTB &= ~(1<<RESET);
-			wait_ms(100);
+			PORTB |= (1<<RESET);	// give reset a positive pulse
+			PORTB &= ~(1<<RESET); // clr_reset    ; set RESET = 0
+			wait_ms(5);
 	
 			spi_out(0xac);
 			spi_out(0x53);
@@ -432,11 +431,18 @@ void USBFlash(char *buf)
 					break;
 				}
 				spi_out(0x00);
-				PORTB |= (1<<SCK);
+
+				/*PORTB |= (1<<SCK);
 				asm("nop");
 				asm("nop");
 				asm("nop");
 				PORTB &= ~(1<<SCK);
+				*/ //bumm	
+
+				PORTB |= (1<<RESET);	// give reset a positive pulse
+				PORTB &= ~(1<<RESET); // clr_reset    ; set RESET = 0
+				wait_ms(5);
+
 				spi_out(0xac);
 				spi_out(0x53);
 			};
