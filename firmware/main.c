@@ -108,7 +108,7 @@ void spi_init()
 
 	DDR_SPI = (1<<MOSI)|(1<<SCK)|(1<<RESET);
 	
-	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);	//128tel
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);	//128tel
 	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|3;
   //SPSR = (0<<SPI2X);
 }
