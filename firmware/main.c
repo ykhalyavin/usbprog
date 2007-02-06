@@ -123,7 +123,12 @@ void spi_out(char data)
 char spi_in()
 {
 	SPDR = 0;
-	while(!(SPSR & (1<<SPIF)));
+	int timeout = 1000;
+	while(!(SPSR & (1<<SPIF))){
+		timeout--;
+		if(timeout==0)
+			break;
+	}
 	return SPDR;
 }
 
