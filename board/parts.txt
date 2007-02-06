@@ -19,6 +19,6 @@ R2       270            R-EU_M1206      M1206        (2700)
 R3       270            R-EU_M1206      M1206        (2700)	 
 R4       1,5K           R-EU_M1206      M1206        (1501) 
 R5       100K           R-EU_R1206      R1206        (1003) 
-R6       10k            R-EU_R1206      R1206        (1003) 
-SV2                     ML10L           ML10L        (1002)
+R6       10k            R-EU_R1206      R1206        (1002) 
+SV2                     ML10L           ML10L 
 X1       USB Buchse B   PN61729         PN61729      
