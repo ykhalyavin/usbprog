@@ -65,7 +65,7 @@ create_window (void)
   GtkWidget *hbox10;
   GtkWidget *label18;
   GtkWidget *fixed1;
-  GtkWidget *labelSize;
+  GtkWidget *label34;
   GtkWidget *hbox24;
   GtkWidget *hseparator5;
   GtkWidget *vbuttonbox2;
@@ -97,7 +97,7 @@ create_window (void)
   GtkWidget *label3;
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), _("avrupdate - AVR Online Update"));
+  gtk_window_set_title (GTK_WINDOW (window), _("usbprog - Online Update"));
   gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
 
   hbox1 = gtk_hbox_new (FALSE, 0);
@@ -131,7 +131,7 @@ create_window (void)
   gtk_widget_show (hbox12);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox12, FALSE, FALSE, 0);
 
-  label25 = gtk_label_new (_("<b>USB Device IDs:</b>"));
+  label25 = gtk_label_new (_("<b>USB Firmware IDs:</b>"));
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (hbox12), label25, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
@@ -170,7 +170,7 @@ create_window (void)
   gtk_widget_show (hbox20);
   gtk_box_pack_start (GTK_BOX (hbox16), hbox20, TRUE, TRUE, 0);
 
-  label31 = gtk_label_new (_("<b>USB avrupdate IDs:</b>"));
+  label31 = gtk_label_new (_("<b>USB usbprog ID:</b>"));
   gtk_widget_show (label31);
   gtk_box_pack_start (GTK_BOX (hbox20), label31, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label31), TRUE);
@@ -217,7 +217,7 @@ create_window (void)
   gtk_widget_show (hbox13);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox13, FALSE, TRUE, 0);
 
-  label30 = gtk_label_new (_("<b>Version File</b> (http://www../version.conf)<b>:</b>"));
+  label30 = gtk_label_new (_("<b>Version File</b> (http://www../versions.conf)<b>:</b>"));
   gtk_widget_show (label30);
   gtk_box_pack_start (GTK_BOX (hbox13), label30, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label30), TRUE);
@@ -242,7 +242,7 @@ create_window (void)
   gtk_widget_show (hbox10);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox10, FALSE, TRUE, 0);
 
-  label18 = gtk_label_new (_("<b>Application Info:</b>"));
+  label18 = gtk_label_new (_("<b>Firmware Info:</b>"));
   gtk_widget_show (label18);
   gtk_box_pack_start (GTK_BOX (hbox10), label18, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label18), TRUE);
@@ -251,10 +251,11 @@ create_window (void)
   gtk_widget_show (fixed1);
   gtk_box_pack_start (GTK_BOX (vbox6), fixed1, TRUE, TRUE, 0);
 
-  labelSize = gtk_label_new ("");
-  gtk_fixed_put (GTK_FIXED (fixed1), labelSize, 88, 40);
-  gtk_widget_set_size_request (labelSize, 112, 16);
-  gtk_misc_set_alignment (GTK_MISC (labelSize), 0.5, 0.53);
+  label34 = gtk_label_new (_("usbprog - AVRISP mkII Klon 0.3"));
+  gtk_widget_show (label34);
+  gtk_fixed_put (GTK_FIXED (fixed1), label34, 0, 0);
+  gtk_widget_set_size_request (label34, 224, 16);
+  gtk_label_set_justify (GTK_LABEL (label34), GTK_JUSTIFY_FILL);
 
   hbox24 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox24);
@@ -269,16 +270,15 @@ create_window (void)
   gtk_box_pack_start (GTK_BOX (vbox6), vbuttonbox2, TRUE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox2), GTK_BUTTONBOX_SPREAD);
 
-  buttonVersion = gtk_button_new_with_mnemonic (_("Read AVR Version"));
+  buttonVersion = gtk_button_new_with_mnemonic (_("Get Firmware Version"));
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonVersion);
   GTK_WIDGET_SET_FLAGS (buttonVersion, GTK_CAN_DEFAULT);
 
   buttonQuick = gtk_button_new_with_mnemonic (_("Quick Auto Update"));
-  gtk_widget_show (buttonQuick);
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonQuick);
   GTK_WIDGET_SET_FLAGS (buttonQuick, GTK_CAN_DEFAULT);
 
-  buttonStartAU = gtk_button_new_with_mnemonic (_("Start Update Mode (with Vendor Request)"));
+  buttonStartAU = gtk_button_new_with_mnemonic (_("Start update mode"));
   gtk_widget_show (buttonStartAU);
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonStartAU);
   GTK_WIDGET_SET_FLAGS (buttonStartAU, GTK_CAN_DEFAULT);
@@ -295,11 +295,11 @@ create_window (void)
   gtk_widget_show (hbox18);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox18, TRUE, TRUE, 0);
 
-  label27 = gtk_label_new (_("Author: Benedikt Sauter <sauter@ixbat.de>\nHomepage: http://www.ixbat.de"));
+  label27 = gtk_label_new (_("Author: Benedikt Sauter, sauter@ixbat.de\nhttp://www.embedded-projects.net/usbprog"));
   gtk_widget_show (label27);
   gtk_box_pack_start (GTK_BOX (hbox18), label27, FALSE, FALSE, 0);
 
-  label1 = gtk_label_new (_("AVR Board"));
+  label1 = gtk_label_new (_("usbprog"));
   gtk_widget_show (label1);
   gtk_frame_set_label_widget (GTK_FRAME (frame1), label1);
 
@@ -449,7 +449,7 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (window, label18, "label18");
   GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
-  GLADE_HOOKUP_OBJECT (window, labelSize, "labelSize");
+  GLADE_HOOKUP_OBJECT (window, label34, "label34");
   GLADE_HOOKUP_OBJECT (window, hbox24, "hbox24");
   GLADE_HOOKUP_OBJECT (window, hseparator5, "hseparator5");
   GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
