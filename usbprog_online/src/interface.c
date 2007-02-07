@@ -242,7 +242,7 @@ create_window (void)
   gtk_widget_show (hbox10);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox10, FALSE, TRUE, 0);
 
-  label18 = gtk_label_new (_("<b>Firmware Info:</b>"));
+  label18 = gtk_label_new (_("<b>Actual Firmware:</b>"));
   gtk_widget_show (label18);
   gtk_box_pack_start (GTK_BOX (hbox10), label18, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label18), TRUE);
@@ -278,7 +278,7 @@ create_window (void)
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonQuick);
   GTK_WIDGET_SET_FLAGS (buttonQuick, GTK_CAN_DEFAULT);
 
-  buttonStartAU = gtk_button_new_with_mnemonic (_("Start update mode"));
+  buttonStartAU = gtk_button_new_with_mnemonic (_("Start update mode (1)"));
   gtk_widget_show (buttonStartAU);
   gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonStartAU);
   GTK_WIDGET_SET_FLAGS (buttonStartAU, GTK_CAN_DEFAULT);
@@ -371,15 +371,15 @@ create_window (void)
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox3, FALSE, TRUE, 0);
 
-  buttonDownload = gtk_button_new_with_mnemonic (_("Download Version List"));
+  buttonDownload = gtk_button_new_with_mnemonic (_("Download Version List (2)"));
   gtk_widget_show (buttonDownload);
   gtk_box_pack_start (GTK_BOX (hbox3), buttonDownload, FALSE, FALSE, 0);
 
-  buttonFLash = gtk_button_new_with_mnemonic (_("Flash selected File"));
+  buttonFLash = gtk_button_new_with_mnemonic (_("Flash selected File (3)"));
   gtk_widget_show (buttonFLash);
   gtk_box_pack_start (GTK_BOX (hbox3), buttonFLash, FALSE, FALSE, 0);
 
-  buttonStart = gtk_button_new_with_mnemonic (_("Start Application"));
+  buttonStart = gtk_button_new_with_mnemonic (_("Start Application (4)"));
   gtk_widget_show (buttonStart);
   gtk_box_pack_start (GTK_BOX (hbox3), buttonStart, FALSE, FALSE, 0);
 
