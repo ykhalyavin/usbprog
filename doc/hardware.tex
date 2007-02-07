@@ -14,5 +14,49 @@
 \maketitle
 \tableofcontents
 
+\subsection{Einleitung}
+
+Für den Aufbau braucht man keine Spezialwerkzeuge. 
+Etwas Lötfett ist von Vorteil für das verlöten der ATMega32 Pins mit der Platine. 
+Alle anderen Bauteile sollten mit etwas Erfahrung keine Probleme bereiten. 
+Es ist ratsam mit einer Kreuzpinzette zu arbeiten, da so ein kontrollierter Druck 
+auf das Bauteil ausgeübt werden kann beim anbringen der SMD Bauteile. 
+Da die Pads auf der Platine vorverzinnt sind, braucht man eigentlich kein weiteres Lötzinn, 
+wer aber sicher gehen möchte kann nachträglich noch ein wenig Lötzinn spendieren. 
+
+
+Es ist ratsam, die Platine nicht komplett zu bestücken, sondern zwischen drin 
+kleine Funktionstests zu machen. Die Platine ist bedruckt mit den Bezeichnungen der Bauteile. 
+Trotzem sollte man sich die folgenden zwei Pläne auszudrucken und daneben legen, um sich bei jedem Teil sicher zu sein, dass es an der richtigen Stelle festgelötet wird.
+
+\subsection{Bauteile}
+
+
+
+\subsection{Schritt 1 -  ATMega32  inbetriebnehmen}
+
+Als erstes sollte man etwas Lötfett auf die Pads von der Platine an der Stelle an den der ATMega32 hinkommt, verteilen. Nach dem der ATMega32 festgelötet ist kann man um 100% sicher zu gehen noch mal alle Nachbarpins auf Kurzschluss überprüfen.
+
+Wenn man jetzt noch die USB-, die 10 polige ISP Buchse und die 3er Pinleiste montiert sollte man mit einem anderen Programmierer den ATMega32 ansprechen können. Am einfachsten ist es dies mit einem einfachen Parallelportkabel zu machen.
+
+BILD
+
+ACHTUNG! Wenn man den ATMega32 über die ISP Buchse ansprechen will,
+muss der Jumper auf Postion prog (zur USB Buchse hin) gesteckt werden! 
+Nach dem Programmieren muss der Jumper wieder auf die Standardstellung gesteckt werden.
+
+BILDER
+
+\subsection{Schritt 2 -  USBN9604  inbetriebnehmen}
+
+Der USBN9604 ist oft etwas eigen. Wichtig ist hier, dass man sehr sauber arbeitet. Man braucht hier sehr gute Lötverbindungen, da USB immerhin mit 12 MHz getaktet ist. Ein anzeichen das irgendwo ein ganz feiner Kurzschluss ist, ist der das der USBN9604 sehr schnell sehr warm wird. Dann sollte man schnell die Verbindung trennen und nochmal nacharbeiten.
+
+Um den USBN9604 testen zu können muss man jetzt alle restlichen Teile auf der Platine montieren. 
+
+Falls eigene Quarze verwendet werden muss darauf geachtet werden, das 24 MHz Grundton Quarze verwendet werden! Sonst wird der USBN9604 nie arbeiten können.
+
+Jetzt will man wissen ob der USBN9604 irgenwas macht. Das einzige was er ohne einer Firmware im ATMega32 machen kann, ist einen 4 MHz Takt an seiner CLKOUT Leitung ausgeben. Die misst man am besten mit einem Oszilloskop. Wenn hier keine 4 MHz anliegen, dann arbeitet der USBN9604 nicht korrekt. Entweder es ist irgendwo ein Kurzschluss (oft sieht man diese nur beim ganz genauen hinschauen, und sehr peniblen messen) oder der eingesetzte Quarz ist kein 24 MHz Grundton oder nur einfach defekt.
+
+Mehr kann man in diesem Schritt nicht testen, und wenn man mit einem externen Programmierer den ATMega32 ansprechen kann und der USBN9604 die 4 MHz ausgibt kann man mit dem nächsten Schritt weitermachen. 
 
 \end{document}
