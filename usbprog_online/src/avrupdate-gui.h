@@ -2,7 +2,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-#include "../../../lib/avrupdate.h"
+#include "../lib/avrupdate.h"
 
 /* root widget */
 GtkWidget *root;
