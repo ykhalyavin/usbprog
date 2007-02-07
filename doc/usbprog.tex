@@ -16,18 +16,20 @@
 \section{Was ist usbprog?}
 
 Hauptsächlich ist usbprog eine universelle Hardware die auf 
-der Computer Seite eine USB Schnittstelle hat. Auf
+der Computer Seite eine USB Schnittstelle hat und auf
 dem Adapter eine SPI Schnittstelle
 oder alternativ 4 Portleitungen und eine RS232 Schnittstelle.
 
 Über einen einfachen Update Mechanismus, kann man direkt
 über die bestehende USB Verbindung die Software 
-auf dem Adapter austauschen. Die geht bequem über ein
+auf dem Adapter austauschen. Dies geht bequem über ein
 grafisches Programm welches es für Linux und Windows gibt.
 
-Da alle Pläne und Programme unter einer freien Lizenz stehen,
-kann man eigene Firmware Versionen für usbprog entwicklen.
+Die Hardware kann als Bausatz inklusiver Platine in unserem Online Shop [1] bestellt werden. Wenn man den Adapter in Eigenregie bauen will, kann man sich auch alle Pläne im Download Bereich[2] herunterladen (Schaltpläne, Platinenlayouts usw...).
 
+Der Adapter soll nicht nur für AVR Controller sein, sondern es soll mit der Zeit ein breites Spektrum aufgebaut werden. 
+Wenn es eine neue Software gibt kann man sie dann ganz einfach, ohne grossen Aufwand einspielen. 
+Da die Quelltexte alle offen sind findet sich vielleicht der eine oder andere der mit entwickeln will. 
 
 \subsection{Firmware Versionen}
 
@@ -38,9 +40,9 @@ kann man eigene Firmware Versionen für usbprog entwicklen.
 \subsubsection{usbprog - AVR Porgrammierer und RS232 Schnittstelle über USB}
 	Mit dieser kombination arbeiten wohl die meisten Entwickler.
 	Normalerweise sieht es am Tisch des Entwicklers dann so aus,
-	das ein Parallelport-Kabel und ein Serielles Kabel vom PC wegeht. Dazu
+	das ein Parallelport-Kabel und ein Serielles Kabel vom PC weggeht. Dazu
 	wird dann meistens noch für das Zielboard eine Versorgungsspannung
-	benötitg. Mit dieser Firmwareversion sparrt man sich zwei von den
+	benötitg. Mit dieser Firmwareversion spart man sich zwei von den
 	drei Kabeln.
 
 	Die serielle Schnittstelle wird aktuell nur von Linux (als /dev/ttyUSBx) unterstützt.
@@ -52,23 +54,35 @@ kann man eigene Firmware Versionen für usbprog entwicklen.
 
 \subsection{Hardware}
 
-\LaTeX{} ist auch ohne Formeln sehr nützlich und
-einfach zu verwenden. Grafiken, Tabellen,
-Querverweise aller Art, Literatur- und
-Stichwortverzeichnis sind kein Problem.
 
-Formeln sind etwas schwieriger, dennoch hier ein
-einfaches Beispiel.  Zwei von Einsteins
-berühmtesten Formeln lauten:
-\begin{align}
-E &= mc^2                                  \\
-m &= \frac{m_0}{\sqrt{1-\frac{v^2}{c^2}}}
-\end{align}
-Aber wer keine Formeln schreibt, braucht sich
-damit auch nicht zu beschäftigen.
+Das Herz des Adapters bilden ein ATMega32 der verbunden ist mit einem USBN9604. Alle
+Schaltpläne und Quelltexte zu dieser sind im Downloadbereich herunterladbar[2].
+
+
+Eine Anleitung zum Aufbauen der Hardware gibt es hier[3].
 
 
 \subsection{Firmware installieren}
+
+Wenn man auf einen USB Adapter umsteigt bringt es einem nichts,
+wenn man dann wieder ein Parallelport- oder Serielles-Kabel
+zum austauschen der Firmeware auf dem USB Adapter benötigt.
+
+Daher wurde ein Mechanismus eingebaut, so dass man die Firmware
+ohne extra Verbindung jederzeit austauschen kann.
+
+Das einzige mal wann ein herkömmliches Kabel benötig wird,
+ist der Zeitpunkt wenn der das usbprog Hintergrundprogramm
+usbprog_base.hex aufgespielt wird.
+
+Sobald dies einmal gemacht worden ist kann man mit usbprog Online
+bequem sich eine passende Firmware aussuchen und aufspielen.
+
+SCREENSHOT
+
+
+Eine genaue Anleitung wie Sie das erste Mal usbprog_base.hex aufspielen
+und aktivieren finden Sie hier[4].
 
 
 \subsection{Unterstüzte Software}
