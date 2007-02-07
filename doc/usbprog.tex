@@ -1,0 +1,77 @@
+%% Erläuterungen zu den Befehlen erfolgen unter
+%% diesem Beispiel.                
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{amsmath}
+
+\title{usbprog - Mikrocontroller Entwicklungskit}
+\author{Benedikt Sauter}
+\date{07. Februar 2007}
+\begin{document}
+
+\maketitle
+\tableofcontents
+\section{Was ist usbprog?}
+
+Hauptsächlich ist usbprog eine universelle Hardware die auf 
+der Computer Seite eine USB Schnittstelle hat. Auf
+dem Adapter eine SPI Schnittstelle
+oder alternativ 4 Portleitungen und eine RS232 Schnittstelle.
+
+Über einen einfachen Update Mechanismus, kann man direkt
+über die bestehende USB Verbindung die Software 
+auf dem Adapter austauschen. Die geht bequem über ein
+grafisches Programm welches es für Linux und Windows gibt.
+
+Da alle Pläne und Programme unter einer freien Lizenz stehen,
+kann man eigene Firmware Versionen für usbprog entwicklen.
+
+
+\subsection{Firmware Versionen}
+
+\subsubsection{AVRISP mkII Klon}
+	Dieser Klon verhält sich 1:1 wie ein AVRISP mkII. Bisher wurde
+	er erfolgreich mit AVR Studio 4 und avrdude getestet.
+
+\subsubsection{usbprog - AVR Porgrammierer und RS232 Schnittstelle über USB}
+	Mit dieser kombination arbeiten wohl die meisten Entwickler.
+	Normalerweise sieht es am Tisch des Entwicklers dann so aus,
+	das ein Parallelport-Kabel und ein Serielles Kabel vom PC wegeht. Dazu
+	wird dann meistens noch für das Zielboard eine Versorgungsspannung
+	benötitg. Mit dieser Firmwareversion sparrt man sich zwei von den
+	drei Kabeln.
+
+	Die serielle Schnittstelle wird aktuell nur von Linux (als /dev/ttyUSBx) unterstützt.
+
+\subsubsection{usbprog - JTAG Interface, AVR On-Chip-Debugger}
+	Diese Version ist gerade noch in der Entwicklung. Man kann dann ohne extra Hardwareaufwand
+	einfach Atmels AVR Controller debuggen. 
+
+
+\subsection{Hardware}
+
+\LaTeX{} ist auch ohne Formeln sehr nützlich und
+einfach zu verwenden. Grafiken, Tabellen,
+Querverweise aller Art, Literatur- und
+Stichwortverzeichnis sind kein Problem.
+
+Formeln sind etwas schwieriger, dennoch hier ein
+einfaches Beispiel.  Zwei von Einsteins
+berühmtesten Formeln lauten:
+\begin{align}
+E &= mc^2                                  \\
+m &= \frac{m_0}{\sqrt{1-\frac{v^2}{c^2}}}
+\end{align}
+Aber wer keine Formeln schreibt, braucht sich
+damit auch nicht zu beschäftigen.
+
+
+\subsection{Firmware installieren}
+
+
+\subsection{Unterstüzte Software}
+
+
+\end{document}
