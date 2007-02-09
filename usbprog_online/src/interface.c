@@ -66,9 +66,11 @@ create_window (void)
   GtkWidget *label18;
   GtkWidget *fixed1;
   GtkWidget *label34;
+  GtkWidget *button8;
   GtkWidget *hbox24;
   GtkWidget *hseparator5;
   GtkWidget *hbox18;
+  GtkWidget *hbuttonbox2;
   GtkWidget *label27;
   GtkWidget *label1;
   GtkWidget *frame3;
@@ -248,9 +250,14 @@ create_window (void)
 
   label34 = gtk_label_new (_("usbprog - AVRISP mkII Klon 0.3"));
   gtk_widget_show (label34);
-  gtk_fixed_put (GTK_FIXED (fixed1), label34, 16, 8);
+  gtk_fixed_put (GTK_FIXED (fixed1), label34, 24, 8);
   gtk_widget_set_size_request (label34, 224, 16);
   gtk_label_set_justify (GTK_LABEL (label34), GTK_JUSTIFY_FILL);
+
+  button8 = gtk_button_new_with_mnemonic (_("Find usbprog Adapter"));
+  gtk_widget_show (button8);
+  gtk_fixed_put (GTK_FIXED (fixed1), button8, 56, 32);
+  gtk_widget_set_size_request (button8, 160, 32);
 
   hbox24 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox24);
@@ -262,11 +269,15 @@ create_window (void)
 
   hbox18 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox18);
-  gtk_box_pack_start (GTK_BOX (vbox6), hbox18, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox6), hbox18, FALSE, FALSE, 0);
+
+  hbuttonbox2 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox2);
+  gtk_box_pack_start (GTK_BOX (hbox18), hbuttonbox2, FALSE, FALSE, 0);
 
   label27 = gtk_label_new (_("Author: Benedikt Sauter, sauter@ixbat.de\nhttp://www.embedded-projects.net/usbprog"));
   gtk_widget_show (label27);
-  gtk_box_pack_start (GTK_BOX (hbox18), label27, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox6), label27, FALSE, FALSE, 0);
 
   label1 = gtk_label_new (_("usbprog"));
   gtk_widget_show (label1);
@@ -369,6 +380,9 @@ create_window (void)
   g_signal_connect ((gpointer) treeviewVersions, "row_activated",
                     G_CALLBACK (on_treeviewVersions_row_activated),
                     NULL);
+  g_signal_connect ((gpointer) button4, "clicked",
+                    G_CALLBACK (on_download_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (window, window, "window");
@@ -408,9 +422,11 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, label18, "label18");
   GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
   GLADE_HOOKUP_OBJECT (window, label34, "label34");
+  GLADE_HOOKUP_OBJECT (window, button8, "button8");
   GLADE_HOOKUP_OBJECT (window, hbox24, "hbox24");
   GLADE_HOOKUP_OBJECT (window, hseparator5, "hseparator5");
   GLADE_HOOKUP_OBJECT (window, hbox18, "hbox18");
+  GLADE_HOOKUP_OBJECT (window, hbuttonbox2, "hbuttonbox2");
   GLADE_HOOKUP_OBJECT (window, label27, "label27");
   GLADE_HOOKUP_OBJECT (window, label1, "label1");
   GLADE_HOOKUP_OBJECT (window, frame3, "frame3");

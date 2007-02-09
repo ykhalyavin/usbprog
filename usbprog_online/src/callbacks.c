@@ -43,51 +43,6 @@ on_buttonQuick_clicked                 (GtkButton       *button,
 
 
 void
-on_buttonDownload_clicked              (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *entryFile;
-	entryFile    = lookup_widget(GTK_WIDGET(button),  "entryFile");
-
-	gchar *url = gtk_entry_get_text(GTK_ENTRY(entryFile));
-	int versions = avrupdate_net_versions(url);
-
-	
-	/* update List */
-	GtkWidget *treeviewVersions;
-	GtkListStore *list;
-	GtkTreeIter iter;
-
-	treeviewVersions = lookup_widget(GTK_WIDGET(button),  "treeviewVersions");
-
-	/* create a two-column list */
-	list = gtk_list_store_new(4, G_TYPE_INT,G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_list_store_clear   (list);
-
-	int i;
-
-	struct avrupdate_info *tmp;
-	/* put some data into the list */
-	for (i = 0; i < versions; i++)
-	{
-		tmp = avrupdate_net_get_version_info(url,i);
-		/* remove linebreak */
-		g_strdelimit  (tmp->description,"\n",0x00);
-
-		gtk_list_store_append(list, &iter);
-		gtk_list_store_set(list, &iter,
-		0, i+1,
-		1, tmp->title,
-		2, tmp->version,
-		3, tmp->description,
-		-1);
-	}
-
-	gtk_tree_view_set_model(treeviewVersions, list);
-}
-
-
-void
 on_buttonFLash_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
@@ -188,6 +143,52 @@ on_treeviewVersions_row_activated      (GtkTreeView     *treeview,
 {
 	//g_print("flash file %i",selectedVersion);
 	on_buttonFLash_clicked((GtkButton*)treeview,user_data);
+
+}
+
+
+void
+on_download_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+	GtkWidget *entryFile;
+	entryFile    = lookup_widget(GTK_WIDGET(button),  "entryFile");
+
+	gchar *url = gtk_entry_get_text(GTK_ENTRY(entryFile));
+	int versions = avrupdate_net_versions(url);
+
+	
+	/* update List */
+	GtkWidget *treeviewVersions;
+	GtkListStore *list;
+	GtkTreeIter iter;
+
+	treeviewVersions = lookup_widget(GTK_WIDGET(button),  "treeviewVersions");
+
+	/* create a two-column list */
+	list = gtk_list_store_new(4, G_TYPE_INT,G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_list_store_clear   (list);
+
+	int i;
+
+	struct avrupdate_info *tmp;
+	/* put some data into the list */
+	for (i = 0; i < versions; i++)
+	{
+		tmp = avrupdate_net_get_version_info(url,i);
+		/* remove linebreak */
+		g_strdelimit  (tmp->description,"\n",0x00);
+
+		gtk_list_store_append(list, &iter);
+		gtk_list_store_set(list, &iter,
+		0, i+1,
+		1, tmp->title,
+		2, tmp->version,
+		3, tmp->description,
+		-1);
+	}
+
+	gtk_tree_view_set_model(treeviewVersions, list);
 
 }
 

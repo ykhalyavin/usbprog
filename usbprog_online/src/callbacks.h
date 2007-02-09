@@ -45,3 +45,7 @@ on_treeviewVersions_row_activated      (GtkTreeView     *treeview,
                                         GtkTreePath     *path,
                                         GtkTreeViewColumn *column,
                                         gpointer         user_data);
+
+void
+on_download_clicked                    (GtkButton       *button,
+                                        gpointer         user_data);
