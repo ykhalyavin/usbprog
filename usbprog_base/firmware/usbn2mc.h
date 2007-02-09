@@ -19,7 +19,8 @@
 #define _MCIFACE_H_
 
 
-#include "../../usbn2mc/tiny/usbnapi.h"
+#include "../../firmware/usbn2mc/tiny/usbnapi.h"
+
 
 unsigned char USBNRead(unsigned char Adr);
 unsigned char USBNBurstRead(void);

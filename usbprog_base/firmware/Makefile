@@ -51,7 +51,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../../usbn2mc/tiny/usbn960x.c usbn2mc.c ../../usbn2mc/tiny/usbnapi.c uart.c
+SRC = $(TARGET).c ../../firmware/usbn2mc/tiny/usbn960x.c usbn2mc.c ../../firmware/usbn2mc/tiny/usbnapi.c uart.c
 
 
 # List Assembler source files here.
