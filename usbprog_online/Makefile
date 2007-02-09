@@ -9,7 +9,7 @@
 
 CXX = $(shell wx-config --cxx)
 
-FILES = main.o window.o
+FILES = main.o mainwindow.o
 
 
 SVNDEF := -D'SVN_REV="$(shell svnversion -n .)"'
@@ -31,8 +31,8 @@ vScope: $(FILES)
 main.o: main.cpp
 	$(CXX) $(CFLAGS) -c main.cpp
 
-window.o: window.cpp
-	$(CXX) $(CFLAGS) -c window.cpp
+mainwindow.o: mainwindow.cpp
+	$(CXX) $(CFLAGS) -c mainwindow.cpp
 
 
 

@@ -5,7 +5,7 @@
 #include "wx/wxprec.h"
 #include "wx/wx.h" 
 
-#include "window.h"
+#include "mainwindow.h"
 
 
 
@@ -25,7 +25,7 @@ wxString title;
 //title.Printf("vScope Studio Rev. %s", SVN_REV);
 #endif
 
-MyFrame *frame = new MyFrame(0, 10, title, wxPoint(50,50), wxSize(100,100),0);
+MainWindow *frame = new MainWindow(0, 10, title, wxPoint(50,50), wxSize(100,100),0);
 frame->Show(TRUE);
 SetTopWindow(frame);
 return TRUE;
