@@ -7,7 +7,7 @@
 //#include <avr/signal.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
-#define F_CPU 8000000
+#define F_CPU 16000000
 #include <util/delay.h>
 #include <avr/eeprom.h>
 
@@ -106,7 +106,7 @@ void avrupdate_start_app()
     	//SendHex(page_addr);
     	page_addr = page_addr/2;
     	avrupdate_program_page (page_addr);
-    	UARTWrite("programm rest\r\n"); 
+    	//UARTWrite("programm rest\r\n"); 
   	}
 
   	USBNWrite(RXC1,FLUSH);
@@ -166,7 +166,7 @@ void avrupdate_cmd(char *buf)
 				}	
       		} else
       		{
-				UARTWrite("64\r\n");
+				//UARTWrite("64\r\n");
 				avrupdate_program_page (page_addr);
 				state = NONE;
       		}
@@ -281,7 +281,7 @@ int main(void)
   	// start usb chip
   	USBNStart();
   
-  	UARTWrite("\r\nbootloader is now active\r\n");
+  	//UARTWrite("\r\nbootloader is now active\r\n");
 
   	collect128=0;
   	// wait 2 seconds then start application
@@ -290,7 +290,7 @@ int main(void)
 
 	/*
   		wait_ms(2000);
-  		UARTWrite("\r\nbootloader start app now");
+  		//UARTWrite("\r\nbootloader start app now");
   		avrupdate_start_app();
   		while(1);
 	*/ 
