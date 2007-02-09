@@ -1,0 +1,16 @@
+%%
+%% ticket for "Zweckform 32011" 
+%% pre-cutted visiting cards
+%%
+\unitlength=1mm
+
+%% tested for an Canon BJC-6000 (manual feed), adjust for your printer
+%%\hoffset=-11.0mm
+\hoffset=-8.0mm
+\voffset=-12.0mm
+
+\ticketNumbers{2}{5}
+
+\ticketSize{85}{54}     % in unitlength
+\ticketDistance{9.8}{0} % in unitlength
+

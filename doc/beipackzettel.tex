@@ -1,0 +1,90 @@
+%%%%
+%
+% LaTeX template for business cards v1.0
+%
+% Latest version and online documentation:
+%   http://www.selftex.de
+%
+% Author:
+%   Peter Koeller <pkoeller@metaprojekt.de>
+%
+% License:
+%   The bundle is placed under the LaTeX Project Public License 
+%   (macros/latex/base/lppl.txt on CTAN).
+%
+%%%%
+\documentclass[a4paper,10pt]{letter}
+
+% use the option crossmark for test printouts
+\usepackage[zw32011_back,crossmark]{ticket}
+
+\newcounter{cardsperpage}
+
+% edit if a page holds more than the 10 cards
+\setcounter{cardsperpage}{10}
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+        \pdffalse
+\else
+        \pdfoutput=1
+        \pdftrue
+\fi
+\ifpdf
+        \usepackage[pdftex]{graphicx}
+        \DeclareGraphicsExtensions{.png}
+\else
+        \usepackage{graphicx}
+        \DeclareGraphicsExtensions{.eps}
+\fi
+\usepackage{color}
+
+% define something
+\definecolor{uni}{rgb}{0.5608,0.0627,0.0549}
+
+% make your default ticket. \ticketdefault is somewhat like a background
+% here it is empty.
+\renewcommand{\ticketdefault}{
+}
+
+% the business card itself
+\newcommand{\businesscard}{\ticket{
+    %\put( 50, 5){\includegraphics[width=28.83mm,height=35.01mm,origin=bl]{quietscheente}}
+
+    \put( 7, 48){\bfseries www.usb-projects.net}
+    \put( 7, 44){\small USB einfach verstehen und anwenden:}
+    \put( 7, 40){\small freie USB Stacks, Treiber- und Anwendungsbeispiele,}
+    \put( 7, 36){\small Grundkurs, Tutorial, Projekte}
+   
+    \put( 5, 34){\color{uni}\line(1,0){75}}
+
+		\put( 7, 30){\bfseries www.embedded-projects.net/usbprog}
+    \put( 7, 25){\small - Bauanleitunge/Pl\"ane}
+    \put( 7, 21){\small - Programme,Quelltexte,Downloads}
+    
+		\put( 5, 19){\color{uni}\line(1,0){75}}
+
+		\put( 7, 15){\bfseries Projekte auf www.embedded-projects.net}
+    \put( 7, 11){\small Habt Ihr Projekte die es als Bausatz geben sollte?}
+    \put( 7, 7){\small Dann schreibt mir eine Email. Ich helfe euch dabei gern.}
+    \put( 7, 3){\small Benedikt Sauter, sauter@ixbat.de}
+
+
+
+ }}
+
+% a counter, which makes life easier...
+\newcounter{numcards}
+
+\begin{document}
+\sffamily
+
+% insert the cards
+\whiledo{\thenumcards<\thecardsperpage}{
+  \stepcounter{numcards}
+  \businesscard
+}
+
+\end{document}
+
+
