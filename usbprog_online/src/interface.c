@@ -115,7 +115,7 @@ create_mainwindow (void)
   gtk_widget_show (hbox6);
   gtk_box_pack_start (GTK_BOX (hbox2), hbox6, FALSE, FALSE, 0);
 
-  label8 = gtk_label_new (_("label8"));
+  label8 = gtk_label_new (_("VID "));
   gtk_widget_show (label8);
   gtk_box_pack_start (GTK_BOX (hbox6), label8, FALSE, FALSE, 0);
 
@@ -124,9 +124,10 @@ create_mainwindow (void)
   gtk_box_pack_start (GTK_BOX (hbox6), entry2, TRUE, TRUE, 0);
   gtk_widget_set_size_request (entry2, 40, -1);
 
-  label9 = gtk_label_new (_("label9"));
+  label9 = gtk_label_new (_("PID"));
   gtk_widget_show (label9);
   gtk_box_pack_start (GTK_BOX (hbox6), label9, FALSE, FALSE, 0);
+  gtk_misc_set_padding (GTK_MISC (label9), 2, 0);
 
   entry3 = gtk_entry_new ();
   gtk_widget_show (entry3);
@@ -151,6 +152,7 @@ create_mainwindow (void)
   entry4 = gtk_entry_new ();
   gtk_widget_show (entry4);
   gtk_box_pack_start (GTK_BOX (hbox7), entry4, FALSE, FALSE, 0);
+  gtk_entry_set_text (GTK_ENTRY (entry4), _("http://www.ixbat.de/usbprog/versions.conf"));
 
   fixed1 = gtk_fixed_new ();
   gtk_widget_show (fixed1);

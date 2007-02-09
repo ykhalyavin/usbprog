@@ -36,8 +36,6 @@ main (int argc, char *argv[])
    */
   mainwindow = create_mainwindow ();
   gtk_widget_show (mainwindow);
-  fontselectiondialog1 = create_fontselectiondialog1 ();
-  gtk_widget_show (fontselectiondialog1);
 
   gtk_main ();
   return 0;

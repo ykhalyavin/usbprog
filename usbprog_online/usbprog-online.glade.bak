@@ -115,7 +115,7 @@
 			      <child>
 				<widget class="GtkLabel" id="label8">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">label8</property>
+				  <property name="label" translatable="yes">VID </property>
 				  <property name="use_underline">False</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -160,7 +160,7 @@
 			      <child>
 				<widget class="GtkLabel" id="label9">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">label9</property>
+				  <property name="label" translatable="yes">PID</property>
 				  <property name="use_underline">False</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -168,7 +168,7 @@
 				  <property name="selectable">False</property>
 				  <property name="xalign">0.5</property>
 				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
+				  <property name="xpad">2</property>
 				  <property name="ypad">0</property>
 				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
 				  <property name="width_chars">-1</property>
@@ -261,7 +261,7 @@
 				  <property name="editable">True</property>
 				  <property name="visibility">True</property>
 				  <property name="max_length">0</property>
-				  <property name="text" translatable="yes"></property>
+				  <property name="text" translatable="yes">http://www.ixbat.de/usbprog/versions.conf</property>
 				  <property name="has_frame">True</property>
 				  <property name="invisible_char">*</property>
 				  <property name="activates_default">False</property>
