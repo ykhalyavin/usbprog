@@ -68,12 +68,6 @@ create_window (void)
   GtkWidget *label34;
   GtkWidget *hbox24;
   GtkWidget *hseparator5;
-  GtkWidget *vbuttonbox2;
-  GtkWidget *buttonVersion;
-  GtkWidget *buttonQuick;
-  GtkWidget *buttonStartAU;
-  GtkWidget *hbox25;
-  GtkWidget *hseparator6;
   GtkWidget *hbox18;
   GtkWidget *label27;
   GtkWidget *label1;
@@ -90,10 +84,11 @@ create_window (void)
   GtkWidget *textviewLog;
   GtkWidget *hbox8;
   GtkWidget *label17;
-  GtkWidget *hbox3;
-  GtkWidget *buttonDownload;
-  GtkWidget *buttonFLash;
-  GtkWidget *buttonStart;
+  GtkWidget *hbuttonbox1;
+  GtkWidget *button4;
+  GtkWidget *button5;
+  GtkWidget *button6;
+  GtkWidget *button7;
   GtkWidget *label3;
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -131,7 +126,7 @@ create_window (void)
   gtk_widget_show (hbox12);
   gtk_box_pack_start (GTK_BOX (vbox6), hbox12, FALSE, FALSE, 0);
 
-  label25 = gtk_label_new (_("<b>USB Firmware IDs:</b>"));
+  label25 = gtk_label_new (_("<b>USB Device:</b>"));
   gtk_widget_show (label25);
   gtk_box_pack_start (GTK_BOX (hbox12), label25, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label25), TRUE);
@@ -170,7 +165,7 @@ create_window (void)
   gtk_widget_show (hbox20);
   gtk_box_pack_start (GTK_BOX (hbox16), hbox20, TRUE, TRUE, 0);
 
-  label31 = gtk_label_new (_("<b>USB usbprog ID:</b>"));
+  label31 = gtk_label_new (_("<b>USB avrupdate:</b>"));
   gtk_widget_show (label31);
   gtk_box_pack_start (GTK_BOX (hbox20), label31, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label31), TRUE);
@@ -253,7 +248,7 @@ create_window (void)
 
   label34 = gtk_label_new (_("usbprog - AVRISP mkII Klon 0.3"));
   gtk_widget_show (label34);
-  gtk_fixed_put (GTK_FIXED (fixed1), label34, 0, 0);
+  gtk_fixed_put (GTK_FIXED (fixed1), label34, 16, 8);
   gtk_widget_set_size_request (label34, 224, 16);
   gtk_label_set_justify (GTK_LABEL (label34), GTK_JUSTIFY_FILL);
 
@@ -264,32 +259,6 @@ create_window (void)
   hseparator5 = gtk_hseparator_new ();
   gtk_widget_show (hseparator5);
   gtk_box_pack_start (GTK_BOX (hbox24), hseparator5, TRUE, TRUE, 0);
-
-  vbuttonbox2 = gtk_vbutton_box_new ();
-  gtk_widget_show (vbuttonbox2);
-  gtk_box_pack_start (GTK_BOX (vbox6), vbuttonbox2, TRUE, TRUE, 0);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (vbuttonbox2), GTK_BUTTONBOX_SPREAD);
-
-  buttonVersion = gtk_button_new_with_mnemonic (_("Get Firmware Version"));
-  gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonVersion);
-  GTK_WIDGET_SET_FLAGS (buttonVersion, GTK_CAN_DEFAULT);
-
-  buttonQuick = gtk_button_new_with_mnemonic (_("Quick Auto Update"));
-  gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonQuick);
-  GTK_WIDGET_SET_FLAGS (buttonQuick, GTK_CAN_DEFAULT);
-
-  buttonStartAU = gtk_button_new_with_mnemonic (_("Start update mode (1)"));
-  gtk_widget_show (buttonStartAU);
-  gtk_container_add (GTK_CONTAINER (vbuttonbox2), buttonStartAU);
-  GTK_WIDGET_SET_FLAGS (buttonStartAU, GTK_CAN_DEFAULT);
-
-  hbox25 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox25);
-  gtk_box_pack_start (GTK_BOX (vbox6), hbox25, TRUE, TRUE, 0);
-
-  hseparator6 = gtk_hseparator_new ();
-  gtk_widget_show (hseparator6);
-  gtk_box_pack_start (GTK_BOX (hbox25), hseparator6, TRUE, TRUE, 0);
 
   hbox18 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox18);
@@ -356,7 +325,6 @@ create_window (void)
   textviewLog = gtk_text_view_new ();
   gtk_widget_show (textviewLog);
   gtk_container_add (GTK_CONTAINER (scrolledwindow5), textviewLog);
-  gtk_widget_set_size_request (textviewLog, -1, 116);
 
   hbox8 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox8);
@@ -367,49 +335,39 @@ create_window (void)
   gtk_box_pack_start (GTK_BOX (hbox8), label17, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label17), TRUE);
 
-  hbox3 = gtk_hbox_new (TRUE, 0);
-  gtk_widget_show (hbox3);
-  gtk_box_pack_start (GTK_BOX (vbox2), hbox3, FALSE, TRUE, 0);
+  hbuttonbox1 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox1);
+  gtk_box_pack_end (GTK_BOX (vbox2), hbuttonbox1, FALSE, FALSE, 0);
 
-  buttonDownload = gtk_button_new_with_mnemonic (_("Download Version List (2)"));
-  gtk_widget_show (buttonDownload);
-  gtk_box_pack_start (GTK_BOX (hbox3), buttonDownload, FALSE, FALSE, 0);
+  button4 = gtk_button_new_with_mnemonic (_("Download"));
+  gtk_widget_show (button4);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button4);
+  GTK_WIDGET_SET_FLAGS (button4, GTK_CAN_DEFAULT);
 
-  buttonFLash = gtk_button_new_with_mnemonic (_("Flash selected File (3)"));
-  gtk_widget_show (buttonFLash);
-  gtk_box_pack_start (GTK_BOX (hbox3), buttonFLash, FALSE, FALSE, 0);
+  button5 = gtk_button_new_with_mnemonic (_("Cancel"));
+  gtk_widget_show (button5);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button5);
+  GTK_WIDGET_SET_FLAGS (button5, GTK_CAN_DEFAULT);
 
-  buttonStart = gtk_button_new_with_mnemonic (_("Start Application (4)"));
-  gtk_widget_show (buttonStart);
-  gtk_box_pack_start (GTK_BOX (hbox3), buttonStart, FALSE, FALSE, 0);
+  button6 = gtk_button_new_with_mnemonic (_("Quit"));
+  gtk_widget_show (button6);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button6);
+  GTK_WIDGET_SET_FLAGS (button6, GTK_CAN_DEFAULT);
+
+  button7 = gtk_button_new_with_mnemonic (_("OK"));
+  gtk_widget_show (button7);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox1), button7);
+  GTK_WIDGET_SET_FLAGS (button7, GTK_CAN_DEFAULT);
 
   label3 = gtk_label_new (_("Online Versions"));
   gtk_widget_show (label3);
   gtk_frame_set_label_widget (GTK_FRAME (frame3), label3);
 
-  g_signal_connect ((gpointer) buttonVersion, "clicked",
-                    G_CALLBACK (on_buttonVersion_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) buttonQuick, "clicked",
-                    G_CALLBACK (on_buttonQuick_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) buttonStartAU, "clicked",
-                    G_CALLBACK (on_buttonStartAU_clicked),
-                    NULL);
   g_signal_connect ((gpointer) treeviewVersions, "cursor_changed",
                     G_CALLBACK (on_treeviewVersions_cursor_changed),
                     NULL);
   g_signal_connect ((gpointer) treeviewVersions, "row_activated",
                     G_CALLBACK (on_treeviewVersions_row_activated),
-                    NULL);
-  g_signal_connect ((gpointer) buttonDownload, "clicked",
-                    G_CALLBACK (on_buttonDownload_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) buttonFLash, "clicked",
-                    G_CALLBACK (on_buttonFLash_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) buttonStart, "clicked",
-                    G_CALLBACK (on_buttonStart_clicked),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -452,12 +410,6 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, label34, "label34");
   GLADE_HOOKUP_OBJECT (window, hbox24, "hbox24");
   GLADE_HOOKUP_OBJECT (window, hseparator5, "hseparator5");
-  GLADE_HOOKUP_OBJECT (window, vbuttonbox2, "vbuttonbox2");
-  GLADE_HOOKUP_OBJECT (window, buttonVersion, "buttonVersion");
-  GLADE_HOOKUP_OBJECT (window, buttonQuick, "buttonQuick");
-  GLADE_HOOKUP_OBJECT (window, buttonStartAU, "buttonStartAU");
-  GLADE_HOOKUP_OBJECT (window, hbox25, "hbox25");
-  GLADE_HOOKUP_OBJECT (window, hseparator6, "hseparator6");
   GLADE_HOOKUP_OBJECT (window, hbox18, "hbox18");
   GLADE_HOOKUP_OBJECT (window, label27, "label27");
   GLADE_HOOKUP_OBJECT (window, label1, "label1");
@@ -474,10 +426,11 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, textviewLog, "textviewLog");
   GLADE_HOOKUP_OBJECT (window, hbox8, "hbox8");
   GLADE_HOOKUP_OBJECT (window, label17, "label17");
-  GLADE_HOOKUP_OBJECT (window, hbox3, "hbox3");
-  GLADE_HOOKUP_OBJECT (window, buttonDownload, "buttonDownload");
-  GLADE_HOOKUP_OBJECT (window, buttonFLash, "buttonFLash");
-  GLADE_HOOKUP_OBJECT (window, buttonStart, "buttonStart");
+  GLADE_HOOKUP_OBJECT (window, hbuttonbox1, "hbuttonbox1");
+  GLADE_HOOKUP_OBJECT (window, button4, "button4");
+  GLADE_HOOKUP_OBJECT (window, button5, "button5");
+  GLADE_HOOKUP_OBJECT (window, button6, "button6");
+  GLADE_HOOKUP_OBJECT (window, button7, "button7");
   GLADE_HOOKUP_OBJECT (window, label3, "label3");
 
   return window;

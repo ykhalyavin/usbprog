@@ -72,7 +72,7 @@
 			      <child>
 				<widget class="GtkLabel" id="label25">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">&lt;b&gt;USB Firmware IDs:&lt;/b&gt;</property>
+				  <property name="label" translatable="yes">&lt;b&gt;USB Device:&lt;/b&gt;</property>
 				  <property name="use_underline">False</property>
 				  <property name="use_markup">True</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -232,7 +232,7 @@
 				  <child>
 				    <widget class="GtkLabel" id="label31">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">&lt;b&gt;USB usbprog ID:&lt;/b&gt;</property>
+				      <property name="label" translatable="yes">&lt;b&gt;USB avrupdate:&lt;/b&gt;</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">True</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -578,8 +578,8 @@
 				  <property name="angle">0</property>
 				</widget>
 				<packing>
-				  <property name="x">0</property>
-				  <property name="y">0</property>
+				  <property name="x">16</property>
+				  <property name="y">8</property>
 				</packing>
 			      </child>
 			    </widget>
@@ -598,80 +598,6 @@
 
 			      <child>
 				<widget class="GtkHSeparator" id="hseparator5">
-				  <property name="visible">True</property>
-				</widget>
-				<packing>
-				  <property name="padding">0</property>
-				  <property name="expand">True</property>
-				  <property name="fill">True</property>
-				</packing>
-			      </child>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkVButtonBox" id="vbuttonbox2">
-			      <property name="visible">True</property>
-			      <property name="layout_style">GTK_BUTTONBOX_SPREAD</property>
-			      <property name="spacing">0</property>
-
-			      <child>
-				<widget class="GtkButton" id="buttonVersion">
-				  <property name="can_default">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Get Firmware Version</property>
-				  <property name="use_underline">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-				  <signal name="clicked" handler="on_buttonVersion_clicked" last_modification_time="Sat, 18 Nov 2006 17:29:48 GMT"/>
-				</widget>
-			      </child>
-
-			      <child>
-				<widget class="GtkButton" id="buttonQuick">
-				  <property name="can_default">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Quick Auto Update</property>
-				  <property name="use_underline">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-				  <signal name="clicked" handler="on_buttonQuick_clicked" last_modification_time="Sat, 18 Nov 2006 17:29:03 GMT"/>
-				</widget>
-			      </child>
-
-			      <child>
-				<widget class="GtkButton" id="buttonStartAU">
-				  <property name="visible">True</property>
-				  <property name="can_default">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Start update mode (1)</property>
-				  <property name="use_underline">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-				  <signal name="clicked" handler="on_buttonStartAU_clicked" last_modification_time="Sun, 19 Nov 2006 18:38:01 GMT"/>
-				</widget>
-			      </child>
-			    </widget>
-			    <packing>
-			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkHBox" id="hbox25">
-			      <property name="visible">True</property>
-			      <property name="homogeneous">False</property>
-			      <property name="spacing">0</property>
-
-			      <child>
-				<widget class="GtkHSeparator" id="hseparator6">
 				  <property name="visible">True</property>
 				</widget>
 				<packing>
@@ -921,7 +847,6 @@ http://www.embedded-projects.net/usbprog</property>
 
 		      <child>
 			<widget class="GtkTextView" id="textviewLog">
-			  <property name="height_request">116</property>
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
@@ -986,66 +911,64 @@ http://www.embedded-projects.net/usbprog</property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkHBox" id="hbox3">
+		    <widget class="GtkHButtonBox" id="hbuttonbox1">
 		      <property name="visible">True</property>
-		      <property name="homogeneous">True</property>
+		      <property name="layout_style">GTK_BUTTONBOX_DEFAULT_STYLE</property>
 		      <property name="spacing">0</property>
 
 		      <child>
-			<widget class="GtkButton" id="buttonDownload">
+			<widget class="GtkButton" id="button4">
 			  <property name="visible">True</property>
+			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Download Version List (2)</property>
+			  <property name="label" translatable="yes">Download</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_buttonDownload_clicked" last_modification_time="Sat, 18 Nov 2006 17:27:49 GMT"/>
 			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
 		      </child>
 
 		      <child>
-			<widget class="GtkButton" id="buttonFLash">
+			<widget class="GtkButton" id="button5">
 			  <property name="visible">True</property>
+			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Flash selected File (3)</property>
+			  <property name="label" translatable="yes">Cancel</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_buttonFLash_clicked" last_modification_time="Sat, 18 Nov 2006 17:27:08 GMT"/>
 			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
 		      </child>
 
 		      <child>
-			<widget class="GtkButton" id="buttonStart">
+			<widget class="GtkButton" id="button6">
 			  <property name="visible">True</property>
+			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Start Application (4)</property>
+			  <property name="label" translatable="yes">Quit</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="clicked" handler="on_buttonStart_clicked" last_modification_time="Sat, 18 Nov 2006 17:27:28 GMT"/>
 			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkButton" id="button7">
+			  <property name="visible">True</property>
+			  <property name="can_default">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="label" translatable="yes">OK</property>
+			  <property name="use_underline">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+			</widget>
 		      </child>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
 		      <property name="expand">False</property>
-		      <property name="fill">True</property>
+		      <property name="fill">False</property>
+		      <property name="pack_type">GTK_PACK_END</property>
 		    </packing>
 		  </child>
 		</widget>
