@@ -208,6 +208,7 @@ int main(void)
   	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
   	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
   	sei();
+	wait_ms(200);
 
 
   	// bootloader application starts here
