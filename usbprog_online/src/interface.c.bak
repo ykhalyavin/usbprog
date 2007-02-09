@@ -70,7 +70,10 @@ create_mainwindow (void)
   GtkWidget *label1;
 
   mainwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request (mainwindow, 482, 350);
   gtk_window_set_title (GTK_WINDOW (mainwindow), _("usbprog Online"));
+  gtk_window_set_resizable (GTK_WINDOW (mainwindow), FALSE);
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (mainwindow), TRUE);
 
   mainframe = gtk_frame_new (NULL);
   gtk_widget_show (mainframe);
@@ -151,7 +154,7 @@ create_mainwindow (void)
 
   entry4 = gtk_entry_new ();
   gtk_widget_show (entry4);
-  gtk_box_pack_start (GTK_BOX (hbox7), entry4, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox7), entry4, TRUE, TRUE, 0);
   gtk_entry_set_text (GTK_ENTRY (entry4), _("http://www.ixbat.de/usbprog/versions.conf"));
 
   fixed1 = gtk_fixed_new ();
@@ -182,7 +185,7 @@ create_mainwindow (void)
   g_object_set_data (G_OBJECT (GTK_COMBO (combo1)->popwin),
                      "GladeParentKey", combo1);
   gtk_widget_show (combo1);
-  gtk_box_pack_start (GTK_BOX (vbox3), combo1, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox3), combo1, TRUE, FALSE, 0);
 
   combo_entry1 = GTK_COMBO (combo1)->entry;
   gtk_widget_show (combo_entry1);
@@ -205,7 +208,7 @@ create_mainwindow (void)
 
   entry5 = gtk_entry_new ();
   gtk_widget_show (entry5);
-  gtk_box_pack_start (GTK_BOX (hbox8), entry5, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox8), entry5, TRUE, FALSE, 0);
 
   fixed2 = gtk_fixed_new ();
   gtk_widget_show (fixed2);
