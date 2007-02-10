@@ -98,7 +98,7 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("AVRISO mkII Klon");
+  USBNDeviceProduct	("Blink Demo (usbprog)   ");
   USBNDeviceSerialNumber("0000A00164611");
 
 	//0000A0016461 (aktuelle)
@@ -122,9 +122,9 @@ int main(void)
   USBNStart();
   while(1){
 		PORTA &= ~(1<<PA4); //off
-		wait_ms(500);
+		wait_ms(50);
 		PORTA |= (1<<PA4);  //on
-		wait_ms(500);
+		wait_ms(50);
 	}
 }
 
