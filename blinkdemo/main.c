@@ -39,29 +39,6 @@
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
-void CommandAnswer(int length);
-
-volatile struct usbprog_t {
-	char lastcmd;
-	int longpackage;
-	int cmdpackage;
-	int datatogl;
-} usbprog;
-
-volatile char answer[300];
-
-struct pgmmode_t {
-	unsigned short numbytes;
-	uint8_t mode;
-	uint8_t delay;
-	uint8_t cmd1;
-	uint8_t cmd2;
-	uint8_t cmd3;
-	uint8_t poll1;
-	uint8_t poll2;
-	uint32_t address;
-} pgmmode;
-
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -88,7 +65,9 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 		break;
 	}
 }
-
+void USBFlash(char *buf)
+{
+}
 
 #define DDR_SPI DDRB
 #define MOSI PB5
@@ -100,12 +79,10 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 int main(void)
 {
   int conf, interf;
-  //UARTInit();
+  UARTInit();
 
   USBNInit();   
   
-  usbprog.longpackage=0;
-
 	DDRA = (1 << DDA4);
   //PORTA |= (1<<PA4);	//on
 	PORTA &= ~(1<<PA4); //off
@@ -136,7 +113,7 @@ int main(void)
   USBNAlternateSetting(conf,interf,0);
 
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
-  //USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
+  USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
   
   USBNInitMC();
   sei();
