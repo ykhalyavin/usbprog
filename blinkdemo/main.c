@@ -29,10 +29,15 @@
 
 #include "wait.h"
 
+
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
 /* id need for live update of firmware */
+SIGNAL(SIG_INTERRUPT0)
+{
+  USBNInterrupt();
+}
 
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
