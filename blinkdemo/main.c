@@ -98,8 +98,8 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("Blink Demo");
-  USBNDeviceSerialNumber("");
+  USBNDeviceProduct	("AVRISO mkII Klon");
+  USBNDeviceSerialNumber("0000A00164611");
 
 	//0000A0016461 (aktuelle)
 	//0000A0019647
