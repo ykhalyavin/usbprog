@@ -122,9 +122,9 @@ int main(void)
   USBNStart();
   while(1){
 		PORTA &= ~(1<<PA4); //off
-		wait_ms(50);
+		wait_ms(10);
 		PORTA |= (1<<PA4);  //on
-		wait_ms(50);
+		wait_ms(10);
 	}
 }
 
