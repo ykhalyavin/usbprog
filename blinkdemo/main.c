@@ -17,6 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+//#define F_CPU 16000000
 #include <stdlib.h>
 #include <stdint.h>
 #include <avr/io.h>
@@ -24,7 +25,6 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define F_CPU 16000000
 #include <util/delay.h>
 
 #include "wait.h"
@@ -66,9 +66,7 @@ int main(void)
   USBNDeviceProduct	("Blink Demo");
   USBNDeviceSerialNumber("200612261");
  
-	DDRA = (1 << DDA4);
-  PORTA |= (1<<PA4);	//on
-	PORTA &= ~(1<<PA4); //off
+  DDRA = (1 << DDA4);
 
   conf = USBNAddConfiguration();
 
@@ -84,24 +82,12 @@ int main(void)
 
   // start usb chip
   USBNStart();
- 
-  int loop;
-	while(1){
+	
+  while(1){
 		PORTA |= (1<<PA4);	//on
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
+		wait_ms(500);
 		PORTA &= ~(1<<PA4); //off
-			wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-	  	wait_ms(1000);
-
+		wait_ms(500);
 	}
 }
 

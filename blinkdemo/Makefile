@@ -42,7 +42,7 @@ MCU = atmega32
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
-F_OSC = 16000000 
+F_OSC = 160000000 
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -69,7 +69,7 @@ ASRC =
 # Optimization level, can be [0, 1, 2, 3, s]. 
 # 0 = turn off optimization. s = optimize for size.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = s 
+OPT = 0
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
