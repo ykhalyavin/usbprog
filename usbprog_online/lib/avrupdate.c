@@ -118,7 +118,7 @@ int avrupdate_find_usbdevice()
 							if(dev->descriptor.idProduct==0x0c62){
 								if(dev->descriptor.bcdDevice==AVRUPDATE)
 									return AVRUPDATE;
-								if(dev->descriptor.bcdDevice==USBPROG)
+								if(dev->descriptor.bcdDevice==0x0200)
 									return USBPROG;
 								if(dev->descriptor.bcdDevice==BLINKDEMO)
 									return BLINKDEMO;

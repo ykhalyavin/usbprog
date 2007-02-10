@@ -54,14 +54,26 @@ on_buttonFLash_clicked                 (GtkButton       *button,
 	entryFile    = lookup_widget(GTK_WIDGET(button),  "entryFile");
 
 	gchar *url = gtk_entry_get_text(GTK_ENTRY(entryFile));
+
+	GtkWidget *entryPID, *entryVID;
+	entryPID    = lookup_widget(GTK_WIDGET(button),  "entryPID");
+	entryVID    = lookup_widget(GTK_WIDGET(button),  "entryVID");
+
+	int pid,vid;
+	pid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryPID)),4);
+	vid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryVID)),4);
 	
+	// change to update mode 		
+	avrupdate_start_with_vendor_request(vid, pid);
+	wait(2);
+
 	GtkWidget *entryPIDa, *entryVIDa;
 	entryPIDa    = lookup_widget(GTK_WIDGET(button),  "entryPIDa");
 	entryVIDa    = lookup_widget(GTK_WIDGET(button),  "entryVIDa");
 
-	int pid,vid;
 	pid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryPIDa)),4);
 	vid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryVIDa)),4);
+
 
 	avrupdate_net_flash_version(url,selectedVersion,vid,pid);
 
