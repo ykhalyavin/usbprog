@@ -194,8 +194,8 @@ int main(void)
 {
 
 	/* if is no program in flash start bootloader, else start programm */
-	//uint8_t myByte;
-	//myByte = eeprom_read_byte(&eeFooByte);
+	uint8_t myByte;
+	myByte = eeprom_read_byte(&eeFooByte);
 	
 	//eeprom_write_byte(&eeFooByte,0x00);
 
