@@ -197,10 +197,10 @@ int main(void)
 	uint8_t myByte;
 	myByte = eeprom_read_byte(&eeFooByte);
 	
-	//eeprom_write_byte(&eeFooByte,0x00);
+	eeprom_write_byte(&eeFooByte,0x00);
 
-	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
-	if(pgm_read_byte(0)!=0xFF)
+	if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
+	//if(pgm_read_byte(0)!=0xFF)
 		avrupdate_start_app();
 
 
