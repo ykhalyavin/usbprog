@@ -84,9 +84,10 @@ int main(void)
   
   USBNInitMC();
 
+  sei();
   // start usb chip
   USBNStart();
-  sei();
+	wait_ms(1000);
 
   while(1){
 		PORTA |= (1<<PA4);	//on
