@@ -29,7 +29,7 @@
 
 #include "wait.h"
 
-#include "../avrupdate/firmwarelib/avrupdate.h"
+#include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
 #include "usbn2mc.h"
 
@@ -685,7 +685,7 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("usbprog ");
+  USBNDeviceProduct	("AVRISP mkII Klon");
   USBNDeviceSerialNumber("0000A00128255");
 
 	//0000A0016461 (aktuelle)

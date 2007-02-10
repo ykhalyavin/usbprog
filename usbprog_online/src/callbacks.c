@@ -192,3 +192,55 @@ on_download_clicked                    (GtkButton       *button,
 
 }
 
+
+void
+on_find_usbprog_clicked                (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+	GtkWidget *entryVID,*entryPID, *version;
+	entryVID = lookup_widget(GTK_WIDGET(button),  "entryVID");
+	entryPID = lookup_widget(GTK_WIDGET(button),  "entryPID");
+	
+	version = lookup_widget(GTK_WIDGET(button),  "version");
+	
+	gchar vid[4];
+	gchar pid[4];
+
+  int device = avrupdate_find_usbdevice();
+
+	switch(device)
+	{
+		case AVRISPMKII:
+			gtk_entry_set_text(GTK_ENTRY(entryPID), "2104");
+			gtk_entry_set_text(GTK_ENTRY(entryVID), "03eb");
+			gtk_label_set_text(GTK_LABEL(version), "AVRISP mkII Klon");
+		break;
+
+		case USBPROG:
+			gtk_entry_set_text(GTK_ENTRY(entryPID), "0c62");
+			gtk_entry_set_text(GTK_ENTRY(entryVID), "1781");
+			gtk_label_set_text(GTK_LABEL(version), "usbprog (Benes ISP + RS232 Interface)");
+		break;
+			
+		case AVRUPDATE:
+			gtk_entry_set_text(GTK_ENTRY(entryPID), "0c62");
+			gtk_entry_set_text(GTK_ENTRY(entryVID), "1781");
+			gtk_label_set_text(GTK_LABEL(version), "usprog Adapter with no firmware");
+		break;
+			
+		case BLINKDEMO:
+			gtk_entry_set_text(GTK_ENTRY(entryPID), "0c62");
+			gtk_entry_set_text(GTK_ENTRY(entryVID), "1781");
+			gtk_label_set_text(GTK_LABEL(version), "Blink Demo");
+		break;
+
+		default:
+			gtk_entry_set_text(GTK_ENTRY(entryPID), "?");
+			gtk_entry_set_text(GTK_ENTRY(entryVID), "?");
+			gtk_label_set_text(GTK_LABEL(version), "Version: ???");
+	}
+		
+}
+
+

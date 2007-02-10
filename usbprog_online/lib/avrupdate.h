@@ -2,6 +2,11 @@
 #include <usb.h>
 
 
+#define	AVRUPDATE		0x00
+#define	BLINKDEMO		0x01
+#define	USBPROG			0x02
+#define AVRISPMKII	0x03
+
 void avrupdate_start_with_vendor_request(short vendorid, short productid);
 
 
@@ -12,8 +17,9 @@ void avrupdate_close(struct usb_dev_handle* usb_handle);
 /* lowlevel funktions for avr */
 void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file);
 void avrupdate_startapp(struct usb_dev_handle* usb_handle);
-char avrupdate_get_version();
-void avrupdate_set_version(char version);
+char avrupdate_get_version(struct usb_dev_handle* usb_handle);
+void avrupdate_set_version(char version, struct usb_dev_handle* usb_handle);
+int avrupdate_find_usbdevice();
 
 /* check state of the controller -> ready for programming */
 int avrupdate_uc_state();
@@ -37,7 +43,7 @@ struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number);
 
 
 
-/* implicit functionst */
+/* implicit function */
 
 void avrupdate_flash_version(int version);
 

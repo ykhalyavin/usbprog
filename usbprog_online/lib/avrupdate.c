@@ -6,8 +6,10 @@
 //#include <curl/curl.h>
 #include "http_fetcher.h"
 
-#define STARTAPP  0x01
-#define WRITEPAGE 0x02
+#define STARTAPP   0x01
+#define WRITEPAGE  0x02
+#define GETVERSION 0x03
+#define SETVERSION 0x04
 
 void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 {
@@ -84,6 +86,49 @@ void avrupdate_startapp(struct usb_dev_handle* usb_handle)
 }
 
 
+int avrupdate_find_usbdevice()
+{
+	struct usb_bus *busses;
+
+  	//usb_set_debug(2);
+  	usb_init();
+  	usb_find_busses();
+  	usb_find_devices();
+
+  	busses = usb_get_busses();
+
+ 	struct usb_dev_handle* usb_handle;
+  	struct usb_bus *bus;
+
+
+  	unsigned char send_data=0xff;
+
+  	for (bus = busses; bus; bus = bus->next)
+  	{
+    	struct usb_device *dev;
+
+    	for (dev = bus->devices; dev; dev = dev->next){
+					switch (dev->descriptor.idVendor)
+					{
+						case 1003:
+							if(dev->descriptor.idProduct==0x2104)
+								return AVRISPMKII;
+						break;
+						case 6017:
+							if(dev->descriptor.idProduct==0x0c62){
+								if(dev->descriptor.bcdDevice==AVRUPDATE)
+									return AVRUPDATE;
+								if(dev->descriptor.bcdDevice==USBPROG)
+									return USBPROG;
+								if(dev->descriptor.bcdDevice==BLINKDEMO)
+									return BLINKDEMO;
+							}
+						break;
+					}
+      	}
+    	}	
+		return -1;
+}
 
 void avrupdate_start_with_vendor_request(short vendorid, short productid)
 {
@@ -155,13 +200,19 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
 
 
 
-char avrupdate_get_version()
+char avrupdate_get_version(struct usb_dev_handle* usb_handle)
 {
-
+	char cmd[2];
+	char buf[2];
+	cmd[0]=GETVERSION;
+  usb_bulk_write(usb_handle,1,cmd,64,100);
+ 	usb_bulk_read(usb_handle,1,buf,64,100);
+	
+	return buf[0];
 }
 
 
-void avrupdate_set_version(char version)
+void avrupdate_set_version(char version, struct usb_dev_handle* usb_handle)
 {
 
 }

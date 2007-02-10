@@ -64,8 +64,9 @@ create_window (void)
   GtkWidget *hseparator4;
   GtkWidget *hbox10;
   GtkWidget *label18;
-  GtkWidget *fixed1;
-  GtkWidget *label34;
+  GtkWidget *vbox7;
+  GtkWidget *version;
+  GtkWidget *hbox25;
   GtkWidget *button8;
   GtkWidget *hbox24;
   GtkWidget *hseparator5;
@@ -244,20 +245,22 @@ create_window (void)
   gtk_box_pack_start (GTK_BOX (hbox10), label18, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label18), TRUE);
 
-  fixed1 = gtk_fixed_new ();
-  gtk_widget_show (fixed1);
-  gtk_box_pack_start (GTK_BOX (vbox6), fixed1, TRUE, TRUE, 0);
+  vbox7 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox7);
+  gtk_box_pack_start (GTK_BOX (vbox6), vbox7, TRUE, TRUE, 0);
 
-  label34 = gtk_label_new (_("usbprog - AVRISP mkII Klon 0.3"));
-  gtk_widget_show (label34);
-  gtk_fixed_put (GTK_FIXED (fixed1), label34, 24, 8);
-  gtk_widget_set_size_request (label34, 224, 16);
-  gtk_label_set_justify (GTK_LABEL (label34), GTK_JUSTIFY_FILL);
+  version = gtk_label_new (_("Version: ???"));
+  gtk_widget_show (version);
+  gtk_box_pack_start (GTK_BOX (vbox7), version, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (version, -1, 30);
+
+  hbox25 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox25);
+  gtk_box_pack_start (GTK_BOX (vbox7), hbox25, FALSE, FALSE, 0);
 
   button8 = gtk_button_new_with_mnemonic (_("Find usbprog Adapter"));
   gtk_widget_show (button8);
-  gtk_fixed_put (GTK_FIXED (fixed1), button8, 56, 32);
-  gtk_widget_set_size_request (button8, 160, 32);
+  gtk_box_pack_end (GTK_BOX (hbox25), button8, TRUE, FALSE, 0);
 
   hbox24 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox24);
@@ -365,7 +368,7 @@ create_window (void)
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), button6);
   GTK_WIDGET_SET_FLAGS (button6, GTK_CAN_DEFAULT);
 
-  button7 = gtk_button_new_with_mnemonic (_("OK"));
+  button7 = gtk_button_new_with_mnemonic (_("Flash"));
   gtk_widget_show (button7);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), button7);
   GTK_WIDGET_SET_FLAGS (button7, GTK_CAN_DEFAULT);
@@ -374,6 +377,9 @@ create_window (void)
   gtk_widget_show (label3);
   gtk_frame_set_label_widget (GTK_FRAME (frame3), label3);
 
+  g_signal_connect ((gpointer) button8, "clicked",
+                    G_CALLBACK (on_find_usbprog_clicked),
+                    NULL);
   g_signal_connect ((gpointer) treeviewVersions, "cursor_changed",
                     G_CALLBACK (on_treeviewVersions_cursor_changed),
                     NULL);
@@ -382,6 +388,9 @@ create_window (void)
                     NULL);
   g_signal_connect ((gpointer) button4, "clicked",
                     G_CALLBACK (on_download_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) button7, "clicked",
+                    G_CALLBACK (on_buttonFLash_clicked),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -420,8 +429,9 @@ create_window (void)
   GLADE_HOOKUP_OBJECT (window, hseparator4, "hseparator4");
   GLADE_HOOKUP_OBJECT (window, hbox10, "hbox10");
   GLADE_HOOKUP_OBJECT (window, label18, "label18");
-  GLADE_HOOKUP_OBJECT (window, fixed1, "fixed1");
-  GLADE_HOOKUP_OBJECT (window, label34, "label34");
+  GLADE_HOOKUP_OBJECT (window, vbox7, "vbox7");
+  GLADE_HOOKUP_OBJECT (window, version, "version");
+  GLADE_HOOKUP_OBJECT (window, hbox25, "hbox25");
   GLADE_HOOKUP_OBJECT (window, button8, "button8");
   GLADE_HOOKUP_OBJECT (window, hbox24, "hbox24");
   GLADE_HOOKUP_OBJECT (window, hseparator5, "hseparator5");

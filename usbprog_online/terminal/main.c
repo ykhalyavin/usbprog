@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <usb.h>
-#include "avrupdate.h"
+#include "../lib/avrupdate.h"
 
 
 int main(int argc, char **argv)
@@ -8,8 +8,12 @@ int main(int argc, char **argv)
 	
   	// start with the destination of your bin file
 	
-  	struct usb_dev_handle* usb_handle;
-	
+ 	struct usb_dev_handle* usb_handle;
+
+
+avrupdate_find_usbdevice();
+/*
+
 	avrupdate_start_with_vendor_request(0x03eb,0x2104);
 	
 	sleep(2);
@@ -22,7 +26,7 @@ int main(int argc, char **argv)
 
   	avrupdate_startapp(usb_handle);
   	avrupdate_close(usb_handle);
-
+*/
 
 /*
 	char *url = "http://www.ixbat.de/versions.conf";

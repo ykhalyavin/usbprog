@@ -49,3 +49,11 @@ on_treeviewVersions_row_activated      (GtkTreeView     *treeview,
 void
 on_download_clicked                    (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_find_usbprog_clicked                (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_buttonFLash_clicked                 (GtkButton       *button,
+                                        gpointer         user_data);

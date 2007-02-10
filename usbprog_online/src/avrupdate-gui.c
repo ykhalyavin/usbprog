@@ -2,6 +2,7 @@
 
 
 
+
 void InitAVRUpdate(GtkWidget *parent)
 {
 	root = parent;	
@@ -17,18 +18,13 @@ void InitAVRUpdate(GtkWidget *parent)
 	entryPIDa = lookup_widget(GTK_WIDGET(root),  "entryPIDa");
 	entryVID = lookup_widget(GTK_WIDGET(root),  "entryVID");
 	entryVIDa = lookup_widget(GTK_WIDGET(root),  "entryVIDa");
-
-	char *pid = "0c62";
-	char *pida = "0c62";
-	char *vid = "1781";
-	char *vida = "1781";
-
 	
-	gtk_entry_set_text(GTK_ENTRY(entryPID), pid);
+	char *pida = "0c62";
+	char *vida = "1781";
+	
+	
 	gtk_entry_set_text(GTK_ENTRY(entryPIDa), pida);
-	gtk_entry_set_text(GTK_ENTRY(entryVID), vid);
 	gtk_entry_set_text(GTK_ENTRY(entryVIDa), vida);
-
 
 	/* setup treeview table */
 
