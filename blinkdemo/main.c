@@ -84,8 +84,8 @@ int main(void)
   USBNInit();   
   
 	DDRA = (1 << DDA4);
-  //PORTA |= (1<<PA4);	//on
-	PORTA &= ~(1<<PA4); //off
+  PORTA |= (1<<PA4);	//on
+	//PORTA &= ~(1<<PA4); //off
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
   USBNDeviceProductID(0x2104); // atmel ids
@@ -120,7 +120,12 @@ int main(void)
 
   // start usb chip
   USBNStart();
-  while(1);
+  while(1){
+		PORTA &= ~(1<<PA4); //off
+		wait_ms(500);
+		PORTA |= (1<<PA4);  //on
+		wait_ms(500);
+	}
 }
 
 
