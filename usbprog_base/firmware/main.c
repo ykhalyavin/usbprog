@@ -194,12 +194,13 @@ int main(void)
 {
 
 	/* if is no program in flash start bootloader, else start programm */
-	uint8_t myByte;
-	myByte = eeprom_read_byte(&eeFooByte);
+	//uint8_t myByte;
+	//myByte = eeprom_read_byte(&eeFooByte);
 	
-	eeprom_write_byte(&eeFooByte,0x00);
+	//eeprom_write_byte(&eeFooByte,0x00);
 
-	if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
+	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
+	if(pgm_read_byte(0)!=0xFF)
 		avrupdate_start_app();
 
 
@@ -208,7 +209,8 @@ int main(void)
   	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
   	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
   	sei();
-	wait_ms(200);
+	
+	  wait_ms(200);
 
 
   	// bootloader application starts here
@@ -237,7 +239,7 @@ int main(void)
 
   	const unsigned char avrupdateConf[] =
   	{ 
-	0x09,	      // 9 length of this descriptor
+		0x09,	      // 9 length of this descriptor
     0x02,       // descriptor type = configuration descriptor 
     0x20,0x00,  // total length with first interface ... 
     0x01,	      // number of interfaces
