@@ -83,7 +83,7 @@ SIGNAL(SIG_INTERRUPT0)
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
 	//UARTWrite("vendor request check ");
-	SendHex(req->bRequest);
+	//SendHex(req->bRequest);
 	switch(req->bRequest)
 	{
 		case STARTAVRUPDATE:
