@@ -192,7 +192,7 @@ void avrupdate_cmd(char *buf)
 uint8_t eeFooByte EEMEM = 1;
 int main(void)
 {
-
+	cli();
 	/* if is no program in flash start bootloader, else start programm */
 	uint8_t myByte;
 	myByte = eeprom_read_byte(&eeFooByte);
@@ -205,7 +205,6 @@ int main(void)
 
 
   	// spm (bootloader mode from avr needs this, to use an own isr table)	
-  	cli();
   	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
   	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
   	sei();
