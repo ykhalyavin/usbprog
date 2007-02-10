@@ -78,11 +78,11 @@ int main(void)
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
   
   USBNInitMC();
-  sei();
 
   // start usb chip
   USBNStart();
-	
+  sei();
+
   while(1){
 		PORTA |= (1<<PA4);	//on
 		wait_ms(500);
