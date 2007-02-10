@@ -64,9 +64,10 @@ on_buttonFLash_clicked                 (GtkButton       *button,
 	vid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryVID)),4);
 	
 	// change to update mode 		
+	//Log("Activate Update Mode\n");
 	avrupdate_start_with_vendor_request(vid, pid);
-	wait(2);
-
+	//Log("Update Mode is running\n");
+	sleep(3);
 	GtkWidget *entryPIDa, *entryVIDa;
 	entryPIDa    = lookup_widget(GTK_WIDGET(button),  "entryPIDa");
 	entryVIDa    = lookup_widget(GTK_WIDGET(button),  "entryVIDa");
@@ -74,9 +75,13 @@ on_buttonFLash_clicked                 (GtkButton       *button,
 	pid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryPIDa)),4);
 	vid = GetHex(gtk_entry_get_text(GTK_ENTRY(entryVIDa)),4);
 
-
+	//Log("Download and flash selected firmware");
 	avrupdate_net_flash_version(url,selectedVersion,vid,pid);
-
+	//Log("New device starting ...");
+	sleep(3);
+	//Log("Get new VID and PID");
+	on_find_usbprog_clicked(button,NULL);
+	//Log("Finish");
 }
 
 

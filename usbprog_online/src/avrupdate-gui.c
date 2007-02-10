@@ -122,7 +122,7 @@ void Log(char *msg)
 	}
 	
 	int size  = strlen(LogBuffer)+strlen(msg)+1;
-	g_print("size %i\n",size);
+	//g_print("size %i\n",size);
 
 	/* get new bigger memory */
 	char * tmp = (char *) malloc(size);

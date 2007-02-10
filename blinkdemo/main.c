@@ -87,19 +87,18 @@ int main(void)
   PORTA |= (1<<PA4);	//on
 	//PORTA &= ~(1<<PA4); //off
 
-  USBNDeviceVendorID(0x03eb);	//atmel ids
-  USBNDeviceProductID(0x2104); // atmel ids
+  USBNDeviceVendorID(0x1781);	//atmel ids
+  USBNDeviceProductID(0x0c62); // atmel ids
   
-  USBNDeviceBCDDevice(0x0200);
+  USBNDeviceBCDDevice(0x0001);
 
 
   char lang[]={0x09,0x04};
   _USBNAddStringDescriptor(lang); // language descriptor
 
   
-  USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("Blink Demo (usbprog)   ");
-  USBNDeviceSerialNumber("0000A00164611");
+  //USBNDeviceManufacture ("B.Sauter");
+  USBNDeviceProduct	("blinkled");
 
 	//0000A0016461 (aktuelle)
 	//0000A0019647
@@ -116,10 +115,9 @@ int main(void)
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
   
   USBNInitMC();
-  sei();
-
   // start usb chip
   USBNStart();
+	sei();
   while(1){
 		PORTA &= ~(1<<PA4); //off
 		wait_ms(10);

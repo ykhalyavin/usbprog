@@ -155,11 +155,16 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
         		printf("vendor: %i\n",dev->descriptor.idVendor);
-        		usb_handle = usb_open(dev);
-        		stat = usb_set_configuration (usb_handle,1);
-				usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 100);
-				usb_close(usb_handle);
-				//return usb_handle;
+        			usb_handle = usb_open(dev);
+        			stat = usb_set_configuration (usb_handle,1);
+							int timeout;
+							while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000)<0)
+							{
+								timeout++;
+								if(timeout>6)
+									break;
+							};
+							usb_close(usb_handle);
       		}
     	}	
   	}
@@ -189,7 +194,7 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		printf("vendor: %i\n",dev->descriptor.idVendor);
+        		//printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
         		stat = usb_set_configuration (usb_handle,1);
 				return usb_handle;	
@@ -221,6 +226,9 @@ void avrupdate_set_version(char version, struct usb_dev_handle* usb_handle)
 
 void avrupdate_close(struct usb_dev_handle* usb_handle)
 {
+		usb_reset(usb_handle);
+		usb_set_configuration(usb_handle,1);
+		sleep(2);
   	usb_close(usb_handle);
 }
 
@@ -271,6 +279,8 @@ void avrupdate_net_flash_version(char * url,int number, int vendorid, int produc
 			fputc(buffer[i], fp);
 			//fprintf(fp,"%s",buffer);
 		fclose(fp);
+
+		//while(avrupdate_find_usbdevice()!=AVRUPDATE);
 
 		struct usb_dev_handle* usb_handle = avrupdate_open(vendorid,productid);
 		avrupdate_flash_bin(usb_handle,"flash.bin");
