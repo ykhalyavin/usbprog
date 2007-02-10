@@ -200,8 +200,8 @@ int main(void)
 	//eeprom_write_byte(&eeFooByte,0x00);
 
 	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
-	if(pgm_read_byte(0)!=0xFF)
-		avrupdate_start_app();
+	//if(pgm_read_byte(0)!=0xFF)
+	//	avrupdate_start_app();
 
 
   	// spm (bootloader mode from avr needs this, to use an own isr table)	
