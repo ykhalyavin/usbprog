@@ -84,12 +84,23 @@ int main(void)
 
   // start usb chip
   USBNStart();
-  
+ 
+  int loop;
 	while(1){
 		PORTA |= (1<<PA4);	//on
-		wait_ms(500);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
 		PORTA &= ~(1<<PA4); //off
-		wait_ms(500);
+			wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
+	  	wait_ms(1000);
 
 	}
 }
