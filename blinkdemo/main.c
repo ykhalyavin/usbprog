@@ -36,7 +36,6 @@
 /* command descriptions for mk2 */
 //#include "spi.h"
 
-
 /*** prototypes and global vars ***/
 /* send a command back to pc */
 
