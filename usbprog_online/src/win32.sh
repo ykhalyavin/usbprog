@@ -4,5 +4,5 @@ gcc \
 -mno-cygwin -mms-bitfields \
 -DPACKAGE_DATA_DIR="\"/mingw/share\"" \
 -DPACKAGE="\"usbprog-online\"" \
-*.c \
+*.c -lusb -lcurl -lwsock32 -lws2_32 \
 `pkg-config --libs gtk+-win32-2.0`

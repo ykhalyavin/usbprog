@@ -1,18 +1,26 @@
 
-
-
-all: main.o http_error_codes.o support.o avrupdate.o avrupdate-gui.o callbacks.o http_fetcher.o interface.o
-
 GCC =	gcc \
 	`pkg-config --cflags gtk+-win32-2.0` \
 	-mno-cygwin -mms-bitfields 
+
+
+all: main.o http_error_codes.o support.o avrupdate.o avrupdate-gui.o callbacks.o http_fetcher.o interface.o
+	gcc -o usbprog-online.exe\
+	http_error_codes.o support.o avrupdate.o\
+	avrupdate-gui.o callbacks.o main.o\
+	http_fetcher.o interface.o
+	pkg-config --libs gtk+-win32-2.0`\
+	
 
 http_error_codes.o: http_error_codes.c http_error_codes.h
 	$(GCC)-c http_error_codes.c
 
 
 main.o:main.c
-	$(GCC)-c main.c
+	$(GCC) -DPACKAGE_DATA_DIR="\"/mingw/share\"" \
+	-DPACKAGE="\"usbprog-online\"" \
+	-c main.c
+
 avrupdate-gui.o: avrupdate-gui.c avrupdate-gui.h
 	$(GCC)-c avrupdate-gui.c 
 
