@@ -23,13 +23,20 @@
 #include <strings.h>
 #include <ctype.h>
 #include <errno.h>
-#include <netdb.h>
 #include <unistd.h>
+
+#ifndef WIN32
 #include <netinet/in.h>
-#include <sys/types.h>
+#include <netdb.h>
 #include <sys/socket.h>
+#endif
 #include <sys/time.h>
+#include <sys/types.h>
 #include "http_fetcher.h"
+
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 /* Globals */
 int timeout = DEFAULT_READ_TIMEOUT;
