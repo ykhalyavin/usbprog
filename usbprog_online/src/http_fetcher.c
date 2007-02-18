@@ -76,9 +76,10 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		redirectsFollowed = 0;
 
 
-
-WSADATA wsaData;
-int res = WSAStartup(0x101,&wsaData);
+		#ifdef WIN32
+		WSADATA wsaData;
+		int res = WSAStartup(0x101,&wsaData);
+		#endif
 
 
 
@@ -499,6 +500,9 @@ int res = WSAStartup(0x101,&wsaData);
 
 	close(sock);
 
+	#ifdef WIN32
+	WSACleanup();
+	#endif
 	return bytesRead;
 	}
 
