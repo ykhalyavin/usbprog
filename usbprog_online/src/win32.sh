@@ -1,5 +1,10 @@
+
+
+export PATH=$PATH:/c/mingw/bin
+export PKG_CONFIG_PATH=/c/mingw/lib/pkgconfig
+
 gcc \
--o usbprog-online \
+-g -o usbprog-online \
 `pkg-config --cflags gtk+-win32-2.0` \
 -mno-cygwin -mms-bitfields \
 -DPACKAGE_DATA_DIR="\"/mingw/share\"" \

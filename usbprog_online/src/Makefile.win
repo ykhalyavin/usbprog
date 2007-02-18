@@ -38,3 +38,7 @@ http_fetcher.o: http_fetcher.c http_fetcher.h
 	$(GCC)-c http_fetcher.c
 interface.o: interface.c interface.h
 	$(GCC)-c interface.c
+
+
+clean:
+	rm *.o

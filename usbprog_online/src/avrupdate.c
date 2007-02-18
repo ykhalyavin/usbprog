@@ -241,6 +241,7 @@ size_t _write_data(void *data, size_t size, size_t nmemb, void *userp)
 
 int avrupdate_net_get_versionfile(char * url, char **buffer)
 {
+
 	return http_fetch(url, buffer); 
 }
 

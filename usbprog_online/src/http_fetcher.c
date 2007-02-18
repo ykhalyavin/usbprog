@@ -36,6 +36,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#include <winsock2.h>
+#include <mswsock.h>
 #endif
 
 /* Globals */
@@ -72,6 +74,12 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		selectRet,
 		found = 0,	/* For redirects */
 		redirectsFollowed = 0;
+
+
+
+WSADATA wsaData;
+int res = WSAStartup(0x101,&wsaData);
+
 
 
 	if(url_tmp == NULL)
@@ -246,12 +254,15 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		requestBuf = tmp;
 
 		sock = makeSocket(host);		/* errorSource set within makeSocket */
-		if(sock == -1) { free(url); free(requestBuf); return -1;}
+		if(sock == -1) { printf("ende\n");free(url); free(requestBuf); return -1;}
 
 		free(url);
         url = NULL;
-
+ 		#ifdef WIN32
+		if(send(sock, requestBuf, strlen(requestBuf),0) == -1)
+		#else
 		if(write(sock, requestBuf, strlen(requestBuf)) == -1)
+		#endif
 			{
 			close(sock);
 			free(requestBuf);
@@ -427,8 +438,11 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 			errorSource = ERRNO;
 			return -1;
 			}
-
+		#ifdef WIN32
+		ret = recv(sock, pageBuf + bytesRead, contentLength,0);
+	        #else	
 		ret = read(sock, pageBuf + bytesRead, contentLength);
+		#endif
 		if(ret == -1)
 			{
 			close(sock);
@@ -484,6 +498,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		*fileBuf = pageBuf;
 
 	close(sock);
+
 	return bytesRead;
 	}
 
@@ -735,7 +750,11 @@ int _http_read_header(int sock, char *headerPtr)
 			}
 		else if(selectRet == -1) { errorSource = ERRNO; return -1; }
 
+		#ifdef WIN32
+		ret = recv(sock, headerPtr, 1,0);
+		#else
 		ret = read(sock, headerPtr, 1);
+		#endif
 		if(ret == -1) { errorSource = ERRNO; return -1; }
 		bytesRead++;
 

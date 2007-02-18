@@ -8,7 +8,7 @@
 #include "interface.h"
 #include "support.h"
 
-#include "../lib/avrupdate.h"
+#include "avrupdate.h"
 
 int selectedVersion=0;
 
