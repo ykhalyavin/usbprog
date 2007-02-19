@@ -442,3 +442,7 @@ download:
 
 reset:
 	avrdude -p m32 -c bsd -E noreset
+
+upgrade:
+	hex2bin main.hex
+	usbprog main.bin

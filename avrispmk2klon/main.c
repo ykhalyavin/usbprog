@@ -616,7 +616,12 @@ void USBFlash(char *buf)
 				case 0xa0:
 					result = spi_in();
 				break;
-				
+
+				//write fuse and lock bit
+				case 0xac:
+					spi_out(buf[7]);
+				break;
+
 				//write eeprom
 				case 0xc0:
 					spi_out(buf[7]);

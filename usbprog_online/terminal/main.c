@@ -12,13 +12,12 @@ int main(int argc, char **argv)
 
 
 avrupdate_find_usbdevice();
-/*
 
 	avrupdate_start_with_vendor_request(0x03eb,0x2104);
 	
 	sleep(2);
 
-	usb_handle = avrupdate_open(0x0400,0x5dc3);
+	usb_handle = avrupdate_open(0x1781,0x0c62);
  
   	if(argc==2)
     	avrupdate_flash_bin(usb_handle,argv[1]);
@@ -26,7 +25,6 @@ avrupdate_find_usbdevice();
 
   	avrupdate_startapp(usb_handle);
   	avrupdate_close(usb_handle);
-*/
 
 /*
 	char *url = "http://www.ixbat.de/versions.conf";
