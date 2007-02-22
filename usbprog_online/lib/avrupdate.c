@@ -144,6 +144,8 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
  	struct usb_dev_handle* usb_handle;
   	struct usb_bus *bus;
 
+	if(avrupdate_find_usbdevice()==USBPROG)
+		return;
 
   	unsigned char send_data=0xff;
 
@@ -241,6 +243,7 @@ size_t _write_data(void *data, size_t size, size_t nmemb, void *userp)
 
 int avrupdate_net_get_versionfile(char * url, char **buffer)
 {
+
 	return http_fetch(url, buffer); 
 }
 
