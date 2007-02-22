@@ -1,5 +1,5 @@
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -65,9 +65,11 @@ on_buttonFLash_clicked                 (GtkButton       *button,
 	
 	// change to update mode 		
 	//Log("Activate Update Mode\n");
+	#ifndef WIN32
 	avrupdate_start_with_vendor_request(vid, pid);
+	//sleep(3);
+	#endif
 	//Log("Update Mode is running\n");
-	sleep(3);
 	GtkWidget *entryPIDa, *entryVIDa;
 	entryPIDa    = lookup_widget(GTK_WIDGET(button),  "entryPIDa");
 	entryVIDa    = lookup_widget(GTK_WIDGET(button),  "entryVIDa");
@@ -78,9 +80,9 @@ on_buttonFLash_clicked                 (GtkButton       *button,
 	//Log("Download and flash selected firmware");
 	avrupdate_net_flash_version(url,selectedVersion,vid,pid);
 	//Log("New device starting ...");
-	sleep(3);
+	//sleep(3);
 	//Log("Get new VID and PID");
-	on_find_usbprog_clicked(button,NULL);
+	//on_find_usbprog_clicked(button,NULL);
 	//Log("Finish");
 }
 

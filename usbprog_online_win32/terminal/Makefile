@@ -1,7 +1,7 @@
 all:
 	gcc -g -c ../lib/avrupdate.c
-	gcc -c main.c -I ../lib/
-	gcc -g -o avrupdate main.o -lusb -I ../lib/  -lavrupdate
+	gcc -c main.c -lusb
+	gcc -g -o avrupdate main.o -lusb -lavrupdate
 
 install:
 	cp avrupdate /usr/bin
