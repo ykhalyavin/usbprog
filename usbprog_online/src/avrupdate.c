@@ -144,6 +144,8 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
  	struct usb_dev_handle* usb_handle;
   	struct usb_bus *bus;
 
+	if(avrupdate_find_usbdevice()==USBPROG)
+		return;
 
   	unsigned char send_data=0xff;
 
