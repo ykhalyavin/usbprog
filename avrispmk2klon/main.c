@@ -290,11 +290,11 @@ void CommandAnswer(int length)
 	}
 }
 
-
 /* central command parser */
 void USBFlash(char *buf)
 {
 	int i; 
+  USBNWrite(TXC1,FLUSH);
 	char result;
 	int count = 32;
 	uint16_t numberofbytes;
@@ -324,12 +324,14 @@ void USBFlash(char *buf)
 			answer[11] = 'K';
 			answer[12] = '2';
 			CommandAnswer(13);
+			return;
 		break;
 		case CMD_SET_PARAMETER:
 			// do we like, all commands are successfully
 			answer[0] = CMD_SET_PARAMETER;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
+			return;
 		break;
 		case CMD_GET_PARAMETER:
 			answer[0] = CMD_GET_PARAMETER;
@@ -364,10 +366,12 @@ void USBFlash(char *buf)
 					answer[2] = 0x00; // FIXME all is not perfect!
 			}
 			CommandAnswer(3);
+			return;
 
 		break;
 		case CMD_OSCCAL:
 
+			return;
 		break;
 
 		case CMD_READ_OSCCAL_ISP:
@@ -381,6 +385,7 @@ void USBFlash(char *buf)
 			answer[2] = result;
 			answer[3] = STATUS_CMD_OK;
 			CommandAnswer(4);
+			return;
 
 		break;
 
@@ -399,35 +404,49 @@ void USBFlash(char *buf)
 			answer[0] = CMD_LOAD_ADDRESS;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
+			return;
 		break;
 		case CMD_FIRMWARE_UPGRADE:
-
+			avrupdate_start();
+			return;
 		break;
 		case CMD_RESET_PROTECTION:
 			answer[0] = CMD_RESET_PROTECTION;
 			answer[1] = STATUS_CMD_OK;	// this command returns always ok!
+			return;
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
+			//usbprog.datatogl=1;	// to be sure that togl is on next session clear
+			//led on
 			PORTA |= (1<<PA4);	//on
 			//PORTB &= ~(1<<RESET); //on
 			//cbi	portb,SCK	; clear SCK
 			//PORTB &= ~(1<<SCK); //bum
 			
 			// set_reset		;	set RESET = 1
+			answer[0] = CMD_ENTER_PROGMODE_ISP;
 			PORTB |= (1<<RESET);	// give reset a positive pulse
+			asm("nop");
+			asm("nop");
+			asm("nop");
 			PORTB &= ~(1<<RESET); // clr_reset    ; set RESET = 0
-			wait_ms(5);
+			
+			wait_ms(25);
 	
 			spi_out(0xac);
 			spi_out(0x53);
 
 			answer[1] = STATUS_CMD_FAILED;
-			int syncloops = buf[4];
+			//int syncloops = buf[4];
+			int syncloops = 5;
 			for (syncloops;syncloops>0;syncloops--) {
 				result = spi_in();
 				//SendHex(result);
 				if (result == buf[6]) {	//0x53 for avr
+					spi_out(0x00);
 					answer[1] = STATUS_CMD_OK;
+					CommandAnswer(2);
+					return;
 					break;
 				}
 				spi_out(0x00);
@@ -439,9 +458,9 @@ void USBFlash(char *buf)
 				PORTB &= ~(1<<SCK);
 				*/ //bumm	
 
-				PORTB |= (1<<RESET);	// give reset a positive pulse
-				PORTB &= ~(1<<RESET); // clr_reset    ; set RESET = 0
-				wait_ms(5);
+				//PORTB |= (1<<RESET);	// give reset a positive pulse
+				//PORTB &= ~(1<<RESET); // clr_reset    ; set RESET = 0
+				wait_ms(20);
 
 				spi_out(0xac);
 				spi_out(0x53);
@@ -449,8 +468,9 @@ void USBFlash(char *buf)
 
 			spi_out(0x00);
 
-			answer[0] = CMD_ENTER_PROGMODE_ISP;
+			answer[1] = STATUS_CMD_FAILED;
 			CommandAnswer(2);
+			return;
 		break;
 		case CMD_LEAVE_PROGMODE_ISP:
 			PORTA &= ~(1<<PA4); //off
@@ -458,7 +478,8 @@ void USBFlash(char *buf)
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
-			usbprog.datatogl=0;	// to be sure that togl is on next session clear
+			//usbprog.datatogl=0;	// to be sure that togl is on next session clear
+			return;
 
 		break;
 		case CMD_CHIP_ERASE_ISP:
@@ -470,6 +491,7 @@ void USBFlash(char *buf)
 			answer[0] = CMD_CHIP_ERASE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
+			return;
 		break;
 		case CMD_PROGRAM_FLASH_ISP:
 			//UARTWrite("\r\nfla");
@@ -517,6 +539,7 @@ void USBFlash(char *buf)
 			answer[0] = CMD_READ_FLASH_ISP;
 			answer[1] = STATUS_CMD_FAILED;
 			CommandAnswer(2);
+			return;
 		break;
 
 		case CMD_READ_LOCK_ISP:
@@ -530,6 +553,7 @@ void USBFlash(char *buf)
 			answer[2] = result;
 			answer[3] = STATUS_CMD_OK;
 			CommandAnswer(4);
+			return;
 		break;
 
 		case CMD_PROGRAM_EEPROM_ISP:
@@ -548,6 +572,7 @@ void USBFlash(char *buf)
 			answer[1] = STATUS_CMD_OK;
 			answer[2] = STATUS_CMD_OK;
 			CommandAnswer(3);
+			return;
 
 		break;
 		case CMD_READ_FUSE_ISP:
@@ -561,6 +586,7 @@ void USBFlash(char *buf)
 			answer[2] = result;
 			answer[3] = STATUS_CMD_OK;
 			CommandAnswer(4);
+			return;
 		break;
 		case CMD_READ_SIGNATURE_ISP:
 			spi_out(buf[2]);	
@@ -573,6 +599,7 @@ void USBFlash(char *buf)
 			answer[2] = result;
 			answer[3] = STATUS_CMD_OK;
 			CommandAnswer(4);
+			return;
 		break;
 		case CMD_SPI_MULTI:
 			spi_out(buf[4]);	
@@ -639,7 +666,7 @@ void USBFlash(char *buf)
 
 			answer[6] = STATUS_CMD_OK;
 			CommandAnswer(3+buf[2]);
-
+			return;
 		break;
 		}
 	}
