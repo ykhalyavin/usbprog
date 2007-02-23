@@ -1,0 +1,10 @@
+
+Use it as avrispv2 Klone
+
+./configure --avrispv2
+
+
+Use it as usbprog
+
+./configure
+
