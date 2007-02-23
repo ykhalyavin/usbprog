@@ -36,6 +36,13 @@
 /*** prototypes and global vars ***/
 /* send a command back to pc */
 void CommandAnswer(int length);
+volatile struct usbprog_t {
+  char lastcmd;
+	int longpackage;
+	int cmdpackage;
+	int datatogl;
+} usbprog;
+
 volatile char answer[300];
 
 SIGNAL(SIG_UART_RECV)
@@ -140,10 +147,8 @@ void USBFlash(char *buf)
 	switch(buf[0]) {
 		case 0x00:
 		break;
-		}
 	}
 }
-
 
 int main(void)
 {
