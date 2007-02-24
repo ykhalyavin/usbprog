@@ -49,6 +49,7 @@ volatile struct usbprog_t {
 	int longpackage;
 	int cmdpackage;
 	int datatogl;
+	char sck_duration;
 } usbprog;
 
 volatile char answer[300];
@@ -108,8 +109,9 @@ void spi_init()
 
 	DDR_SPI = (1<<MOSI)|(1<<SCK)|(1<<RESET);
 	
-	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);	//128tel
-	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|3;
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);	//1si68tel alt
+	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1);	//250KHz
+	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
   //SPSR = (0<<SPI2X);
 }
 
@@ -330,6 +332,54 @@ void USBFlash(char *buf)
 			// do we like, all commands are successfully
 			answer[0] = CMD_SET_PARAMETER;
 			answer[1] = STATUS_CMD_OK;
+
+			switch(buf[1]){
+				case PARAM_SCK_DURATION:
+					switch(buf[2]){
+						case 0x00:	//8MHz
+							SPCR = (1<<SPE)|(1<<MSTR);
+  						SPSR = (1<<SPI2X);
+						break;
+
+						case 0x01:	//4MHz
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
+  						SPSR = 0x00;
+						break;
+
+						case 0x02:	//2MHz
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+  						SPSR = (1<<SPI2X);
+						break;
+
+	  				case 0x03:	//1MHz
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+  						SPSR = 0x00;
+						break;
+	  				
+						case 0x04:	//500kHz
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1);
+  						SPSR = (1<<SPI2X);
+						break;
+						
+						case 0x05:	//250kHz
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1);
+  						SPSR = 0x00;
+						break;
+						
+						case 0x06:	//125kHz
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
+  						SPSR = 0x00;
+						break;
+
+					default:
+							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+  						SPSR = 0x00;
+							buf[2] = 3;
+					}
+					usbprog.sck_duration=buf[2];
+				break;
+			}
+
 			CommandAnswer(2);
 			return;
 		break;
@@ -359,7 +409,7 @@ void USBFlash(char *buf)
 				break;
 	
 				case PARAM_SCK_DURATION:
-					answer[2] = 3; // 1MHz
+					answer[2] = usbprog.sck_duration;
 				break;	
 
 				default:
@@ -370,7 +420,10 @@ void USBFlash(char *buf)
 
 		break;
 		case CMD_OSCCAL:
-
+			/* peforms a calibration secquence */
+			answer[0] = CMD_OSCCAL;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
 			return;
 		break;
 
@@ -682,6 +735,7 @@ int main(void)
   USBNInit();   
   
   usbprog.longpackage=0;
+	usbprog.sck_duration=3;//1MHz
 
 /* usbprog ids 
   USBNDeviceVendorID(0x1781);
