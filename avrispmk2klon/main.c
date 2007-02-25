@@ -50,6 +50,7 @@ volatile struct usbprog_t {
 	int cmdpackage;
 	int datatogl;
 	char sck_duration;
+	int fragmentnumber;
 } usbprog;
 
 volatile char answer[300];
@@ -273,6 +274,45 @@ void flash_program_fsm(char * buf)
 }
 
 
+void SendCompleteAnswer()
+{
+	if(pgmmode.numbytes==0)
+		return;
+
+	USBNWrite(TXC1,FLUSH);
+	
+	int i;
+	if(pgmmode.numbytes>64){
+		for(i=0;i<64;i++)
+			USBNWrite(TXD1,answer[usbprog.fragmentnumber*64+i]);
+
+		usbprog.fragmentnumber++;
+		pgmmode.numbytes = pgmmode.numbytes - 64;
+		USBToglAndSend();
+ 	}
+	else {
+		for(i=0;i<pgmmode.numbytes;i++)
+			USBNWrite(TXD1,answer[usbprog.fragmentnumber*64+i]);
+
+		usbprog.fragmentnumber=0;
+		pgmmode.numbytes=0;
+		USBToglAndSend();
+	}
+
+}
+
+void USBToglAndSend()
+{
+	if(usbprog.datatogl==1) {
+		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
+		usbprog.datatogl=0;
+	} else {
+		USBNWrite(TXC1,TX_LAST+TX_EN);
+		usbprog.datatogl=1;
+	}
+}
+
+
 void CommandAnswer(int length)
 {
 	int i;
@@ -282,14 +322,7 @@ void CommandAnswer(int length)
 		USBNWrite(TXD1,answer[i]);
 
 	/* control togl bit */
-
-	if(usbprog.datatogl==1) {
-		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-		usbprog.datatogl=0;
-	} else {
-		USBNWrite(TXC1,TX_LAST+TX_EN);
-		usbprog.datatogl=1;
-	}
+	USBToglAndSend();
 }
 
 /* central command parser */
@@ -469,6 +502,7 @@ void USBFlash(char *buf)
 			return;
 		break;
 		case CMD_ENTER_PROGMODE_ISP:
+			pgmmode.address=0;
 			//usbprog.datatogl=1;	// to be sure that togl is on next session clear
 			//led on
 			PORTA |= (1<<PA4);	//on
@@ -575,23 +609,40 @@ void USBFlash(char *buf)
 
 		case CMD_READ_FLASH_ISP:
 			
-			pgmmode.numbytes = (buf[1]<<8)|(buf[2]); // number of bytes
+			pgmmode.numbytes = (buf[1]<<8)|(buf[2])+1; // number of bytes
 			pgmmode.cmd3 = buf[3];	// read command
+			int numbytes = pgmmode.numbytes;
 			// collect max first 62 bytes
-			for(pgmmode.numbytes;pgmmode.numbytes > 0; pgmmode.numbytes--) {
+			int answerindex=2;
+			for(numbytes;numbytes > 0; numbytes--) {
 				spi_out(pgmmode.cmd3);
 				spi_out(pgmmode.address>>8);
 				spi_out(pgmmode.address);
-				answer[pgmmode.address+2]=spi_in();
-				pgmmode.address++;
+				answer[answerindex]=spi_in();
+				answerindex++;
+				if(pgmmode.cmd3==0x20){
+					pgmmode.cmd3=0x28;
+				}
+				else {
+					pgmmode.cmd3=0x20;
+					pgmmode.address++;
+				}
 			}
 			
 			// then toggle send next read bytes
 			// and finish with status_cmd_ok
 
 			answer[0] = CMD_READ_FLASH_ISP;
-			answer[1] = STATUS_CMD_FAILED;
-			CommandAnswer(2);
+			answer[1] = STATUS_CMD_OK;
+			answer[pgmmode.numbytes+1] = STATUS_CMD_OK;
+			
+			if(pgmmode.numbytes>62){
+				CommandAnswer(64);
+				pgmmode.numbytes = pgmmode.numbytes - 62;
+				usbprog.fragmentnumber=1;
+			}
+			else CommandAnswer(pgmmode.numbytes+2);
+
 			return;
 		break;
 
@@ -608,13 +659,27 @@ void USBFlash(char *buf)
 			CommandAnswer(4);
 			return;
 		break;
+		case CMD_PROGRAM_LOCK_ISP:
+			spi_out(buf[1]);	
+			spi_out(buf[2]);	
+			spi_out(buf[3]);	
+			spi_out(buf[4]);	
+	
+			answer[0] = CMD_PROGRAM_LOCK_ISP;
+			answer[1] = STATUS_CMD_OK;
+			answer[2] = STATUS_CMD_OK;
+			CommandAnswer(3);
+			return;
+
 
 		case CMD_PROGRAM_EEPROM_ISP:
 
 		break;
+
 		case CMD_READ_EEPROM_ISP:
 
 		break;
+
 		case CMD_PROGRAM_FUSE_ISP:
 			spi_out(buf[1]);	
 			spi_out(buf[2]);	
@@ -736,6 +801,7 @@ int main(void)
   
   usbprog.longpackage=0;
 	usbprog.sck_duration=3;//1MHz
+	usbprog.fragmentnumber=0;	// read flash fragment
 
 /* usbprog ids 
   USBNDeviceVendorID(0x1781);
@@ -785,7 +851,8 @@ int main(void)
   interf = USBNAddInterface(conf,0);
   USBNAlternateSetting(conf,interf,0);
 
-  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,&SendCompleteAnswer);
+  //USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
   
   USBNInitMC();
