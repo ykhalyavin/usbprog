@@ -4,7 +4,6 @@
 #include <avr/boot.h>
 #include <stdint.h>
 #include <avr/interrupt.h>
-//#include <avr/signal.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #define F_CPU 16000000
