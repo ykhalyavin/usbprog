@@ -1,10 +1,10 @@
 all:
 	gcc -g -c ../lib/avrupdate.c
-	gcc -c main.c -I ../lib/
-	gcc -g -o avrupdate main.o -lusb -I ../lib/  -lavrupdate
+	gcc -g -c main.c -I ../lib/
+	gcc -g -o usbprog main.o -lusb -I ../lib/  -lavrupdate
 
 install:
-	cp avrupdate /usr/bin
+	cp usbprog /usr/bin
 	
 clean:
-	rm *.o avrupdate
+	rm *.o usbprog

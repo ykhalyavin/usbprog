@@ -6,10 +6,11 @@
 //#include <curl/curl.h>
 #include "http_fetcher.h"
 
-#define STARTAPP   0x01
-#define WRITEPAGE  0x02
-#define GETVERSION 0x03
-#define SETVERSION 0x04
+#define STARTAPP   		0x01
+#define WRITEPAGE  		0x02
+#define GETVERSION 		0x03
+#define SETVERSION 		0x04
+#define STOPPROGMODE 	0x05
 
 void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 {
@@ -79,10 +80,11 @@ void avrupdate_startapp(struct usb_dev_handle* usb_handle)
   	char buf[64];
   	char *ptr = buf;
 
- 
+//   	buf[0]=STOPPROGMODE;
+//   	usb_bulk_write(usb_handle,2,ptr,64,100);
+
    	buf[0]=STARTAPP;
    	usb_bulk_write(usb_handle,2,ptr,64,100);
-   	//printf("TX stat=%d\n",stat);
 }
 
 
@@ -144,8 +146,8 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
  	struct usb_dev_handle* usb_handle;
   	struct usb_bus *bus;
 
-	if(avrupdate_find_usbdevice()==USBPROG)
-		return;
+	//if(avrupdate_find_usbdevice()==USBPROG)
+	//	return;
 
   	unsigned char send_data=0xff;
 
@@ -156,16 +158,11 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		printf("vendor: %i\n",dev->descriptor.idVendor);
+        		  printf("found: %i\n",dev->descriptor.idVendor);
         			usb_handle = usb_open(dev);
         			stat = usb_set_configuration (usb_handle,1);
 							int timeout;
-							while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000)<0)
-							{
-								timeout++;
-								if(timeout>6)
-									break;
-							};
+							usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000);
 							usb_close(usb_handle);
       		}
     	}	
@@ -228,9 +225,11 @@ void avrupdate_set_version(char version, struct usb_dev_handle* usb_handle)
 
 void avrupdate_close(struct usb_dev_handle* usb_handle)
 {
+/*
 		usb_reset(usb_handle);
 		usb_set_configuration(usb_handle,1);
 		sleep(2);
+		*/
   	usb_close(usb_handle);
 }
 

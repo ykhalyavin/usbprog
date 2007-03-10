@@ -26,16 +26,23 @@ SIGNAL(SIG_INTERRUPT0)
   	USBNInterrupt();
 }
 
+// __heap_start is declared in the linker script
+uint8_t eeFooByte EEMEM = 1;
+
 uint8_t state;
 uint8_t page_addr;
 uint8_t page_addr_w;
 uint8_t pageblock[128];
 uint8_t collect128;
 
-#define NONE	    0x00
-#define STARTAPP    0x01
-#define WRITEPAGE   0x02
-#define READCHKSUM  0x03
+#define NONE	    		0x00
+
+#define STARTAPP      0x01
+#define WRITEPAGE     0x02
+#define GETVERSION    0x03
+#define SETVERSION    0x04
+#define STOPPROGMODE  0x05
+
 
 /* usbn2mc tiny needs this */
 void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
@@ -126,6 +133,17 @@ void avrupdate_cmd(char *buf)
   	// check state first ist 
   	switch(state)
   	{
+			case STOPPROGMODE:
+				eeprom_write_byte(&eeFooByte,0x00);
+				wait_ms(10);
+			break;
+
+			case STARTAPP:
+				//UARTWrite("start app now!!!\n\r");
+				eeprom_write_byte(&eeFooByte,0x00);
+				avrupdate_start_app();
+			break;
+
     	case WRITEPAGE:
       		//UARTWrite("write\r\n");
       		//SendHex(page_addr);
@@ -179,6 +197,7 @@ void avrupdate_cmd(char *buf)
       		if(state==STARTAPP)
       		{
 				//cli();
+				eeprom_write_byte(&eeFooByte,0x00);
 				avrupdate_start_app();
 				state = NONE;
    			}	
@@ -186,27 +205,28 @@ void avrupdate_cmd(char *buf)
 	
 }
 
-// __heap_start is declared in the linker script
 
-uint8_t eeFooByte EEMEM = 1;
 int main(void)
 {
 	cli();
+ 	// spm (bootloader mode from avr needs this, to use an own isr table)	
+ 	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
+ 	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
+ 	sei();
+	
+  UARTInit();
+
+  UARTWrite("\r\nbootloader is now active\r\n");
 	/* if is no program in flash start bootloader, else start programm */
 	uint8_t myByte;
 	myByte = eeprom_read_byte(&eeFooByte);
 	
-	eeprom_write_byte(&eeFooByte,0x00);
-
-	if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
-	//if(pgm_read_byte(0)!=0xFF)
+	SendHex(myByte);
+	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
+	if(myByte == 0x00){
+		//UARTWrite("start app");
 		avrupdate_start_app();
-
-
-  	// spm (bootloader mode from avr needs this, to use an own isr table)	
-  	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
-  	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
-  	sei();
+	}
 	
 	  wait_ms(200);
 
@@ -271,7 +291,6 @@ int main(void)
     0x00	      // polling intervall in ms
   	};
 
-  	UARTInit();
   
   
   
@@ -283,7 +302,6 @@ int main(void)
   	// start usb chip
   	USBNStart();
   
-  	//UARTWrite("\r\nbootloader is now active\r\n");
 
   	collect128=0;
   	// wait 2 seconds then start application

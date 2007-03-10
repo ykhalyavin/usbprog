@@ -33,12 +33,13 @@
 #include "uart.h"
 #include "usbn2mc.h"
 
+
 /* command descriptions for mk2 */
 #include "avr069.h"
 
 //#include "spi.h"
 
-#include "devices/at89.h"
+//#include "devices/at89.h"
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
@@ -273,6 +274,117 @@ void flash_program_fsm(char * buf)
 	}
 }
 
+void eeprom_write_byte_isp(unsigned char high, unsigned char low, unsigned char value){
+
+	if(value==0xFF){
+		return;
+	}
+
+	//programm
+	spi_out(0xc0);
+	spi_out(high);
+	spi_out(low);
+	spi_out(value);
+
+
+
+	//wait_ms(1);
+	unsigned char result;
+/*	
+	while(1){
+		//spi_out(pgmmode.cmd3);
+		spi_out(0xa0);
+		spi_out(high);
+		spi_out(low);
+		result = spi_in();
+		
+		if(result==value)
+			return;	
+	}
+	*/
+	
+	return;
+}
+
+void eeprom_write(char * buf){
+	int bufindex=0,bytes=0;
+	
+
+	if(usbprog.cmdpackage==1){
+		usbprog.cmdpackage = 0;
+		// das erste packet
+		bufindex = 10;
+		if(pgmmode.numbytes > 54) {
+			bytes = 64;
+			pgmmode.numbytes = pgmmode.numbytes -54;
+		}
+		else {
+			bytes = pgmmode.numbytes;
+			pgmmode.numbytes =0;
+			usbprog.longpackage=0;
+			answer[0] = CMD_PROGRAM_EEPROM_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
+
+		}
+		
+		//if(pgmmode.numbytes==0) {
+			//answer[0] = CMD_PROGRAM_EEPROM_ISP;
+			//answer[1] = STATUS_CMD_OK;
+			//CommandAnswer(2);
+			//usbprog.longpackage=0;
+		//}
+
+		
+		for(bufindex;bufindex < bytes;bufindex++){
+			// load low word
+			// load high word
+			//spi_out(pgmmode.cmd1);
+			//spi_out(pgmmode.address>>8);
+			//spi_out(pgmmode.address);
+			//spi_out(buf[bufindex]);
+			//wait_ms(1);
+			eeprom_write_byte_isp(pgmmode.address>>8,pgmmode.address,buf[bufindex]);
+			pgmmode.address++;
+		}
+	}
+	else {
+		// alle anderen packete
+		if(pgmmode.numbytes > 64) {
+			bytes = 64;
+			pgmmode.numbytes = pgmmode.numbytes -64;
+		}
+		else {
+			bytes = pgmmode.numbytes;
+			pgmmode.numbytes =0;
+			usbprog.longpackage=0;
+			answer[0] = CMD_PROGRAM_EEPROM_ISP;
+			answer[1] = STATUS_CMD_OK;
+			CommandAnswer(2);
+
+		}
+		//if(pgmmode.numbytes==0) {
+			//usbprog.longpackage=0;
+		//}
+
+
+		bufindex=0;
+		for(bufindex;bufindex < bytes;bufindex++){
+			//spi_out(pgmmode.cmd1);
+			//spi_out(pgmmode.address>>8);
+			//spi_out(pgmmode.address);
+			//spi_out(buf[bufindex]);
+			eeprom_write_byte_isp(pgmmode.address>>8,pgmmode.address,buf[bufindex]);
+			//wait_ms(1);
+			pgmmode.address++;
+		}
+	}
+
+	
+}
+
+
+
 
 void SendCompleteAnswer()
 {
@@ -337,6 +449,11 @@ void USBFlash(char *buf)
 		if(usbprog.lastcmd == CMD_PROGRAM_FLASH_ISP)
 		{
 			flash_program_fsm(buf);
+		}
+
+	  if(usbprog.lastcmd == CMD_PROGRAM_EEPROM_ISP)
+		{
+			eeprom_write(buf);
 		}
 
 		return;
@@ -581,7 +698,7 @@ void USBFlash(char *buf)
 			return;
 		break;
 		case CMD_PROGRAM_FLASH_ISP:
-			//UARTWrite("\r\nfla");
+			// UARTWrite("\r\nfla");
 			// buf[1] = msb number of bytes
 			// buf[2] = lsb number of bytes
 			pgmmode.numbytes = (buf[1]<<8)|(buf[2]);
@@ -659,6 +776,7 @@ void USBFlash(char *buf)
 			CommandAnswer(4);
 			return;
 		break;
+
 		case CMD_PROGRAM_LOCK_ISP:
 			spi_out(buf[1]);	
 			spi_out(buf[2]);	
@@ -670,13 +788,61 @@ void USBFlash(char *buf)
 			answer[2] = STATUS_CMD_OK;
 			CommandAnswer(3);
 			return;
+		break;
 
 
 		case CMD_PROGRAM_EEPROM_ISP:
+			pgmmode.numbytes = (buf[1]<<8)|(buf[2]);
+			
+			// 	-> set longpackage = 1 if greate than 54
+			if(pgmmode.numbytes>54){
+				usbprog.longpackage = 1;
+			}
+			
+			// buf[3] = mode
+			pgmmode.mode = buf[3];
+			// buf[4] = delay
+			pgmmode.delay = buf[4];
+			// buf[5] = spi command for load page and write program memory (one byte at a time)
+			pgmmode.cmd1 = buf[5];
+			// buf[7] = spi command for read program memory
+			pgmmode.cmd3 = buf[7];
 
+			usbprog.cmdpackage = 1;
+			eeprom_write(buf);
+			//usbprog.cmdpackage = 0;
+			return;
 		break;
 
 		case CMD_READ_EEPROM_ISP:
+			pgmmode.numbytes = (buf[1]<<8)|(buf[2])+1; // number of bytes
+			pgmmode.cmd3 = buf[3];	// read command
+			numbytes = pgmmode.numbytes;
+			// collect max first 62 bytes
+			answerindex=2;
+			for(numbytes;numbytes > 0; numbytes--) {
+				spi_out(pgmmode.cmd3);
+				spi_out(pgmmode.address>>8);
+				spi_out(pgmmode.address);
+				answer[answerindex]=spi_in();
+				answerindex++;
+				pgmmode.address++;
+			}
+			
+			// then toggle send next read bytes
+			// and finish with status_cmd_ok
+
+			answer[0] = CMD_READ_EEPROM_ISP;
+			answer[1] = STATUS_CMD_OK;
+			answer[pgmmode.numbytes+1] = STATUS_CMD_OK;
+			
+			if(pgmmode.numbytes>62){
+				CommandAnswer(64);
+				pgmmode.numbytes = pgmmode.numbytes - 62;
+				usbprog.fragmentnumber=1;
+			}
+			else CommandAnswer(pgmmode.numbytes+2);
+
 
 		break;
 
