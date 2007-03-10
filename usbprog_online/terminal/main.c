@@ -25,17 +25,17 @@ int main(int argc, char **argv)
 		case BLINKDEMO:
 			printf("usbprog firmware found: blinkdemo\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
-			return 0;
+			sleep(3);
 		break;
 		case USBPROG:
 			printf("usbprog firmware found: usbprog (Benes ISP)\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
-			return 0;
+			sleep(3);
 		break;
 		case AVRISPMKII:
 			printf("usbprog firmware found: AVRISP mk2 Klon\n");
 			avrupdate_start_with_vendor_request(0x03eb,0x2104);
-			return 0;
+			sleep(3);
 		break;
 		default:
 			printf("Error: Can't find vaild usbprog adapter on usb bus.\n \
