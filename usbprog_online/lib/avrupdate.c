@@ -37,7 +37,7 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
   	int offset=0;
 
  	// open bin file
-  	fd = fopen(file, "r");
+  	fd = fopen(file, "r+b");
   	if(!fd) {
     	fprintf(stderr, "Unable to open file %s, ignoring.\n", file);
   	}
@@ -201,7 +201,7 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		//printf("vendor: %i\n",dev->descriptor.idVendor);
+        		printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
 						usb_set_configuration(usb_handle,1);
 						usb_claim_interface(usb_handle,0);
@@ -285,7 +285,7 @@ void avrupdate_net_flash_version(char * url,int number, int vendorid, int produc
 	else {
    		printf("Page successfully downloaded. (%s)\n", url);
 		FILE *fp;
-		fp = fopen("flash.bin", "w");
+		fp = fopen("flash.bin", "w+b");
 		int i;
 		for(i=0;i<ret;i++)
 			fputc(buffer[i], fp);

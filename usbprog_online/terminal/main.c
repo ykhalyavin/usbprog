@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
 			#if WIN32
-			Sleep(3);
+			Sleep(3000);
 			#else
 			sleep(3);
 			#endif
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
 			#if WIN32
-			Sleep(3);
+			Sleep(3000);
 			#else
 			sleep(3);
 			#endif
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x03eb,0x2104);
 			#if WIN32
-			Sleep(3);
+			Sleep(3000);
 			#else
 			sleep(3);
 			#endif
