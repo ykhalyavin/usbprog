@@ -42,6 +42,7 @@ int main(int argc, char **argv)
 		break;
 		case BLINKDEMO:
 			printf("usbprog firmware found: blinkdemo\n");
+			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
 			#if WIN32
 			Sleep(3);
@@ -51,6 +52,7 @@ int main(int argc, char **argv)
 		break;
 		case USBPROG:
 			printf("usbprog firmware found: usbprog (Benes ISP)\n");
+			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
 			#if WIN32
 			Sleep(3);
@@ -60,6 +62,7 @@ int main(int argc, char **argv)
 		break;
 		case AVRISPMKII:
 			printf("usbprog firmware found: AVRISP mk2 Klon\n");
+			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x03eb,0x2104);
 			#if WIN32
 			Sleep(3);
