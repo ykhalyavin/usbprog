@@ -106,7 +106,10 @@ void avrupdate_program_page (uint32_t page)
 
 // start programm from application sector
 void avrupdate_start_app()
-{
+{	
+		// switch to run app mode
+		eeprom_write_byte(&eeFooByte,0x00);
+
   	//UARTWrite("start\r\n");
   	if(collect128){
     	//SendHex(page_addr);
@@ -134,13 +137,13 @@ void avrupdate_cmd(char *buf)
   	switch(state)
   	{
 			case STOPPROGMODE:
-				eeprom_write_byte(&eeFooByte,0x00);
+				//eeprom_write_byte(&eeFooByte,0x00);
 				wait_ms(10);
 			break;
 
 			case STARTAPP:
 				//UARTWrite("start app now!!!\n\r");
-				eeprom_write_byte(&eeFooByte,0x00);
+				//eeprom_write_byte(&eeFooByte,0x00);
 				avrupdate_start_app();
 			break;
 
@@ -197,7 +200,6 @@ void avrupdate_cmd(char *buf)
       		if(state==STARTAPP)
       		{
 				//cli();
-				eeprom_write_byte(&eeFooByte,0x00);
 				avrupdate_start_app();
 				state = NONE;
    			}	
@@ -221,13 +223,15 @@ int main(void)
 	uint8_t myByte;
 	myByte = eeprom_read_byte(&eeFooByte);
 	
-	SendHex(myByte);
+	//SendHex(myByte);
 	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
-	if(myByte == 0x00){
+	//if(pgm_read_byte(0)!=0xFF){
 		//UARTWrite("start app");
+	if(myByte == 0x00){
 		avrupdate_start_app();
 	}
-	
+
+
 	  wait_ms(200);
 
 

@@ -158,11 +158,19 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		  //printf("found: %i\n",dev->descriptor.idVendor);
+        		  printf("found: %i\n",dev->descriptor.idVendor);
         			usb_handle = usb_open(dev);
-        			stat = usb_set_configuration (usb_handle,1);
-							int timeout;
-							usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000);
+        			usb_set_configuration (usb_handle,1);
+							usb_claim_interface(usb_handle,0);
+							usb_set_altinterface(usb_handle,0);
+
+							int timeout=6;
+
+							while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000)<0){
+								timeout--;
+								if(timeout==0)
+									break;
+							}
 							usb_close(usb_handle);
       		}
     	}	
