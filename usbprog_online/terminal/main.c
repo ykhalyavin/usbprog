@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 			printf("usbprog firmware found: blinkdemo\n");
 			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
-			#if WIN32
+			#if _WIN32
 			Sleep(3000);
 			#else
 			sleep(3);
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 			printf("usbprog firmware found: usbprog (Benes ISP)\n");
 			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
-			#if WIN32
+			#if _WIN32
 			Sleep(3000);
 			#else
 			sleep(3);
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 			printf("usbprog firmware found: AVRISP mk2 Klon\n");
 			printf("Switch usbprog to update mode\n");
 			avrupdate_start_with_vendor_request(0x03eb,0x2104);
-			#if WIN32
+			#if _WIN32
 			Sleep(3000);
 			#else
 			sleep(3);
@@ -95,21 +95,6 @@ int main(int argc, char **argv)
 
 
 	return;
-#if 0
-	
-	avrupdate_start_with_vendor_request(0x03eb,0x2104);
-	
-	sleep(2);
-
-	usb_handle = avrupdate_open(0x1781,0x0c62);
- 
-  	if(argc==2)
-    	avrupdate_flash_bin(usb_handle,argv[1]);
-
-
-  	avrupdate_startapp(usb_handle);
-  	avrupdate_close(usb_handle);
-#endif
 /*
 	char *url = "http://www.ixbat.de/versions.conf";
 	printf("Found %i version(s)\n",avrupdate_net_versions(url));	
@@ -124,6 +109,4 @@ int main(int argc, char **argv)
 
 	avrupdate_net_flash_version(url,0);
 */	
-
-  	return 0;
 }
