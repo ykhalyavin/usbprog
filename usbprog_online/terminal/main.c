@@ -1,3 +1,21 @@
+/* usbn960x.c
+* Copyright (C) 2006  Benedikt Sauter
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 #include <stdio.h>
 #include <usb.h>
 #include "../lib/avrupdate.h"
@@ -25,17 +43,30 @@ int main(int argc, char **argv)
 		case BLINKDEMO:
 			printf("usbprog firmware found: blinkdemo\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
+			#if WIN32
+			Sleep(3);
+			#else
 			sleep(3);
+			#endif
 		break;
 		case USBPROG:
 			printf("usbprog firmware found: usbprog (Benes ISP)\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
+			#if WIN32
+			Sleep(3);
+			#else
 			sleep(3);
+			#endif
 		break;
 		case AVRISPMKII:
 			printf("usbprog firmware found: AVRISP mk2 Klon\n");
 			avrupdate_start_with_vendor_request(0x03eb,0x2104);
+			#if WIN32
+			Sleep(3);
+			#else
 			sleep(3);
+			#endif
+
 		break;
 		default:
 			printf("Error: Can't find vaild usbprog adapter on usb bus.\n \
@@ -47,12 +78,17 @@ int main(int argc, char **argv)
 		printf("Error: Firmware file missing! (usbprog avrispmk2.bin)\n");
 		return -1;
 	}
+	else {
+		printf("Firmware update to %s starting...\n",argv[1]);
+	}
 
 
 	usb_handle = avrupdate_open(0x1781,0x0c62);
  	avrupdate_flash_bin(usb_handle,argv[1]);
  	avrupdate_startapp(usb_handle);
  	avrupdate_close(usb_handle);
+
+	printf("Finish\n");
 
 
 	return;
