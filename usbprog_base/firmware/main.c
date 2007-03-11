@@ -216,9 +216,9 @@ int main(void)
  	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
  	sei();
 	
-  UARTInit();
+  //UARTInit();
 
-  UARTWrite("\r\nbootloader is now active\r\n");
+  //UARTWrite("\r\nbootloader is now active\r\n");
 	/* if is no program in flash start bootloader, else start programm */
 	uint8_t myByte;
 	myByte = eeprom_read_byte(&eeFooByte);
