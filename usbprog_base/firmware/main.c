@@ -259,7 +259,7 @@ int main(void)
   	{ 
 		0x09,	      // 9 length of this descriptor
     0x02,       // descriptor type = configuration descriptor 
-    0x20,0x00,  // total length with first interface ... 
+    0x19,0x00,  // total length with first interface ... 
     0x01,	      // number of interfaces
     0x01,	      // number if this config. ( arg for setconfig)
     0x00,       // string index for config
@@ -275,22 +275,24 @@ int main(void)
     0x00,       // sub-class code 
     0x00,       // protocoll code
     0x00,       // string index for interface
+		#if 0
     //EP1 Descriptor
     0x07,	      // length of ep descriptor
     0x05,	      // descriptor type= endpoint
     0x81,	      // endpoint address (e.g. in ep1)
     0x02,	      // transfer art ( bulk )
     0x80,0x00,  // fifo size
-    0x00,	      // polling intervall in ms
+    0x00	      // polling intervall in ms
+		};
+		#endif
     //EP2 Descriptor
     0x07,	      // length of ep descriptor
     0x05,	      // descriptor type= endpoint
     0x02,	      // endpoint address (e.g. out ep2)
     0x02,	      // transfer art ( bulk )
-    0x00,0x08,  // fifo size
+    0x40,0x00,  // fifo size
     0x00	      // polling intervall in ms
   	};
-
   
   
   

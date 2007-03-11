@@ -195,7 +195,9 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
         		int i,stat;
         		//printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
-        		stat = usb_set_configuration (usb_handle,1);
+						usb_set_configuration(usb_handle,1);
+						usb_claim_interface(usb_handle,0);
+						usb_set_altinterface(usb_handle,0);
 				return usb_handle;	
       		}
     	}	

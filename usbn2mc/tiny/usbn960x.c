@@ -537,8 +537,8 @@ void _USBNSetConfiguration(DeviceRequest *req)
   // load fct pointer list for out eps
   //
 
-USBNWrite(TXC1,FLUSH);
-USBNWrite(EPC1,EP_EN+0x01);      // enable EP1 at adr 1
+//USBNWrite(TXC1,FLUSH);
+//USBNWrite(EPC1,EP_EN+0x01);      // enable EP1 at adr 1
 
 USBNWrite(RXC1,FLUSH);
 USBNWrite(EPC2,EP_EN+0x02); 
@@ -572,8 +572,7 @@ USBNWrite(RXC1,RX_EN);
   USBNWrite(RXC2,RX_EN);
   USBNWrite(RXC3,RX_EN);
 */
-  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
-  
+  //USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 }
 
            
