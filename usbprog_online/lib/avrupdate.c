@@ -158,7 +158,7 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		  printf("found: %i\n",dev->descriptor.idVendor);
+        		  //printf("found: %i\n",dev->descriptor.idVendor);
         			usb_handle = usb_open(dev);
         			usb_set_configuration (usb_handle,1);
 							usb_claim_interface(usb_handle,0);
@@ -201,7 +201,7 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		printf("vendor: %i\n",dev->descriptor.idVendor);
+        		//printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
 						usb_set_configuration(usb_handle,1);
 						usb_claim_interface(usb_handle,0);

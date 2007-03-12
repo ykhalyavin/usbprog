@@ -32,40 +32,47 @@ int main(int argc, char **argv)
  	// start with the destination of your bin file
 	
  	struct usb_dev_handle* usb_handle;
+ 	printf("usbprog GNU/GPL2 Update Tool\n");
+ 	printf("Author: Benedikt Sauter, sauter@ixbat.de 2007\n");
+ 	printf("Firmware Pool: http://www.embedded-projects.net/usbprog\n\n");
 
 	// find a device
 	int device = avrupdate_find_usbdevice();
 
 	switch(device) {
 		case AVRUPDATE:
-			printf("usbprog is ready for an upgrade\n");
+			printf("usbprog found with: update mode\n");
 		break;
 		case BLINKDEMO:
-			printf("usbprog firmware found: blinkdemo\n");
-			printf("Switch usbprog to update mode\n");
+			printf("usbprog found with: blinkdemo\n");
+			printf("start update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
+			printf("please wait some seconds...\n");
 			#if _WIN32
-			Sleep(3000);
+			Sleep(7000);
 			#else
 			sleep(3);
 			#endif
+			
 		break;
 		case USBPROG:
-			printf("usbprog firmware found: usbprog (Benes ISP)\n");
-			printf("Switch usbprog to update mode\n");
+			printf("usbprog found with:usbprog (Benes ISP)\n");
+			printf("start update mode\n");
 			avrupdate_start_with_vendor_request(0x1781,0x0c62);
+			printf("please wait some seconds...\n");
 			#if _WIN32
-			Sleep(3000);
+			Sleep(7000);
 			#else
 			sleep(3);
 			#endif
 		break;
 		case AVRISPMKII:
-			printf("usbprog firmware found: AVRISP mk2 Klon\n");
-			printf("Switch usbprog to update mode\n");
+			printf("usbprog found with: AVRISP mk2 Klon\n");
+			printf("start update mode\n");
 			avrupdate_start_with_vendor_request(0x03eb,0x2104);
+			printf("please wait some seconds...\n");
 			#if _WIN32
-			Sleep(3000);
+			Sleep(7000);
 			#else
 			sleep(3);
 			#endif
@@ -82,16 +89,17 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	else {
-		printf("Firmware update to %s starting...\n",argv[1]);
+		printf("start update to %s \n",argv[1]);
 	}
 
 
 	usb_handle = avrupdate_open(0x1781,0x0c62);
  	avrupdate_flash_bin(usb_handle,argv[1]);
+ 	printf("start new firmware\n\n");
  	avrupdate_startapp(usb_handle);
  	avrupdate_close(usb_handle);
 
-	printf("Finish\n");
+	printf("Have fun with your new adapter!\n");
 
 
 	return;
