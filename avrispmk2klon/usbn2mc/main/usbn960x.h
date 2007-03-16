@@ -25,6 +25,8 @@
 #include "../usb11spec.h"
 #include "../fifo.h"
 
+extern unsigned char USBNBurstRead(void);
+
 struct usb_device_descriptor DeviceDescriptor;
 
 struct list_entry*    DescriptorList;
@@ -154,7 +156,6 @@ void USBNDebug(char *msg);
 //only for compiler
 void USBNDecodeVendorRequest(DeviceRequest *req);
 void USBNDecodeClassRequest(DeviceRequest *req);
-
 
 
 #endif /* __USBN960X_H__ */

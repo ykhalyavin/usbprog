@@ -90,11 +90,10 @@ void _USBNNackEvent(void)
 void _USBNReceiveEvent(void)
 {
   unsigned char event;
-  void (*ptr)();
+  void (*ptr)(char*);
   char buf[64];
   char *bufp=&buf[0];
   event = USBNRead(RXEV);
-  char tmp;
   int i=0;
   
   USBNDebug("rx event\r\n");
@@ -111,7 +110,7 @@ void _USBNReceiveEvent(void)
     
     if(rxfifos.rx1==1){
       ptr = rxfifos.func1;
-      (*ptr)(&buf);
+      (*ptr)((char*)&buf);
     }
     USBNWrite(RXC1,FLUSH);   
     USBNWrite(RXC1,RX_EN);    
@@ -129,7 +128,7 @@ void _USBNReceiveEvent(void)
     
     if(rxfifos.rx2==1){
       ptr = rxfifos.func2;
-      (*ptr)(&buf);
+      (*ptr)((char*)&buf);
     }
     USBNWrite(RXC2,FLUSH);   
     USBNWrite(RXC2,RX_EN);    
@@ -145,7 +144,7 @@ void _USBNReceiveEvent(void)
 
     if(rxfifos.rx3==1){
       ptr = rxfifos.func1;
-      (*ptr)(&buf);
+      (*ptr)((char*)&buf);
     }
   }
   else {}
@@ -155,7 +154,7 @@ void _USBNReceiveEvent(void)
 void _USBNTransmitEvent(void)
 {
   unsigned char event;
-  void (*ptr)();
+  void (*ptr)(void);
   event = USBNRead(TXEV);
   //USBNDebug("tx event\r\n");
   if(event & TX_FIFO0) _USBNTransmitFIFO0();
@@ -549,7 +548,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
       USBNDebug("DEVICE DESCRIPTOR\n\r");  
       #endif
       EP0tx.Size = DeviceDescriptor.bLength;
-      EP0tx.Buf = (char*)&(DeviceDescriptor);
+      EP0tx.Buf = (unsigned char*)&(DeviceDescriptor);
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
@@ -563,7 +562,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 
       // send complete tree
       EP0tx.Size =req->wLength;
-      EP0tx.Buf = &FinalConfigurationArray[index][0];
+      EP0tx.Buf = (unsigned char*)&FinalConfigurationArray[index][0];
 
     break;
     case STRING:
@@ -575,7 +574,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 
       if(index >0)
       {
-	EP0tx.Buf = &FinalStringArray[index][0];
+	EP0tx.Buf = (unsigned char*)&FinalStringArray[index][0];
 	EP0tx.Size = EP0tx.Buf[0];
       }
       else { 
@@ -586,7 +585,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 	//EP0tx.Buf = &FinalStringArray[0][0];
 	//EP0tx.Size = EP0tx.Buf[0];
 	EP0tx.Size=4;
-	EP0tx.Buf=lang;
+	EP0tx.Buf=(unsigned char*)lang;
 
       }
     break;
