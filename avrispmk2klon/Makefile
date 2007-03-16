@@ -443,6 +443,10 @@ download:
 reset:
 	avrdude -p m32 -c bsd -E noreset
 
+ready:
+	mv main.hex avrispmk2.hex
+	hex2bin avrispmk2.hex
+
 upgrade:
 	hex2bin main.hex
 	usbprog main.bin
