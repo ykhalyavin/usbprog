@@ -175,16 +175,16 @@ void flash_program_fsm(char * buf)
 	// if page mode
 	if(pgmmode.mode && 0x01) {
 		if(usbprog.cmdpackage == 1) {
-            // first packet contains header and data
+      // first packet contains header and data
 			bufindex = 10;  // skip the packet header
 			if(pgmmode.numbytes > 54) {
-    			usbprog.longpackage = 1; // we do expect more data
+   			usbprog.longpackage = 1; // we do expect more data
 				bytes = 64;
 				pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex; // max packet is 64 bytes w/ header and data (USB FIFO-size)
-                                                                     // so we have only 54 bytes space for data to program
+                                                             // so we have only 54 bytes space for data to program
 			}
 			else {
-    			usbprog.longpackage = 0; // we do not expect more data
+   			usbprog.longpackage = 0; // we do not expect more data
 				bytes = pgmmode.numbytes + bufindex;
 				pgmmode.numbytes = 0;
 			}
@@ -197,12 +197,12 @@ void flash_program_fsm(char * buf)
 		}
 		else {
 			if(pgmmode.numbytes > 64) {
-    			usbprog.longpackage = 1; // we do expect more data
+   			usbprog.longpackage = 1; // we do expect more data
 				bytes = 64;
 				pgmmode.numbytes = pgmmode.numbytes - 64;
 			}
 			else {
-    			usbprog.longpackage = 0; // we do not expect more data
+   			usbprog.longpackage = 0; // we do not expect more data
 				bytes = pgmmode.numbytes;
 				pgmmode.numbytes = 0;
 			}
@@ -215,7 +215,7 @@ void flash_program_fsm(char * buf)
 
 		// falls numbytes == 0
 		if(pgmmode.numbytes == 0) {
-            // write page to flash
+       // write page to flash
 			spi_out(pgmmode.cmd2);
 			spi_out((char)(start_address >> 8));	//high-byte of page address
 			spi_out((char)(start_address));		    //low-byte  of page address
@@ -266,42 +266,41 @@ void eeprom_write(char * buf){
 
 	if(usbprog.cmdpackage == 1){
 		bufindex = 10;    // first packet, skip the packet header
-        usbprog.cmdpackage = 0;
-        if (pgmmode.numbytes >= (_BUF_LEN - _TMP_OFFSET)) {
-             answer[0] = CMD_PROGRAM_EEPROM_ISP;  // we are not able to program more than this
-             answer[1] = STATUS_CMD_FAILED;       // in one cycle, because we haven't enough RAM
-           	 CommandAnswer(2);					  // AVR-Studio sends max. 128 Bytes in one USB-Packet	
-        }										  // so this should never happen...
-        else {
-             _tmp_buf_index = _TMP_OFFSET;		  // reserve some space at beginning of the buffer to handle
-												  // answer packets during programming if necessary
-        }
-    }
+      usbprog.cmdpackage = 0;
+      if (pgmmode.numbytes >= (_BUF_LEN - _TMP_OFFSET)) {
+        answer[0] = CMD_PROGRAM_EEPROM_ISP;  // we are not able to program more than this
+        answer[1] = STATUS_CMD_FAILED;       // in one cycle, because we haven't enough RAM
+      	 CommandAnswer(2);					  // AVR-Studio sends max. 128 Bytes in one USB-Packet	
+      }										  // so this should never happen...
+      else {
+        _tmp_buf_index = _TMP_OFFSET;		  // reserve some space at beginning of the buffer to handle
+			  // answer packets during programming if necessary
+      }
+  }
 	if(pgmmode.numbytes > (64 - bufindex)) {
-        end_index = 64;
-	    pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex;
-        usbprog.longpackage = 1; // we do expect more data from FIFO
+    end_index = 64;
+	  pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex;
+    usbprog.longpackage = 1; // we do expect more data from FIFO
 	}
 	else {
 		end_index = pgmmode.numbytes + bufindex;
 		pgmmode.numbytes = 0;
-       	usbprog.longpackage = 0; // we do not expect mor data from FIFO
+    usbprog.longpackage = 0; // we do not expect mor data from FIFO
 	}
-    for(; bufindex < end_index; _tmp_buf_index++, bufindex++){
-        answer[_tmp_buf_index] = buf[bufindex];   // copy the USB-FIFO to temporary memory to speed up the transfer
-                                                   // therefore we will borrow some memory from answer[]-buffer
+  for(; bufindex < end_index; _tmp_buf_index++, bufindex++){
+    answer[_tmp_buf_index] = buf[bufindex];   // copy the USB-FIFO to temporary memory to speed up the transfer
+                                                // therefore we will borrow some memory from answer[]-buffer
 	}
-
 	// we've received all bytes to programm, so program it and send acknowlegde to host
-    // perhaps this should be done in the idle-loop to accept other commands during programming
-    // because it'll take 10ms per byte, we'll see... 
-    if (pgmmode.numbytes == 0){
-        for(i = _TMP_OFFSET; i < _tmp_buf_index; i++, pgmmode.address++){
-        		eeprom_write_byte_isp((unsigned char)(pgmmode.address >> 8), (unsigned char)pgmmode.address, answer[i]);
-		}
-     	answer[0] = CMD_PROGRAM_EEPROM_ISP;
-      	answer[1] = STATUS_CMD_OK;
-       	CommandAnswer(2);
+  // perhaps this should be done in the idle-loop to accept other commands during programming
+  // because it'll take 10ms per byte, we'll see... 
+  if (pgmmode.numbytes == 0){
+  	for(i = _TMP_OFFSET; i < _tmp_buf_index; i++, pgmmode.address++){
+   		eeprom_write_byte_isp((unsigned char)(pgmmode.address >> 8), (unsigned char)pgmmode.address, answer[i]);
+	}
+  answer[0] = CMD_PROGRAM_EEPROM_ISP;
+  answer[1] = STATUS_CMD_OK;
+  CommandAnswer(2);
 	}
 }
 
