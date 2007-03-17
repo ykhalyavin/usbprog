@@ -138,7 +138,7 @@ void avrupdate_cmd(char *buf)
   	{
 			case STOPPROGMODE:
 				//eeprom_write_byte(&eeFooByte,0x00);
-				wait_ms(10);
+				//wait_ms(10);
 			break;
 
 			case STARTAPP:
@@ -210,6 +210,9 @@ void avrupdate_cmd(char *buf)
 
 int main(void)
 {
+	uint8_t myByte;
+	myByte = eeprom_read_byte(&eeFooByte);
+	
 	cli();
  	// spm (bootloader mode from avr needs this, to use an own isr table)	
  	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
@@ -220,21 +223,17 @@ int main(void)
 
   //UARTWrite("\r\nbootloader is now active\r\n");
 	/* if is no program in flash start bootloader, else start programm */
-	uint8_t myByte;
-	myByte = eeprom_read_byte(&eeFooByte);
-	
+
 	//SendHex(myByte);
 	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
 	//if(pgm_read_byte(0)!=0xFF){
-		//UARTWrite("start app");
+	//UARTWrite("start app");
 	if(myByte == 0x00){
 		avrupdate_start_app();
 	}
 
 
-	  wait_ms(200);
-
-
+wait_ms(200);
   	// bootloader application starts here
 
   	const unsigned char avrupdateDevice[] =
@@ -307,18 +306,11 @@ int main(void)
 
   	// start usb chip
   	USBNStart();
-  
 
   	collect128=0;
   	// wait 2 seconds then start application
 
 	while(1);	
 
-	/*
-  		wait_ms(2000);
-  		//UARTWrite("\r\nbootloader start app now");
-  		avrupdate_start_app();
-  		while(1);
-	*/ 
 }
 

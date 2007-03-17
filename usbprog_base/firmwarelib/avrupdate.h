@@ -20,6 +20,6 @@
 
 #define STARTAVRUPDATE	0x01	// vendor request to start avrupdate
 
-void avrupdate_start();
+void avrupdate_start(void);
 
 #endif
