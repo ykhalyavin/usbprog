@@ -1,0 +1,138 @@
+Setting up a parallel port programmer.
+
+
+
+1. Check for supported hardware.
+
+If your hardware is already supported, check the odyssey.conf file and
+find the section that defines your hardware. Sections start with the name
+enclosed in square brackets [] and end at the next section start.
+
+Once you find your configuration section, you can either copy it to your
+local user config or leave it in the global configuration file. To activate
+it, change the name of the section to "io".  Hopefully this will be automated
+in the future.
+
+
+2. Selecting an I/O driver
+
+There are currently 2 I/O drivers available:
+
+  linuxppdev - Accesses the parallel port using the Linux ppdev driver.
+    Setting up:
+      Make sure no other parallel port 'consumers' are loaded. This includes
+      lp and gamecon. Do a "modprobe ppdev". If you don't have the module
+      then you'll need to recompile your kernel or use the "directpp" driver.
+      The init_parport.sh script could help you to set up your ppdev module.
+    Pros:
+      Doesn't need root access. Safer than direct hardware access.
+    Cons:
+      Linux >=2.4 specific.
+
+  directpp - Accesses the parallel port using direct I/O.
+    Setting up:
+      Make sure that no parport drivers are loaded at all. That includes
+      parport and parport_pc. If the parallel port drivers are compiled
+      statically into your kernel then DO NOT try to use this driver.
+    Pros:
+      Easy to set up. No modules to load or device permissions to set.
+    Cons:
+      Requires root access. Possible security risk. Do not set odyssey SUID
+      root.
+
+
+Under the "io" section in the configuration file, you'll need to set
+either "driver=linuxppdev" or "driver=directpp".
+
+If the programmer is not attached to the first parallel port, you should
+set the "port" value to the parallel port number. A value of 0 indicates
+the first parallel port, 1 the second port, etc...
+
+Now, if your hardware is already supported then you're done with the setup.
+Otherwise, you'll need to create a custom configuration.
+
+
+3. Creating a custom configuration.
+
+NOTE: Although the chance of any hardware damage is low, please be careful
+      when connecting any hardware to your computer. It is advisable to
+      have a schematic for reference.
+
+If your hardware is not supported then you'll have to make a custom
+configuration. That involves selecting which pin on the parallel port
+goes to which signal/voltage enable on the PIC and the polarity of each
+signal. There are 5 pins which must be defined:
+
+  clkpin - The pin which controls the clock signal.
+  pwrpin - The pin which enables/disables Vcc to the PIC.
+  rdatapin - The pin used to read data from the PIC.
+  wdatapin - The pin used to write data to the PIC.
+  vpppin - The pin which controls the programming voltage, Vpp.
+
+There are two additional optional pins:
+
+  rdatapin2 - Double-checking pin used to read data from the PIC.
+              If defined (and not set to 0), it will be read whenever
+              rdatapin is read and must give the same value.
+
+  lvppin - A pin that controls Low Voltage Programming. Odyssey doesn't
+           currently support LVP so this will be used to force it disabled.
+
+
+The values for each of these must be in the range 1-25 and can be positive
+or negative. A positive value indicates positive logic and a negative value
+indicates inverted logic. For example, here's the configuration for the EPIC
+programmer connected with a straight-through cable:
+
+  [io]
+  clkpin=3
+  rdatapin=10
+  wdatapin=2
+  pwrpin=-4
+  vpppin=-5
+
+A schematic of your programmer will help you immensely. If you don't have one,
+you might try following the traces on the PCB by eye or with a DMM.
+
+To test the signals, you can use the test mode of Odyssey. After creating your
+config file, run "odyssey test" to enter test mode. There you can manually
+enable and disable the various signals and check them with a voltmeter. The
+clk, data, and vcc outputs should all be about 5 volts. The vpp output should
+be about 13 volts.
+
+
+4. Timing parameters
+
+Because everyone's setup is different, there are parameters in the config
+file that can be used to add additional delay to the programming
+procedure. These variables go under the [signaldelay] section:
+
+  set_<pin>_hl     Propagation delay for high-to-low transitions on <pin>
+  set_<pin>_lh     Propagation delay for low-to-high transitions on <pin>
+  set_<pin>        Propagation delay for any transitions on <pin>
+  set              Propagation delay for any output transitions on any pin
+  read_<pin>       Input propagation delay for reads of <pin>
+  read             Input propagation delay for reads of any pin
+  default          Default propagation delay (0 if not specified)
+  additional       Additional delay added to each propagation delay
+
+Each time is specified as an integer number of nanoseconds. The pin names
+used for the delay lookups are:
+   clk vpp pwr rdata wdata lvp
+and the hl/hl specifications should be in the sense of the actual
+PIC pin transition.
+
+The most specific delay value will be used for each signal.
+For output pins:                          For input pins:
+  1. set_<pin>_hl OR set_<pin>_lh           1. read_<pin>
+  2. set_<pin>                              2. read
+  3. set                                    3. default
+  4. default
+
+The resulting value is added to the timing parameters in the PIC
+datasheet, so the propagation delay should reflect the actual logic
+and signal propgation delay from odyssey making the relevant ioctl
+system call or outb operation, to the new value being stable at the
+relevant PIC pin, or for reading, the time from the value being stable
+at the PIC pin according to the PIC datasheet until the first safe
+moment to call ioctl or inb.

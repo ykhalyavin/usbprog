@@ -1,0 +1,112 @@
+Title: Odyssey - PIC programming software
+Authors : see AUTHORS file
+
+
+* Introduction
+
+  This program aims to provide framework and tool to program any serially
+  programmed device and so any PIC in existence (under Linux or any other 
+  free OS, of course).
+
+
+* Supported Hardware in this release
+
+  PIC Programmers:
+    EPIC Programmer by microEngineering Labs
+    Any parallel port programmer (See doc/setup.txt)
+
+  PIC Devices:
+    Tested:
+      PIC12F629
+      PIC12F675
+      PIC16C76
+      PIC16C765
+      PIC16C84
+      PIC16F628
+      PIC16F74
+      PIC16F84
+      PIC16F877
+      PIC18F252
+      PIC18F452
+      PIC18F458
+      PIC18F4550
+      
+    Un(completely )tested but should work:
+      PIC12F683
+      PIC16C61
+      PIC16C62
+      PIC16C620
+      PIC16C620A
+      PIC16C621
+      PIC16C621A
+      PIC16C622
+      PIC16C622A
+      PIC16C62A
+      PIC16C62B
+      PIC16C63
+      PIC16C63A
+      PIC16C64
+      PIC16C64A
+      PIC16C65
+      PIC16C65A
+      PIC16C65B
+      PIC16C66
+      PIC16C67
+      PIC16C71
+      PIC16C710
+      PIC16C711
+      PIC16C712
+      PIC16C716
+      PIC16C72
+      PIC16C72A
+      PIC16C73
+      PIC16C73A
+      PIC16C73B
+      PIC16C74
+      PIC16C745
+      PIC16C74A
+      PIC16C74B
+      PIC16C77
+      PIC16C773
+      PIC16C774
+      PIC16C923
+      PIC16C924
+      PIC16F627
+      PIC16F73
+      PIC16F76
+      PIC16F77
+      PIC16F818
+      PIC16F819
+      PIC16F83
+      PIC16F84A
+      PIC16F870
+      PIC16F871
+      PIC16F872
+      PIC16F873
+      PIC16F874
+      PIC16F876
+      PIC16LF627
+      PIC16LF628
+      PIC18F1320
+      PIC18F2450
+      PIC18F248
+      PIC18F2525
+      PIC18F258
+      PIC18F2620
+      PIC18F442
+      PIC18F4455
+      PIC18F448
+      PIC18F4525
+      PIC18F4620
+      
+* Installation:
+
+  Odyssey uses the standard autoconf/automake setup:
+    ./configure
+    make
+    make install
+
+
+* Setting up:
+
+  See doc/setup.txt for more information.

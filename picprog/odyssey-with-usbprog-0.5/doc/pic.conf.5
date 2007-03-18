@@ -1,0 +1,176 @@
+.TH PIC.CONF 5 "$Date: 2006/12/31 15:45:41 $"
+.SH "NAME"
+pic.conf - The configuration file for PIC microcontroller definitions
+.SH "SYNOPSIS"
+The
+.I pic.conf
+file is a configuration file for the Odyssey PIC programming tool. It contains
+sections, each defining the programming parameters for a particular PIC
+microcontroller device. The format of
+.I pic.conf
+is documented here for quick reference.
+
+.SH "FILE FORMAT"
+The file consists of sections and variables. A section begins with the name of
+the section in square brackets and ends at the next section header. It is
+the same format used by
+.I odyssey.conf.
+
+.PP
+In each section are a set of
+.B variable=value
+assignments. Each of these defines a specific parameter of the PIC. The
+following is a listing of all the currently defined variable names and their
+types. If a PIC doesn't support some feature, the variables do not need to be
+defined for that feature.
+.TP
+.BR deviceid " (string)"
+The PIC numeric id as it can be read from DEVID2:DEVID1. 
+.TP
+.BR deviceidmask " (string)"
+The mask to be applied to DEVID2:DEVID1 to get the actual PIC id.
+.TP
+.BR memtype " (string)"
+The type of memory in the PIC. This can have one of the values "eprom",
+"flash", or "flashe". "eprom" can be used for any eprom/OTP device. "flash"
+can be used for any type of electronically erasable device. "flashe" is
+similar to "flash" but in the programming cycle, the END_PROG command is
+required.
+.TP
+.BR wordsize " (integer)"
+The size of an instruction word in bits.
+.TP
+.BR codesize " (integer)"
+The number of words of program memory.
+.TP
+.BR eesize " (integer)"
+The number of bytes of data EEPROM. If the device doesn't have a data EEPROM,
+this can be set to 0 or not specified at all.
+.TP
+.BR writebuffersize " (integer)"
+The size of the write buffer.
+.TP
+.BR erasebuffersize " (integer)"
+The size of the erase buffer.
+.TP
+.BR progcount " (integer)"
+The maximum number of times to attempt to program a memory location before
+reporting an error. Defined in the programming spec.
+.TP
+.BR progmult " (integer)"
+The multiplier for the number of times to overprogram. Defined in the
+programming spec.
+.TP
+.BR progtime " (integer)"
+The number of microseconds in each programming attempt for one memory
+location. To be on the safe side, the maximum value from the datasheet
+should be used for flash devices.
+.TP
+.BR erasetime " (integer)"
+The number of microseconds that a bulk erase takes.
+.TP
+.BR configmask / configmask[0-7] " (integer)"
+A bitmask of all valid (non-reserved) configuration bits. 
+For PICs including several configuration registers, the id of the register
+has to be added. 
+.TP
+.BR configdefault / configdefault[0-7] " (integer)"
+The default value of the configuration bits after an erase.
+For PICs including several configuration registers, the id of the register
+has to be added. 
+.TP 
+.BR configsave " (integer)"
+A bitmask of persistent bits in the configuration word. These bits will be
+saved before and restored after a chip erase. They will also not be modifiable
+when programming the device.
+.TP
+.BR cp_mask " [(register id),](integer)"
+A bitmask of all the code protection bits.
+For PICs including several configuration registers, the id of the register
+has to be added first. 
+.TP
+.BR cp_all " (integer)"
+The value of the code protection bits when all program memory is code protected.
+.TP
+.BR cp_none " (integer)"
+The value of the code protection bits when no program memory is code protected.
+.TP
+.BR cpd_mask " [(integer),](integer)"
+A bitmask of the bit(s) that enable data memory code protection.
+For PICs including several configuration registers, the id of the register
+has to be added first. 
+.TP
+.BR cpd_on " (integer)"
+The value of the cpd bit(s) when data code protection is enabled.
+.TP
+.BR cpd_off " (integer)"
+The value of the cpd bit(s) when data code protection is disabled.
+.TP
+.BR bkbug_mask " (integer)"
+A bitmask for the bit(s) which enable the on-chip background debugger.
+.TP
+.BR bkbug_on " (integer)"
+The value of the bkbug bits when the debugger is enabled.
+.TP
+.BR bkbug_off " (integer)"
+The value of the bkbug bits when the debugger is disabled.
+.SH "EXAMPLES"
+
+[PIC16F84A]
+  deviceid     = 0x0560
+  deviceidmask = 0x3fe0
+  memtype      = flash
+  wordsize     = 14
+  codesize     = 1024
+  eesize       = 64
+  progcount    = 1
+  progmult     = 0
+  progtime     = 10000
+  erasetime    = 10000
+  configmask   = 0x3fff
+  cp_mask      = 0x3ff0
+  cp_all       = 0x0000
+  cp_none      = 0x3ff0
+
+[PIC18F4550]
+  deviceid       = 0x1200
+  deviceidmask   = 0xffe0
+  memtype        = flash
+  wordsize       = 16
+  codesize       = 16384
+  eesize         = 256
+  writebuffersize= 32
+  erasebuffersize= 64
+  progcount      = 1
+  progmult       = 0
+  progtime       = 5000
+  erasetime      = 5005
+  configmask0    = 0xcf3f
+  configdefault0 = 0x0500
+  configmask1    = 0x1f3f
+  configdefault1 = 0x1f1f  
+  configmask2    = 0x8700
+  configdefault2 = 0x8300
+  configmask3    = 0x00e5
+  configdefault3 = 0x0085
+  configmask4    = 0xc00f
+  configdefault4 = 0xc00f
+  configmask5    = 0xe00f
+  configdefault5 = 0xe00f
+  configmask6    = 0x400f
+  configdefault6 = 0x400f
+  cp_mask        = 4,0x400f
+  cp_all         = 0x0000
+  cp_none        = 0x400f
+  cpd_mask       = 4,0x8000
+  cpd_on         = 0x0000
+  cpd_off        = 0x8000
+
+.SH "LICENSE"
+.B odyssey
+is distributed under the terms of the GNU General Public License version 2.
+.SH "AUTHORS"
+  Mark Aikens <marka@desert.cx>
+  Pierre Gaufillet <pierre.gaufillet@magic.fr>
+.SH "SEE ALSO"
+.BR odyssey (1)

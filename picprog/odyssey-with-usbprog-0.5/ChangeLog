@@ -1,0 +1,84 @@
+Version 0.5:
+ * Added experimental support for :
+     - PIC12F683, PIC16F818, PIC16F819 (Andrew M. Bishop),
+     - PIC18F1320 (Chris Thompson),
+     - PIC18F2450 and configurable write/erase buffers size (Adam Goldman),
+     - PIC18F2525, PIC18F2620, PIC18F4525, PIC18F4620 (Jason Modisette),
+     - PIC18F4455 (Pierre Gaufillet).
+ * Supports now PIC16F84A with id 0x540 (PIC16F84A_OLDID) and
+   0x560 (PIC16F84A).
+ * Added simple example for signaldelay section in odyssey.conf
+ * Updated man pages
+
+Version 0.4:
+ * Compile fixes for GCC 4.2 (Fernando Rodriguez)
+ * Added PIC18F2XX0/2X21/2XX5/4XX0/4X21/4XX5 support (Pierre Gaufillet).
+ * Fix EEPROM reading for PIC18 (Pierre Gaufillet).
+ * Added configdefault<x> variable in pic.conf to take into account config
+   reset != 0xffff (Pierre Gaufillet).
+
+Version 0.3.2:
+  * Add --without-directio option to configure script (Martin Habets)
+
+Version 0.3.1:
+  * Add verification of the PIC device ID (Ian Jackson)
+  * Added a new pin definition for the LVP control pin. Some programming issues
+    may be solved because the LVP pin was not being set to the correct value.
+  * Added finer-grained signal timing parameters (Ian Jackson)
+  * Fix EEPROM data writing & reading for the pic18f252
+
+Version 0.3:
+  * Mark PIC18F452 and PIC18F252 as tested. (Fernando Rodriguez)
+  * Added a programmer configuration for the ProPIC programmer.
+    (Fernando Rodr?guez)
+  * Added a programmer configuration for the EPE Toolkit v3. (David Bean)
+  * Add support for 16f87[3467]A PIC devices. (David Bean)
+  * Fix some timing problems when reading bits from the PIC (Ian Jackson)
+  * Added some config file parameters for increasing various programming
+    delays
+  * Added support for rdata2 pin for programming multiple PICs at once.
+    (Ian Jackson)
+  * Some internal code cleanups
+
+Version 0.2.3:
+  * Mark PIC16F628 as tested; (Greg Hill). I'm getting a few reports that
+    it doesn't work for some people so YMMV.
+  * Some minor bugfixes
+  * Added a programmer testing shell that allows you to set/clear the various
+    PIC programmer signals manually. (Gerardo <gpuga@gioia...>)
+
+Version 0.2.2a:
+  * Small fix for programmers that use the any of the hardware inverted pins
+    on the parallel port. (Pins 1, 11, 14, and 17)
+  * Added a programmer configuration for the Schaer programmer.
+
+Version 0.2.2:
+  * Added support for PIC12F6xx devices
+  * Experimental support for PIC16F62x devices
+  * Minor bug fixes and some pic.conf changes
+  * Added some command line options to select alternate configuration files,
+    set arbitrary configuration variables, and list available device types.
+
+Version 0.2.1:
+  * Fixed bug where erase sometimes didn't completely erase the PIC
+  * Added and tested programming of the PIC18F252
+  * Created a manpage
+
+Version 0.2:
+  * Made the device type selection a mandatory parameter
+  * Default output file format changed to 8-bit Intel hex.
+  * Fixed and tested all operations for the PIC16F877
+  * Added PIC18* framework and experimental PIC18fxx2 device reading support
+  * Reworked and cleaned up pic.conf
+  * Slight internal class reorganization
+  * New sparse DataBuffer implementation
+
+Version 0.1.1:
+  * Fixed compile errors when compiling with gcc 3.2
+  * When blankchecking, if a device is blank then say so.
+  * Allow PIC memory location 0x2004 to be programmed for debugger support
+  * Erasing of PIC16F8xx devices now erases the ID locations.
+  * Fixed writing to PIC data EEPROM
+
+Version 0.1:
+  * Initial release.
