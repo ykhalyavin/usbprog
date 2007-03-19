@@ -537,7 +537,7 @@ void USBFlash(char *buf)
 		case CMD_ENTER_PROGMODE_ISP:
 			pgmmode.address = 0;
 			//led on
-      LED_on;
+      //LED_on;
 			RESET_high;
 			asm("nop");
 			asm("nop");
