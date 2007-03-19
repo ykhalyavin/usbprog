@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<anjuta>
+    <plugin name="GtkSourceview editor" mandatory="no">
+        <require group="Anjuta Plugin"
+                 attribute="Location"
+                 value="anjuta-sourceview:SourceviewPlugin"/>
+    </plugin>
+</anjuta>

@@ -1,0 +1,10 @@
+
+[Anjuta]
+Maximized=1
+Geometry=1280x949+0+25
+
+[File Loader]
+Files=file:///home/alois/Projects/usbprog/dev/trunk/usbprog_tools/usbprog-online/src/usbprog.h#31%%%file:///home/alois/Projects/usbprog/dev/trunk/usbprog_tools/lib/avrupdate.h#32%%%file:///home/alois/Projects/usbprog/dev/trunk/usbprog_tools/lib/avrupdate.c#350
+
+[Execution]
+Run in terminal=2

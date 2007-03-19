@@ -6,15 +6,17 @@
 //#include <curl/curl.h>
 #include "http_fetcher.h"
 
-#define STARTAPP   		0x01
-#define WRITEPAGE  		0x02
-#define GETVERSION 		0x03
-#define SETVERSION 		0x04
-#define STOPPROGMODE 	0x05
+#define STARTAPP   0x01
+#define WRITEPAGE  0x02
+#define GETVERSION 0x03
+#define SETVERSION 0x04
+
+#define SIMULATION
 
 void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 {
-  	char buf[64];
+	#ifndef SIMULATION  	
+	char buf[64];
   	char cmd[64];
 
   	FILE *fd;
@@ -37,7 +39,7 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
   	int offset=0;
 
  	// open bin file
-  	fd = fopen(file, "r+b");
+  	fd = fopen(file, "r");
   	if(!fd) {
     	fprintf(stderr, "Unable to open file %s, ignoring.\n", file);
   	}
@@ -71,25 +73,28 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 
     	// data message 
     	usb_bulk_write(usb_handle,2,buf,64,100);
-  	}	 
+  	}	
+	#endif 
 }
 
 
 void avrupdate_startapp(struct usb_dev_handle* usb_handle)
 {
-  	char buf[64];
+	#ifndef SIMULATION  	
+	char buf[64];
   	char *ptr = buf;
 
-//   	buf[0]=STOPPROGMODE;
-//   	usb_bulk_write(usb_handle,2,ptr,64,100);
-
+ 
    	buf[0]=STARTAPP;
    	usb_bulk_write(usb_handle,2,ptr,64,100);
+   	//printf("TX stat=%d\n",stat);
+	#endif
 }
 
 
 int avrupdate_find_usbdevice()
 {
+	#ifndef SIMULATION
 	struct usb_bus *busses;
 
   	//usb_set_debug(2);
@@ -130,10 +135,27 @@ int avrupdate_find_usbdevice()
       	}
     	}	
 		return -1;
+	#else
+		switch (rand()%3)
+		{
+			case 0:
+				return AVRISPMKII;
+			break;
+			case 1:
+				return AVRUPDATE;
+			break;
+			case 2:
+				return USBPROG;
+			break;
+			return BLINKDEMO;
+		}
+
+	#endif
 }
 
 void avrupdate_start_with_vendor_request(short vendorid, short productid)
 {
+	#ifndef SIMULATION	
 	struct usb_bus *busses;
 
   	//usb_set_debug(2);
@@ -146,8 +168,8 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
  	struct usb_dev_handle* usb_handle;
   	struct usb_bus *bus;
 
-	//if(avrupdate_find_usbdevice()==USBPROG)
-	//	return;
+	if(avrupdate_find_usbdevice()==USBPROG)
+		return;
 
   	unsigned char send_data=0xff;
 
@@ -158,27 +180,26 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
     	for (dev = bus->devices; dev; dev = dev->next){
       		if (dev->descriptor.idVendor == vendorid){
         		int i,stat;
-        		  //printf("found: %i\n",dev->descriptor.idVendor);
+        		printf("vendor: %i\n",dev->descriptor.idVendor);
         			usb_handle = usb_open(dev);
-        			usb_set_configuration (usb_handle,1);
-							usb_claim_interface(usb_handle,0);
-							usb_set_altinterface(usb_handle,0);
-
-							int timeout=6;
-
-							while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000)<0){
-								timeout--;
-								if(timeout==0)
+        			stat = usb_set_configuration (usb_handle,1);
+							int timeout;
+							while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000)<0)
+							{
+								timeout++;
+								if(timeout>6)
 									break;
-							}
+							};
 							usb_close(usb_handle);
       		}
     	}	
   	}
+	#endif
 }
 
 struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
 {
+	#ifndef SIMULATION	
 	struct usb_bus *busses;
 
   	//usb_set_debug(2);
@@ -203,26 +224,34 @@ struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
         		int i,stat;
         		//printf("vendor: %i\n",dev->descriptor.idVendor);
         		usb_handle = usb_open(dev);
-						usb_set_configuration(usb_handle,1);
-						usb_claim_interface(usb_handle,0);
-						usb_set_altinterface(usb_handle,0);
+        		stat = usb_set_configuration (usb_handle,1);
 				return usb_handle;	
       		}
     	}	
   	}
+	#else
+	struct usb_dev_handle* usb_handle;
+	return usb_handle;	
+	#endif
 }
 
 
 
 char avrupdate_get_version(struct usb_dev_handle* usb_handle)
 {
+	#ifndef SIMULATION	
 	char cmd[2];
 	char buf[2];
 	cmd[0]=GETVERSION;
-  usb_bulk_write(usb_handle,1,cmd,64,100);
+  	usb_bulk_write(usb_handle,1,cmd,64,100);
  	usb_bulk_read(usb_handle,1,buf,64,100);
 	
 	return buf[0];
+	#else
+	char buf[2];
+	return buf[0];
+	#endif
+	
 }
 
 
@@ -235,16 +264,16 @@ void avrupdate_set_version(char version, struct usb_dev_handle* usb_handle)
 
 void avrupdate_close(struct usb_dev_handle* usb_handle)
 {
-/*
-		usb_reset(usb_handle);
+	#ifndef SIMULATION	
+	usb_reset(usb_handle);
 		usb_set_configuration(usb_handle,1);
 		sleep(2);
-		*/
   	usb_close(usb_handle);
+	#endif
 }
 
 size_t _write_data(void *data, size_t size, size_t nmemb, void *userp)
-{
+{	
 	strcpy(userp,data);
 	return size*nmemb;
 }
@@ -285,7 +314,7 @@ void avrupdate_net_flash_version(char * url,int number, int vendorid, int produc
 	else {
    		printf("Page successfully downloaded. (%s)\n", url);
 		FILE *fp;
-		fp = fopen("flash.bin", "w+b");
+		fp = fopen("flash.bin", "w");
 		int i;
 		for(i=0;i<ret;i++)
 			fputc(buffer[i], fp);
@@ -344,16 +373,16 @@ struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number)
 	return tmp;
 }
 
-/*void avrupdate_setlog(char *msg)
+void avrupdate_setlog(char *msg)
 {
-	logfile = msg;
-}*/
+	//logfile = msg;
+}
 
 
-/*char * avrupdate_log()
+char * avrupdate_log()
 {
-	if(logfile!=NULL)
-		logfile = NULL;
+//	if(logfile!=NULL)
+//		logfile = NULL;
 	
-	return logfile;
-}*/
+//	return logfile;
+}
