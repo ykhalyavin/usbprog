@@ -2,7 +2,7 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* always defined to indicate that i18n is enabled */
-#define ENABLE_NLS 1
+/* #undef ENABLE_NLS */
 
 /* GETTEXT package name */
 #define GETTEXT_PACKAGE "usbprog-online"
@@ -11,7 +11,7 @@
 #define HAVE_BIND_TEXTDOMAIN_CODESET 1
 
 /* Define to 1 if you have the `dcgettext' function. */
-#define HAVE_DCGETTEXT 1
+/* #undef HAVE_DCGETTEXT */
 
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #define HAVE_GETTEXT 1
@@ -21,6 +21,9 @@
 
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 #define HAVE_LC_MESSAGES 1
+
+/* LibUSB */
+#define HAVE_LIBUSB 1
 
 /* Define to 1 if you have the <locale.h> header file. */
 #define HAVE_LOCALE_H 1

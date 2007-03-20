@@ -38,9 +38,9 @@ MKINSTALLDIRS = $(top_srcdir)/./mkinstalldirs
 
 CC = gcc
 GENCAT = @GENCAT@
-GMSGFMT = /usr/bin/msgfmt
-MSGFMT = /usr/bin/msgfmt
-XGETTEXT = /usr/bin/xgettext
+GMSGFMT = 
+MSGFMT = no
+XGETTEXT = :
 MSGMERGE = msgmerge
 
 DEFS = -DHAVE_CONFIG_H
@@ -61,8 +61,8 @@ POTFILES = \
 	../src/main.c
 
 CATALOGS = 
-CATOBJEXT = .gmo
-INSTOBJEXT = .mo
+CATOBJEXT = NONE
+INSTOBJEXT = 
 
 .SUFFIXES:
 .SUFFIXES: .c .o .po .pox .gmo .mo .msg .cat

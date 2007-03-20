@@ -40,6 +40,11 @@ AC_SUBST(WX_LIBS)
 AC_PROG_CPP
 AC_PROG_CXX
 
+dnl Look for LibUSB and validate its function
+AC_CHECK_HEADER([usb.h], ,AC_MSG_ERROR(*** LibUSB required.))
+AC_CHECK_LIB([usb], [usb_init], AC_DEFINE(HAVE_LIBUSB, 1, LibUSB) LIBS="$LIBS -lusb",
+			 AC_MSG_ERROR(*** LibUSB required.  Linking -lusb failed.))
+
 
 dnl Set gettext package name
 GETTEXT_PACKAGE=usbprog-online
