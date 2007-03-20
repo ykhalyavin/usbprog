@@ -266,41 +266,42 @@ void eeprom_write(char * buf){
 
 	if(usbprog.cmdpackage == 1){
 		bufindex = 10;    // first packet, skip the packet header
-      usbprog.cmdpackage = 0;
-      if (pgmmode.numbytes >= (_BUF_LEN - _TMP_OFFSET)) {
-        answer[0] = CMD_PROGRAM_EEPROM_ISP;  // we are not able to program more than this
-        answer[1] = STATUS_CMD_FAILED;       // in one cycle, because we haven't enough RAM
-      	 CommandAnswer(2);					  // AVR-Studio sends max. 128 Bytes in one USB-Packet	
-      }										  // so this should never happen...
-      else {
-        _tmp_buf_index = _TMP_OFFSET;		  // reserve some space at beginning of the buffer to handle
-			  // answer packets during programming if necessary
-      }
-  }
+		usbprog.cmdpackage = 0;
+		if (pgmmode.numbytes >= (_BUF_LEN - _TMP_OFFSET)) {
+			answer[0] = CMD_PROGRAM_EEPROM_ISP;  // we are not able to program more than this
+			answer[1] = STATUS_CMD_FAILED;       // in one cycle, because we haven't enough RAM
+			CommandAnswer(2);					  // AVR-Studio sends max. 128 Bytes in one USB-Packet	
+		}										  // so this should never happen...
+		else {
+			_tmp_buf_index = _TMP_OFFSET;		// reserve some space at beginning of the buffer to handle
+												// answer packets during programming if necessary
+		}
+	}
+	
 	if(pgmmode.numbytes > (64 - bufindex)) {
-    end_index = 64;
-	  pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex;
-    usbprog.longpackage = 1; // we do expect more data from FIFO
+		end_index = 64;
+		pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex;
+		usbprog.longpackage = 1; // we do expect more data from FIFO
 	}
 	else {
 		end_index = pgmmode.numbytes + bufindex;
 		pgmmode.numbytes = 0;
-    usbprog.longpackage = 0; // we do not expect mor data from FIFO
+		usbprog.longpackage = 0; // we do not expect mor data from FIFO
 	}
-  for(; bufindex < end_index; _tmp_buf_index++, bufindex++){
-    answer[_tmp_buf_index] = buf[bufindex];   // copy the USB-FIFO to temporary memory to speed up the transfer
-                                                // therefore we will borrow some memory from answer[]-buffer
+	for(; bufindex < end_index; _tmp_buf_index++, bufindex++){
+		answer[_tmp_buf_index] = buf[bufindex];   	// copy the USB-FIFO to temporary memory to speed up the transfer
+													// therefore we will borrow some memory from answer[]-buffer
 	}
 	// we've received all bytes to programm, so program it and send acknowlegde to host
-  // perhaps this should be done in the idle-loop to accept other commands during programming
-  // because it'll take 10ms per byte, we'll see... 
-  if (pgmmode.numbytes == 0){
-  	for(i = _TMP_OFFSET; i < _tmp_buf_index; i++, pgmmode.address++){
-   		eeprom_write_byte_isp((unsigned char)(pgmmode.address >> 8), (unsigned char)pgmmode.address, answer[i]);
-	}
-  answer[0] = CMD_PROGRAM_EEPROM_ISP;
-  answer[1] = STATUS_CMD_OK;
-  CommandAnswer(2);
+	// perhaps this should be done in the idle-loop to accept other commands during programming
+	// because it'll take 10ms per byte, we'll see... 
+	if (pgmmode.numbytes == 0){
+		for(i = _TMP_OFFSET; i < _tmp_buf_index; i++, pgmmode.address++){
+			eeprom_write_byte_isp((unsigned char)(pgmmode.address >> 8), (unsigned char)pgmmode.address, answer[i]);
+		}
+		answer[0] = CMD_PROGRAM_EEPROM_ISP;
+		answer[1] = STATUS_CMD_OK;
+		CommandAnswer(2);
 	}
 }
 
@@ -358,6 +359,7 @@ void CommandAnswer(int length)
 void USBFlash(char *buf)
 {
 	char result = 0;
+    int numbytes;
 
     USBNWrite(TXC1, FLUSH);
 
@@ -536,8 +538,7 @@ void USBFlash(char *buf)
 
 		case CMD_ENTER_PROGMODE_ISP:
 			pgmmode.address = 0;
-			//led on
-      //LED_on;
+            LED_on;
 			RESET_high;
 			asm("nop");
 			asm("nop");
@@ -623,7 +624,7 @@ void USBFlash(char *buf)
 
 			pgmmode.numbytes = ((buf[1] << 8) | (buf[2])) + 1; // number of bytes
 			pgmmode.cmd3 = buf[3];	// read command
-			int numbytes = pgmmode.numbytes;
+			numbytes = pgmmode.numbytes - 1;
 			// collect max first 62 bytes
 			int answerindex = 2;
 			for(;numbytes > 0; numbytes--) {
@@ -706,7 +707,7 @@ void USBFlash(char *buf)
 		case CMD_READ_EEPROM_ISP:
 			pgmmode.numbytes = ((buf[1] << 8) | (buf[2])) + 1; // number of bytes
 			pgmmode.cmd3 = buf[3];	// read command
-			numbytes = pgmmode.numbytes;
+			numbytes = pgmmode.numbytes - 1;
 			// collect max first 62 bytes
 			answerindex = 2;
 			for(;numbytes > 0; numbytes--) {
