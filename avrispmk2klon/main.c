@@ -540,12 +540,21 @@ void USBFlash(char *buf)
 			pgmmode.address = 0;
 					//cbi	portb,SCK	; clear SCK
 					PORTB &= ~(1<<SCK);
-										
 					// set_reset		;	set RESET = 1
 					PORTB |= (1<<RESET_PIN);	// give reset a positive pulse
-					wait_ms(1);
+					wait_ms(10);
 					// clr_reset		;	set RESET = 0
+					//			asm("nop");
+			asm("nop");
+			asm("nop");
+			asm("nop");
+
 					PORTB &= ~(1<<RESET_PIN);
+			asm("nop");
+			asm("nop");
+			asm("nop");
+			asm("nop");
+
 					wait_ms(25);
 					spi_out(0xac);
 					spi_out(0x53);
