@@ -1,3 +1,21 @@
 # List of source files containing translatable strings.
 
-src/main.c
+## Created by Anjuta - will be overwritten
+## If you don't want it to overwrite it,
+## 	Please disable it in the Anjuta project configuration
+
+# Source files
+src/CsvReader.cpp
+src/CsvReader.h
+src/GUIFrame.cpp
+src/GUIFrame.h
+src/OnlineVersions.cpp
+src/OnlineVersions.h
+src/usbprog.cpp
+src/usbprog.h
+src/usbprogonlineApp.cpp
+src/usbprogonlineApp.h
+src/usbprogonlineMain.cpp
+src/usbprogonlineMain.h
+
+

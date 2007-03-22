@@ -1,7 +1,9 @@
 ## Process this file with automake to produce Makefile.in
-## Created by Anjuta
+## Created by Anjuta - will be overwritten
+## If you don't want it to overwrite it,
+## 	Please disable it in the Anjuta project configuration
 
-SUBDIRS = src po
+SUBDIRS = po src
 
 usbprog_onlinedocdir = ${prefix}/doc/usbprog-online
 usbprog_onlinedoc_DATA = \
@@ -10,7 +12,8 @@ usbprog_onlinedoc_DATA = \
 	AUTHORS\
 	ChangeLog\
 	INSTALL\
-	NEWS
+	NEWS\
+	TODO
 
 EXTRA_DIST = $(usbprog_onlinedoc_DATA)
 

@@ -1,36 +1,35 @@
 ## Process this file with automake to produce Makefile.in
 
-## Created by Anjuta
+## Created by Anjuta - will be overwritten
+## If you don't want it to overwrite it,
+## 	Please disable it in the Anjuta project configuration
 
 INCLUDES = \
-	$(WX_CXXFLAGS) \
-	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
-	-DPACKAGE_DATA_DIR=\""$(datadir)"\" $(PACKAGE_CFLAGS)
+	$(WX_CXXFLAGS)
 
-AM_CFLAGS =\
-	 -Wall \
-	 -g \
-	 $(WX_CPPFLAGS)
+AM_CXXFLAGS =\
+	 -Wall\
+	 -g
 
 bin_PROGRAMS = usbprog-online
 
 usbprog_online_SOURCES = \
-	GUIFrame.cpp    \
-	usbprogonlineApp.cpp    \
-	usbprogonlineMain.cpp    \
-	GUIFrame.h    \
-	usbprogonlineApp.h    \
-	usbprogonlineMain.h    \
-	CsvReader.cpp    \
-	CsvReader.h    \
-	OnlineVersions.cpp    \
-	OnlineVersions.h    \
-	usbprog.cpp    \
-	usbprog.h    
+	CsvReader.cpp\
+	CsvReader.h\
+	GUIFrame.cpp\
+	GUIFrame.h\
+	OnlineVersions.cpp\
+	OnlineVersions.h\
+	usbprog.cpp\
+	usbprog.h\
+	usbprogonlineApp.cpp\
+	usbprogonlineApp.h\
+	usbprogonlineMain.cpp\
+	usbprogonlineMain.h
 
-usbprog_online_LDADD = \
-	$(PACKAGE_LIBS) \
-	$(WX_LIBS) \
-	-lavrupdate 
+usbprog_online_LDFLAGS = \
+	-lavrupdate
+
+usbprog_online_LDADD =  \
+	$(WX_LIBS)
 
