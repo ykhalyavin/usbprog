@@ -1,7 +1,7 @@
 /***************************************************************
  * Name:      usbprogonlineMain.cpp
  * Purpose:   Code for Application Frame
- * Author:    Alois Flammensboeck (flammenboeck@softsprings.org)
+ * Author:    Alois Flammensboeck (flammensboeck@softsprings.org)
  * Created:   2007-03-09
  * Copyright: Alois Flammensboeck (http://www.softsprings.org)
  * License:
@@ -50,10 +50,6 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 usbprogonlineFrame::usbprogonlineFrame(wxFrame *frame)
 	: GUIFrame(frame)
 {
-#if wxUSE_STATUSBAR
-//	statusBar->SetStatusText(_("Hello Code::Blocks user!"), 0);
-//	statusBar->SetStatusText(wxbuildinfo(short_f), 1);
-#endif
 
 		wxLog *logger=new wxLogTextCtrl(text_ctrl_3);
   		wxLog::SetActiveTarget(logger);
@@ -147,13 +143,21 @@ void usbprogonlineFrame::OnBtnFlashClick( wxCommandEvent& event )
                                      wxLIST_STATE_SELECTED);
         onlineVersions.DownloadOnlineVersion(firstSelectedItem,tmpFileName);
 		wxLogInfo(_T("Saving online version to %s"),tmpFileName.c_str());
-        usbProg.open();
+		
+		
+		if (usbProg.getOpened()){
+			usbProg.close();
+		}
+		usbProg.open(update);
         usbProg.flashFile(tmpFileName);
-        usbProg.close();
-        OnBtnFindAdapterClick(event)  ;                    
+		usbProg.close();
+		usbProg.open(online);
+		usbProg.startApplication();
+		usbProg.close();
+        
+		OnBtnFindAdapterClick(event)  ;                    
 	} else{
 		wxLogError(_T("One File has to be selected to download"));
 	}
 	
 }
-

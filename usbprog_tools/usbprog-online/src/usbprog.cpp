@@ -18,12 +18,14 @@
 //
 // Class: usbprog
 //
-// Created by: Alois Flammensböck <flammensboeck@softsprings.org>
+// Created by: Alois Flammensboeck <flammensboeck@softsprings.org>
 // Created on: Sat Mar 17 18:09:49 2007
 //
 
 #include "usbprog.h"
 #include "wx/log.h"
+
+using namespace std;
 
 usbprog::usbprog()
 {
@@ -36,28 +38,43 @@ usbprog::~usbprog()
 	// TODO: put destructor code here
 }
 
-void usbprog::open()
+void usbprog::open(usbprogMode mode)
 {
-	int deviceID = getUSBDeviceID();
-	usb_handle = avrupdate_open(getVendorID(deviceID),getProductID(deviceID));
-	opened = true;
+	if (!opened){
+		int deviceID = getUSBDeviceID();
+		usb_handle = avrupdate_open(getVendorID(deviceID),getProductID(deviceID));
+		opened = true;
+	}else{
+		throw exception();
+	}
 }
+
 void usbprog::close()
 {
 	checkIfOpened();
 	avrupdate_close(usb_handle);
 	opened = false;
 }
+
+usbprogMode usbprog::getCurrentMode()
+{
+	if (getUSBDeviceID() != AVRUPDATE)
+		return online;
+	else
+		return update;
+	
+}
+
+bool usbprog::getOpened(){
+	return opened;
+}
+	
 void usbprog::flashFile(wxString filename)
 {
-	bool wasOpen = opened;
-	if (opened) {
-		close();
-	}
+	checkIfOpened();
+	checkIfMode(update);
 	
-	wxLogInfo(_T("Activate Update Mode"));
-	avrupdate_start_with_vendor_request(UPDATE_VENDOR_ID, UPDATE_PRODUCT_ID);
-	wxLogInfo(_T("Update Mode is running"));
+	avrupdate_start_with_vendor_request(getVendorID(), getProductID());
 	sleep(3);
 	
 	//at the moment we have to copy the filename string to provide
@@ -69,22 +86,16 @@ void usbprog::flashFile(wxString filename)
 	memcpy( buf , filename.c_str() , char_len*sizeof(char) ); 
 	wxLogInfo(_T("Starting to flash %s"),filename.c_str());
 	avrupdate_flash_bin(usb_handle,buf);
-	wxLogInfo(_T("Completed flashing"),filename.c_str());
-	sleep(3);
+	delete(buf);
 	
-	wxLogInfo(_T("Deactivate Update Mode"));
-	open();
-		
-	wxLogInfo(_T("Starting Application"));
-	avrupdate_startapp(usb_handle);
-	wxLogInfo(_T("Application started"));
-	if (!wasOpen) {
-		close();
-	}
+	sleep(3);
+	wxLogInfo(_T("Completed flashing"),filename.c_str());
 }
+
 void usbprog::startApplication()
 {	
 	checkIfOpened();
+	checkIfMode(online);
 	avrupdate_startapp(usb_handle);
 }
 
@@ -97,6 +108,15 @@ void usbprog::checkIfOpened()
 {
 	if (!opened){
 		wxLogError(_T("The USB-Device is not open"));
+		throw UsbProgNotOpenException();
+	}	
+}
+	
+void usbprog::checkIfMode(usbprogMode mode)
+{	
+	if (mode != getCurrentMode()) {
+		wxLogError(_T("The USB-Device is in wrong Mode."));
+		throw UsbProgWrongModeException();
 	}
 }
 wxString usbprog::getUSBDeviceName()
@@ -116,7 +136,7 @@ wxString usbprog::getUSBDeviceName(int deviceID)
 		break;
 			
 		case AVRUPDATE:
-			return _T("usprog Adapter with no firmware");
+			return _T("usprog Adapter in Update Mode");
 		break;
 			
 		case BLINKDEMO:

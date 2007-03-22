@@ -17,7 +17,7 @@
 
 //
 // Class: usbprog
-// Created by: Alois Flammensböck <flammensboeck@softsprings.org>
+// Created by: Alois Flammensboeck <flammensboeck@softsprings.org>
 // Created on: Sat Mar 17 18:09:49 2007
 //
 
@@ -25,14 +25,38 @@
 #define _USBPROG_H_
 
 #include <wx/string.h>
+#include <exception>
+
+
+enum deviceType {
+	AVRUPDATE = 0x00,
+	BLINKDEMO = 0x01,
+	USBPROG = 0x02,
+	AVRISPMKII = 0x03
+};
+	
+enum usbprogMode {
+	update,
+	online
+};
 
 extern "C"
 {
   #include "../lib/avrupdate.h"
 }
 
+
 const int UPDATE_PRODUCT_ID = 0x0c62;
 const int UPDATE_VENDOR_ID = 0x1781;
+
+
+class UsbProgNotOpenException: std::exception
+{
+};
+	
+class UsbProgWrongModeException: std::exception
+{
+};
 
 class usbprog
 {
@@ -43,10 +67,19 @@ class usbprog
 		usbprog();
 		 ~usbprog();
 	
-		void open();
+		void open(usbprogMode mode);
 		void close();
+	
+		usbprogMode getCurrentMode();
+	
+		bool getOpened();
+	
+		//only possible in update mode
+		//device must be open
 		void flashFile(wxString filename);
-		void startApplication();
+		
+		//possible in update mode and in online mode
+		//device need not to be open
 		int getUSBDeviceID();
 		wxString getUSBDeviceName();
 		wxString getUSBDeviceName(int deviceID);
@@ -55,9 +88,9 @@ class usbprog
 		int getProductID();
 		int getProductID(int deviceID);
 		
-		// usbprog interface
-	
-		// TODO: add member function declarations...
+		//only possible in online mode
+		//device must be open
+		void startApplication();
 	
 	protected:
 		// usbprog variables
@@ -66,8 +99,8 @@ class usbprog
 	
 	private:
 		void checkIfOpened();
+		void checkIfMode(usbprogMode mode);
 };
 
 
 #endif	//_USBPROG_H_
-
