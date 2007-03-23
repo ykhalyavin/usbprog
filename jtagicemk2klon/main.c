@@ -72,52 +72,6 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 }
 
 
-#define DDR_SPI DDRB
-#define MOSI PB5
-#define MISO PB6
-#define SCK PB7
-#define RESET PB0
-
-
-void spi_init()
-{
-	
-	DDR_SPI &=~(1<<MISO);
-	//PORTB = (1<<MISO);
-
-	DDR_SPI = (1<<MOSI)|(1<<SCK)|(1<<RESET);
-	
-	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);	//128tel
-	//SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|3;
-  //SPSR = (0<<SPI2X);
-}
-
-void spi_out(char data)
-{
-  	SPDR = data;
-    while ( !(SPSR & (1<<SPIF)) ) ;
-}
-
-
-char spi_in()
-{
-	SPDR = 0;
-	int timeout = 1000;
-	while(!(SPSR & (1<<SPIF))){
-		timeout--;
-		if(timeout==0)
-			break;
-	}
-	return SPDR;
-}
-
-
-void spi_write_program_memory(char data)
-{
-
-
-}
-
 void CommandAnswer(int length)
 {
 	int i;
@@ -155,7 +109,6 @@ int main(void)
   int conf, interf;
   //UARTInit();
 
-  spi_init();
   USBNInit();   
   
   usbprog.longpackage=0;
