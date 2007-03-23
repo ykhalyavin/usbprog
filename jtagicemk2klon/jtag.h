@@ -18,6 +18,59 @@
 #ifndef _JTAG_H_
 #define _JTAG_H_
 
+#include <avr/io.h>
+#include "bit.h"
+
+#define uint8_t	unsigned char
+
+#define JTAG_IR_LENGTH		3
+
+#define JTAG_PORT_INIT		DDRD
+#define JTAG_PORT_WRITE		PORTB
+#define JTAG_PORT_READ		PINB
+#define	TCK								0
+#define TMS								7
+#define TDI								5
+#define TDO								6
+
+// check if tdo == 1
+#define JTAG_IS_TDO_SET()                    (JTAG_PORT_READ & BIT(TDO))
+// a jtag clock
+#define JTAG_CLK()                      {JTAG_SET_TCK(); JTAG_CLEAR_TCK();}
+
+
+// lowlevel
+#define JTAG_SET_TCK()                       SETBIT( JTAG_PORT_WRITE, TCK )
+#define JTAG_CLEAR_TCK()                     CLEARBIT( JTAG_PORT_WRITE, TCK )
+
+#define JTAG_SET_TMS()                       SETBIT( JTAG_PORT_WRITE, TMS )
+#define JTAG_CLEAR_TMS()                     CLEARBIT( JTAG_PORT_WRITE, TMS )
+
+#define JTAG_SET_TDI()                       SETBIT( JTAG_PORT_WRITE, TDI )
+#define JTGA_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
+
+// JTAG State Machine
+typedef enum
+{
+	SELECT_DR_SCAN,
+	CAPTURE_DR,
+	SHIFT_DR,
+	EXIT1_DR,
+	PAUSE_DR,
+	EXIT2_DR,
+	UPDATE_DR,
+
+	TEST_LOGIC_RESET,
+	RUN_TEST_IDLE,
+
+	SELECT_IR_SCAN,
+	CAPTURE_IR,
+	SHIFT_IR,
+	EXIT1_IR,
+	PAUSE_IR,
+	EXIT2_IR,
+	UPDATE_IR
+} TAP_STATE;
 
 
 // setup connection
@@ -30,10 +83,13 @@ void jtag_reset();
 void jtag_goto_state(uint8_t state);
 
 // write to target tdi
-uint8_t jtag_read(uint8 numbers, unsigned char * buf);
+uint8_t jtag_read(uint8_t numbers, unsigned char * buf);
 
 // read from target tdo
 uint8_t jtag_write(uint8_t numbers, unsigned char * buf);
+
+
+
 
 
 
