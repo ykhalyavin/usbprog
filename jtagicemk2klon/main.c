@@ -32,6 +32,7 @@
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
 #include "usbn2mc.h"
+#include "jtag.h"
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
@@ -95,7 +96,6 @@ void CommandAnswer(int length)
 /* central command parser */
 void USBFlash(char *buf)
 {
-	int i; 
   USBNWrite(TXC1,FLUSH);
 		
 	switch(buf[0]) {
@@ -107,14 +107,14 @@ void USBFlash(char *buf)
 int main(void)
 {
   int conf, interf;
-  //UARTInit();
+	// only for testing
+  UARTInit();
 
   USBNInit();   
   
   usbprog.longpackage=0;
 
 	DDRA = (1 << DDA4);
-  //PORTA |= (1<<PA4);	//on
 	PORTA &= ~(1<<PA4); //off
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
@@ -146,6 +146,28 @@ int main(void)
 
   // start usb chip
   USBNStart();
+
+	// only for testing
+
+	jtag_init();
+	jtag_goto_state(SHIFT_DR);
+
+	unsigned char jtagbuf[10];
+	jtagbuf[0]=0x01;
+
+	jtag_write(4,jtagbuf);	
+
+	jtag_read(32,jtagbuf);
+
+	SendHex(jtagbuf[0]);
+	SendHex(jtagbuf[1]);
+	SendHex(jtagbuf[2]);
+	SendHex(jtagbuf[3]);
+
+	// end testing
+	
+
+
   while(1);
 }
 

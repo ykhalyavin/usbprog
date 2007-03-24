@@ -74,10 +74,10 @@ typedef enum
 
 
 // setup connection
-void jtag_init();
+void jtag_init(void);
 
 // force jtag tap into reset state
-void jtag_reset();
+void jtag_reset(void);
 
 // goto a state
 void jtag_goto_state(uint8_t state);

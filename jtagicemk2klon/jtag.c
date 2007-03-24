@@ -22,25 +22,35 @@
 
 static TAP_STATE tapstate;
 
-void jtag_init()
+void jtag_init(void)
 {
-
+	// use as output
+	JTAG_PORT_INIT |= (1<<TCK)|(1<<TMS)|(1<<TDI);
+	// use as input
+	JTAG_PORT_INIT &=~(1<<TDO);
+	
+	JTAG_CLEAR_TCK();
+	jtag_reset();
 }
 
-void jtag_reset()
+void jtag_reset(void)
 {
-
+	int i;
+	JTAG_SET_TMS();
+	for(i=0;i<5;i++) {
+		JTAG_CLK();	
+	}
 }
 
 uint8_t jtag_read(uint8_t numbers, unsigned char * buf)
 {
-
+	return 0;
 }
 
 uint8_t jtag_write(uint8_t numbers, unsigned char * buf)
 {
 
-
+	return 0;
 }
 
 
