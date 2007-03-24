@@ -92,13 +92,23 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 		if(JTAG_IS_TDO_SET())
 			buf[receivedbits/8] |= (1 << (receivedbits & 7));	
 		else
-			buf[receivedbits/8] |= (0 << (receivedbits & 7));	
+			buf[receivedbits/8] &= ~(1 << (receivedbits & 7));	
 
 		receivedbits++;
 		JTAG_CLK();
   }
 	
 	return receivedbits;
+}
+
+
+
+uint8_t jtag_write_and_read(	uint8_t numberofbits, 
+															unsigned char * buf, 
+															uint8_t numberofreadbits,
+															unsigned readbuf)
+{
+
 }
 
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
@@ -115,7 +125,6 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 		if(numberofbits==1)
 			JTAG_SET_TMS();				// last one with tms
 
-  	//JTAG_clock((BYTE)((p[bitofs/8] >> (bitofs & 7) & 1) ? TDI : 0));  // send all bits but the last one
 		if(buf[sendbits/8] >> (sendbits & 7) & 1) 
 			JTAG_SET_TDI();
 		else
@@ -124,7 +133,6 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 		JTAG_CLK();
 	  sendbits++;
 	}
-
 	return sendbits;
 }
 

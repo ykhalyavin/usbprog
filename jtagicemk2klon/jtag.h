@@ -73,10 +73,11 @@ typedef enum
 	UPDATE_IR
 } TAP_STATE;
 
+// for openocd
 void jtag_send_slice(uint8_t tck, uint8_t tms, uint8_t tdi);
 
+// for openocd
 uint8_t jtag_read_tdo(void);
-
 
 // setup connection
 void jtag_init(void);
@@ -93,6 +94,12 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf);
 // read from target tdo
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf);
 
+// write and read after every clock edge
+uint8_t jtag_write_and_read(  uint8_t numberofbits,
+                              unsigned char * buf,
+                              uint8_t numberofreadbits,
+                              unsigned readbuf);
+																																													{
 
 
 
