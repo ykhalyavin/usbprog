@@ -24,8 +24,11 @@
 
 #include "usbprog.h"
 #include "wx/log.h"
+#include <stdexcept> //runtime_error
 
 using namespace std;
+
+using std::runtime_error;
 
 usbprog::usbprog()
 {
@@ -41,11 +44,36 @@ usbprog::~usbprog()
 void usbprog::open(usbprogMode mode)
 {
 	if (!opened){
+		
 		int deviceID = getUSBDeviceID();
+		
+		if (mode == update) {
+			wxLogDebug(_T("Try to switch usbprog to update mode"));
+			if (deviceID != AVRUPDATE){
+				wxLogInfo(_T("usbprog found with: %s"),getUSBDeviceName(deviceID).c_str());
+				wxLogInfo(_T("start update mode"));
+				avrupdate_start_with_vendor_request(getVendorID(deviceID),getProductID(deviceID));
+				#if _WIN32
+				Sleep(7000);
+				#else
+				sleep(3);
+				#endif
+				
+				//now the deviceID should be AVRUPDATE
+				deviceID = getUSBDeviceID();
+				if (deviceID != AVRUPDATE) {
+						throw runtime_error("Could not switch usbprog to update mode");
+				}
+			}else{
+				wxLogDebug(_T("usbprog is already in update mode"));
+			}
+		}
+				
 		usb_handle = avrupdate_open(getVendorID(deviceID),getProductID(deviceID));
+		
 		opened = true;
 	}else{
-		throw exception();
+		throw runtime_error("usbprog already opened");
 	}
 }
 
@@ -74,8 +102,6 @@ void usbprog::flashFile(wxString filename)
 	checkIfOpened();
 	checkIfMode(update);
 	
-	avrupdate_start_with_vendor_request(getVendorID(), getProductID());
-	sleep(3);
 	
 	//at the moment we have to copy the filename string to provide
 	//a non const char* as filename
@@ -95,7 +121,7 @@ void usbprog::flashFile(wxString filename)
 void usbprog::startApplication()
 {	
 	checkIfOpened();
-	checkIfMode(online);
+	checkIfMode(update);
 	avrupdate_startapp(usb_handle);
 }
 

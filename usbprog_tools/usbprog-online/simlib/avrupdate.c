@@ -55,10 +55,14 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
       		// command message
       		cmd[0]=WRITEPAGE;
       		cmd[1]=(char)page; // page number
+			
+	//#ifndef SIMULATION  	
       		usb_bulk_write(usb_handle,2,cmd,64,100);
 
       		// data message 
       		usb_bulk_write(usb_handle,2,buf,64,100);
+			
+	//#endif 
       		offset = 0;
       		page++;
     	}
@@ -69,23 +73,25 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
     	// command message
     	cmd[0]=WRITEPAGE;
     	cmd[1]=(char)page; // page number
+	//#ifndef SIMULATION  
     	usb_bulk_write(usb_handle,2,cmd,64,100);
 
     	// data message 
     	usb_bulk_write(usb_handle,2,buf,64,100);
-  	}	
-	#endif 
+	//#endif 
+  	}
+	#endif	
 }
 
 
 void avrupdate_startapp(struct usb_dev_handle* usb_handle)
 {
-	#ifndef SIMULATION  	
 	char buf[64];
   	char *ptr = buf;
 
  
    	buf[0]=STARTAPP;
+	#ifndef SIMULATION  	
    	usb_bulk_write(usb_handle,2,ptr,64,100);
    	//printf("TX stat=%d\n",stat);
 	#endif

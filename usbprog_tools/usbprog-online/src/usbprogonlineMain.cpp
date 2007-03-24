@@ -142,7 +142,7 @@ void usbprogonlineFrame::OnBtnFlashClick( wxCommandEvent& event )
                                      wxLIST_NEXT_ALL,
                                      wxLIST_STATE_SELECTED);
         onlineVersions.DownloadOnlineVersion(firstSelectedItem,tmpFileName);
-		wxLogInfo(_T("Saving online version to %s"),tmpFileName.c_str());
+		wxLogInfo(_T("Saved online version to %s"),tmpFileName.c_str());
 		
 		
 		if (usbProg.getOpened()){
@@ -150,8 +150,6 @@ void usbprogonlineFrame::OnBtnFlashClick( wxCommandEvent& event )
 		}
 		usbProg.open(update);
         usbProg.flashFile(tmpFileName);
-		usbProg.close();
-		usbProg.open(online);
 		usbProg.startApplication();
 		usbProg.close();
         

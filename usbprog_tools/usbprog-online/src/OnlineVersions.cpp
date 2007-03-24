@@ -155,6 +155,8 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
 			url = url.Remove(0,7);
 		}
 		
+		wxLogInfo(_T("URL: %s"),url.c_str());
+		
 		int fileLocationPos = url.Find('/'); 
 		wxString servername;
 		wxString fileLocation;
@@ -166,6 +168,9 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
 			servername = url;
 			fileLocation = _T("");
 		}
+		
+		
+		wxLogDebug(_T("Extracted Servername: %s"),servername.c_str());
 		
 		//find out port if available
 		int portPos = servername.Find(':');
@@ -185,16 +190,19 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
 	
     	get.SetHeader( _T("User-Agent"), _T("usbprog-online") );
     	
+		wxLogDebug(_T("Try to connect to %s Port %d"),servername.c_str(),port);
     	
     	if (get.Connect(servername, port)){
-    	
+    		
 	
+			wxLogDebug(_T("Connection to Server %s successfull"));
     		// just grab the root document. index.html, default.asp, etc. the server will determine what it sould be.
     		wxInputStream* resStream = get.GetInputStream( fileLocation );
+			wxLogInfo(_T("Got Inputstream"));
  			wxProtocolError error = get.GetError() ;
  			if (error == wxPROTO_NOERR){
  			
-				wxLogInfo(_T("Download successful"),url.c_str());
+				wxLogDebug(_T("Download successful"),url.c_str());
  				
  				wxFFileOutputStream fileStream(fileName);
  				fileStream.Write(*resStream);
@@ -235,4 +243,4 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
 	}else {
 			wxLogError(_T("Invalid versionID %d"),versionID);
 	}
-}	
+}
