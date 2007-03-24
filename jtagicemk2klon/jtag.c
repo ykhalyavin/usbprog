@@ -34,8 +34,38 @@ void jtag_init(void)
 	
 	// use as input
 	JTAG_CLEAR_TCK();
+	JTAG_CLEAR_TMS();
+	JTAG_CLEAR_TDI();
 	
 	jtag_reset();
+}
+
+uint8_t jtag_read_tdo(void)
+{
+	if(JTAG_IS_TDO_SET())
+		return 1;
+	else 
+		return 0;
+}
+
+void jtag_send_slice(uint8_t tck, uint8_t tms, uint8_t tdi)
+{
+	
+	if(tms)
+		JTAG_PORT_WRITE |= (1<<TMS);
+	else
+		JTAG_PORT_WRITE &= ~(1<<TMS);
+	
+	if(tdi)
+		JTAG_PORT_WRITE |= (1<<TDI);
+	else
+		JTAG_PORT_WRITE &= ~(1<<TDI);
+	
+	if(tck)
+		JTAG_PORT_WRITE |= (1<<TCK);
+	else
+		JTAG_PORT_WRITE &= ~(1<<TCK);
+
 }
 
 void jtag_reset(void)

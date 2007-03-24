@@ -20,6 +20,7 @@
 
 #include <avr/io.h>
 #include "bit.h"
+#include "wait.h"
 
 #define uint8_t	unsigned char
 
@@ -36,7 +37,7 @@
 // check if tdo == 1
 #define JTAG_IS_TDO_SET()               (JTAG_PORT_READ & BIT(TDO))
 // a jtag clock
-#define JTAG_CLK()                      {JTAG_SET_TCK(); asm("nop"); asm("nop"); asm("nop"); JTAG_CLEAR_TCK();}
+#define JTAG_CLK()                      {JTAG_SET_TCK(); wait_ms(1); JTAG_CLEAR_TCK();}
 
 
 // lowlevel
@@ -71,6 +72,10 @@ typedef enum
 	EXIT2_IR,
 	UPDATE_IR
 } TAP_STATE;
+
+void jtag_send_slice(uint8_t tck, uint8_t tms, uint8_t tdi);
+
+uint8_t jtag_read_tdo(void);
 
 
 // setup connection

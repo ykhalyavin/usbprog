@@ -152,48 +152,66 @@ int main(void)
 
 	jtag_init();
 
-while(1){
+	int i=32;
 	// only for testing
 	jtag_reset();
 
-	jtag_goto_state(SHIFT_IR);
+	//jtag_goto_state(SHIFT_IR);
 	
-	//jtagbuf[0]=0x01;	//  idcode
-	jtagbuf[0]=0xff;	//  bypass
-	jtag_write(4,jtagbuf);	
+	//jtag_send_slice(tck,tms,tdi)
+	jtag_send_slice(0,0,0);
+	jtag_send_slice(1,0,0);
 
-	jtag_goto_state(SHIFT_DR);
+	jtag_send_slice(0,1,0);
+	jtag_send_slice(1,1,0);
 
-	JTAG_SET_TDI();
-	JTAG_CLK();
+	jtag_send_slice(0,0,0);
+	jtag_send_slice(1,0,0);
+
+	jtag_send_slice(0,0,0);
+	jtag_send_slice(1,0,0);
+	jtag_send_slice(0,0,0);
+
+	char buf[4];
+	buf[0]=0x00;
+
+	// goto idle
+	jtag_send_slice(0,1,0);
+	jtag_send_slice(1,1,0);
 	
-	if(JTAG_IS_TDO_SET())
-		SendHex(0x11);
-	else
-		SendHex(0x00);
-
-	JTAG_CLEAR_TDI();
-	JTAG_CLK();
-
-	if(JTAG_IS_TDO_SET())
-		SendHex(0x11);
-	else
-		SendHex(0x00);
+	jtag_send_slice(0,1,0);
+	jtag_send_slice(1,1,0);
 	
-	JTAG_CLEAR_TDI();
-	JTAG_CLK();
-	if(JTAG_IS_TDO_SET())
-		SendHex(0x11);
-	else
-		SendHex(0x00);
+	jtag_send_slice(0,0,0);
+	jtag_send_slice(1,0,0);
+	jtag_send_slice(0,0,0);
 
-}
+	// goto dr shift
+	jtag_send_slice(0,1,0);
+	jtag_send_slice(1,1,0);
+	
+	jtag_send_slice(0,0,0);
+	jtag_send_slice(1,0,0);
+	
+	jtag_send_slice(0,0,0);
+	jtag_send_slice(1,0,0);
+	jtag_send_slice(0,0,0);
 
-	SendHex(jtagbuf[0]);
-	SendHex(jtagbuf[1]);
-	SendHex(jtagbuf[2]);
-	SendHex(jtagbuf[3]);
 
+
+	for(i=0;i<32;i++) {
+		if(JTAG_IS_TDO_SET())
+			SendHex(0x11);
+		else
+			SendHex(0x00);
+		JTAG_CLK();
+	}	
+	
+	//jtag_read(32,buf);
+
+	//SendHex(buf[0]);
+
+	while(1);
 	// end testing
 }
 
