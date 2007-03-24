@@ -29,7 +29,12 @@ void jtag_init(void)
 	// use as input
 	JTAG_PORT_INIT &=~(1<<TDO);
 	
+	// pullup
+	//JTAG_PORT_WRITE |= (1<<TDO);
+	
+	// use as input
 	JTAG_CLEAR_TCK();
+	
 	jtag_reset();
 }
 
@@ -42,15 +47,47 @@ void jtag_reset(void)
 	}
 }
 
-uint8_t jtag_read(uint8_t numbers, unsigned char * buf)
+uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 {
-	return 0;
+  int receivedbits = 0;
+
+  while(numberofbits--) {
+
+		if(numberofbits==1)
+			JTAG_SET_TMS();			// last one with tms
+
+		JTAG_CLK();
+		buf[receivedbits/8] |= (JTAG_IS_TDO_SET() << (receivedbits & 7));	
+  }
+ 	
+	return receivedbits;
 }
 
-uint8_t jtag_write(uint8_t numbers, unsigned char * buf)
+uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 {
+	int sendbits=0;
+	
+	// if numbers is not vaild
+	if(numberofbits<=0)
+		return -1;
+	
+	//numberofbits--;
+  while(numberofbits--) {
 
-	return 0;
+		if(numberofbits==1)
+			JTAG_SET_TMS();				// last one with tms
+
+  	//JTAG_clock((BYTE)((p[bitofs/8] >> (bitofs & 7) & 1) ? TDI : 0));  // send all bits but the last one
+		if(buf[sendbits/8] >> (sendbits & 7) & 1) 
+			JTAG_SET_TDI();
+		else
+			JTAG_CLEAR_TDI();
+
+		JTAG_CLK();
+	  sendbits++;
+	}
+
+	return sendbits;
 }
 
 

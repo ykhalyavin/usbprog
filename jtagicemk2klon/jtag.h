@@ -25,18 +25,18 @@
 
 #define JTAG_IR_LENGTH		3
 
-#define JTAG_PORT_INIT		DDRD
+#define JTAG_PORT_INIT		DDRB
 #define JTAG_PORT_WRITE		PORTB
 #define JTAG_PORT_READ		PINB
 #define	TCK								0
 #define TMS								7
-#define TDI								5
-#define TDO								6
+#define TDI							  5	
+#define TDO								6	
 
 // check if tdo == 1
-#define JTAG_IS_TDO_SET()                    (JTAG_PORT_READ & BIT(TDO))
+#define JTAG_IS_TDO_SET()               (JTAG_PORT_READ & BIT(TDO))
 // a jtag clock
-#define JTAG_CLK()                      {JTAG_SET_TCK(); JTAG_CLEAR_TCK();}
+#define JTAG_CLK()                      {JTAG_SET_TCK(); asm("nop"); asm("nop"); asm("nop"); JTAG_CLEAR_TCK();}
 
 
 // lowlevel
@@ -47,7 +47,7 @@
 #define JTAG_CLEAR_TMS()                     CLEARBIT( JTAG_PORT_WRITE, TMS )
 
 #define JTAG_SET_TDI()                       SETBIT( JTAG_PORT_WRITE, TDI )
-#define JTGA_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
+#define JTAG_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
 
 // JTAG State Machine
 typedef enum
@@ -83,10 +83,10 @@ void jtag_reset(void);
 void jtag_goto_state(uint8_t state);
 
 // write to target tdi
-uint8_t jtag_read(uint8_t numbers, unsigned char * buf);
+uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf);
 
 // read from target tdo
-uint8_t jtag_write(uint8_t numbers, unsigned char * buf);
+uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf);
 
 
 

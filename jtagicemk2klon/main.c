@@ -109,7 +109,7 @@ int main(void)
   int conf, interf;
 	// only for testing
   UARTInit();
-
+#if 0
   USBNInit();   
   
   usbprog.longpackage=0;
@@ -140,24 +140,54 @@ int main(void)
 
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
-  
+
   USBNInitMC();
   sei();
 
   // start usb chip
   USBNStart();
-
-	// only for testing
-
-	jtag_init();
-	jtag_goto_state(SHIFT_DR);
+#endif
 
 	unsigned char jtagbuf[10];
-	jtagbuf[0]=0x01;
 
+	jtag_init();
+
+while(1){
+	// only for testing
+	jtag_reset();
+
+	jtag_goto_state(SHIFT_IR);
+	
+	//jtagbuf[0]=0x01;	//  idcode
+	jtagbuf[0]=0xff;	//  bypass
 	jtag_write(4,jtagbuf);	
 
-	jtag_read(32,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
+
+	JTAG_SET_TDI();
+	JTAG_CLK();
+	
+	if(JTAG_IS_TDO_SET())
+		SendHex(0x11);
+	else
+		SendHex(0x00);
+
+	JTAG_CLEAR_TDI();
+	JTAG_CLK();
+
+	if(JTAG_IS_TDO_SET())
+		SendHex(0x11);
+	else
+		SendHex(0x00);
+	
+	JTAG_CLEAR_TDI();
+	JTAG_CLK();
+	if(JTAG_IS_TDO_SET())
+		SendHex(0x11);
+	else
+		SendHex(0x00);
+
+}
 
 	SendHex(jtagbuf[0]);
 	SendHex(jtagbuf[1]);
@@ -165,10 +195,6 @@ int main(void)
 	SendHex(jtagbuf[3]);
 
 	// end testing
-	
-
-
-  while(1);
 }
 
 

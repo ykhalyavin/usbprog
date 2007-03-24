@@ -35,11 +35,9 @@ void UARTInit(void)
 
 void UARTPutChar(unsigned char sign)
 {
-	#if 0
   	// bei neueren AVRs steht der Status in UCSRA/UCSR0A/UCSR1A, hier z.B. fuer ATmega16:
   	while (!(UCSRA & (1<<UDRE))); /* warten bis Senden moeglich                   */
   		UDR = sign;                    /* schreibt das Zeichen x auf die Schnittstelle */
-	#endif
 }
 
 
