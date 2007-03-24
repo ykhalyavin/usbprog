@@ -37,7 +37,7 @@
 // check if tdo == 1
 #define JTAG_IS_TDO_SET()               (JTAG_PORT_READ & BIT(TDO))
 // a jtag clock
-#define JTAG_CLK()                      {JTAG_SET_TCK(); wait_ms(1); JTAG_CLEAR_TCK();}
+#define JTAG_CLK()                      {JTAG_CLEAR_TCK(); JTAG_SET_TCK(); asm("nop"); JTAG_CLEAR_TCK();}
 
 
 // lowlevel

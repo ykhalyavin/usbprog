@@ -18,6 +18,7 @@
 
 #include "jtag.h"
 #include "bit.h"
+#include "uart.h"
 
 
 static TAP_STATE tapstate;
@@ -36,6 +37,8 @@ void jtag_init(void)
 	JTAG_CLEAR_TCK();
 	JTAG_CLEAR_TMS();
 	JTAG_CLEAR_TDI();
+
+	tapstate = TEST_LOGIC_RESET;
 	
 	jtag_reset();
 }
@@ -75,6 +78,7 @@ void jtag_reset(void)
 	for(i=0;i<5;i++) {
 		JTAG_CLK();	
 	}
+	tapstate = TEST_LOGIC_RESET;
 }
 
 uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
