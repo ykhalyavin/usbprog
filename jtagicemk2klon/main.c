@@ -152,85 +152,16 @@ int main(void)
 
 	jtag_init();
 
-	int i=32;
-	// only for testing
-	jtag_reset();
-
-
-	//jtag_goto_state(SHIFT_IR);
-	//jtag_goto_state(RUN_TEST_IDLE);
 	jtag_goto_state(SHIFT_DR);
 
-	// go into shift dr state
-#if 0
-	JTAG_CLEAR_TMS();
-	JTAG_CLK();
-
-	JTAG_SET_TMS();
-	JTAG_CLK();
-
-	JTAG_CLEAR_TMS();
-	JTAG_CLK();
-
-	JTAG_CLEAR_TMS();
-	JTAG_CLK();
-#endif
-
-#if 0 
-	// goto shift ir
-	//jtag_send_slice(tck,tms,tdi)
-	jtag_send_slice(0,0,0);
-	jtag_send_slice(1,0,0);
-
-	jtag_send_slice(0,1,0);
-	jtag_send_slice(1,1,0);
-
-	jtag_send_slice(0,0,0);
-	jtag_send_slice(1,0,0);
-
-	jtag_send_slice(0,0,0);
-	jtag_send_slice(1,0,0);
-	jtag_send_slice(0,0,0);
-#endif
 	char buf[4];
-	buf[0]=0x00;
-#if 0
-	// goto idle
-	jtag_send_slice(0,1,0);
-	jtag_send_slice(1,1,0);
+	jtag_read(32,buf);
 	
-	jtag_send_slice(0,1,0);
-	jtag_send_slice(1,1,0);
+	SendHex(buf[0]);
+	SendHex(buf[1]);
+	SendHex(buf[2]);
+	SendHex(buf[3]);
 	
-	jtag_send_slice(0,0,0);
-	jtag_send_slice(1,0,0);
-	jtag_send_slice(0,0,0);
-
-	// goto dr shift
-	jtag_send_slice(0,1,0);
-	jtag_send_slice(1,1,0);
-	
-	jtag_send_slice(0,0,0);
-	jtag_send_slice(1,0,0);
-	
-	jtag_send_slice(0,0,0);
-	jtag_send_slice(1,0,0);
-	jtag_send_slice(0,0,0);
-
-#endif 
-
-	for(i=0;i<32;i++) {
-		if(JTAG_IS_TDO_SET())
-			SendHex(0x11);
-		else
-			SendHex(0x00);
-		JTAG_CLK();
-	}	
-	
-	//jtag_read(32,buf);
-
-	//SendHex(buf[0]);
-
 	while(1);
 	// end testing
 }

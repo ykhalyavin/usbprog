@@ -84,16 +84,20 @@ void jtag_reset(void)
 uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 {
   int receivedbits = 0;
-
   while(numberofbits--) {
 
 		if(numberofbits==1)
 			JTAG_SET_TMS();			// last one with tms
 
+		if(JTAG_IS_TDO_SET())
+			buf[receivedbits/8] |= (1 << (receivedbits & 7));	
+		else
+			buf[receivedbits/8] |= (0 << (receivedbits & 7));	
+
+		receivedbits++;
 		JTAG_CLK();
-		buf[receivedbits/8] |= (JTAG_IS_TDO_SET() << (receivedbits & 7));	
   }
- 	
+	
 	return receivedbits;
 }
 
