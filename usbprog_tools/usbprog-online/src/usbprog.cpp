@@ -26,6 +26,8 @@
 #include "wx/log.h"
 #include <stdexcept> //runtime_error
 
+#define __WXDEBUG__
+
 using namespace std;
 
 using std::runtime_error;
@@ -110,7 +112,7 @@ void usbprog::flashFile(wxString filename)
 
 	char * buf  = new char[char_len];
 	try{
-		memcpy( buf, filename.c_str() , char_len*sizeof(char) ); 
+		memcpy( buf, filename.mb_str() , char_len*sizeof(char) ); 
 	
 		wxLogInfo(_T("Starting to flash %s"),buf);
 		avrupdate_flash_bin(usb_handle,buf);

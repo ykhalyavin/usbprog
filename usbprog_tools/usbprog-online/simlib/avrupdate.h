@@ -62,4 +62,3 @@ void avrupdate_flash_version(int version);
  * 	-d version, download version
  *
  */
-

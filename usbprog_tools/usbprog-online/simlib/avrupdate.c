@@ -44,6 +44,7 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 
  	// open bin file
   	fd = fopen(file, "r");
+    	fprintf(stdout, "File opened: %s\n", file);
   	if(!fd) {
     	fprintf(stderr, "Unable to open file %s, ignoring.\n", file);
   	}
