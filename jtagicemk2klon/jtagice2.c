@@ -23,19 +23,49 @@
 #include "uart.h"
 #include "jtag.h"
 
+static JTAGICE_STATE jtagicestate;
 
-typedef enum {
-	START,
-	GET_SEQUENCE_NUMBER,
-	GET_MESSAGE_SIZE,
-	GET_TOKEN,
-	GET_DATA,
-	GET_CRC
-} JTAGICE_STATE;
+void JTAGICE_init()
+{
+	jtagicestate = START;
+}
 
-void JTAGICE_init(void);
-void JTAGICE_common_state_machine(void);
+void JTAGICE_common_state_machine(void)
+{
+	char sign;
+	sign = fifo_get_nowait(recvfifo);	
 
+	while(1) {
+	
+		switch(state) {
+			case START:
+
+			break;
+			case GET_SEQUENCE_NUMBER:
+
+			break;
+
+			case GET_MESSAGE_SIZE:
+
+			break;
+
+			case GET_TOKEN:
+
+			break;
+
+			case GET_DATA:
+
+			break;
+
+			case GET_CRC:
+
+			break;
+
+			default:
+		}	
+	}
+
+}
 
 
 

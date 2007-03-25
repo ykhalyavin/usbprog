@@ -99,7 +99,6 @@ uint8_t jtag_write_and_read(  uint8_t numberofbits,
                               unsigned char * buf,
                               uint8_t numberofreadbits,
                               unsigned readbuf);
-																																													{
 
 
 

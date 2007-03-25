@@ -92,25 +92,67 @@ void CommandAnswer(int length)
 	}
 }
 
+/* called after data where send to pc */
+void USBSend()
+{
 
-/* central command parser */
-void USBFlash(char *buf)
+}
+
+
+/* is called when received data from pc */
+void USBReceive(char *buf)
 {
   USBNWrite(TXC1,FLUSH);
-		
-	switch(buf[0]) {
-		case 0x00:
-		break;
-	}
+	// put receive bytes into fifo
 }
+
+
+void CommonStateMachine(void)
+{
+	char sign;
+	sign = fifo_get_nowait(recvfifo);	
+
+	while(1) {
+	
+		switch(state) {
+			case START:
+
+			break;
+			case GET_SEQUENCE_NUMBER:
+
+			break;
+
+			case GET_MESSAGE_SIZE:
+
+			break;
+
+			case GET_TOKEN:
+
+			break;
+
+			case GET_DATA:
+
+			break;
+
+			case GET_CRC:
+
+			break;
+
+			default:
+		}	
+	}
+
+}
+
+
 
 int main(void)
 {
   int conf, interf;
 	// only for testing
   UARTInit();
-#if 0
-  USBNInit();   
+  
+	USBNInit();   
   
   usbprog.longpackage=0;
 
@@ -118,7 +160,7 @@ int main(void)
 	PORTA &= ~(1<<PA4); //off
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
-  USBNDeviceProductID(0x2104); // atmel ids
+  USBNDeviceProductID(0x2103); // atmel ids
   
   USBNDeviceBCDDevice(0x0200);
 
@@ -138,15 +180,17 @@ int main(void)
   interf = USBNAddInterface(conf,0);
   USBNAlternateSetting(conf,interf,0);
 
-  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
-  USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,USBSend);
+  USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBReceive);
 
   USBNInitMC();
   sei();
 
   // start usb chip
   USBNStart();
-#endif
+
+
+	// only for testing
 
 	unsigned char jtagbuf[10];
 
