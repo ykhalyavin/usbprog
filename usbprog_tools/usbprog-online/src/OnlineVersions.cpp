@@ -27,6 +27,7 @@
 #include "CsvReader.h"
 #include <wx/log.h>
 #include <wx/wfstream.h>
+#include <stdexcept>
 
 OnlineVersions::OnlineVersions()
 {
@@ -79,6 +80,8 @@ void OnlineVersions::Update(wxString url)
 
     get.SetHeader( _T("User-Agent"), _T("usbprog-online") );
     
+	//Set Timeout to 10 seconds
+	get.SetTimeout(10); 
     
     if (get.Connect(servername, port)){
     
@@ -155,7 +158,7 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
 			url = url.Remove(0,7);
 		}
 		
-		wxLogInfo(_T("URL: %s"),url.c_str());
+		wxLogDebug(_T("URL: %s"),url.c_str());
 		
 		int fileLocationPos = url.Find('/'); 
 		wxString servername;
@@ -196,7 +199,6 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
     		
 	
 			wxLogDebug(_T("Connection to Server %s successfull"));
-    		// just grab the root document. index.html, default.asp, etc. the server will determine what it sould be.
     		wxInputStream* resStream = get.GetInputStream( fileLocation );
 			wxLogInfo(_T("Got Inputstream"));
  			wxProtocolError error = get.GetError() ;

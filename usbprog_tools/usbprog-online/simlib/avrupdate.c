@@ -13,9 +13,13 @@
 
 #define SIMULATION
 
+#ifdef SIMULATION
+int currentFirmware = BLINKDEMO;
+#endif
+
 void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 {
-	#ifndef SIMULATION  	
+	//#ifndef SIMULATION  	
 	char buf[64];
   	char cmd[64];
 
@@ -44,6 +48,7 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
     	fprintf(stderr, "Unable to open file %s, ignoring.\n", file);
   	}
 
+	#ifndef SIMULATION  	
   	while(!feof(fd))
   	{
     	buf[offset]=fgetc(fd);
@@ -51,36 +56,35 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
     	offset++;
     	if(offset == 64)
     	{
-      		//printf("send package\n");
+      		printf("send package\n");
       		// command message
       		cmd[0]=WRITEPAGE;
       		cmd[1]=(char)page; // page number
 			
-	//#ifndef SIMULATION  	
       		usb_bulk_write(usb_handle,2,cmd,64,100);
 
       		// data message 
       		usb_bulk_write(usb_handle,2,buf,64,100);
-			
-	//#endif 
       		offset = 0;
       		page++;
     	}
   	}
+			
+	#endif 
   	if(offset > 0)
   	{
-    	//printf("rest\n");
+    	printf("rest\n");
     	// command message
     	cmd[0]=WRITEPAGE;
     	cmd[1]=(char)page; // page number
-	//#ifndef SIMULATION  
+	#ifndef SIMULATION  
     	usb_bulk_write(usb_handle,2,cmd,64,100);
 
     	// data message 
     	usb_bulk_write(usb_handle,2,buf,64,100);
-	//#endif 
+	#endif 
   	}
-	#endif	
+	//#endif	
 }
 
 
@@ -142,19 +146,7 @@ int avrupdate_find_usbdevice()
     	}	
 		return -1;
 	#else
-		switch (rand()%3)
-		{
-			case 0:
-				return AVRISPMKII;
-			break;
-			case 1:
-				return AVRUPDATE;
-			break;
-			case 2:
-				return USBPROG;
-			break;
-			return BLINKDEMO;
-		}
+		return currentFirmware;
 
 	#endif
 }
@@ -200,7 +192,10 @@ void avrupdate_start_with_vendor_request(short vendorid, short productid)
       		}
     	}	
   	}
+	#else
+		currentFirmware = AVRUPDATE;
 	#endif
+	
 }
 
 struct usb_dev_handle* avrupdate_open(short vendorid, short productid)

@@ -109,9 +109,15 @@ void usbprog::flashFile(wxString filename)
 	int char_len = wxchar_len*sizeof(wxChar)/sizeof(char);
 
 	char * buf  = new char[char_len];
-	memcpy( buf , filename.c_str() , char_len*sizeof(char) ); 
-	wxLogInfo(_T("Starting to flash %s"),filename.c_str());
-	avrupdate_flash_bin(usb_handle,buf);
+	try{
+		memcpy( buf, filename.c_str() , char_len*sizeof(char) ); 
+	
+		wxLogInfo(_T("Starting to flash %s"),buf);
+		avrupdate_flash_bin(usb_handle,buf);
+	}catch(...){
+		delete(buf);
+		throw;
+	}
 	delete(buf);
 	
 	sleep(3);
@@ -127,7 +133,12 @@ void usbprog::startApplication()
 
 int usbprog::getUSBDeviceID()
 {
-	return avrupdate_find_usbdevice();
+	int deviceID = avrupdate_find_usbdevice();
+	if (deviceID >= 0){
+		return deviceID;
+	}else{
+		throw runtime_error("Could not get USB Device ID");
+	}
 }
 
 void usbprog::checkIfOpened()

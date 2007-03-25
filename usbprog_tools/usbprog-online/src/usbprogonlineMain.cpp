@@ -88,12 +88,15 @@ void usbprogonlineFrame::OnAbout(wxCommandEvent &event)
 
 void usbprogonlineFrame::OnBtnFindAdapterClick( wxCommandEvent& event )
 {
-	int deviceID = usbProg.getUSBDeviceID();
-	lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
-	
-	teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
-	teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
-	
+	try{
+		int deviceID = usbProg.getUSBDeviceID();
+		lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
+		
+		teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
+		teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
+	}catch(std::exception &e){
+		wxLogError(_T("%s"), e.what());
+	}
 }
 
 void usbprogonlineFrame::OnBtnDownloadClick( wxCommandEvent& event ){
@@ -135,27 +138,31 @@ void usbprogonlineFrame::OnBtnDownloadClick( wxCommandEvent& event ){
  
 void usbprogonlineFrame::OnBtnFlashClick( wxCommandEvent& event )
 {
-	if (listCtrlOnlineVersions->GetSelectedItemCount() == 1){
-		wxString tmpFileName = wxFileName::CreateTempFileName(_T("firmware"));
-		long firstSelectedItem =-1;
-		firstSelectedItem = listCtrlOnlineVersions->GetNextItem(firstSelectedItem,
-                                     wxLIST_NEXT_ALL,
-                                     wxLIST_STATE_SELECTED);
-        onlineVersions.DownloadOnlineVersion(firstSelectedItem,tmpFileName);
-		wxLogInfo(_T("Saved online version to %s"),tmpFileName.c_str());
-		
-		
-		if (usbProg.getOpened()){
-			usbProg.close();
-		}
-		usbProg.open(update);
-        usbProg.flashFile(tmpFileName);
-		usbProg.startApplication();
-		usbProg.close();
-        
-		OnBtnFindAdapterClick(event)  ;                    
-	} else{
-		wxLogError(_T("One File has to be selected to download"));
-	}
 	
+  	try{
+		if (listCtrlOnlineVersions->GetSelectedItemCount() == 1){
+			wxString tmpFileName = wxFileName::CreateTempFileName(_T("firmware"));
+			long firstSelectedItem =-1;
+			firstSelectedItem = listCtrlOnlineVersions->GetNextItem(firstSelectedItem,
+										 wxLIST_NEXT_ALL,
+										 wxLIST_STATE_SELECTED);
+			onlineVersions.DownloadOnlineVersion(firstSelectedItem,tmpFileName);
+			wxLogInfo(_T("Saved online version to %s"),tmpFileName.c_str());
+			
+			
+			if (usbProg.getOpened()){
+				usbProg.close();
+			}
+			usbProg.open(update);
+			usbProg.flashFile(tmpFileName);
+			usbProg.startApplication();
+			usbProg.close();
+			
+			OnBtnFindAdapterClick(event)  ;                    
+		} else{
+			wxLogError(_T("One File has to be selected to download"));
+		}
+	}catch(std::exception &e){
+		wxLogError(_T("%s"), e.what());
+   	}	
 }
