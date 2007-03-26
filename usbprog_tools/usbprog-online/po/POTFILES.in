@@ -7,15 +7,15 @@
 # Source files
 src/CsvReader.cpp
 src/CsvReader.h
-src/GUIFrame.cpp
-src/GUIFrame.h
 src/OnlineVersions.cpp
 src/OnlineVersions.h
 src/usbprog.cpp
 src/usbprog.h
 src/usbprogonlineApp.cpp
 src/usbprogonlineApp.h
-src/usbprogonlineMain.cpp
-src/usbprogonlineMain.h
+src/MainFrameGenerated.cpp
+src/MainFrameGenerated.h
+src/MainFrame.cpp
+src/MainFrame.h
 
 

@@ -15,10 +15,11 @@
 #pragma hdrstop
 #endif //__BORLANDC__
 
-#include "usbprogonlineMain.h"
+#include "MainFrame.h"
 #include "wx/protocol/http.h"
 #include <iostream>
 #include <wx/filename.h>
+#include "../images/hardware.xpm"
 
 //helper functions
 enum wxbuildinfoformat {
@@ -47,65 +48,64 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 }
 
 
-usbprogonlineFrame::usbprogonlineFrame(wxFrame *frame)
-	: GUIFrame(frame)
+MainFrame::MainFrame(wxFrame *frame)
+	: MainFrameGenerated(frame)
 {
 
-		wxLog *logger=new wxLogTextCtrl(text_ctrl_3);
+		wxLog *logger=new wxLogTextCtrl(textCtrlAppLog);
   		wxLog::SetActiveTarget(logger);
   		wxLog::SetVerbose(true);
   		
 		listCtrlOnlineVersions->InsertColumn(0,_T("Nr."),wxLIST_FORMAT_LEFT, 30);
 		listCtrlOnlineVersions->InsertColumn(1,_T("Application"),wxLIST_FORMAT_LEFT, 120);
 		listCtrlOnlineVersions->InsertColumn(2,_T("Vers."),wxLIST_FORMAT_LEFT, 40);
-		listCtrlOnlineVersions->InsertColumn(3,_T("Description"),wxLIST_FORMAT_LEFT,180);
+		listCtrlOnlineVersions->InsertColumn(3,_T("Description"),wxLIST_FORMAT_LEFT,330);
 		
-		teUSBUpdateVID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_VENDOR_ID));
-		teUSBUpdatePID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_PRODUCT_ID));
+		//teUSBUpdateVID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_VENDOR_ID));
+		//teUSBUpdatePID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_PRODUCT_ID));
 		lblCurrentFirmware->SetLabel(_T(""));
-		
+		hardware = new wxBitmap((const char **) hardware_xpm);
+		m_bitmap1->SetBitmap(*hardware);
+		FindAdapter();
+		RefreshOnlineVersions();
 }
 
-usbprogonlineFrame::~usbprogonlineFrame()
+MainFrame::~MainFrame()
 {
+		delete hardware;
 }
 
-void usbprogonlineFrame::OnClose(wxCloseEvent &event)
+void MainFrame::OnClose(wxCloseEvent &event)
 {
     Destroy();
 }
 
-void usbprogonlineFrame::OnQuit(wxCommandEvent &event)
+void MainFrame::OnQuit(wxCommandEvent &event)
 {
     Destroy();
 }
 
-void usbprogonlineFrame::OnAbout(wxCommandEvent &event)
-{
-    wxString msg = wxbuildinfo(long_f);
-    wxMessageBox(msg, _("Welcome to..."));
-}
-
-void usbprogonlineFrame::OnBtnFindAdapterClick( wxCommandEvent& event )
+void MainFrame::FindAdapter()
 {
 	try{
 		int deviceID = usbProg.getUSBDeviceID();
 		lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
 		
-		teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
-		teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
+		//teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
+		//teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
 	}catch(std::exception &e){
 		wxLogError(_T("%s"), e.what());
 	}
 }
 
-void usbprogonlineFrame::OnBtnDownloadClick( wxCommandEvent& event ){
-   // wxString url = teVersionsFileURL->GetLineText(0);
-    wxString url = teVersionsFileURL->GetValue();
+void MainFrame::RefreshOnlineVersions()
+{   
+	// wxString url = teVersionsFileURL->GetLineText(0);
   	try{
-	    onlineVersions.Update(url);
+	    onlineVersions.Update(ONLINE_VERSIONS_FILE);
 	
-    
+    	//clear the listCtrlOnlineVersions
+		listCtrlOnlineVersions->DeleteAllItems();
     	for (int i =0; i < onlineVersions.Count();i++){
    			wxString nr;
 			nr << i;
@@ -126,17 +126,20 @@ void usbprogonlineFrame::OnBtnDownloadClick( wxCommandEvent& event ){
 		wxLogError(_T("%s"), e.what());
    	}
 }
+	
 
+void MainFrame::OnBtnFindAdapterClick( wxCommandEvent& event )
+{
+		FindAdapter();
+}
 
- void usbprogonlineFrame::OnBtnCancelClick( wxCommandEvent& event )
- {
- }
+void MainFrame::OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event )
+{
+	RefreshOnlineVersions();
+}
+
  
- void usbprogonlineFrame::OnBtnQuitClick( wxCommandEvent& event )
- {
- }
- 
-void usbprogonlineFrame::OnBtnFlashClick( wxCommandEvent& event )
+void MainFrame::OnBtnFlashClick( wxCommandEvent& event )
 {
 	
   	try{
@@ -158,7 +161,9 @@ void usbprogonlineFrame::OnBtnFlashClick( wxCommandEvent& event )
 			usbProg.startApplication();
 			usbProg.close();
 			
-			OnBtnFindAdapterClick(event)  ;                    
+			OnBtnFindAdapterClick(event)  ;     
+			wxLogInfo(_T("Deleting temporary file %s"),	tmpFileName.c_str());
+			wxRemoveFile(tmpFileName);	
 		} else{
 			wxLogError(_T("One File has to be selected to download"));
 		}

@@ -73,16 +73,16 @@ module.source.type=
 module.source.files=\
 	CsvReader.cpp\
 	CsvReader.h\
-	GUIFrame.cpp\
-	GUIFrame.h\
 	OnlineVersions.cpp\
 	OnlineVersions.h\
 	usbprog.cpp\
 	usbprog.h\
 	usbprogonlineApp.cpp\
 	usbprogonlineApp.h\
-	usbprogonlineMain.cpp\
-	usbprogonlineMain.h
+	MainFrameGenerated.cpp\
+	MainFrameGenerated.h\
+	MainFrame.cpp\
+	MainFrame.h
 
 module.pixmap.name=pixmaps
 module.pixmap.type=

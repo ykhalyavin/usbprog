@@ -49,6 +49,8 @@ extern "C"
 const int UPDATE_PRODUCT_ID = 0x0c62;
 const int UPDATE_VENDOR_ID = 0x1781;
 
+const wxString ONLINE_VERSIONS_FILE = _T("http://www.ixbat.de/usbprog/versions.conf");
+
 
 class UsbProgNotOpenException: std::exception
 {

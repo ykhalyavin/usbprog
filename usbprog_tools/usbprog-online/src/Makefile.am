@@ -16,16 +16,16 @@ bin_PROGRAMS = usbprog-online
 usbprog_online_SOURCES = \
 	CsvReader.cpp\
 	CsvReader.h\
-	GUIFrame.cpp\
-	GUIFrame.h\
 	OnlineVersions.cpp\
 	OnlineVersions.h\
 	usbprog.cpp\
 	usbprog.h\
 	usbprogonlineApp.cpp\
 	usbprogonlineApp.h\
-	usbprogonlineMain.cpp\
-	usbprogonlineMain.h
+	MainFrameGenerated.cpp\
+	MainFrameGenerated.h\
+	MainFrame.cpp\
+	MainFrame.h
 
 usbprog_online_LDFLAGS = \
 	-lavrupdate

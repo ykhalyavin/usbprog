@@ -13,27 +13,29 @@
 #include "usbprogonlineApp.h"
 #include <wx/log.h>
 
-#include "GUIFrame.h"
+#include "MainFrameGenerated.h"
 #include "usbprog.h"
 #include "OnlineVersions.h"
 
-class usbprogonlineFrame: public GUIFrame
+class MainFrame: public MainFrameGenerated
 {
+	wxBitmap* hardware;
 	usbprog usbProg;
     OnlineVersions onlineVersions;
 	public:
-		usbprogonlineFrame(wxFrame *frame);
-		~usbprogonlineFrame();
+		MainFrame(wxFrame *frame);
+		~MainFrame();
 	private:
 		virtual void OnClose(wxCloseEvent& event);
 		virtual void OnQuit(wxCommandEvent& event);
-		virtual void OnAbout(wxCommandEvent& event);
+		void FindAdapter();
+		void RefreshOnlineVersions();
     protected:
+		
 		virtual void OnBtnFindAdapterClick( wxCommandEvent& event );
-		virtual void OnBtnDownloadClick( wxCommandEvent& event );
-		virtual void OnBtnCancelClick( wxCommandEvent& event );
-		virtual void OnBtnQuitClick( wxCommandEvent& event );
 		virtual void OnBtnFlashClick( wxCommandEvent& event );
+		virtual void OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event );	
+
 };
 
 #endif // usbprogonlineMAIN_H

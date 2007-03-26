@@ -16,13 +16,13 @@
 #endif //__BORLANDC__
 
 #include "usbprogonlineApp.h"
-#include "usbprogonlineMain.h"
+#include "MainFrame.h"
 
 IMPLEMENT_APP(usbprogonlineApp);
 
 bool usbprogonlineApp::OnInit()
 {
-	usbprogonlineFrame* frame = new usbprogonlineFrame(0L);
+	MainFrame* frame = new MainFrame(0L);
 
 	frame->Show();
 

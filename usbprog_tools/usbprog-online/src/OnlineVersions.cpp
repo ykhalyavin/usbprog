@@ -192,15 +192,15 @@ void OnlineVersions::DownloadOnlineVersion(int versionID,  wxString fileName)
 	
 	
     	get.SetHeader( _T("User-Agent"), _T("usbprog-online") );
+		
+		//Set Timeout to 10 seconds
+		get.SetTimeout(10); 
     	
 		wxLogDebug(_T("Try to connect to %s Port %d"),servername.c_str(),port);
     	
     	if (get.Connect(servername, port)){
     		
-	
-			wxLogDebug(_T("Connection to Server %s successfull"));
     		wxInputStream* resStream = get.GetInputStream( fileLocation );
-			wxLogInfo(_T("Got Inputstream"));
  			wxProtocolError error = get.GetError() ;
  			if (error == wxPROTO_NOERR){
  			

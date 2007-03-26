@@ -5,8 +5,8 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __GUIFrame__
-#define __GUIFrame__
+#ifndef __MainFrameGenerated__
+#define __MainFrameGenerated__
 
 // Define WX_GCH in order to support precompiled headers with GCC compiler.
 // You have to create the header "wx_pch.h" and include all files needed
@@ -19,6 +19,7 @@
 #include <wx/wx.h>
 #endif
 
+#include <wx/statbmp.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/listctrl.h>
@@ -26,60 +27,51 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #define wxIDBtnFindAdapter 1000
-#define wxIDBtnDownload 1001
-#define wxIDBtnFlash 1002
+#define wxIDBtnFlash 1001
+#define wxIDBtnRefreshOnlineVersions 1002
+#define wxIDTextCtrlAppLog 1003
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class GUIFrame
+/// Class MainFrameGenerated
 ///////////////////////////////////////////////////////////////////////////////
-class GUIFrame : public wxFrame 
+class MainFrameGenerated : public wxFrame 
 {
 	DECLARE_EVENT_TABLE()
 	private:
 		
 		// Private event handlers
 		void _wxFB_OnBtnFindAdapterClick( wxCommandEvent& event ){ OnBtnFindAdapterClick( event ); }
-		void _wxFB_OnBtnDownloadClick( wxCommandEvent& event ){ OnBtnDownloadClick( event ); }
 		void _wxFB_OnBtnFlashClick( wxCommandEvent& event ){ OnBtnFlashClick( event ); }
+		void _wxFB_OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event ){ OnBtnRefreshOnlineVersionsClick( event ); }
 		
 	
 	protected:
-		wxStaticText* label_1;
-		wxStaticText* label_2;
-		wxTextCtrl* teUSBDeviceVID;
-		wxStaticText* label_2_copy;
-		wxTextCtrl* teUSBDevicePID;
-		wxStaticText* label_1_copy;
-		wxStaticText* label_2_copy_1;
-		wxTextCtrl* teUSBUpdateVID;
-		wxStaticText* label_2_copy_copy;
-		wxTextCtrl* teUSBUpdatePID;
-		wxStaticLine* static_line_1;
-		wxStaticText* label_1_copy_copy;
-		wxTextCtrl* teVersionsFileURL;
-		wxStaticLine* static_line_1_copy;
-		wxStaticText* label_1_copy_copy_copy;
+		wxStaticText* m_staticText2;
+		wxStaticText* m_staticText3;
+		wxStaticText* m_staticText4;
+		wxStaticText* m_staticText5;
+		wxStaticBitmap* m_bitmap1;
+		wxStaticLine* m_staticline2;
+		wxStaticText* m_staticText62;
 		wxStaticText* lblCurrentFirmware;
 		wxButton* btnFindAdapter;
-		wxStaticLine* static_line_1_copy_copy;
-		wxStaticText* label_4;
-		wxStaticText* label_1_copy_1;
+		wxStaticLine* m_staticline1;
+		wxStaticText* m_staticText6;
 		wxListCtrl* listCtrlOnlineVersions;
-		wxStaticText* label_1_copy_1_copy;
-		wxTextCtrl* text_ctrl_3;
-		wxStaticText* label_1_copy_1_copy_copy;
-		wxButton* btnDownload;
 		wxButton* btnFlash;
+		wxButton* btnRefreshOnlineVersions;
+		wxStaticText* m_staticText61;
+		wxTextCtrl* textCtrlAppLog;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBtnFindAdapterClick( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnBtnDownloadClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBtnFlashClick( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		GUIFrame( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("usbprog - Online Update"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_FRAME_STYLE );
+		MainFrameGenerated( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("USBProg - Online"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 553,710 ), int style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 	
 };
 
-#endif //__GUIFrame__
+#endif //__MainFrameGenerated__
