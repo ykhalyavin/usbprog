@@ -16,13 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <stdint.h>
+#include "../usbn2mc/fifo.h"
 
-#include "jtagice2.h" 
+struct message_t {
+	unsigned char start;
+	unsigned short sequence_number;
+ 	unsigned long size;
+	unsigned char token;
+	unsigned char * body;
+	unsigned char crc;
+};
 
-#include "../usbprog_base/firmwarelib/avrupdate.h"
-#include "uart.h"
-#include "jtag.h"
+fifo_t * inbuf;
+fifo_t * outbuf;
 
+char inbuf_field[200];
+char outbuf_field[200];
 
 typedef enum {
 	START,

@@ -32,7 +32,9 @@
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
 #include "usbn2mc.h"
+
 #include "jtag.h"
+#include "jtagice2.h"
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
@@ -104,44 +106,6 @@ void USBReceive(char *buf)
 {
   USBNWrite(TXC1,FLUSH);
 	// put receive bytes into fifo
-}
-
-
-void CommonStateMachine(void)
-{
-	char sign;
-	sign = fifo_get_nowait(recvfifo);	
-
-	while(1) {
-	
-		switch(state) {
-			case START:
-
-			break;
-			case GET_SEQUENCE_NUMBER:
-
-			break;
-
-			case GET_MESSAGE_SIZE:
-
-			break;
-
-			case GET_TOKEN:
-
-			break;
-
-			case GET_DATA:
-
-			break;
-
-			case GET_CRC:
-
-			break;
-
-			default:
-		}	
-	}
-
 }
 
 

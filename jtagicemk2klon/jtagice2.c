@@ -18,30 +18,51 @@
  */
 
 #include "jtagice2.h" 
-
-#include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
 #include "jtag.h"
 
+#include "../usbn2mc/fifo.h"
+
+// represent acutal state of state machine
 static JTAGICE_STATE jtagicestate;
+
+// actuall message
+volatile struct message_t msg;
 
 void JTAGICE_init()
 {
 	jtagicestate = START;
+	fifo_init (inbuf, inbuf_field, 200);
+	fifo_init (outbuf, outbuf_field, 200);
 }
 
 void JTAGICE_common_state_machine(void)
 {
 	char sign;
-	sign = fifo_get_nowait(recvfifo);	
+	uint8_t counter=0;
+	sign = fifo_get_wait(inbuf);	
 
 	while(1) {
-	
-		switch(state) {
+		
+		switch(jtagicestate) {
+			
 			case START:
-
+				if(sign==27) {
+					// start timeout timer
+					jtagicestate=GET_SEQUENCE_NUMBER;
+				} else {
+					jtagicestate=START;
+				}
 			break;
+
 			case GET_SEQUENCE_NUMBER:
+				counter=0;
+				if(counter<2){
+					sign = fifo_get_nowait(inbuf);
+					counter++;
+				}
+
+				
 
 			break;
 
@@ -62,6 +83,7 @@ void JTAGICE_common_state_machine(void)
 			break;
 
 			default:
+				;
 		}	
 	}
 
