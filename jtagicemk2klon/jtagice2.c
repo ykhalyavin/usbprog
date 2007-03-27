@@ -38,17 +38,18 @@ void JTAGICE_init()
 
 void JTAGICE_common_state_machine(void)
 {
-	char sign;
+	char sign[1];
 	uint8_t counter=0;
-	sign = fifo_get_wait(inbuf);	
+	sign[0] = fifo_get_wait(inbuf);	
 
 	while(1) {
 		
 		switch(jtagicestate) {
 			
 			case START:
-				if(sign==27) {
+				if(sign[0]==27) {
 					// start timeout timer
+					msg.start = sign[0];
 					jtagicestate=GET_SEQUENCE_NUMBER;
 				} else {
 					jtagicestate=START;
@@ -58,15 +59,45 @@ void JTAGICE_common_state_machine(void)
 			case GET_SEQUENCE_NUMBER:
 				counter=0;
 				if(counter<2){
-					sign = fifo_get_nowait(inbuf);
+					if(fifo_get_nowait(inbuf,sign))
+					{
+						msg.sequence_number[counter];	
+					}else {
+						// error fifo epmty
+						jtagicestate=START;
+					}
 					counter++;
+				} else {
+					if(counter==2) {
+						jtagicestate=GET_MESSAGE_SIZE;
+					}
+					else {
+						// error timeout
+						jtagicestate=START;
+					}
 				}
-
-				
-
 			break;
 
 			case GET_MESSAGE_SIZE:
+				counter=0;
+				if(counter<4){
+					if(fifo_get_nowait(inbuf,sign))
+					{
+						msg.size[counter];	
+					}else {
+						// error fifo epmty
+						jtagicestate=START;
+					}
+					counter++;
+				} else {
+					if(counter==4) {
+						jtagicestate=GET_TOKEN;
+					}
+					else {
+						// error timeout
+						jtagicestate=START;
+					}
+				}
 
 			break;
 
@@ -83,7 +114,8 @@ void JTAGICE_common_state_machine(void)
 			break;
 
 			default:
-				;
+				// error unknown state
+				jtagicestate=START;
 		}	
 	}
 
