@@ -48,6 +48,7 @@ volatile struct usbprog_t {
 	int datatogl;
 	char seq1;				// sequence number
 	char seq2;				// sequence number
+	int emulatormode;
 } usbprog;
 
 volatile char answer[300];
@@ -153,6 +154,34 @@ void cmd_get_sign_on(char * buf)
 }
 
 
+
+void cmd_set_parameter(char * buf)
+{
+	switch(buf[9]) {
+
+		case EMULATOR_MODE:
+			usbprog.emulatormode = buf[10];
+			answer[0] = MESSAGE_START;
+			answer[1] = usbprog.seq1;
+			answer[2] = usbprog.seq2;
+			answer[3] = 0x01;					// length of body
+			answer[4] = 0;
+			answer[5] = 0;
+			answer[6] = 0;
+			answer[7] = TOKEN;
+
+			answer[8]	= 0xAB;		// page 57 datasheet no target power
+			crc16_append(answer,9);
+			CommandAnswer(11);
+
+		break;
+		default:
+			;
+	}
+
+}
+
+
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
@@ -168,8 +197,11 @@ void USBReceive(char *buf)
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				SendHex(0x88);
 				cmd_get_sign_on(buf);
+			break;
+
+			case CMND_SET_PARAMETER:
+				cmd_set_parameter(buf);
 			break;
 
 			default:

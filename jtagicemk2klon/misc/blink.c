@@ -25,12 +25,12 @@
 
 int main(void)
 {
-	DDRA = (1 << DDA0);
+	DDRB = (1 << DDB0);
 
 	while(1){
-		PORTA &= ~(1<<PA0); //off
+		PORTB &= ~(1<<PB0); //off
 		asm("nop");
-		PORTA |= (1<<PA0); //on
+		PORTB |= (1<<PB0); //on
 	}	
 
 }

@@ -23,7 +23,8 @@
 #define MESSAGE_START		0x1b
 #define TOKEN						0x0e
 
-#define CMND_GET_SIGN_ON	0x01
+#define CMND_GET_SIGN_ON		0x01
+#define CMND_SET_PARAMETER	0x02
 
 
 
@@ -34,7 +35,11 @@
 
 #define RSP_SIGN_ON			0x86
 #define RSP_SELFTEST		0x86
+#define RSP_PARAMETER		0x81
 
+
+// parameter
+#define EMULATOR_MODE					0x03
 
 
 struct message_t {
