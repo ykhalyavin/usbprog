@@ -31,13 +31,14 @@ volatile struct message_t msg;
 
 void JTAGICE_init()
 {
-	jtagicestate = START;
-	fifo_init (inbuf, inbuf_field, 200);
-	fifo_init (outbuf, outbuf_field, 200);
+	//jtagicestate = START;
+	//fifo_init (inbuf, inbuf_field, 200);
+	//fifo_init (outbuf, outbuf_field, 200);
 }
 
 void JTAGICE_common_state_machine(void)
 {
+#if 0
 	char sign[1];
 	uint8_t counter=0;
 	sign[0] = fifo_get_wait(inbuf);	
@@ -83,7 +84,7 @@ void JTAGICE_common_state_machine(void)
 				if(counter<4){
 					if(fifo_get_nowait(inbuf,sign))
 					{
-						msg.size[counter];	
+						msg.size[counter]=sign;	
 					}else {
 						// error fifo epmty
 						jtagicestate=START;
@@ -102,7 +103,7 @@ void JTAGICE_common_state_machine(void)
 			break;
 
 			case GET_TOKEN:
-
+				if(fifo_get_nowait(inbuf,sign))
 			break;
 
 			case GET_DATA:
@@ -118,7 +119,7 @@ void JTAGICE_common_state_machine(void)
 				jtagicestate=START;
 		}	
 	}
-
+#endif
 }
 
 

@@ -19,6 +19,24 @@
 #include <stdint.h>
 #include "../usbn2mc/fifo.h"
 
+
+#define MESSAGE_START		0x1b
+#define TOKEN						0x0e
+
+#define CMND_GET_SIGN_ON	0x01
+
+
+
+#define RSP_OK					0x80
+#define RSP_FAILED			0xA0
+
+
+
+#define RSP_SIGN_ON			0x86
+#define RSP_SELFTEST		0x86
+
+
+
 struct message_t {
 	unsigned char start;
 	unsigned short sequence_number;
@@ -27,12 +45,6 @@ struct message_t {
 	unsigned char * body;
 	unsigned char crc;
 };
-
-fifo_t * inbuf;
-fifo_t * outbuf;
-
-char inbuf_field[200];
-char outbuf_field[200];
 
 typedef enum {
 	START,
@@ -44,7 +56,7 @@ typedef enum {
 } JTAGICE_STATE;
 
 void JTAGICE_init(void);
-void JTAGICE_common_state_machine(void);
+//void JTAGICE_common_state_machine(void);
 
 
 
