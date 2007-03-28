@@ -10,14 +10,20 @@ RunInTerminal=true
 [Project State]
 clean before build=false
 
-[filelist]
-0=/home/alois/Projects/usbprog/dev/trunk/usbprog_tools/usbprog-online/autogen.sh
-
 [filenumbers]
-0=1
+0=42
+1=1
+2=22
 
 [filemarkers]
 0=
+1=
+2=
+
+[filelist]
+0=/home/alois/Projects/usbprog/trunk/usbprog_tools/usbprog-online/src/MainFrameGenerated.h
+1=/home/alois/Projects/usbprog/trunk/usbprog_tools/usbprog-online/src/MainFrameGenerated.cpp
+2=/home/alois/Projects/usbprog/trunk/usbprog_tools/usbprog-online/src/MainFrame.h
 
 [Project Tree]
 0=0

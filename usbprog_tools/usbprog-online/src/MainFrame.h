@@ -30,11 +30,14 @@ class MainFrame: public MainFrameGenerated
 		virtual void OnQuit(wxCommandEvent& event);
 		void FindAdapter();
 		void RefreshOnlineVersions();
+		void SwitchToAppLog();
     protected:
-		
-		virtual void OnBtnFindAdapterClick( wxCommandEvent& event );
+  		virtual void OnBtnFindAdapterClick( wxCommandEvent& event );
 		virtual void OnBtnFlashClick( wxCommandEvent& event );
 		virtual void OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event );	
+		virtual void OnBtnSelectFileClick( wxCommandEvent& event );
+		virtual void OnBtnFlashLocalFile( wxCommandEvent& event );
+		virtual void OnBtnClearLog( wxCommandEvent& event );
 
 };
 

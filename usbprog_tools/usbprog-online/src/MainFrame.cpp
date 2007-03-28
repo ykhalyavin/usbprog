@@ -21,6 +21,7 @@
 #include <wx/filename.h>
 #include "../images/hardware.xpm"
 
+
 //helper functions
 enum wxbuildinfoformat {
     short_f, long_f };
@@ -89,14 +90,45 @@ void MainFrame::FindAdapter()
 {
 	try{
 		int deviceID = usbProg.getUSBDeviceID();
-		lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
+		if (deviceID >= 0){
+			lblConnectionStatus->SetLabel(_T("Connected to usbprog-adapter"));
+			lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
+			panelOnline->Enable(true);
+			//panelLocal->Enable(true);
+		}else{
+			lblConnectionStatus->SetLabel(_T("NOT Connected to usbprog-adapter"));
+			lblCurrentFirmware->SetLabel(wxEmptyString);
+			panelOnline->Enable(false);
+			//panelLocal->Enable(false);
+		}
 		
 		//teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
 		//teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
 	}catch(std::exception &e){
 		wxLogError(_T("%s"), e.what());
+		SwitchToAppLog();
 	}
+	
 }
+
+void MainFrame::SwitchToAppLog()
+{
+	notebookSource->SetSelection(3);
+}
+
+void MainFrame::OnBtnFindAdapterClick( wxCommandEvent& event )
+{
+	FindAdapter();	
+}
+
+
+
+void MainFrame::OnBtnSelectFileClick( wxCommandEvent& event )
+{
+	wxFileDialog fileDialog(this);
+	fileDialog.ShowModal();
+}
+
 
 void MainFrame::RefreshOnlineVersions()
 {   
@@ -128,11 +160,6 @@ void MainFrame::RefreshOnlineVersions()
 }
 	
 
-void MainFrame::OnBtnFindAdapterClick( wxCommandEvent& event )
-{
-		FindAdapter();
-}
-
 void MainFrame::OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event )
 {
 	RefreshOnlineVersions();
@@ -144,6 +171,7 @@ void MainFrame::OnBtnFlashClick( wxCommandEvent& event )
 	
   	try{
 		if (listCtrlOnlineVersions->GetSelectedItemCount() == 1){
+			SwitchToAppLog();
 			wxString tmpFileName = wxFileName::CreateTempFileName(_T("firmware"));
 			long firstSelectedItem =-1;
 			firstSelectedItem = listCtrlOnlineVersions->GetNextItem(firstSelectedItem,
@@ -170,4 +198,12 @@ void MainFrame::OnBtnFlashClick( wxCommandEvent& event )
 	}catch(std::exception &e){
 		wxLogError(_T("%s"), e.what());
    	}	
+}
+
+
+void MainFrame::OnBtnFlashLocalFile( wxCommandEvent& event )
+{
+}
+void MainFrame::OnBtnClearLog( wxCommandEvent& event )
+{
 }
