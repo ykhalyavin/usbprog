@@ -69,26 +69,26 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 	}
 }
 
-volatile int datatogl = 0;
-//volatile char answer[300];
+volatile char answer[300];
 
 void CommandAnswer(int length)
 {
 	int i;
 
  	USBNWrite(TXC1,FLUSH);
-	for(i=0;i<length;i++)
+	for(i=0;i<length;i++){
 		USBNWrite(TXD1,answer[i]);
+	}
 
 	//SendHex(0x11);
 	/* control togl bit */
 
-	if(datatogl==0) {
+	if(jtagice.datatogl==1) {
 		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-		datatogl=0;
+		jtagice.datatogl=0;
 	} else {
 		USBNWrite(TXC1,TX_LAST+TX_EN);
-		datatogl=1;
+		jtagice.datatogl=1;
 	}
 }
 
@@ -101,7 +101,7 @@ void USBSend()
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
-  USBNWrite(TXC1,FLUSH);
+  //USBNWrite(RXC1,FLUSH);
 #if 0	
 	if(jtagice.longpackage) {
 
@@ -112,9 +112,9 @@ void USBReceive(char *buf)
 
 	} else {
 #endif	
-		jtagice.seq1=buf[1];		// save sequence number
-		jtagice.seq2=buf[2];		// save sequence number
-	
+	//	jtagice.seq1=buf[1];		// save sequence number
+ //	jtagice.seq2=buf[2];		// save sequence number
+/*	
 		// check if package is a cmdpackage
 		if(buf[0]==MESSAGE_START)
 			jtagice.cmdpackage=1;
@@ -126,58 +126,14 @@ void USBReceive(char *buf)
 		//jtagice.size = buf[3]+(buf[4]<<8)+(buf[5]<<16)+(buf[6]<<24);
 		if(jtagice.size>54)
 			jtagice.longpackage = 1;
-			
+*/			
 	
 		int cmdlength;
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				//cmdlength = cmd_get_sign_on(buf,NULL);
-				  answer[0] = MESSAGE_START;
-					  answer[1] = jtagice.seq1;
-						  answer[2] = jtagice.seq2;
-							  answer[3] = 0x1c;         // length of body
-								  answer[4] = 0;
-									  answer[5] = 0;
-										  answer[6] = 0;
-											  answer[7] = TOKEN;
-
-												  answer[8] = RSP_SELFTEST;   // page 57 datasheet
-													  answer[9] = 0x01; // communication protocoll version
-														  answer[10] = 0xff;
-															  answer[11] = 0x07;
-																  answer[12] = 0x04;
-																	  answer[13] = 0x00;
-																		  answer[14] = 0xff;
-																			  answer[15] = 0x14;
-																				  answer[16] = 0x04;
-																					  answer[17] = 0x00;
-																						  answer[18] = 0x00;
-
-																							  answer[19] = 0xa0;  // serial number
-																								  answer[20] = 0x00;
-																									  answer[21] = 0x00;
-																										  answer[22] = 0x0d;
-																											  answer[23] = 0x3f;  // end of serial number
-
-																												  answer[24] = 'J';
-																													  answer[25] = 'T';
-																														  answer[26] = 'A';
-																															  answer[27] = 'G';
-																																  answer[28] = 'I';
-																																	  answer[29] = 'C';
-																																		  answer[30] = 'E';
-																																			  answer[31] = 'm';
-																																				  answer[32] = 'k';
-																																					  answer[33] = 'I';
-																																						  answer[34] = 'I';
-																																							  answer[35] = 0x00;
-																																								  answer[36] = 0x00;
-																																									  answer[37] = 0x00;
-																																										  crc16_append(answer,36);
-
-				CommandAnswer(38);
-
+				cmdlength = cmd_get_sign_on(&buf,&answer);
+				CommandAnswer(cmdlength);
 			break;
 
 			case CMND_SET_PARAMETER:
@@ -194,7 +150,6 @@ void USBReceive(char *buf)
 		}
 		// recalculate size
 		jtagice.size = jtagice.size -54;
-		//CommandAnswer(cmdlength);
 	//}
 }
 
@@ -209,6 +164,9 @@ int main(void)
 	USBNInit();   
   
   jtagice.longpackage=0;
+  jtagice.datatogl=1;
+
+	//jtag_init();
 
 	DDRA = (1 << DDA4);
 	PORTA &= ~(1<<PA4); //off
@@ -245,9 +203,7 @@ int main(void)
 
 	// only for testing
 
-	unsigned char jtagbuf[10];
-
-	jtag_init();
+	//unsigned char jtagbuf[10];
 
 #if 0
 	jtag_goto_state(SHIFT_DR);

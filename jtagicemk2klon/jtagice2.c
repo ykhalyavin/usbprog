@@ -125,7 +125,7 @@ void JTAGICE_common_state_machine(void)
 
 
 
-int cmd_get_sign_on(char *msg, char * answer2)
+int cmd_get_sign_on(char *msg, char * answer)
 {
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -168,7 +168,7 @@ int cmd_get_sign_on(char *msg, char * answer2)
 	answer[35] = 0x00;
 	answer[36] = 0x00;
 	answer[37] = 0x00;
-	crc16_append(answer,36);
+	crc16_append(answer, (unsigned long)36);
 	return 38;
 }
 

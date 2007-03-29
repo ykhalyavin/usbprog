@@ -53,7 +53,7 @@
 #define EMULATOR_MODE					0x03
 
 
-int cmd_get_sign_on(char *msg, char * answer2);
+int cmd_get_sign_on(char *msg, char * answer);
 int cmd_set_parameter(char * buf);
 int cmd_get_parameter(char *msg, char * answer);
 int cmd_read_memory(char * buf);
@@ -62,7 +62,6 @@ int cmd_single_step(char * buf);
 int cmd_forced_stop(char * buf);
 int cmd_set_device_descriptor(char * buf);
 
-volatile char answer[300];
 
 volatile struct jtagice_t {
   char lastcmd;

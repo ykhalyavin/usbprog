@@ -1,3 +1,4 @@
+#include "uart.h"
 #include "crc.h"
 
 const unsigned short crc_table[256] =
@@ -10,16 +11,19 @@ unsigned short crc16_checksum(char * buf,unsigned long length)
 {
 	unsigned long i;
 	unsigned short crc=0xffff;
+
 	for(i=0;i<length;i++) {
 		CRC(crc,buf[i]);
+		//SendHex(buf[i]);
 	}
+	
 	return crc;
 }
 
 
 void crc16_append(char * buf, unsigned long length)
 {
-	unsigned long crc = crc16_checksum(buf,length);
+	unsigned short crc = crc16_checksum(buf,length);
 	buf[length] = (unsigned char)(crc&0xff);
 	buf[length+1] = (unsigned char)((crc>>8) & 0xff);
 }
