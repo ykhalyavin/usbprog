@@ -25,6 +25,17 @@
 
 #define CMND_GET_SIGN_ON		0x01
 #define CMND_SET_PARAMETER	0x02
+#define CMND_GET_PARAMETER	0x03
+#define CMND_READ_MEMORY		0x05
+#define CMND_READ_PC				0x07
+#define CMND_SINGLE_STEP		0x09
+#define CMND_FORCED_STOP		0x0A
+#define CMND_SET_DEVICE_DESCRIPTOR	0x0C
+
+
+//events are from 0xe0 - 0xff
+#define EVT_BREAK		0xE0
+
 
 
 
@@ -42,8 +53,16 @@
 #define EMULATOR_MODE					0x03
 
 
-int cmd_get_sign_on(char * buf);
+int cmd_get_sign_on(char *msg, char * answer2);
 int cmd_set_parameter(char * buf);
+int cmd_get_parameter(char *msg, char * answer);
+int cmd_read_memory(char * buf);
+int cmd_read_pc(char * buf);
+int cmd_single_step(char * buf);
+int cmd_forced_stop(char * buf);
+int cmd_set_device_descriptor(char * buf);
+
+volatile char answer[300];
 
 volatile struct jtagice_t {
   char lastcmd;

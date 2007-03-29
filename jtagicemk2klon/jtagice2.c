@@ -33,8 +33,8 @@ volatile struct message_t msg;
 void JTAGICE_init()
 {
 	//jtagicestate = START;
-	//fifo_init (inbuf, inbuf_field, 200);
-	//fifo_init (outbuf, outbuf_field, 200);
+	//fifo_init (inanswer, inbuf_field, 200);
+	//fifo_init (outanswer, outbuf_field, 200);
 }
 
 void JTAGICE_common_state_machine(void)
@@ -42,7 +42,7 @@ void JTAGICE_common_state_machine(void)
 #if 0
 	char sign[1];
 	uint8_t counter=0;
-	sign[0] = fifo_get_wait(inbuf);	
+	sign[0] = fifo_get_wait(inanswer);	
 
 	while(1) {
 		
@@ -61,7 +61,7 @@ void JTAGICE_common_state_machine(void)
 			case GET_SEQUENCE_NUMBER:
 				counter=0;
 				if(counter<2){
-					if(fifo_get_nowait(inbuf,sign))
+					if(fifo_get_nowait(inanswer,sign))
 					{
 						msg.sequence_number[counter];	
 					}else {
@@ -83,7 +83,7 @@ void JTAGICE_common_state_machine(void)
 			case GET_MESSAGE_SIZE:
 				counter=0;
 				if(counter<4){
-					if(fifo_get_nowait(inbuf,sign))
+					if(fifo_get_nowait(inanswer,sign))
 					{
 						msg.size[counter]=sign;	
 					}else {
@@ -104,7 +104,7 @@ void JTAGICE_common_state_machine(void)
 			break;
 
 			case GET_TOKEN:
-				if(fifo_get_nowait(inbuf,sign))
+				if(fifo_get_nowait(inanswer,sign))
 			break;
 
 			case GET_DATA:
@@ -125,72 +125,71 @@ void JTAGICE_common_state_machine(void)
 
 
 
-int cmd_get_sign_on(char * buf)
+int cmd_get_sign_on(char *msg, char * answer2)
 {
-	buf[0] = MESSAGE_START;
-	buf[1] = jtagice.seq1;
-	buf[2] = jtagice.seq2;
-	buf[3] = 0x1c;					// length of body
-	buf[4] = 0;
-	buf[5] = 0;
-	buf[6] = 0;
-	buf[7] = TOKEN;
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x1c;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
 
-	buf[8]	= RSP_SELFTEST;		// page 57 datasheet
-	buf[9]	= 0x01;	// communication protocoll version
-	buf[10] = 0xff;	
-	buf[11] = 0x07;
-	buf[12] = 0x04;
-	buf[13] = 0x00;
-	buf[14] = 0xff;
-	buf[15] = 0x14;
-	buf[16] = 0x04;
-	buf[17] = 0x00;
-	buf[18] = 0x00;
+	answer[8]	= RSP_SELFTEST;		// page 57 datasheet
+	answer[9]	= 0x01;	// communication protocoll version
+	answer[10] = 0xff;	
+	answer[11] = 0x07;
+	answer[12] = 0x04;
+	answer[13] = 0x00;
+	answer[14] = 0xff;
+	answer[15] = 0x14;
+	answer[16] = 0x04;
+	answer[17] = 0x00;
+	answer[18] = 0x00;
 
-	buf[19] = 0xa0;	// serial number
-	buf[20] = 0x00;
-	buf[21] = 0x00;
-	buf[22] = 0x0d;
-	buf[23] = 0x3f;	// end of serial number
+	answer[19] = 0xa0;	// serial number
+	answer[20] = 0x00;
+	answer[21] = 0x00;
+	answer[22] = 0x0d;
+	answer[23] = 0x3f;	// end of serial number
 
-	buf[24] = 'J';
-	buf[25] = 'T';
-	buf[26] = 'A';
-	buf[27] = 'G';
-	buf[28] = 'I';
-	buf[29] = 'C';
-	buf[30] = 'E';
-	buf[31] = 'm';
-	buf[32] = 'k';
-	buf[33] = 'I';
-	buf[34] = 'I';
-	buf[35] = 0x00;
-	buf[36] = 0x00;
-	buf[37] = 0x00;
-	crc16_append(buf,36);
+	answer[24] = 'J';
+	answer[25] = 'T';
+	answer[26] = 'A';
+	answer[27] = 'G';
+	answer[28] = 'I';
+	answer[29] = 'C';
+	answer[30] = 'E';
+	answer[31] = 'm';
+	answer[32] = 'k';
+	answer[33] = 'I';
+	answer[34] = 'I';
+	answer[35] = 0x00;
+	answer[36] = 0x00;
+	answer[37] = 0x00;
+	crc16_append(answer,36);
 	return 38;
 }
 
 
-
-int cmd_set_parameter(char * buf)
+int cmd_set_parameter(char * answer)
 {
-	switch(buf[9]) {
+	switch(answer[9]) {
 
 		case EMULATOR_MODE:
-			jtagice.emulatormode = buf[10];
-			buf[0] = MESSAGE_START;
-			buf[1] = jtagice.seq1;
-			buf[2] = jtagice.seq2;
-			buf[3] = 0x01;					// length of body
-			buf[4] = 0;
-			buf[5] = 0;
-			buf[6] = 0;
-			buf[7] = TOKEN;
+			jtagice.emulatormode = answer[10];
+			answer[0] = MESSAGE_START;
+			answer[1] = jtagice.seq1;
+			answer[2] = jtagice.seq2;
+			answer[3] = 0x01;					// length of body
+			answer[4] = 0;
+			answer[5] = 0;
+			answer[6] = 0;
+			answer[7] = TOKEN;
 
-			buf[8]	= 0xAB;		// page 57 datasheet no target power
-			crc16_append(buf,9);
+			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
+			crc16_append(answer,9);
 			return 11;
 
 		break;
@@ -201,4 +200,62 @@ int cmd_set_parameter(char * buf)
 }
 
 
+int cmd_get_parameter(char *msg, char * answer)
+{
+  jtag_goto_state(SHIFT_DR);
+
+	char jtagbuf[4];
+	jtag_read(32,jtagbuf);
+	
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x05;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x81;		// (0x80 = ok)
+
+	answer[9] = jtagbuf[0];
+	answer[10] = jtagbuf[1];
+	answer[11] = jtagbuf[2];
+	answer[12] = jtagbuf[3];
+	crc16_append(answer,13);
+	return 15;
+}
+
+int cmd_read_memory(char * answer)
+{
+}
+
+int cmd_read_pc(char * answer)
+{
+}
+
+int cmd_single_step(char * answer)
+{
+}
+
+int cmd_forced_stop(char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,9);
+	return 11;
+}
+
+int cmd_set_device_descriptor(char * answer)
+{
+}
 
