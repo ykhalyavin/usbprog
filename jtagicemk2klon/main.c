@@ -112,8 +112,8 @@ void USBReceive(char *buf)
 
 	} else {
 #endif	
-	//	jtagice.seq1=buf[1];		// save sequence number
- //	jtagice.seq2=buf[2];		// save sequence number
+		jtagice.seq1=buf[1];		// save sequence number
+ 		jtagice.seq2=buf[2];		// save sequence number
 /*	
 		// check if package is a cmdpackage
 		if(buf[0]==MESSAGE_START)
@@ -133,21 +133,25 @@ void USBReceive(char *buf)
 
 			case CMND_GET_SIGN_ON:
 				cmdlength = cmd_get_sign_on(&buf,&answer);
-				CommandAnswer(cmdlength);
 			break;
 
 			case CMND_SET_PARAMETER:
-				cmdlength = cmd_set_parameter(buf);
+				cmdlength = cmd_set_parameter(&buf,&answer);
+			break;
+			
+			case CMND_GET_PARAMETER:
+				cmdlength = cmd_get_parameter(&buf,&answer);
 			break;
 
 			case CMND_FORCED_STOP:
-				cmdlength = cmd_forced_stop(buf);
+				cmdlength = cmd_forced_stop(&buf,&answer);
 			break;
 
 			default:
 				answer[0]=RSP_FAILED;
 				cmdlength=1;
 		}
+		CommandAnswer(cmdlength);
 		// recalculate size
 		jtagice.size = jtagice.size -54;
 	//}
@@ -166,7 +170,7 @@ int main(void)
   jtagice.longpackage=0;
   jtagice.datatogl=1;
 
-	//jtag_init();
+	jtag_init();
 
 	DDRA = (1 << DDA4);
 	PORTA &= ~(1<<PA4); //off

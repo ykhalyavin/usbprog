@@ -14,7 +14,6 @@ unsigned short crc16_checksum(char * buf,unsigned long length)
 
 	for(i=0;i<length;i++) {
 		CRC(crc,buf[i]);
-		//SendHex(buf[i]);
 	}
 	
 	return crc;

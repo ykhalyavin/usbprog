@@ -173,9 +173,9 @@ int cmd_get_sign_on(char *msg, char * answer)
 }
 
 
-int cmd_set_parameter(char * answer)
+int cmd_set_parameter(char *msg, char * answer)
 {
-	switch(answer[9]) {
+	switch(msg[9]) {
 
 		case EMULATOR_MODE:
 			jtagice.emulatormode = answer[10];
@@ -189,7 +189,7 @@ int cmd_set_parameter(char * answer)
 			answer[7] = TOKEN;
 
 			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
-			crc16_append(answer,9);
+			crc16_append(answer,(unsigned long)9);
 			return 11;
 
 		break;
@@ -222,7 +222,7 @@ int cmd_get_parameter(char *msg, char * answer)
 	answer[10] = jtagbuf[1];
 	answer[11] = jtagbuf[2];
 	answer[12] = jtagbuf[3];
-	crc16_append(answer,13);
+	crc16_append(answer,(unsigned long)13);
 	return 15;
 }
 
@@ -238,7 +238,7 @@ int cmd_single_step(char * answer)
 {
 }
 
-int cmd_forced_stop(char * answer)
+int cmd_forced_stop(char * msg, char * answer)
 {
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
@@ -251,7 +251,7 @@ int cmd_forced_stop(char * answer)
 	answer[7] = TOKEN;
 
 	answer[8]	= 0x80;		// (0x80 = ok)
-	crc16_append(answer,9);
+	crc16_append(answer,(unsigned long)9);
 	return 11;
 }
 
