@@ -1,5 +1,5 @@
 /*
- * usbprog - A Downloader/Uploader for AVR device programmers
+ * jtagice - A Downloader/Uploader for AVR device programmers
  * Copyright (C) 2006 Benedikt Sauter 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 #include "jtag.h"
 
 #include "../usbn2mc/fifo.h"
+
 
 // represent acutal state of state machine
 static JTAGICE_STATE jtagicestate;
@@ -120,6 +121,83 @@ void JTAGICE_common_state_machine(void)
 		}	
 	}
 #endif
+}
+
+
+
+int cmd_get_sign_on(char * buf)
+{
+	buf[0] = MESSAGE_START;
+	buf[1] = jtagice.seq1;
+	buf[2] = jtagice.seq2;
+	buf[3] = 0x1c;					// length of body
+	buf[4] = 0;
+	buf[5] = 0;
+	buf[6] = 0;
+	buf[7] = TOKEN;
+
+	buf[8]	= RSP_SELFTEST;		// page 57 datasheet
+	buf[9]	= 0x01;	// communication protocoll version
+	buf[10] = 0xff;	
+	buf[11] = 0x07;
+	buf[12] = 0x04;
+	buf[13] = 0x00;
+	buf[14] = 0xff;
+	buf[15] = 0x14;
+	buf[16] = 0x04;
+	buf[17] = 0x00;
+	buf[18] = 0x00;
+
+	buf[19] = 0xa0;	// serial number
+	buf[20] = 0x00;
+	buf[21] = 0x00;
+	buf[22] = 0x0d;
+	buf[23] = 0x3f;	// end of serial number
+
+	buf[24] = 'J';
+	buf[25] = 'T';
+	buf[26] = 'A';
+	buf[27] = 'G';
+	buf[28] = 'I';
+	buf[29] = 'C';
+	buf[30] = 'E';
+	buf[31] = 'm';
+	buf[32] = 'k';
+	buf[33] = 'I';
+	buf[34] = 'I';
+	buf[35] = 0x00;
+	buf[36] = 0x00;
+	buf[37] = 0x00;
+	crc16_append(buf,36);
+	return 38;
+}
+
+
+
+int cmd_set_parameter(char * buf)
+{
+	switch(buf[9]) {
+
+		case EMULATOR_MODE:
+			jtagice.emulatormode = buf[10];
+			buf[0] = MESSAGE_START;
+			buf[1] = jtagice.seq1;
+			buf[2] = jtagice.seq2;
+			buf[3] = 0x01;					// length of body
+			buf[4] = 0;
+			buf[5] = 0;
+			buf[6] = 0;
+			buf[7] = TOKEN;
+
+			buf[8]	= 0xAB;		// page 57 datasheet no target power
+			crc16_append(buf,9);
+			return 11;
+
+		break;
+		default:
+			;
+	}
+
 }
 
 

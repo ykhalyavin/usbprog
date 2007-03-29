@@ -1,5 +1,5 @@
 /*
- * usbprog - A Downloader/Uploader for AVR device programmers
+ * jtagice - A Downloader/Uploader for AVR device programmers
  * Copyright (C) 2006 Benedikt Sauter 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,17 +41,10 @@
 /* send a command back to pc */
 void CommandAnswer(int length);
 
-volatile struct usbprog_t {
-  char lastcmd;
-	int longpackage;
-	int cmdpackage;
-	int datatogl;
-	char seq1;				// sequence number
-	char seq2;				// sequence number
-	int emulatormode;
-} usbprog;
-
 volatile char answer[300];
+
+
+
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -90,13 +83,12 @@ void CommandAnswer(int length)
 		USBNWrite(TXD1,answer[i]);
 
 	/* control togl bit */
-
-	if(usbprog.datatogl==1) {
+	if(jtagice.datatogl==1) {
 		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-		usbprog.datatogl=0;
+		jtagice.datatogl=0;
 	} else {
 		USBNWrite(TXC1,TX_LAST+TX_EN);
-		usbprog.datatogl=1;
+		jtagice.datatogl=1;
 	}
 }
 
@@ -106,108 +98,54 @@ void USBSend()
 
 }
 
-void cmd_get_sign_on(char * buf)
-{
-	answer[0] = MESSAGE_START;
-	answer[1] = usbprog.seq1;
-	answer[2] = usbprog.seq2;
-	answer[3] = 0x1c;					// length of body
-	answer[4] = 0;
-	answer[5] = 0;
-	answer[6] = 0;
-	answer[7] = TOKEN;
-
-	answer[8]	= RSP_SELFTEST;		// page 57 datasheet
-	answer[9]	= 0x01;	// communication protocoll version
-	answer[10] = 0xff;	
-	answer[11] = 0x07;
-	answer[12] = 0x04;
-	answer[13] = 0x00;
-	answer[14] = 0xff;
-	answer[15] = 0x14;
-	answer[16] = 0x04;
-	answer[17] = 0x00;
-	answer[18] = 0x00;
-
-	answer[19] = 0xa0;	// serial number
-	answer[20] = 0x00;
-	answer[21] = 0x00;
-	answer[22] = 0x0d;
-	answer[23] = 0x3f;	// end of serial number
-
-	answer[24] = 'J';
-	answer[25] = 'T';
-	answer[26] = 'A';
-	answer[27] = 'G';
-	answer[28] = 'I';
-	answer[29] = 'C';
-	answer[30] = 'E';
-	answer[31] = 'm';
-	answer[32] = 'k';
-	answer[33] = 'I';
-	answer[34] = 'I';
-	answer[35] = 0x00;
-	answer[36] = 0x00;
-	answer[37] = 0x00;
-	crc16_append(answer,36);
-	CommandAnswer(38);
-}
-
-
-
-void cmd_set_parameter(char * buf)
-{
-	switch(buf[9]) {
-
-		case EMULATOR_MODE:
-			usbprog.emulatormode = buf[10];
-			answer[0] = MESSAGE_START;
-			answer[1] = usbprog.seq1;
-			answer[2] = usbprog.seq2;
-			answer[3] = 0x01;					// length of body
-			answer[4] = 0;
-			answer[5] = 0;
-			answer[6] = 0;
-			answer[7] = TOKEN;
-
-			answer[8]	= 0xAB;		// page 57 datasheet no target power
-			crc16_append(answer,9);
-			CommandAnswer(11);
-
-		break;
-		default:
-			;
-	}
-
-}
-
-
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
   USBNWrite(TXC1,FLUSH);
 	
-	if(usbprog.longpackage) {
+	if(jtagice.longpackage) {
+
+		// recalculate message size
+		jtagice.size = jtagice.size -64;
+		if(jtagice.size==0)
+			jtagice.longpackage = 0;
 
 	} else {
-
-		usbprog.seq1=buf[1];		// save sequence number
-		usbprog.seq2=buf[2];		// save sequence number
+		
+		jtagice.seq1=buf[1];		// save sequence number
+		jtagice.seq2=buf[2];		// save sequence number
 	
+		// check if package is a cmdpackage
+		if(buf[0]==MESSAGE_START)
+			jtagice.cmdpackage=1;
+		else
+			jtagice.cmdpackage=0;
+
+		// check if package is a longpackage
+		jtagice.size = buf[3]+(255*buf[4])+(512*buf[5])+(1024*buf[6]);
+		//jtagice.size = buf[3]+(buf[4]<<8)+(buf[5]<<16)+(buf[6]<<24);
+		if(jtagice.size>54)
+			jtagice.longpackage = 1;
+			
+	
+		int cmdlength;
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				cmd_get_sign_on(buf);
+				cmdlength = cmd_get_sign_on(buf);
 			break;
 
 			case CMND_SET_PARAMETER:
-				cmd_set_parameter(buf);
+				cmdlength = cmd_set_parameter(buf);
 			break;
 
 			default:
 				answer[0]=RSP_FAILED;
-				CommandAnswer(1);
+				cmdlength=1;
 		}
+		// recalculate size
+		jtagice.size = jtagice.size -54;
+		CommandAnswer(cmdlength);
 	}
 }
 
@@ -221,7 +159,7 @@ int main(void)
   
 	USBNInit();   
   
-  usbprog.longpackage=0;
+  jtagice.longpackage=0;
 
 	DDRA = (1 << DDA4);
 	PORTA &= ~(1<<PA4); //off
@@ -273,6 +211,9 @@ int main(void)
 	SendHex(buf[2]);
 	SendHex(buf[3]);
 #endif	
+
+	// ask for new events
+	// while send an event block usb receive routine
 	while(1);
 	// end testing
 }

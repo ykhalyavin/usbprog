@@ -42,6 +42,21 @@
 #define EMULATOR_MODE					0x03
 
 
+int cmd_get_sign_on(char * buf);
+int cmd_set_parameter(char * buf);
+
+volatile struct jtagice_t {
+  char lastcmd;
+	int longpackage;
+	int cmdpackage;
+ 	unsigned long size;
+	int datatogl;
+	char seq1;				// sequence number
+	char seq2;				// sequence number
+	int emulatormode;
+} jtagice;
+
+
 struct message_t {
 	unsigned char start;
 	unsigned short sequence_number;
