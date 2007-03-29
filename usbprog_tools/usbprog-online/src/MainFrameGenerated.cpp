@@ -20,6 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE( MainFrameGenerated, wxFrame )
 	EVT_BUTTON( wxIDBtnFindAdapter, MainFrameGenerated::_wxFB_OnBtnFindAdapterClick )
+	EVT_LIST_ITEM_DESELECTED( wxIDListCtrlOnlineVersions, MainFrameGenerated::_wxFB_OnListCtrlOnlineVersionsItemDeselected )
+	EVT_LIST_ITEM_SELECTED( wxIDListCtrlOnlineVersions, MainFrameGenerated::_wxFB_OnListCtrlOnlineVersionsItemSelected )
 	EVT_BUTTON( wxIDBtnDownloadAndFlash, MainFrameGenerated::_wxFB_OnBtnFlashClick )
 	EVT_BUTTON( wxIDBtnRefreshOnlineVersions, MainFrameGenerated::_wxFB_OnBtnRefreshOnlineVersionsClick )
 	EVT_BUTTON( wxIDBtnSelectFile, MainFrameGenerated::_wxFB_OnBtnSelectFileClick )
@@ -106,7 +108,7 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	
 	bSizer51->Add( m_staticText6, 0, wxALL, 5 );
 	
-	listCtrlOnlineVersions = new wxListCtrl( panelOnline, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxLC_REPORT );
+	listCtrlOnlineVersions = new wxListCtrl( panelOnline, wxIDListCtrlOnlineVersions, wxDefaultPosition, wxSize( -1,-1 ), wxLC_REPORT );
 	bSizer51->Add( listCtrlOnlineVersions, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer10;

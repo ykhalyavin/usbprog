@@ -38,6 +38,8 @@ class MainFrame: public MainFrameGenerated
 		virtual void OnBtnSelectFileClick( wxCommandEvent& event );
 		virtual void OnBtnFlashLocalFile( wxCommandEvent& event );
 		virtual void OnBtnClearLog( wxCommandEvent& event );
+		virtual void OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event );
+		virtual void OnListCtrlOnlineVersionsItemSelected( wxListEvent& event );
 
 };
 

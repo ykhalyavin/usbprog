@@ -29,12 +29,13 @@
 
 #define wxIDNotebookSource 1000
 #define wxIDBtnFindAdapter 1001
-#define wxIDBtnDownloadAndFlash 1002
-#define wxIDBtnRefreshOnlineVersions 1003
-#define wxIDBtnSelectFile 1004
-#define wxIDBtnFlashLocalFile 1005
-#define wxIDTextCtrlAppLog 1006
-#define wxIDBtnClearLog 1007
+#define wxIDListCtrlOnlineVersions 1002
+#define wxIDBtnDownloadAndFlash 1003
+#define wxIDBtnRefreshOnlineVersions 1004
+#define wxIDBtnSelectFile 1005
+#define wxIDBtnFlashLocalFile 1006
+#define wxIDTextCtrlAppLog 1007
+#define wxIDBtnClearLog 1008
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameGenerated
@@ -46,6 +47,8 @@ class MainFrameGenerated : public wxFrame
 		
 		// Private event handlers
 		void _wxFB_OnBtnFindAdapterClick( wxCommandEvent& event ){ OnBtnFindAdapterClick( event ); }
+		void _wxFB_OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event ){ OnListCtrlOnlineVersionsItemDeselected( event ); }
+		void _wxFB_OnListCtrlOnlineVersionsItemSelected( wxListEvent& event ){ OnListCtrlOnlineVersionsItemSelected( event ); }
 		void _wxFB_OnBtnFlashClick( wxCommandEvent& event ){ OnBtnFlashClick( event ); }
 		void _wxFB_OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event ){ OnBtnRefreshOnlineVersionsClick( event ); }
 		void _wxFB_OnBtnSelectFileClick( wxCommandEvent& event ){ OnBtnSelectFileClick( event ); }
@@ -83,6 +86,8 @@ class MainFrameGenerated : public wxFrame
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBtnFindAdapterClick( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnListCtrlOnlineVersionsItemSelected( wxListEvent& event ){ event.Skip(); }
 		virtual void OnBtnFlashClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBtnSelectFileClick( wxCommandEvent& event ){ event.Skip(); }

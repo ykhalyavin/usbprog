@@ -61,6 +61,8 @@ MainFrame::MainFrame(wxFrame *frame)
 		listCtrlOnlineVersions->InsertColumn(1,_T("Application"),wxLIST_FORMAT_LEFT, 120);
 		listCtrlOnlineVersions->InsertColumn(2,_T("Vers."),wxLIST_FORMAT_LEFT, 40);
 		listCtrlOnlineVersions->InsertColumn(3,_T("Description"),wxLIST_FORMAT_LEFT,330);
+	
+		btnDownloadAndFlash->Enable(false);
 		
 		//teUSBUpdateVID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_VENDOR_ID));
 		//teUSBUpdatePID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_PRODUCT_ID));
@@ -94,12 +96,12 @@ void MainFrame::FindAdapter()
 			lblConnectionStatus->SetLabel(_T("Connected to usbprog-adapter"));
 			lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
 			panelOnline->Enable(true);
-			//panelLocal->Enable(true);
+			panelLocal->Enable(true);
 		}else{
 			lblConnectionStatus->SetLabel(_T("NOT Connected to usbprog-adapter"));
 			lblCurrentFirmware->SetLabel(wxEmptyString);
 			panelOnline->Enable(false);
-			//panelLocal->Enable(false);
+			panelLocal->Enable(false);
 		}
 		
 		//teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
@@ -127,6 +129,7 @@ void MainFrame::OnBtnSelectFileClick( wxCommandEvent& event )
 {
 	wxFileDialog fileDialog(this);
 	fileDialog.ShowModal();
+	textCtrlFileName->SetValue(fileDialog.GetPath());
 }
 
 
@@ -203,7 +206,42 @@ void MainFrame::OnBtnFlashClick( wxCommandEvent& event )
 
 void MainFrame::OnBtnFlashLocalFile( wxCommandEvent& event )
 {
+	try{
+		wxString fileName = textCtrlFileName->GetLineText(0);
+		if (wxFile::Exists(fileName)){
+			SwitchToAppLog();
+			if (usbProg.getOpened()){
+				usbProg.close();
+			}
+			usbProg.open(update);
+			usbProg.flashFile(fileName);
+			usbProg.startApplication();
+			usbProg.close();
+			
+			OnBtnFindAdapterClick(event)  ;
+		}			
+	}catch(std::exception &e){
+		wxLogError(_T("%s"), e.what());
+   	}	
 }
 void MainFrame::OnBtnClearLog( wxCommandEvent& event )
 {
+	textCtrlAppLog->Clear();
+}
+
+void MainFrame::OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event )
+{
+	if (listCtrlOnlineVersions->GetSelectedItemCount()>0){
+		btnDownloadAndFlash->Enable(true);
+	}else{
+		btnDownloadAndFlash->Enable(false);
+	}
+}
+void MainFrame::OnListCtrlOnlineVersionsItemSelected( wxListEvent& event )
+{
+	if (event.GetIndex()>=0){
+		btnDownloadAndFlash->Enable(true);
+	}else{
+		btnDownloadAndFlash->Enable(false);
+	}
 }
