@@ -11,19 +11,22 @@ RunInTerminal=true
 clean before build=false
 
 [filenumbers]
-0=42
+0=85
 1=1
-2=22
+2=38
+3=97
 
 [filemarkers]
 0=
 1=
 2=
+3=
 
 [filelist]
-0=/home/alois/Projects/usbprog/trunk/usbprog_tools/usbprog-online/src/MainFrameGenerated.h
-1=/home/alois/Projects/usbprog/trunk/usbprog_tools/usbprog-online/src/MainFrameGenerated.cpp
-2=/home/alois/Projects/usbprog/trunk/usbprog_tools/usbprog-online/src/MainFrame.h
+0=/home/alois/Projects/usbprog/dev/trunk/usbprog_tools/usbprog-online/src/MainFrameGenerated.h
+1=/home/alois/Projects/usbprog/dev/trunk/usbprog_tools/usbprog-online/src/MainFrameGenerated.cpp
+2=/home/alois/Projects/usbprog/dev/trunk/usbprog_tools/usbprog-online/src/MainFrame.h
+3=/home/alois/Projects/usbprog/dev/trunk/usbprog_tools/usbprog-online/src/MainFrame.cpp
 
 [Project Tree]
 0=0
