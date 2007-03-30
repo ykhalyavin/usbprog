@@ -74,8 +74,7 @@ volatile char answer[300];
 void CommandAnswer(int length)
 {
 	int i;
-
- 	USBNWrite(TXC1,FLUSH);
+	USBNWrite(TXC1,FLUSH);
 	for(i=0;i<length;i++){
 		USBNWrite(TXD1,answer[i]);
 	}
@@ -101,7 +100,6 @@ void USBSend()
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
-  //USBNWrite(RXC1,FLUSH);
 #if 0	
 	if(jtagice.longpackage) {
 
@@ -112,31 +110,43 @@ void USBReceive(char *buf)
 
 	} else {
 #endif	
-		jtagice.seq1=buf[1];		// save sequence number
- 		jtagice.seq2=buf[2];		// save sequence number
-/*	
+
 		// check if package is a cmdpackage
 		if(buf[0]==MESSAGE_START)
 			jtagice.cmdpackage=1;
 		else
 			jtagice.cmdpackage=0;
-
+		
+		if(jtagice.cmdpackage==1) {
+			jtagice.seq1=buf[1];		// save sequence number
+ 			jtagice.seq2=buf[2];		// save sequence number
+		}
+/*
 		// check if package is a longpackage
 		jtagice.size = buf[3]+(255*buf[4])+(512*buf[5])+(1024*buf[6]);
 		//jtagice.size = buf[3]+(buf[4]<<8)+(buf[5]<<16)+(buf[6]<<24);
-		if(jtagice.size>54)
-			jtagice.longpackage = 1;
-*/			
+*/
+//		if(jtagice.size>54)
+//			jtagice.longpackage = 1;
 	
-		int cmdlength;
+		int cmdlength=0;
+
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
 				cmdlength = cmd_get_sign_on(&buf,&answer);
 			break;
 
+			case CMND_GET_SIGN_OFF:
+				cmdlength = cmd_sign_off(&buf,&answer);
+			break;
+
 			case CMND_SET_PARAMETER:
 				cmdlength = cmd_set_parameter(&buf,&answer);
+			break;
+		
+			case CMND_READ_MEMORY:
+				cmdlength = cmd_read_memory(&buf,&answer);
 			break;
 			
 			case CMND_GET_PARAMETER:
@@ -147,11 +157,37 @@ void USBReceive(char *buf)
 				cmdlength = cmd_forced_stop(&buf,&answer);
 			break;
 
+			case CMND_SET_DEVICE_DESCRIPTOR:
+				cmdlength = cmd_set_device_descriptor(&buf,&answer);
+			break;
+	
+			case CMND_GO:
+				cmdlength = cmd_go(&buf,&answer);
+			break;
+			
+			case CMND_RESTORE_TARGET:
+				cmdlength = cmd_restore_target(&buf,&answer);
+			break;
+
+			case CMND_LEAVE_PROGMODE:
+				cmdlength = cmd_leave_progmode(&buf,&answer);
+			break;
+
+			case CMND_ENTER_PROGMODE:
+				cmdlength = cmd_enter_progmode(&buf,&answer);
+			break;
+
+			case CMND_RESET:
+				cmdlength = cmd_reset(&buf,&answer);
+			break;
+
+
 			default:
 				answer[0]=RSP_FAILED;
-				cmdlength=1;
+				cmdlength=0;
 		}
-		CommandAnswer(cmdlength);
+		if(cmdlength!=0)
+			CommandAnswer(cmdlength);
 		// recalculate size
 		jtagice.size = jtagice.size -54;
 	//}
@@ -170,7 +206,7 @@ int main(void)
   jtagice.longpackage=0;
   jtagice.datatogl=1;
 
-	jtag_init();
+	//jtag_init();
 
 	DDRA = (1 << DDA4);
 	PORTA &= ~(1<<PA4); //off

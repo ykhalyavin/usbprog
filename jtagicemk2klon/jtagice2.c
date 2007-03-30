@@ -172,6 +172,23 @@ int cmd_get_sign_on(char *msg, char * answer)
 	return 38;
 }
 
+int cmd_sign_off(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
 
 int cmd_set_parameter(char *msg, char * answer)
 {
@@ -202,6 +219,7 @@ int cmd_set_parameter(char *msg, char * answer)
 
 int cmd_get_parameter(char *msg, char * answer)
 {
+	jtag_init();
   jtag_goto_state(SHIFT_DR);
 
 	char jtagbuf[4];
@@ -226,17 +244,15 @@ int cmd_get_parameter(char *msg, char * answer)
 	return 15;
 }
 
-int cmd_read_memory(char * answer)
+
+int cmd_read_pc(char *msg, char * answer)
 {
 }
 
-int cmd_read_pc(char * answer)
+int cmd_single_step(char *msg, char * answer)
 {
 }
 
-int cmd_single_step(char * answer)
-{
-}
 
 int cmd_forced_stop(char * msg, char * answer)
 {
@@ -255,7 +271,145 @@ int cmd_forced_stop(char * msg, char * answer)
 	return 11;
 }
 
-int cmd_set_device_descriptor(char * answer)
+int cmd_set_device_descriptor(char * msg, char * answer)
 {
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int cmd_go(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int cmd_restore_target(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int cmd_enter_progmode(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int cmd_leave_progmode(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+
+int cmd_reset(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+
+int cmd_read_memory(char * msg, char * answer)
+{
+	int length=8;
+	int msglen=0;
+	SendHex(msg[15]);
+	switch(msg[15]) {
+		case LOCK_BITS:
+			SendHex(0xff);
+			msglen = 1;
+			answer[9]	= 0xff;		// (lock bits)
+		break;
+		case FUSE_BITS:
+			msglen = 3;
+			answer[9]	= 0xe3;		// (lfuse)
+			answer[10]	= 0x08;		// (hfuse)
+			answer[11]	= 0xe3;		// (efuse)
+		break;
+		default:
+			SendHex(0x88);
+	}
+	msglen++;
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = (char)msglen;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x82;		// (0x80 = ok)
+
+	length = length+msglen;
+	crc16_append(answer,(unsigned long)length);
+	return length+2;
 }
 
