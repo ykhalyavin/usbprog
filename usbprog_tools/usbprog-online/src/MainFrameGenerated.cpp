@@ -32,6 +32,7 @@ END_EVENT_TABLE()
 MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 	
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
@@ -67,6 +68,8 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	
 	notebookSource = new wxNotebook( this, wxIDNotebookSource, wxDefaultPosition, wxSize( -1,-1 ), wxNB_TOP );
 	panelStatus = new wxPanel( notebookSource, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	panelStatus->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	

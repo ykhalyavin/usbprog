@@ -239,7 +239,7 @@ void MainFrame::OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event )
 }
 void MainFrame::OnListCtrlOnlineVersionsItemSelected( wxListEvent& event )
 {
-	if (event.GetIndex()>=0){
+	if (listCtrlOnlineVersions->GetSelectedItemCount()>0){
 		btnDownloadAndFlash->Enable(true);
 	}else{
 		btnDownloadAndFlash->Enable(false);
