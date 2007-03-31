@@ -23,6 +23,6 @@
 
 int enable_prg_avr();
 int disable_prg_avr();
-int rd_fuse_avr (unsigned char *fuse);
+int rd_fuse_avr (char *fuse);
 
 #endif

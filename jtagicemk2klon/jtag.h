@@ -29,16 +29,13 @@
 #define JTAG_PORT_INIT		DDRB
 #define JTAG_PORT_WRITE		PORTB
 #define JTAG_PORT_READ		PINB
-#define	TCK								0
+#define	TCK								0	
 #define TMS								7
 #define TDI							  5	
 #define TDO								6	
 
 // check if tdo == 1
 #define JTAG_IS_TDO_SET()               (JTAG_PORT_READ & BIT(TDO))
-// a jtag clock
-#define JTAG_CLK()                      {JTAG_CLEAR_TCK(); JTAG_SET_TCK(); asm("nop"); JTAG_CLEAR_TCK();}
-
 
 // lowlevel
 #define JTAG_SET_TCK()                       SETBIT( JTAG_PORT_WRITE, TCK )
@@ -49,6 +46,10 @@
 
 #define JTAG_SET_TDI()                       SETBIT( JTAG_PORT_WRITE, TDI )
 #define JTAG_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
+
+// a jtag clock
+#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); wait_ms(1); JTAG_SET_TCK(); wait_ms(1); JTAG_CLEAR_TCK();}
+
 
 // JTAG State Machine
 typedef enum
@@ -97,8 +98,7 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf);
 // write and read after every clock edge
 uint8_t jtag_write_and_read(  uint8_t numberofbits,
                               unsigned char * buf,
-                              uint8_t numberofreadbits,
-                              unsigned readbuf);
+	                            unsigned char * readbuf);
 
 
 

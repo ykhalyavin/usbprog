@@ -20,7 +20,6 @@
 
 #include "jtag_avr_prg.h"
 #include "jtag_avr_defines.h"
-#include "jtag.h"
 
 /*----------------------------------------------------------------------*
  * enable programming of flash of this derivate. We must assure that    *
@@ -35,7 +34,7 @@ int enable_prg_avr ()
  * disable programming of flash. In all cases it is sufficient to send  *
  * an all "0" to the programming command of all devices                 *
  *----------------------------------------------------------------------*/
-int disable_prg_avr (unsigned char delay)
+int disable_prg_avr ()
 {
 	return 1;
 }
