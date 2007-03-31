@@ -331,27 +331,25 @@ char jtagbuf[10];
 jtag_reset();	
 	
 jtag_goto_state(SHIFT_IR);
-//jtagbuf[0]=AVR_IDCODE;
+jtagbuf[0]=AVR_IDCODE;
 //jtagbuf[0]=0x11;
-jtagbuf[0]=BYPASS;
+//jtagbuf[0]=BYPASS;
 jtag_write(4,jtagbuf);
 
 	
 	jtag_goto_state(SHIFT_DR);
-
+	asm("nop");
 	char buf[4];
 	char buf2[4];
-	buf[0]=0x44;
-	buf[1]=0x44;
-	jtag_write_and_read(16,buf,buf2);
-	buf[2]=0x00;
-	buf[3]=0x00;
+	buf[0]=0xAA;
+	buf[1]=0xAA;
 	
-	//jtag_read(32,buf);
-	
-	SendHex(buf2[0]);
-	SendHex(buf2[1]);
-
+	jtag_read(32,buf);
+	//jtag_write_and_read(16,buf,buf2);
+	SendHex(buf[0]);
+	SendHex(buf[1]);
+	SendHex(buf[2]);
+	SendHex(buf[3]);
 //jtag_goto_state(SHIFT_DR);
 //	jtagbuf[0]=0xAA;
 //	jtagbuf[1]=0xAA;

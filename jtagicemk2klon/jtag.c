@@ -112,7 +112,7 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 	if(numberofbits<=0)
 		return -1;
 	
-	//numberofbits--;
+	numberofbits--;
   while(numberofbits--) {
 
 		//if(numberofbits==1)
