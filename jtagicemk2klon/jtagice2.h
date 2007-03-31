@@ -62,6 +62,10 @@
 #define EMULATOR_MODE					0x03
 
 
+//jtag cmds
+#define AVR_PRG_ENABLE	0x44
+#define AVR_PRG_CMDS		0x55
+
 int cmd_get_sign_on(char *msg, char * answer);
 int cmd_sign_off(char *msg, char * answer);
 int cmd_set_parameter(char *msg, char * answer);

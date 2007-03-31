@@ -219,7 +219,6 @@ int cmd_set_parameter(char *msg, char * answer)
 
 int cmd_get_parameter(char *msg, char * answer)
 {
-	jtag_init();
   jtag_goto_state(SHIFT_DR);
 
 	char jtagbuf[4];
@@ -247,6 +246,25 @@ int cmd_get_parameter(char *msg, char * answer)
 
 int cmd_read_pc(char *msg, char * answer)
 {
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x05;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x84;		// (0x80 = ok)
+	
+	answer[9] = 0x4b;
+	answer[10]= 0x00;
+	answer[11]= 0x00;
+	answer[12]= 0x00;
+
+	crc16_append(answer,(unsigned long)13);
+	return 15;
 }
 
 int cmd_single_step(char *msg, char * answer)
@@ -325,6 +343,20 @@ int cmd_restore_target(char * msg, char * answer)
 int cmd_enter_progmode(char * msg, char * answer)
 {
 	// TODO (program answer always with ok!)
+	char jtagbuf[2];
+
+	jtag_reset();
+	jtag_goto_state(SHIFT_IR);
+	
+	jtagbuf[0]= AVR_PRG_ENABLE;
+	jtag_write(4,jtagbuf);
+
+	jtag_goto_state(SHIFT_DR);
+	jtagbuf[0]= 0x70;
+	jtagbuf[1] = 0xA3;
+	jtag_write(16,jtagbuf);
+
+
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -379,16 +411,37 @@ int cmd_read_memory(char * msg, char * answer)
 {
 	int length=8;
 	int msglen=0;
-	SendHex(msg[15]);
+	char jtagbuf[6];
+	//SendHex(msg[15]);
 	switch(msg[15]) {
 		case LOCK_BITS:
-			SendHex(0xff);
+			//SendHex(0xff);
 			msglen = 1;
 			answer[9]	= 0xff;		// (lock bits)
 		break;
 		case FUSE_BITS:
 			msglen = 3;
-			answer[9]	= 0xe3;		// (lfuse)
+			jtag_reset();
+			jtag_goto_state(SHIFT_IR);
+			jtagbuf[0]=AVR_PRG_CMDS;
+			jtag_write(4,jtagbuf);
+			
+			jtag_goto_state(SHIFT_DR);
+			jtagbuf[0]=0x04; jtagbuf[1]=0x23; jtagbuf[2]=0x00;
+			jtagbuf[3]=0x32; jtagbuf[4]=0x00; jtagbuf[5]=0x33;
+			jtag_write(48,jtagbuf);
+
+			jtag_goto_state(RUN_TEST_IDLE);
+			jtag_goto_state(SHIFT_DR);
+			jtag_read(48,jtagbuf);
+
+			int i;
+			
+			for(i=0;i<6;i++)
+			SendHex(jtagbuf[i]);
+
+			answer[9]		= jtagbuf[4];			// (lfuse)
+
 			answer[10]	= 0x08;		// (hfuse)
 			answer[11]	= 0xe3;		// (efuse)
 		break;

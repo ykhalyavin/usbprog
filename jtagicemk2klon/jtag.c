@@ -101,16 +101,6 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 	return receivedbits;
 }
 
-
-
-uint8_t jtag_write_and_read(	uint8_t numberofbits, 
-															unsigned char * buf, 
-															uint8_t numberofreadbits,
-															unsigned readbuf)
-{
-
-}
-
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 {
 	int sendbits=0;
@@ -134,6 +124,16 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 	  sendbits++;
 	}
 	return sendbits;
+}
+
+
+
+uint8_t jtag_write_and_read(	uint8_t numberofbits, 
+															unsigned char * buf, 
+															uint8_t numberofreadbits,
+															unsigned readbuf)
+{
+
 }
 
 

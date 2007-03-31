@@ -180,6 +180,11 @@ void USBReceive(char *buf)
 			case CMND_RESET:
 				cmdlength = cmd_reset(&buf,&answer);
 			break;
+			
+			case CMND_READ_PC:
+				cmdlength = cmd_read_pc(&buf,&answer);
+			break;
+
 
 
 			default:
@@ -206,7 +211,7 @@ int main(void)
   jtagice.longpackage=0;
   jtagice.datatogl=1;
 
-	//jtag_init();
+	jtag_init();
 
 	DDRA = (1 << DDA4);
 	PORTA &= ~(1<<PA4); //off
