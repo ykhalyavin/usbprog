@@ -262,6 +262,31 @@ int main(void)
 	SendHex(buf[3]);
 #endif	
 
+char jtagbuf[10];
+jtag_reset();
+
+jtag_goto_state(SHIFT_IR);
+jtagbuf[0]=AVR_PRG_CMDS;
+jtag_write(4,jtagbuf);
+
+jtag_goto_state(SHIFT_DR);
+jtagbuf[0]=0x04; jtagbuf[1]=0x23; jtagbuf[2]=0x00;
+jtagbuf[3]=0x32; jtagbuf[4]=0x00; jtagbuf[5]=0x33;
+jtag_write(15,jtagbuf);
+
+//jtag_goto_state(RUN_TEST_IDLE);
+wait_ms(10);
+jtag_goto_state(UPDATE_IR);
+jtag_goto_state(SHIFT_DR);
+jtag_read(48,jtagbuf);
+jtag_goto_state(UPDATE_DR);
+
+int i;
+for(i=0;i<6;i++)
+SendHex(jtagbuf[i]);
+
+
+
 	// ask for new events
 	// while send an event block usb receive routine
 	while(1);

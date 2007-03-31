@@ -30,101 +30,6 @@ static JTAGICE_STATE jtagicestate;
 // actuall message
 volatile struct message_t msg;
 
-void JTAGICE_init()
-{
-	//jtagicestate = START;
-	//fifo_init (inanswer, inbuf_field, 200);
-	//fifo_init (outanswer, outbuf_field, 200);
-}
-
-void JTAGICE_common_state_machine(void)
-{
-#if 0
-	char sign[1];
-	uint8_t counter=0;
-	sign[0] = fifo_get_wait(inanswer);	
-
-	while(1) {
-		
-		switch(jtagicestate) {
-			
-			case START:
-				if(sign[0]==27) {
-					// start timeout timer
-					msg.start = sign[0];
-					jtagicestate=GET_SEQUENCE_NUMBER;
-				} else {
-					jtagicestate=START;
-				}
-			break;
-
-			case GET_SEQUENCE_NUMBER:
-				counter=0;
-				if(counter<2){
-					if(fifo_get_nowait(inanswer,sign))
-					{
-						msg.sequence_number[counter];	
-					}else {
-						// error fifo epmty
-						jtagicestate=START;
-					}
-					counter++;
-				} else {
-					if(counter==2) {
-						jtagicestate=GET_MESSAGE_SIZE;
-					}
-					else {
-						// error timeout
-						jtagicestate=START;
-					}
-				}
-			break;
-
-			case GET_MESSAGE_SIZE:
-				counter=0;
-				if(counter<4){
-					if(fifo_get_nowait(inanswer,sign))
-					{
-						msg.size[counter]=sign;	
-					}else {
-						// error fifo epmty
-						jtagicestate=START;
-					}
-					counter++;
-				} else {
-					if(counter==4) {
-						jtagicestate=GET_TOKEN;
-					}
-					else {
-						// error timeout
-						jtagicestate=START;
-					}
-				}
-
-			break;
-
-			case GET_TOKEN:
-				if(fifo_get_nowait(inanswer,sign))
-			break;
-
-			case GET_DATA:
-
-			break;
-
-			case GET_CRC:
-
-			break;
-
-			default:
-				// error unknown state
-				jtagicestate=START;
-		}	
-	}
-#endif
-}
-
-
-
 int cmd_get_sign_on(char *msg, char * answer)
 {
 	answer[0] = MESSAGE_START;
@@ -421,7 +326,9 @@ int cmd_read_memory(char * msg, char * answer)
 		break;
 		case FUSE_BITS:
 			msglen = 3;
+			
 			jtag_reset();
+			
 			jtag_goto_state(SHIFT_IR);
 			jtagbuf[0]=AVR_PRG_CMDS;
 			jtag_write(4,jtagbuf);
@@ -431,14 +338,18 @@ int cmd_read_memory(char * msg, char * answer)
 			jtagbuf[3]=0x32; jtagbuf[4]=0x00; jtagbuf[5]=0x33;
 			jtag_write(48,jtagbuf);
 
-			jtag_goto_state(RUN_TEST_IDLE);
+			//jtag_goto_state(RUN_TEST_IDLE);
+			asm("nop");
+			jtag_goto_state(UPDATE_IR);
+
 			jtag_goto_state(SHIFT_DR);
 			jtag_read(48,jtagbuf);
+			jtag_goto_state(UPDATE_DR);
 
 			int i;
-			
 			for(i=0;i<6;i++)
-			SendHex(jtagbuf[i]);
+				SendHex(jtagbuf[i]);
+
 
 			answer[9]		= jtagbuf[4];			// (lfuse)
 
