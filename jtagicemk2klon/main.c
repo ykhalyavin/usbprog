@@ -246,14 +246,15 @@ int main(void)
   // start usb chip
   USBNStart();
 
-	// only for testing
+	
 	#include "jtag_avr_defines.h"
 	unsigned char jtagbuf[10];
-
+	char recvbuf[10];
+/*
+	// READ IDCODE
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_IDCODE;
 	jtag_write(4,jtagbuf);
-
 	
 	jtag_goto_state(SHIFT_DR);
 	jtag_read(32,jtagbuf);
@@ -261,7 +262,85 @@ int main(void)
 	SendHex(jtagbuf[1]);
 	SendHex(jtagbuf[2]);
 	SendHex(jtagbuf[3]);
+
+	asm("nop");
+	//BYPASS TEST
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=BYPASS;
+	jtag_write(4,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
+	jtagbuf[0]=0x11;
+	jtagbuf[1]=0x11;
+	recvbuf[0]=0x00;
+	recvbuf[1]=0x00;
+	jtag_write_and_read(16,jtagbuf,recvbuf);
+	SendHex(recvbuf[0]);
+	SendHex(recvbuf[1]);
 	
+	// READ IDCODE
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=AVR_IDCODE;
+	jtag_write(4,jtagbuf);
+	
+	jtag_goto_state(SHIFT_DR);
+	jtag_read(32,jtagbuf);
+	SendHex(jtagbuf[0]);
+	SendHex(jtagbuf[1]);
+	SendHex(jtagbuf[2]);
+	SendHex(jtagbuf[3]);
+*/
+
+	// RESET
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=AVR_RESET;
+	jtag_write(4,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
+	jtagbuf[0]=0x1;
+	jtag_write(1,jtagbuf);
+	
+
+
+	// ENABLE PROG
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=AVR_PRG_ENABLE;
+	jtag_write(4,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
+	jtagbuf[0]=0x3A;
+	jtagbuf[1]=0x07;
+	jtag_write(16,jtagbuf);
+	//jtag_goto_state(UPDATE_DR);
+
+
+	// SIGNATURE BYTE
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=AVR_PRG_CMDS;
+	jtag_write(4,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
+	
+	jtagbuf[0]=0x08;	// enter
+	jtagbuf[1]=0x23; // 
+	jtag_write(15,jtagbuf);
+	
+	jtagbuf[0]=0x01;	// load address
+	jtagbuf[1]=0x03;
+	jtag_goto_state(SHIFT_DR);
+	jtag_write(15,jtagbuf);
+
+	jtagbuf[0]=0x00;	// read signature
+	jtagbuf[1]=0x32;
+	jtag_goto_state(SHIFT_DR);
+	jtag_write(15,jtagbuf);
+
+	jtagbuf[0]=0x00;	// read signature
+	jtagbuf[1]=0x33;
+	recvbuf[0]=0x00;
+	recvbuf[1]=0x00;
+	jtag_goto_state(SHIFT_DR);
+	jtag_write_and_read(15,jtagbuf,recvbuf);
+	
+	SendHex(recvbuf[0]);
+	SendHex(recvbuf[1]);
+
 	// ask for new events
 	// while send an event block usb receive routine
 	while(1);

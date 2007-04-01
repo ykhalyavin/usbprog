@@ -134,10 +134,11 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 			}
 		}
 
-		if(buf[sendbits/8] >> (sendbits & 7) & 1) 
+		if(buf[sendbits/8] >> (sendbits & 7) & 1) {
 			JTAG_SET_TDI();
-		else
+		} else {
 			JTAG_CLEAR_TDI();
+		}
 
 	  sendbits++;
 		JTAG_CLK();
@@ -157,23 +158,30 @@ uint8_t jtag_write_and_read(	uint8_t numberofbits,
 	if(numberofbits<=0)
 		return -1;
 	
-	//numberofbits--;
-  while(numberofbits--) {
-
-		//if(numberofbits==1)
-	 //		JTAG_SET_TMS();				// last one with tms
+	JTAG_CLEAR_TMS();				// last one with tms
 	
-		if(JTAG_IS_TDO_SET())
-			readbuf[bits/8] |= (1 << (bits & 7));	
-		else
-			readbuf[bits/8] &= ~(1 << (bits & 7));	
-
+  while(numberofbits--) {
+		if(numberofbits==0){
+	 		JTAG_SET_TMS();				// last one with tms
+			if(tapstate==SHIFT_IR){
+				tapstate = EXIT1_IR;
+			} else {
+				tapstate = EXIT1_DR;
+			}
+		}
 		if(buf[bits/8] >> (bits & 7) & 1) 
 			JTAG_SET_TDI();
 		else
 			JTAG_CLEAR_TDI();
 	
 		JTAG_CLK();
+
+		if(JTAG_IS_TDO_SET())
+			readbuf[bits/8] |= (1 << (bits & 7));	
+		else
+			readbuf[bits/8] &= ~(1 << (bits & 7));	
+
+
 	  bits++;
 	}
 	return bits;
