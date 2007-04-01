@@ -288,7 +288,20 @@ int main(void)
 	//SendHex(jtagbuf[1]);
 	//SendHex(jtagbuf[2]);
 	//SendHex(jtagbuf[3]);
+	
+	JTAG_CLEAR_TMS();
+	JTAG_CLEAR_TDI();
+	JTAG_CLEAR_TCK();
+	JTAG_SET_TCK();
+	JTAG_CLEAR_TCK();
 
+	jtag_reset();
+
+	JTAG_CLEAR_TMS();
+	JTAG_CLEAR_TDI();
+	JTAG_CLEAR_TCK();
+	JTAG_SET_TCK();
+	JTAG_CLEAR_TCK();
 
 	// RESET
 	jtag_goto_state(SHIFT_IR);
@@ -310,7 +323,6 @@ int main(void)
 	
 	// wie kann man herausfinden ob sich der controller im programmiermodus befindet?
 
-
 	// theoretisch sollte er sich hier im programmiermodus befinden
 
 
@@ -325,13 +337,17 @@ int main(void)
 	jtag_write(15,jtagbuf);
 	jtag_goto_state(SHIFT_DR);
 
+	//jtagbuf[0]=0x00;	// load address
+	//jtagbuf[1]=0x36;
 	jtagbuf[0]=0x00;	// load address
-	jtagbuf[1]=0x36;
+	jtagbuf[1]=0x32;
+
 	jtag_write(15,jtagbuf);
 	jtag_goto_state(SHIFT_DR);
 
 	jtagbuf[0]=0x00;	// read signature
-	jtagbuf[1]=0x37;
+	//jtagbuf[1]=0x37;
+	jtagbuf[1]=0x33;
 	jtag_write_and_read(15,jtagbuf,recvbuf);
 	jtag_goto_state(SHIFT_DR);
 
