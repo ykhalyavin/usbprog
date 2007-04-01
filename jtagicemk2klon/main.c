@@ -250,7 +250,7 @@ int main(void)
 	#include "jtag_avr_defines.h"
 	unsigned char jtagbuf[10];
 	char recvbuf[10];
-/*
+
 	// READ IDCODE
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_IDCODE;
@@ -288,7 +288,7 @@ int main(void)
 	SendHex(jtagbuf[1]);
 	SendHex(jtagbuf[2]);
 	SendHex(jtagbuf[3]);
-*/
+
 
 	// RESET
 	jtag_goto_state(SHIFT_IR);
