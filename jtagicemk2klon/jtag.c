@@ -40,8 +40,6 @@ void jtag_init(void)
 	JTAG_CLEAR_TDI();
 	JTAG_CLEAR_TCK();
 
-	tapstate = TEST_LOGIC_RESET;
-	
 	jtag_reset();
 }
 
@@ -87,7 +85,18 @@ void jtag_reset(void)
 uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 {
   int receivedbits = 0;
+	JTAG_CLEAR_TMS();				// last one with tms
+	JTAG_CLK();
+
   while(numberofbits--) {
+		if(numberofbits==0){
+	 		JTAG_SET_TMS();				// last one with tms
+			if(tapstate==SHIFT_IR){
+				tapstate = EXIT1_IR;
+			} else {
+				tapstate = EXIT1_DR;
+			}
+		}
 
 		//if(numberofbits==1)
 	  //	JTAG_SET_TMS();			// last one with tms
@@ -112,19 +121,26 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 	if(numberofbits<=0)
 		return -1;
 	
-	numberofbits--;
-  while(numberofbits--) {
+	JTAG_CLEAR_TMS();				// last one with tms
 
-		//if(numberofbits==1)
-	 //		JTAG_SET_TMS();				// last one with tms
+	//numberofbits--;
+  while(numberofbits--) {
+		if(numberofbits==0){
+	 		JTAG_SET_TMS();				// last one with tms
+			if(tapstate==SHIFT_IR){
+				tapstate = EXIT1_IR;
+			} else {
+				tapstate = EXIT1_DR;
+			}
+		}
 
 		if(buf[sendbits/8] >> (sendbits & 7) & 1) 
 			JTAG_SET_TDI();
 		else
 			JTAG_CLEAR_TDI();
 
-		JTAG_CLK();
 	  sendbits++;
+		JTAG_CLK();
 	}
 	return sendbits;
 }
@@ -170,7 +186,7 @@ void jtag_goto_state(TAP_STATE state)
   if( state > UPDATE_IR ) return; 
 
   while( tapstate != state ){
-	//SendHex(tapstate);
+		//SendHex(tapstate);
 		switch( tapstate ) {
 			case TEST_LOGIC_RESET:
 			  JTAG_CLEAR_TMS();

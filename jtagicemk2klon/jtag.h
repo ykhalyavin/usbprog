@@ -48,7 +48,7 @@
 #define JTAG_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
 
 // a jtag clock
-#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); wait_ms(1); JTAG_SET_TCK(); wait_ms(1); JTAG_CLEAR_TCK();}
+#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); JTAG_SET_TCK(); }
 
 
 // JTAG State Machine

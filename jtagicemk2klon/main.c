@@ -247,117 +247,21 @@ int main(void)
   USBNStart();
 
 	// only for testing
+	#include "jtag_avr_defines.h"
+	unsigned char jtagbuf[10];
 
-	//unsigned char jtagbuf[10];
-
-#if 0
-	jtag_goto_state(SHIFT_DR);
-
-	char buf[4];
-	jtag_read(32,buf);
-	
-	SendHex(buf[0]);
-	SendHex(buf[1]);
-	SendHex(buf[2]);
-	SendHex(buf[3]);
-#endif	
-
-char jtagbuf[10];
-#include "jtag_avr_defines.h"
-/*
-//AVR RESET
-// jtag_avr -> reset_avr();
-	// jtag_avr -> select reset regigster 
-	jtag_init();
-	jtag_reset();
 	jtag_goto_state(SHIFT_IR);
-	jtagbuf[0]=AVR_RESET;
+	jtagbuf[0]=AVR_IDCODE;
 	jtag_write(4,jtagbuf);
-	// select DR Register
-	jtag_goto_state(SHIFT_DR);
-	// write 1 to resetregister
-	jtagbuf[0]=1;
-	jtag_write(1,jtagbuf);
-
-// ENABLE PORG
-// jtag_avr_prg ->  enable_prg_avr();
-	jtag_goto_state(SHIFT_IR);
-	jtagbuf[0]=AVR_PRG_ENABLE;
-	jtag_write(4,jtagbuf);
-	
-	jtag_goto_state(SHIFT_DR);
-	// write signature to dr
-	jtagbuf[0]=0xa3;
-	jtagbuf[1]=0x70;
-	jtag_write(16,jtagbuf);
-
-	// jtag_avr -> select_programming_enable_register();
-//READ FUSE
-//jtag_avr_prg -> rd_fuse_avr (char *fuse);
-	jtag_goto_state(SHIFT_IR);
-	jtagbuf[0]=AVR_PRG_CMDS;
-	jtag_write(4,jtagbuf);
-	jtag_goto_state(SHIFT_DR);
-
-	char readbuf[2]={0x00,0x00};
-#if 0	
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x32;
-	jtag_write(15,jtagbuf);
-	
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x33;
-	jtag_write_and_read(15,jtagbuf,readbuf);
-	// jtag_avr -> select_programming_command_register();
-	// write fuse command to dr instruction_avr(char * send, int length, char * receive);
-#endif
-
-	jtagbuf[0]=0x04;
-	jtagbuf[1]=0x43;
-	jtag_write(15,jtagbuf);
-
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x32;
-	jtag_write(15,jtagbuf);
-
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x33;
-	jtag_write_and_read(15,jtagbuf,readbuf);
-
-	SendHex(readbuf[0]);
-	SendHex(readbuf[1]);
-*/
-
-jtag_reset();	
-	
-jtag_goto_state(SHIFT_IR);
-jtagbuf[0]=AVR_IDCODE;
-//jtagbuf[0]=0x11;
-//jtagbuf[0]=BYPASS;
-jtag_write(4,jtagbuf);
 
 	
 	jtag_goto_state(SHIFT_DR);
-	asm("nop");
-	char buf[4];
-	char buf2[4];
-	buf[0]=0xAA;
-	buf[1]=0xAA;
+	jtag_read(32,jtagbuf);
+	SendHex(jtagbuf[0]);
+	SendHex(jtagbuf[1]);
+	SendHex(jtagbuf[2]);
+	SendHex(jtagbuf[3]);
 	
-	jtag_read(32,buf);
-	//jtag_write_and_read(16,buf,buf2);
-	SendHex(buf[0]);
-	SendHex(buf[1]);
-	SendHex(buf[2]);
-	SendHex(buf[3]);
-//jtag_goto_state(SHIFT_DR);
-//	jtagbuf[0]=0xAA;
-//	jtagbuf[1]=0xAA;
-	//while(1){
-//	jtag_write(16,jtagbuf);
-	//jtag_goto_state(SHIFT_DR);
-//		}
-
 	// ask for new events
 	// while send an event block usb receive routine
 	while(1);
