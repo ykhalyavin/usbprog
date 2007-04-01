@@ -246,7 +246,7 @@ int main(void)
   // start usb chip
   USBNStart();
 
-	
+#if 0	
 	#include "jtag_avr_defines.h"
 	unsigned char jtagbuf[10];
 	char recvbuf[10];
@@ -258,10 +258,10 @@ int main(void)
 	
 	jtag_goto_state(SHIFT_DR);
 	jtag_read(32,jtagbuf);
-	SendHex(jtagbuf[0]);
-	SendHex(jtagbuf[1]);
-	SendHex(jtagbuf[2]);
-	SendHex(jtagbuf[3]);
+	sendhex(jtagbuf[0]);
+	sendhex(jtagbuf[1]);
+	sendhex(jtagbuf[2]);
+	sendhex(jtagbuf[3]);
 
 	asm("nop");
 	//BYPASS TEST
@@ -354,6 +354,7 @@ int main(void)
 	//jtag_read(15,recvbuf);
 	SendHex(recvbuf[0]);
 
+#endif
 
 	// ask for new events
 	// while send an event block usb receive routine

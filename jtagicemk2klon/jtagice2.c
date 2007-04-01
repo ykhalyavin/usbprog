@@ -124,10 +124,9 @@ int cmd_set_parameter(char *msg, char * answer)
 
 int cmd_get_parameter(char *msg, char * answer)
 {
-  jtag_goto_state(SHIFT_DR);
 
 	char jtagbuf[4];
-	jtag_read(32,jtagbuf);
+	idcode(jtagbuf);
 	
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -247,20 +246,6 @@ int cmd_restore_target(char * msg, char * answer)
 
 int cmd_enter_progmode(char * msg, char * answer)
 {
-	// TODO (program answer always with ok!)
-	char jtagbuf[2];
-
-	jtag_reset();
-	jtag_goto_state(SHIFT_IR);
-	
-	jtagbuf[0]= AVR_PRG_ENABLE;
-	jtag_write(4,jtagbuf);
-
-	jtag_goto_state(SHIFT_DR);
-	jtagbuf[0]= 0x70;
-	jtagbuf[1] = 0xA3;
-	jtag_write(16,jtagbuf);
-
 
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
