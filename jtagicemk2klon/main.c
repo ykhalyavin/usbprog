@@ -274,8 +274,8 @@ int main(void)
 	recvbuf[0]=0x00;
 	recvbuf[1]=0x00;
 	jtag_write_and_read(16,jtagbuf,recvbuf);
-	SendHex(recvbuf[0]);
-	SendHex(recvbuf[1]);
+	//SendHex(recvbuf[0]);
+	//SendHex(recvbuf[1]);
 	
 	// READ IDCODE
 	jtag_goto_state(SHIFT_IR);
@@ -284,10 +284,10 @@ int main(void)
 	
 	jtag_goto_state(SHIFT_DR);
 	jtag_read(32,jtagbuf);
-	SendHex(jtagbuf[0]);
-	SendHex(jtagbuf[1]);
-	SendHex(jtagbuf[2]);
-	SendHex(jtagbuf[3]);
+	//SendHex(jtagbuf[0]);
+	//SendHex(jtagbuf[1]);
+	//SendHex(jtagbuf[2]);
+	//SendHex(jtagbuf[3]);
 
 
 	// RESET
@@ -298,48 +298,46 @@ int main(void)
 	jtagbuf[0]=0x1;
 	jtag_write(1,jtagbuf);
 	
-
-
 	// ENABLE PROG
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_PRG_ENABLE;
 	jtag_write(4,jtagbuf);
 	jtag_goto_state(SHIFT_DR);
-	jtagbuf[0]=0x3A;
-	jtagbuf[1]=0x07;
+	jtagbuf[0]=0x70;
+	jtagbuf[1]=0xA3;
 	jtag_write(16,jtagbuf);
 	//jtag_goto_state(UPDATE_DR);
+	
+	// wie kann man herausfinden ob sich der controller im programmiermodus befindet?
+
+
+	// theoretisch sollte er sich hier im programmiermodus befinden
 
 
 	// SIGNATURE BYTE
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_PRG_CMDS;
 	jtag_write(4,jtagbuf);
-	jtag_goto_state(SHIFT_DR);
 	
-	jtagbuf[0]=0x08;	// enter
+	jtag_goto_state(SHIFT_DR);
+	jtagbuf[0]=0x04;	// enter signature byte read
 	jtagbuf[1]=0x23; // 
 	jtag_write(15,jtagbuf);
-	
-	jtagbuf[0]=0x01;	// load address
-	jtagbuf[1]=0x03;
 	jtag_goto_state(SHIFT_DR);
+
+	jtagbuf[0]=0x00;	// load address
+	jtagbuf[1]=0x36;
 	jtag_write(15,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
 
 	jtagbuf[0]=0x00;	// read signature
-	jtagbuf[1]=0x32;
-	jtag_goto_state(SHIFT_DR);
-	jtag_write(15,jtagbuf);
-
-	jtagbuf[0]=0x00;	// read signature
-	jtagbuf[1]=0x33;
-	recvbuf[0]=0x00;
-	recvbuf[1]=0x00;
-	jtag_goto_state(SHIFT_DR);
+	jtagbuf[1]=0x37;
 	jtag_write_and_read(15,jtagbuf,recvbuf);
-	
+	jtag_goto_state(SHIFT_DR);
+
+	//jtag_read(15,recvbuf);
 	SendHex(recvbuf[0]);
-	SendHex(recvbuf[1]);
+
 
 	// ask for new events
 	// while send an event block usb receive routine
