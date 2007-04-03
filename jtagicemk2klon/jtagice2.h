@@ -45,6 +45,7 @@
 #define EVT_BREAK		0xE0
 
 // memory types
+#define SPM							0xA0
 #define FUSE_BITS				0xb2
 #define LOCK_BITS				0xb3
 

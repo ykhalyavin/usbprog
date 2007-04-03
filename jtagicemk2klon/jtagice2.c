@@ -18,8 +18,9 @@
  */
 
 #include "jtagice2.h" 
+#include "jtag_avr_prg.h" 
 #include "uart.h"
-#include "jtag.h"
+//#include "jtag.h"
 
 #include "../usbn2mc/fifo.h"
 
@@ -126,6 +127,7 @@ int cmd_get_parameter(char *msg, char * answer)
 {
 
 	char jtagbuf[4];
+	// get id from target controller over jtag connection
 	idcode(jtagbuf);
 	
 	answer[0] = MESSAGE_START;
@@ -162,7 +164,7 @@ int cmd_read_pc(char *msg, char * answer)
 
 	answer[8]	= 0x84;		// (0x80 = ok)
 	
-	answer[9] = 0x4b;
+	answer[9] = 0x00;
 	answer[10]= 0x00;
 	answer[11]= 0x00;
 	answer[12]= 0x00;
@@ -229,6 +231,7 @@ int cmd_go(char * msg, char * answer)
 
 int cmd_restore_target(char * msg, char * answer)
 {
+	avr_reset(0);	// clear reset mode
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -246,6 +249,11 @@ int cmd_restore_target(char * msg, char * answer)
 
 int cmd_enter_progmode(char * msg, char * answer)
 {
+	SendHex(0x55);
+
+	avr_reset(1);
+	avr_prog_enable();
+	avr_prog_cmd();
 
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -281,6 +289,8 @@ int cmd_leave_progmode(char * msg, char * answer)
 
 int cmd_reset(char * msg, char * answer)
 {
+	avr_reset(1); // force target controller into reset state
+
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -307,40 +317,20 @@ int cmd_read_memory(char * msg, char * answer)
 		case LOCK_BITS:
 			//SendHex(0xff);
 			msglen = 1;
-			answer[9]	= 0xff;		// (lock bits)
+			answer[9]	= rd_lock_avr();		// (lock bits)
 		break;
 		case FUSE_BITS:
 			msglen = 3;
-			
-			jtag_reset();
-			
-			jtag_goto_state(SHIFT_IR);
-			jtagbuf[0]=AVR_PRG_CMDS;
-			jtag_write(4,jtagbuf);
-			
-			jtag_goto_state(SHIFT_DR);
-			jtagbuf[0]=0x04; jtagbuf[1]=0x23; jtagbuf[2]=0x00;
-			jtagbuf[3]=0x32; jtagbuf[4]=0x00; jtagbuf[5]=0x33;
-			jtag_write(48,jtagbuf);
-
-			//jtag_goto_state(RUN_TEST_IDLE);
-			asm("nop");
-			jtag_goto_state(UPDATE_IR);
-
-			jtag_goto_state(SHIFT_DR);
-			jtag_read(48,jtagbuf);
-			jtag_goto_state(UPDATE_DR);
-
-			int i;
-			for(i=0;i<6;i++)
-				SendHex(jtagbuf[i]);
-
-
-			answer[9]		= jtagbuf[4];			// (lfuse)
-
-			answer[10]	= 0x08;		// (hfuse)
-			answer[11]	= 0xe3;		// (efuse)
+						
+			answer[9]		= rd_lfuse_avr();			// (lfuse)
+			answer[10]	= rd_hfuse_avr();		// (hfuse)
+			answer[11]	= rd_efuse_avr();		// (efuse)
 		break;
+
+		case SPM:
+
+		break;
+
 		default:
 			SendHex(0x88);
 	}

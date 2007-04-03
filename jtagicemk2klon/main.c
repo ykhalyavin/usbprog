@@ -246,11 +246,11 @@ int main(void)
   // start usb chip
   USBNStart();
 
-#if 0	
 	#include "jtag_avr_defines.h"
-	unsigned char jtagbuf[10];
 	char recvbuf[10];
+	unsigned char jtagbuf[10];
 
+#if 0	
 	// READ IDCODE
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_IDCODE;
@@ -302,7 +302,10 @@ int main(void)
 	JTAG_CLEAR_TCK();
 	JTAG_SET_TCK();
 	JTAG_CLEAR_TCK();
+#endif
 
+
+#if 0
 	// RESET
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_RESET;
@@ -319,7 +322,6 @@ int main(void)
 	jtagbuf[0]=0x70;
 	jtagbuf[1]=0xA3;
 	jtag_write(16,jtagbuf);
-	//jtag_goto_state(UPDATE_DR);
 	
 	// wie kann man herausfinden ob sich der controller im programmiermodus befindet?
 
@@ -332,27 +334,35 @@ int main(void)
 	jtag_write(4,jtagbuf);
 	
 	jtag_goto_state(SHIFT_DR);
-	jtagbuf[0]=0x04;	// enter signature byte read
+	jtagbuf[0]=0x08;	// enter signature byte 
 	jtagbuf[1]=0x23; // 
 	jtag_write(15,jtagbuf);
-	jtag_goto_state(SHIFT_DR);
+	jtag_goto_state(RUN_TEST_IDLE);
 
-	//jtagbuf[0]=0x00;	// load address
-	//jtagbuf[1]=0x36;
+
+	jtag_goto_state(SHIFT_DR);
 	jtagbuf[0]=0x00;	// load address
-	jtagbuf[1]=0x32;
-
+	jtagbuf[1]=0x03;
 	jtag_write(15,jtagbuf);
+	jtag_goto_state(RUN_TEST_IDLE);
+		
+	
 	jtag_goto_state(SHIFT_DR);
-
+	jtagbuf[0]=0x00;	// read
+	jtagbuf[1]=0x32;
+	jtag_write(15,jtagbuf);
+	jtag_goto_state(RUN_TEST_IDLE);
+	
+	jtag_goto_state(SHIFT_DR);
 	jtagbuf[0]=0x00;	// read signature
-	//jtagbuf[1]=0x37;
 	jtagbuf[1]=0x33;
-	jtag_write_and_read(15,jtagbuf,recvbuf);
-	jtag_goto_state(SHIFT_DR);
+	recvbuf[0]=0x00;
+	recvbuf[1]=0x00;
+	//jtag_write_and_read(15,jtagbuf,recvbuf);
+	jtag_read(15,recvbuf);
 
-	//jtag_read(15,recvbuf);
 	SendHex(recvbuf[0]);
+	SendHex(recvbuf[1]);
 
 #endif
 

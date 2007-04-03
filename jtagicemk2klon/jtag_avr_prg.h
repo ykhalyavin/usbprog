@@ -21,8 +21,14 @@
 #ifndef JTAG_AVR_PRG_H
 #define JTAG_AVR_PRG_H
 
-int enable_prg_avr();
-int disable_prg_avr();
-int rd_fuse_avr (char *fuse);
+char rd_efuse_avr ();
+char rd_hfuse_avr ();
+char rd_lfuse_avr ();
+char rd_lock_avr ();
+int rd_fuse_avr (char *buf, int withextend);
+int rd_signature_avr (char *signature);
+
+void avr_sequence(char tdi2, char tdi1, char * tdo);
+
 
 #endif
