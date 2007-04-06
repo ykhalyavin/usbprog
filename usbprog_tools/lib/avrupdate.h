@@ -2,6 +2,9 @@
 #include <usb.h>
 
 
+#define WITHNETWORKSUPPORT	1
+
+
 #define	AVRUPDATE		0x00
 #define	BLINKDEMO		0x01
 #define	USBPROG			0x02

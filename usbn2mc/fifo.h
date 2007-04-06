@@ -21,7 +21,7 @@ typedef struct
 void fifo_init (fifo_t*, char* buf, const int size);
 int fifo_put (fifo_t*, const char data);
 char fifo_get_wait (fifo_t*);
-char fifo_get_nowait (fifo_t*);
+int fifo_get_nowait (fifo_t*, char *entry);
 
 // swap function for spinlock mechanism
 static inline void

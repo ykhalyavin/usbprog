@@ -1,6 +1,6 @@
 all:
-	gcc -g -c main.c -I ../lib/
-	gcc -g -o usbprog main.o -lusb -I ../lib/  -lavrupdate
+	gcc -g -c main.c -I ../lib/ -pg
+	gcc -g -o usbprog main.o -lusb -I ../lib/  -lavrupdate -pg
 
 install:
 	cp usbprog /usr/bin

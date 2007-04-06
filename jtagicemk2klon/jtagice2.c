@@ -173,8 +173,41 @@ int cmd_read_pc(char *msg, char * answer)
 	return 15;
 }
 
+int cmd_set_break(char *msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+
+}
+
+
 int cmd_single_step(char *msg, char * answer)
 {
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+
 }
 
 
@@ -249,8 +282,6 @@ int cmd_restore_target(char * msg, char * answer)
 
 int cmd_enter_progmode(char * msg, char * answer)
 {
-	SendHex(0x55);
-
 	avr_reset(1);
 	avr_prog_enable();
 	avr_prog_cmd();
@@ -311,38 +342,68 @@ int cmd_read_memory(char * msg, char * answer)
 {
 	int length=8;
 	int msglen=0;
+	unsigned long len,startaddr;	// length
+	
+	// byte 2,3,4 of length = default value
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+
+
 	char jtagbuf[6];
 	//SendHex(msg[15]);
 	switch(msg[15]) {
 		case LOCK_BITS:
 			//SendHex(0xff);
-			msglen = 1;
+			msglen=2;
+			answer[3] = 2;					// length of body with ok
 			answer[9]	= rd_lock_avr();		// (lock bits)
 		break;
+
 		case FUSE_BITS:
-			msglen = 3;
+			msglen=3;
+			answer[3] = 4;					// length of body with ok
 						
 			answer[9]		= rd_lfuse_avr();			// (lfuse)
 			answer[10]	= rd_hfuse_avr();		// (hfuse)
 			answer[11]	= rd_efuse_avr();		// (efuse)
 		break;
 
+
+		case SRAM:
+			// flash lesen 
+			len = msg[16]+(255*msg[17])+(512*msg[18])+(1024*msg[19]);	// length
+			//startaddress
+			startaddr = msg[20]+(255*msg[21])+(512*msg[22])+(1024*msg[23]);	// length
+			answer[3] = (char)msg[16]+1;					// length of body with ok
+			msglen=(int)msg[16]+1;
+			//SendHex(msg[16]);
+
+		break;
+
 		case SPM:
+			// flash lesen 
+			len = msg[16]+(255*msg[17])+(512*msg[18])+(1024*msg[19]);	// length
+			//startaddress
+			startaddr = msg[20]+(255*msg[21])+(512*msg[22])+(1024*msg[23]);	// length
+			
+			// read data from flash and send back
+			//answer[3] = (char)(startaddr+1);					// length of body with ok
+			answer[3] = (char)msg[16]+1;					// length of body with ok
+			msglen=(int)msg[16]+1;
+
+			//answer[9] - ...
 
 		break;
 
 		default:
-			SendHex(0x88);
+			//SendHex(0x88);
 	}
-	msglen++;
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
-	answer[3] = (char)msglen;					// length of body
-	answer[4] = 0;
-	answer[5] = 0;
-	answer[6] = 0;
+	
 	answer[7] = TOKEN;
 
 	answer[8]	= 0x82;		// (0x80 = ok)

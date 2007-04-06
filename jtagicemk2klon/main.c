@@ -184,8 +184,17 @@ void USBReceive(char *buf)
 			case CMND_READ_PC:
 				cmdlength = cmd_read_pc(&buf,&answer);
 			break;
+	
+			case CMND_SET_BREAK:
+				cmdlength = cmd_set_break(&buf,&answer);
+			break;
 
 
+			case CMND_SINGLE_STEP:
+				cmdlength = cmd_single_step(&buf,&answer);
+			break;
+
+	
 
 			default:
 				answer[0]=RSP_FAILED;

@@ -34,6 +34,7 @@
 #define CMND_FORCED_STOP		0x0A
 #define CMND_RESET					0x0B
 #define CMND_SET_DEVICE_DESCRIPTOR	0x0C
+#define CMND_SET_BREAK			0x11
 
 #define CMND_ENTER_PROGMODE	0x14
 #define CMND_LEAVE_PROGMODE	0x15
@@ -45,6 +46,7 @@
 #define EVT_BREAK		0xE0
 
 // memory types
+#define SRAM						0x20
 #define SPM							0xA0
 #define FUSE_BITS				0xb2
 #define LOCK_BITS				0xb3
@@ -82,6 +84,7 @@ int cmd_restore_target(char * msg, char * answer);
 int cmd_enter_progmode(char * msg, char * answer);
 int cmd_leave_progmode(char * msg, char * answer);
 int cmd_reset(char * msg, char * answer);
+int cmd_set_break(char * msg, char * answer);
 
 
 

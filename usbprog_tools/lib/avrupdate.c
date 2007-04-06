@@ -3,8 +3,10 @@
 #include <usb.h>
 
 #include "avrupdate.h"
-//#include <curl/curl.h>
+
+#if WITHNETWORKSUPPOER
 #include "http_fetcher.h"
+#endif
 
 #define STARTAPP   		0x01
 #define WRITEPAGE  		0x02
@@ -253,7 +255,12 @@ size_t _write_data(void *data, size_t size, size_t nmemb, void *userp)
 int avrupdate_net_get_versionfile(char * url, char **buffer)
 {
 
+#if WITHNETWORKSUPPOER
 	return http_fetch(url, buffer); 
+#else
+	return 0;	
+#endif
+
 }
 
 int avrupdate_net_versions(char * url)
@@ -275,6 +282,7 @@ int avrupdate_net_versions(char * url)
 
 void avrupdate_net_flash_version(char * url,int number, int vendorid, int productid)
 {
+#if WITHNETWORKSUPPORT
 	struct avrupdate_info * tmp = avrupdate_net_get_version_info(url,number);
 	
 	int ret;
@@ -301,6 +309,7 @@ void avrupdate_net_flash_version(char * url,int number, int vendorid, int produc
 
 		remove("flash.bin");
 	}
+#endif
 }
 
 
@@ -324,9 +333,12 @@ struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number)
 {
 	char *buffer;
 
+#if WITHNETWORKSUPPORT
 	avrupdate_net_get_versionfile(url,&buffer);
-	struct avrupdate_info * tmp = (struct avrupdate_info *)malloc(sizeof(struct avrupdate_info));
+#endif
 
+	struct avrupdate_info * tmp = (struct avrupdate_info *)malloc(sizeof(struct avrupdate_info));
+#if WITHNETWORKSUPPORT
 	int rows = avrupdate_net_versions(url);
 
 	char **line = malloc(rows* sizeof(char*));
@@ -339,7 +351,7 @@ struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number)
 	tmp->version = fields[1];
 	tmp->file = fields[2];
 	tmp->description= fields[3];
-
+#endif
 	
 	return tmp;
 }

@@ -61,6 +61,7 @@ volatile struct usbprog_t {
 	int datatogl;
 	char sck_duration;
 	int fragmentnumber;
+	int avrstudio;
 } usbprog;
 
 #define _BUF_LEN     300
@@ -538,13 +539,13 @@ void USBFlash(char *buf)
 
 		case CMD_ENTER_PROGMODE_ISP:
 			pgmmode.address = 0;
-					//cbi	portb,SCK	; clear SCK
-					PORTB &= ~(1<<SCK);
-					// set_reset		;	set RESET = 1
-					PORTB |= (1<<RESET_PIN);	// give reset a positive pulse
-					wait_ms(10);
-					// clr_reset		;	set RESET = 0
-					//			asm("nop");
+			//cbi	portb,SCK	; clear SCK
+			PORTB &= ~(1<<SCK);
+			// set_reset		;	set RESET = 1
+			PORTB |= (1<<RESET_PIN);	// give reset a positive pulse
+			wait_ms(10);
+			// clr_reset		;	set RESET = 0
+			//			asm("nop");
 			asm("nop");
 			asm("nop");
 			asm("nop");
@@ -559,8 +560,8 @@ void USBFlash(char *buf)
 					spi_out(0xac);
 					spi_out(0x53);
       
+			LED_on;
 			/*
-			//LED_on;
 			RESET_high;
 			asm("nop");
 			asm("nop");
@@ -601,12 +602,15 @@ void USBFlash(char *buf)
 		break;
 
 		case CMD_LEAVE_PROGMODE_ISP:
-            LED_off;
+      LED_off;
 			RESET_high;
 			answer[0] = CMD_LEAVE_PROGMODE_ISP;
 			answer[1] = STATUS_CMD_OK;
 			CommandAnswer(2);
-			//usbprog.datatogl=0;	// to be sure that togl is on next session clear
+			
+			// wenn adapter vom avrdude aus angesteuert wird
+			if(usbprog.avrstudio==0)
+		  	usbprog.datatogl=0;	// to be sure that togl is on next session clear
 			return;
     	break;
 
@@ -801,6 +805,7 @@ void USBFlash(char *buf)
 		break;
 
 		case CMD_SPI_MULTI:
+			usbprog.avrstudio=1;	// only avrdude use this command
 			spi_out(buf[4]);	
 			spi_out(buf[5]);
 			spi_out(buf[6]);
@@ -860,10 +865,11 @@ int main(void)
     USBNInit();
 
     usbprog.longpackage = 0;
-	usbprog.sck_duration = 3;   // 1MHz
-	usbprog.fragmentnumber = 0;	// read flash fragment
+		usbprog.sck_duration = 3;   // 1MHz
+		usbprog.avrstudio = 1;   // 1 no
+		usbprog.fragmentnumber = 0;	// read flash fragment
 
-    DDRA = (1 << DDA4);
+    DDRA = (1 << PA4);
     LED_off;
     RESET_high;
 

@@ -19,8 +19,13 @@ char fifo_get_wait (fifo_t *f)
     return _inline_fifo_get (f);	
 }
 
-char fifo_get_nowait (fifo_t *f)
+int fifo_get_nowait (fifo_t *f, char *entry)
 {
-  if (!f->count) return -1;
-  return _inline_fifo_get (f);	
+  if (f->count <=0) {
+		return -1;
+	}
+	else {
+  	entry[0] = _inline_fifo_get (f);	
+		return 1;
+	}
 }
