@@ -18,15 +18,10 @@
  *
  *----------------------------------------------------------------------*/
 
-#ifndef JTAG_H
-#define JTAG_H
+#ifndef JTAG_AVR_DEFINES_H
+#define JTAG_AVR_DEFINES_H
 
-/*
- * symbolic pins. The real levels are setup 
- */
-#define TMS                             1
-#define TDI                             2
-#define TDO                             4
+#include "constant.h"
 
 /*
  * JTAG reset lasts 5 times

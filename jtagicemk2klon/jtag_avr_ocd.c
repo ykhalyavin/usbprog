@@ -20,6 +20,7 @@
  *----------------------------------------------------------------------*/
 
 #include "jtag_avr_prg.h"
+#include "jtag.h"
 #include "jtag_avr.h"
 #include "jtag_avr_defines.h"
 
@@ -162,7 +163,7 @@ init_avr_jtag (struct avr_reg *reg, unsigned char delay)
     unsigned char stat, buf_in [4], buf_out [4], *p, *q;
     char          cnt;
 
-    stat = reset_jtag (delay);
+    stat = jtag_reset();
     if (stat == JTAG_OK) stat = avr_reset (0);
     if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
     if (stat == JTAG_OK) stat = avr_reset(0);
@@ -307,7 +308,7 @@ activate_ocd (unsigned char delay)
     unsigned char stat, buf_in [2];
  
     do {
-        reset_jtag (delay);
+        jtag_reset ();
         stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
         buf_in [0] = BIT2;
         buf_in [1] = AVR_EN_OCDR;
@@ -642,10 +643,8 @@ run_avr (unsigned char mode, unsigned char go_flg, unsigned long addr,
     unsigned char stat, tdo, tdi;
 
     stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
-    if (stat != PWR_SUPPLY_ERR) {
-        tdi  = mode;
-        stat = jtag_write_and_read (1,&tdo, &tdi);
-    }
+    tdi  = mode;
+    stat = jtag_write_and_read (1,&tdo, &tdi);
     return stat;
 }
 
@@ -657,7 +656,7 @@ step_avr (unsigned char delay)
 {
     unsigned char stat;
 
-    stat = reset_jtag (delay); 
+    stat = jtag_reset (); 
     if (stat == JTAG_OK) stat = activate_ocd (delay);
 }
 
@@ -681,6 +680,7 @@ init_all_regs_avr (void)
 void
 get_all_regs_avr (unsigned char delay)
 {
+	#if 0
     unsigned char *p, xsum, byte_buf [2];
     char          i; 
 
@@ -695,13 +695,16 @@ get_all_regs_avr (unsigned char delay)
     } while (!(--i & 0x80));
     outch ('#');
     outbyte (xsum);
+	#endif
 }
+
 
 /*----------------------------------------------------------------------*
  *----------------------------------------------------------------------*/
 void
 set_all_regs_avr (unsigned char *buf, unsigned char delay)
 {
+	#if 0
     unsigned char *p, ok, val;
     char          i; 
 
@@ -716,6 +719,8 @@ set_all_regs_avr (unsigned char *buf, unsigned char delay)
         }
         i++;
     }
-    if (ok) pstring (ok_str);
-    else pr_stat ('E', NO_NUMBER);
+    //if (ok) pstring (ok_str);
+    //else pr_stat ('E', 19);
+    //else pr_stat ('E', NO_NUMBER);
+	#endif
 }

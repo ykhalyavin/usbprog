@@ -71,7 +71,7 @@ void jtag_send_slice(uint8_t tck, uint8_t tms, uint8_t tdi)
 
 }
 
-void jtag_reset(void)
+int jtag_reset(void)
 {
 	int i;
 	JTAG_SET_TMS();
@@ -80,6 +80,8 @@ void jtag_reset(void)
 	}
 	JTAG_CLEAR_TMS();
 	tapstate = TEST_LOGIC_RESET;
+
+	return 1;
 }
 
 uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)

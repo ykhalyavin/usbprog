@@ -397,7 +397,7 @@ int cmd_read_memory(char * msg, char * answer)
 		break;
 
 		default:
-			//SendHex(0x88);
+			SendHex(0x88);
 	}
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;

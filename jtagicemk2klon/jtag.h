@@ -84,7 +84,7 @@ uint8_t jtag_read_tdo(void);
 void jtag_init(void);
 
 // force jtag tap into reset state
-void jtag_reset(void);
+int jtag_reset(void);
 
 // goto a state
 void jtag_goto_state(uint8_t state);
