@@ -56,13 +56,24 @@ int avr_prog_cmd()
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_PRG_CMDS;
 	jtag_write(4,jtagbuf);
+
+	return 1;
 }
+
+int avr_jtag_instr(unsigned char instr, int delay)
+{
+	char jtagbuf[1];
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=instr;
+	jtag_write(4,jtagbuf);
+
+	return 1;
+}
+
 
 
 //tdi2 = 7 bit
 ////tdi1 = 8 bit (write it like it is in the datasheet page ...278...)
-//
-//
 
 void avr_sequence(char tdi2, char tdi1, char * tdo)
 {

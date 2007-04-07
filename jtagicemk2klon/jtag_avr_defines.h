@@ -104,4 +104,16 @@ enum jtag_data_state {
     IDLE = 2
 };
 
+
+#define JTAG_OK  1
+#define AVR  1
+
+
+enum {
+  CHK_PC = 1, /* get program counter +2 or +4 depending on the AVR
+		                   instruction */
+	LONG        /* 32 bits instruction when data or I/O is queried  */
+};
+
+
 #endif

@@ -1,6 +1,7 @@
 /*-------------------------------------------------------------------------
  * JTAG_AVR_OCD.H
  * Copyright (C) 2003 Armand ten Doesschate <a.doesschate@hccnet.nl>
+ * Copyright (C) 2007 Benedikt Sauter <satrer@sistecs.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,31 +22,30 @@
 #ifndef JTAG_AVR_OCD_H
 #define JTAG_AVR_OCD_H
 
-#include "tgt_info.h"
+char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,
+                       short size, unsigned char delay);
+unsigned char rd_sram_ocd_avr (unsigned short addr, unsigned char *buf,
+                               short size, unsigned char delay);
+unsigned char rd_io_ocd_avr (unsigned char addr, unsigned char *buf,
+                             short size, unsigned char delay);
+unsigned char rd_e2_ocd_avr (unsigned short addr, unsigned char *buf,
+                             short size, unsigned char delay);
+unsigned char wr_avr_flash_ocd (unsigned long addr, unsigned char *buf,
+                                short size, unsigned char delay);
+unsigned char wr_sram_ocd_avr (unsigned short addr, unsigned char *buf,
+                               short size, unsigned char delay);
+unsigned char wr_io_ocd_avr (unsigned char addr, unsigned char *buf,
+                             short size, unsigned char delay);
 
-extern unsigned char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,
-                                       short size, unsigned char delay);
-extern unsigned char rd_sram_ocd_avr (unsigned short addr, unsigned char *buf,
-                                      short size, unsigned char delay);
-extern unsigned char rd_io_ocd_avr (unsigned char addr, unsigned char *buf,
-                                    short size, unsigned char delay);
-extern unsigned char rd_e2_ocd_avr (unsigned short addr, unsigned char *buf,
-                                    short size, unsigned char delay);
-extern unsigned char wr_avr_flash_ocd (unsigned long addr, unsigned char *buf,
-                                       short size, unsigned char delay);
-extern unsigned char wr_sram_ocd_avr (unsigned short addr, unsigned char *buf,
-                                      short size, unsigned char delay);
-extern unsigned char wr_io_ocd_avr (unsigned char addr, unsigned char *buf,
-                                    short size, unsigned char delay);
-extern void step_avr (unsigned char delay);
-extern unsigned char force_avr_stop (unsigned char delay);
-extern unsigned char run_avr (unsigned char mode, unsigned char go_flg,
+void step_avr (unsigned char delay);
+unsigned char force_avr_stop (unsigned char delay);
+unsigned char run_avr (unsigned char mode, unsigned char go_flg,
                               unsigned long addr, unsigned char delay);
-extern unsigned char init_avr_jtag (struct avr_reg *reg, unsigned char delay);
+unsigned char init_avr_jtag (struct avr_reg *reg, unsigned char delay);
 
-extern void init_all_regs_avr (void);
-extern void get_all_regs_avr (unsigned char delay);
-extern void set_all_regs_avr (unsigned char *buf, unsigned char delay);
+void init_all_regs_avr (void);
+void get_all_regs_avr (unsigned char delay);
+void set_all_regs_avr (unsigned char *buf, unsigned char delay);
 
 
 #endif
