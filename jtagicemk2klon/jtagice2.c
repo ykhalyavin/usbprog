@@ -19,9 +19,12 @@
 
 #include "jtagice2.h" 
 #include "jtag_avr_prg.h" 
+#include "jtag_avr_ocd.h" 
+#include "jtag_avr.h" 
 #include "uart.h"
-//#include "jtag.h"
+#include "jtag.h"
 
+#include "jtag_avr_defines.h"
 #include "../usbn2mc/fifo.h"
 
 
@@ -152,6 +155,17 @@ int cmd_get_parameter(char *msg, char * answer)
 
 int cmd_read_pc(char *msg, char * answer)
 {
+	char jtagbuf[4],recvbuf[4];
+	jtag_reset();
+	avr_jtag_instr(AVR_INSTR,0);
+
+	jtagbuf[0]=0x00;
+	jtagbuf[1]=0x00;
+	jtagbuf[2]=0xff;
+	jtagbuf[2]=0xff;
+	jtag_write_and_read(32,jtagbuf,recvbuf);
+
+
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -164,13 +178,31 @@ int cmd_read_pc(char *msg, char * answer)
 
 	answer[8]	= 0x84;		// (0x80 = ok)
 	
-	answer[9] = 0x00;
-	answer[10]= 0x00;
+	answer[9] = recvbuf[0]/2;
+	answer[10] = recvbuf[1]/2;
 	answer[11]= 0x00;
 	answer[12]= 0x00;
 
 	crc16_append(answer,(unsigned long)13);
 	return 15;
+}
+
+int cmd_clr_break(char *msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+
 }
 
 int cmd_set_break(char *msg, char * answer)
@@ -213,6 +245,9 @@ int cmd_single_step(char *msg, char * answer)
 
 int cmd_forced_stop(char * msg, char * answer)
 {
+ 	jtag_reset();
+  avr_jtag_instr(AVR_FORCE_BRK, 0);
+
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -247,6 +282,9 @@ int cmd_set_device_descriptor(char * msg, char * answer)
 
 int cmd_go(char * msg, char * answer)
 {
+  jtag_reset();
+  avr_jtag_instr(AVR_RUN, 0);
+
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -285,6 +323,8 @@ int cmd_enter_progmode(char * msg, char * answer)
 	avr_reset(1);
 	avr_prog_enable();
 	avr_prog_cmd();
+
+
 
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -378,6 +418,12 @@ int cmd_read_memory(char * msg, char * answer)
 			answer[3] = (char)msg[16]+1;					// length of body with ok
 			msglen=(int)msg[16]+1;
 			//SendHex(msg[16]);
+		
+			answer[9]=0x00;
+			answer[10]=0x00;
+			answer[11]=0x00;
+			answer[12]=0x00;
+			//rd_sram_ocd_avr ((short)startaddr, &answer[9] ,(short)len ,0);
 
 		break;
 
@@ -392,6 +438,12 @@ int cmd_read_memory(char * msg, char * answer)
 			answer[3] = (char)msg[16]+1;					// length of body with ok
 			msglen=(int)msg[16]+1;
 
+			//init_avr_jtag (&(reg.avr), 0);
+			char buf[20];
+			rd_flash_ocd_avr ((short)msg[20], &buf ,(short)msg[16] ,0);
+			//rd_flash_ocd_avr ((short)startaddr, &buf ,(short)len ,0);
+			answer[9]=buf[0];
+			answer[10]=buf[1];
 			//answer[9] - ...
 
 		break;

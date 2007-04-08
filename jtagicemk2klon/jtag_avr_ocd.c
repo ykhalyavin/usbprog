@@ -19,10 +19,11 @@
  *
  *----------------------------------------------------------------------*/
 
-#include "jtag_avr_prg.h"
 #include "jtag.h"
 #include "jtag_avr.h"
 #include "jtag_avr_defines.h"
+#include "jtag_avr_ocd.h"
+#include "uart.h"
 
 /*----------------------------------------------------------------------*
  * This function reads or writes the peripherals, internal memory, CPU  *
@@ -44,55 +45,51 @@
  * with an run-test/idle stage, while the access of the ocd register    *
  * set is not required                                                  *
  *----------------------------------------------------------------------*/
-static unsigned char
+unsigned char
 exec_instr_avr (unsigned char *out, unsigned char *in, unsigned char flg,
                 unsigned char delay)
 {
-    unsigned char tdi [4], tdo [4], stat;
-
-    stat      = avr_jtag_instr (AVR_INSTR, delay);
-    if (stat == JTAG_OK) {
-        if (flg == CHK_PC) {
-            tdi [0] = 0;
-            tdi [1] = 0;
-            tdi [2] = 0;
-            tdi [3] = 0;
-            stat = jtag_write_and_read (32,tdo, tdi);
-            if (stat == JTAG_OK) {
-                out [0] = tdo [0];
-                out [1] = tdo [1];
-                out [2] = tdo [2];
-                out [3] = tdo [3];
-            }
-        }
-        else { 
-            /*
-             * an avr instruction 
-             */
-            tdi [0] = in [0];
-            tdi [1] = in [1];
-            stat = jtag_write_and_read (16,tdo, tdi);
-        }
-    }
-    return stat;
+  unsigned char tdi [4], tdo [4], stat;
+	
+	jtag_reset();
+  avr_jtag_instr (AVR_INSTR, delay);
+  if (flg == CHK_PC) {
+  	tdi [0] = 0;
+    tdi [1] = 0;
+    tdi [2] = 0xFF;
+    tdi [3] = 0xFF;
+    jtag_write_and_read (32,tdi, tdo);
+    out [0] = tdo [0];
+    out [1] = tdo [1];
+    out [2] = tdo [2];
+    out [3] = tdo [3];
+  } else {
+    /*
+    * an avr instruction 
+    */
+    tdi [0] = in [0];
+    tdi [1] = in [1];
+    jtag_write_and_read (16,tdi, tdo);
+  }
+  return 1;
 }
 
 /*----------------------------------------------------------------------*
  * write to on chip debugging registers                                 *
  *----------------------------------------------------------------------*/
-static unsigned char
+unsigned char
 wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay)
 {
     unsigned char stat, tdi [3], tdo [3];
 
-    stat = avr_jtag_instr (AVR_OCD, delay);
-    if (stat == JTAG_OK) {
-        tdi [0] = buf [0];
-        tdi [1] = buf [1];
-        tdi [2] = reg | AVR_WR_OCDR;
-        stat    = jtag_write_and_read (21,tdo, tdi);
-    };
-    return stat;
+		jtag_reset();
+    avr_jtag_instr (AVR_OCD, delay);
+    tdi [0] = buf [0];
+    tdi [1] = buf [1];
+    tdi [2] = reg | AVR_WR_OCDR;
+    jtag_write_and_read (21,tdi, tdo);
+    
+		return 1;
 }
 
 /*----------------------------------------------------------------------*
@@ -101,47 +98,45 @@ wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay)
  * acts just like a shift register : when you must read you must clock  *
  * in redundant data in order to read the shift register                *
  *----------------------------------------------------------------------*/
-static unsigned char
+unsigned char
 rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay)
 {
     unsigned char stat, tdo [3], tdi [3];
 
-    stat = avr_jtag_instr (AVR_OCD, delay);
-    if (stat == JTAG_OK) {
-        tdi [0] = reg;
-        stat    = jtag_write_and_read (5,&tdo [0], &tdi [0]);
-    }
-    if (stat == JTAG_OK) {
-        tdi [0]     = 0;
-        tdi [1]     = 0;
-        tdi [2]     = reg;
-        stat        = jtag_write_and_read (21,tdo, tdi);
-        buf_out [0] = tdo [0];
-        buf_out [1] = tdo [1];
-    }
-    return stat;
+		jtag_reset();
+    avr_jtag_instr (AVR_OCD, delay);
+    tdi [0] = reg;
+    jtag_write_and_read (5,tdi, tdo);
+    
+    tdi [0]     = 0;
+    tdi [1]     = 0;
+    tdi [2]     = reg;
+    jtag_write_and_read (16,tdi, tdo);
+    buf_out [0] = tdo [0];
+    buf_out [1] = tdo [1];
+    
+		return 1;
 }
 
 /*----------------------------------------------------------------------*
  *----------------------------------------------------------------------*/
-static unsigned char
+unsigned char
 rd_dbg_channel (unsigned char *buf_out, unsigned char delay)
 {
     unsigned char stat, tdo [2], tdi [2];
-
-    stat = avr_jtag_instr (AVR_OCD, delay);
-    if (stat == JTAG_OK) {
-        tdi [0] = AVR_DBG_COMM_DATA;
-        stat    = jtag_write_and_read (5,&tdo [0], &tdi [0]);
-    }
-    if (stat == JTAG_OK) {
-        tdi [0]     = 0;
-        tdi [1]     = 0;
-        stat        = jtag_write_and_read (16,tdo, tdi);
-        buf_out [0] = tdo [0];
-        buf_out [1] = tdo [1];
-    }
-    return stat;
+	
+		jtag_reset();
+    avr_jtag_instr (AVR_OCD, delay);
+    tdi [0] = AVR_DBG_COMM_DATA;
+    jtag_write_and_read (5,tdi, tdo);
+        
+		tdi [0]     = 0;
+    tdi [1]     = 0;
+    jtag_write_and_read (16,tdi, tdo);
+    buf_out [0] = tdo [0];
+    buf_out [1] = tdo [1];
+    
+		return 1;
 }
 
 /*----------------------------------------------------------------------*
@@ -149,27 +144,24 @@ rd_dbg_channel (unsigned char *buf_out, unsigned char delay)
 unsigned char
 force_avr_stop (unsigned char delay)
 {
-    unsigned char stat;
-
-    stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
-    return stat;
+		jtag_reset();
+    avr_jtag_instr (AVR_FORCE_BRK, delay);
+    return 1;
 }
 
 /*----------------------------------------------------------------------*
  *----------------------------------------------------------------------*/
-unsigned char
-init_avr_jtag (struct avr_reg *reg, unsigned char delay)
+unsigned char init_avr_jtag (struct avr_reg *reg, unsigned char delay)
 {
     unsigned char stat, buf_in [4], buf_out [4], *p, *q;
     char          cnt;
-
-    stat = jtag_reset();
-    if (stat == JTAG_OK) stat = avr_reset (0);
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-    if (stat == JTAG_OK) stat = avr_reset(0);
-    if (stat == JTAG_OK) stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-    if (stat == JTAG_OK) stat = avr_reset (1);
+    //jtag_reset();
+    //avr_reset (0);
+    rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
+    //avr_reset(0);
+    avr_jtag_instr (AVR_FORCE_BRK, delay);
+    rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
+    //avr_reset (1);
 
     /*
      * set break point at reset vector : 
@@ -178,28 +170,28 @@ init_avr_jtag (struct avr_reg *reg, unsigned char delay)
      */
     buf_in [0] = 0;
     buf_in [1] = 0;
-    if (stat == JTAG_OK) wr_dbg_ocd (AVR_PSB0, buf_in, delay);
+    wr_dbg_ocd (AVR_PSB0, buf_in, delay);
     /*
      * prepare to read control and status register
      */
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_BCR, buf_out, delay);
+    rd_dbg_ocd (AVR_BCR, buf_out, delay);
     /*
      * write control and status register with PSB1 activated
      */
     buf_in [0] = 0;
     buf_in [1] = AVR_EN_PSB1;
-    if (stat == JTAG_OK) wr_dbg_ocd (AVR_BCR, buf_in, delay);
+    wr_dbg_ocd (AVR_BCR, buf_in, delay);
 
     /*
      * and let the target run
      */
-    if (stat == JTAG_OK) stat = avr_reset (0);
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
+    //avr_reset (0);
+    rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
 
     /*
      * prepare to read control and status register again
      */
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_BCR, buf_out, delay);
+    rd_dbg_ocd (AVR_BCR, buf_out, delay);
 
     /*
      * write control and status register with PSB0 deactivated
@@ -207,40 +199,39 @@ init_avr_jtag (struct avr_reg *reg, unsigned char delay)
      */
     buf_in [0] = 0;
     buf_in [1] = 0;
-    if (stat == JTAG_OK) wr_dbg_ocd (AVR_BCR, buf_in, delay);
+    wr_dbg_ocd (AVR_BCR, buf_in, delay);
 
     /*
      * prepare to read the pc
      */
-    if (stat == JTAG_OK) exec_instr_avr (buf_out, buf_in, CHK_PC, delay);
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
+    exec_instr_avr (buf_out, buf_in, CHK_PC, delay);
+    rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
 
     buf_in [0] = buf_out [0];
     buf_in [1] = buf_out [1] | AVR_EN_OCDR;
-    if (stat == JTAG_OK) wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
+    wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
 
-    if (stat == JTAG_OK) {  
-        buf_in [0] = 0xE1;
-        buf_in [1] = 0xBF;
-        buf_in [2] = 0xF1;
-        buf_in [3] = 0xBF;
-        q          = (unsigned char *) &(reg->pc);
-        p          = buf_in;
-        cnt        = 1;
-        do {
-            stat = exec_instr_avr (buf_out, p, 0, delay);
-            p += 2;
-            if (stat == JTAG_OK) stat = rd_dbg_channel (buf_out, delay);
-            if (stat == JTAG_OK) *q++ = buf_out [1];
-        } while ((!(--cnt & 0x80)) && (stat == JTAG_OK));
-    }
+    buf_in [0] = 0xE1;
+    buf_in [1] = 0xBF;
+    buf_in [2] = 0xF1;
+    buf_in [3] = 0xBF;
+    q          = (unsigned char *) &(reg->pc);
+    p          = buf_in;
+    cnt        = 1;
+    do {
+    	exec_instr_avr (buf_out, p, 0, delay);
+      p += 2;
+      rd_dbg_channel (buf_out, delay);
+      *q++ = buf_out [1];
+    } while ((!(--cnt & 0x80)));
+  
 
-    if (stat == JTAG_OK) stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-    buf_in [0] = BIT3 | BIT2;
-    buf_in [1] = AVR_EN_OCDR;
-    if (stat == JTAG_OK) stat = wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
+  rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
+  buf_in [0] = BIT3 | BIT2;
+  buf_in [1] = AVR_EN_OCDR;
+  wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
 
-    return stat;
+  return 1;
 }
 
 /*----------------------------------------------------------------------*
@@ -248,7 +239,7 @@ init_avr_jtag (struct avr_reg *reg, unsigned char delay)
  * or initial condition                                                 *
  *----------------------------------------------------------------------*/
 #if 0
-static void
+void
 get_avr_regs (unsigned char delay)
 {
     unsigned char buf_in [2], buf_out [2], stat, *p, *q, xsum, byte_buf [2];
@@ -302,23 +293,21 @@ get_avr_regs (unsigned char delay)
 /*----------------------------------------------------------------------*
  * enable on chip debugging                                             * 
  *----------------------------------------------------------------------*/
-static unsigned char
+unsigned char
 activate_ocd (unsigned char delay)
 {
     unsigned char stat, buf_in [2];
  
     do {
         jtag_reset ();
-        stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
+        avr_jtag_instr (AVR_FORCE_BRK, delay);
         buf_in [0] = BIT2;
         buf_in [1] = AVR_EN_OCDR;
-        if (stat == JTAG_OK)
-            stat = wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-        if (stat == JTAG_OK)
-            stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-    } while (((buf_in [0] & (BIT2 | BIT3)) != (BIT2 | BIT3))
-             && (stat == JTAG_OK));
-    return stat;
+        wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
+        rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
+    } while (((buf_in [0] & (BIT2 | BIT3)) != (BIT2 | BIT3)));
+		SendHex(buf_in [0]);
+    return 1;
 }
 
 /*----------------------------------------------------------------------*
@@ -337,50 +326,53 @@ unsigned char
 rd_flash_ocd_avr (unsigned long addr, unsigned char *buf, short size,
                   unsigned char delay)
 {
+		
     unsigned char stat, *p, buf_in [2], buf_out [2];
     short         num;
   
     num  = 0;
-    stat = activate_ocd (delay);
+		//init_avr_jtag (&(reg.avr), 0);
+    activate_ocd (delay);
+
     p    = (unsigned char *) &addr;
     p   += 2;
     /*
      * ldi      r31,hi8(addr)
      */
-    if (stat == JTAG_OK) {
-        buf_in [0] = (*p & 0xF) + 0xF0;
-        buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-        stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-    }
+    buf_in [0] = (*p & 0xF) + 0xF0;
+    buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
+    exec_instr_avr (buf_out, buf_in, 0, delay);
+
     /*
      * ldi      r30,lo8(addr)
      */
-    if (stat == JTAG_OK) {
-        buf_in [0] = (*++p & 0xF) + 0xE0;
-        buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-        stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-    }
-    while ((stat == JTAG_OK) && (num < size)) {
+
+    buf_in [0] = (*++p & 0xF) + 0xE0;
+    buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
+    exec_instr_avr (buf_out, buf_in, 0, delay);
+		
+		//SendHex(0x99);
+    while (num < size) {
         /*
          * lpm  r0,z+
          */
         buf_in [0] = 5;
         buf_in [1] = 0x90;
-        stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
+        exec_instr_avr (buf_out, buf_in, 0, delay);
         /*
          * out  ocdr,r0
          */
-        if (stat == JTAG_OK) {
-            buf_in [0] = 1;
-            buf_in [1] = 0xBE;
-            stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-        }
-        if (stat == JTAG_OK) stat   = rd_dbg_channel (buf_out, delay);
-        if (stat == JTAG_OK) *buf++ = buf_out [1];
+        buf_in [0] = 1;
+        buf_in [1] = 0xBE;
+        exec_instr_avr (buf_out, buf_in, 0, delay);
+        rd_dbg_channel (buf_out, delay);
+        //SendHex(buf_out [0]);
+        //SendHex(buf_out [1]);
+				*buf++ = buf_out [1];
         num++;
     }
 
-    return stat;
+    return 1;
 }
 
 /*----------------------------------------------------------------------*
@@ -644,7 +636,7 @@ run_avr (unsigned char mode, unsigned char go_flg, unsigned long addr,
 
     stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
     tdi  = mode;
-    stat = jtag_write_and_read (1,&tdo, &tdi);
+    stat = jtag_write_and_read (1,&tdi, &tdo);
     return stat;
 }
 

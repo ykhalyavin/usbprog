@@ -60,12 +60,14 @@ int avr_prog_cmd()
 	return 1;
 }
 
+
 int avr_jtag_instr(unsigned char instr, int delay)
 {
 	char jtagbuf[1];
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=instr;
 	jtag_write(4,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
 
 	return 1;
 }

@@ -35,6 +35,7 @@
 #define CMND_RESET					0x0B
 #define CMND_SET_DEVICE_DESCRIPTOR	0x0C
 #define CMND_SET_BREAK			0x11
+#define CMND_CLR_BREAK			0x1A
 
 #define CMND_ENTER_PROGMODE	0x14
 #define CMND_LEAVE_PROGMODE	0x15
@@ -85,6 +86,7 @@ int cmd_enter_progmode(char * msg, char * answer);
 int cmd_leave_progmode(char * msg, char * answer);
 int cmd_reset(char * msg, char * answer);
 int cmd_set_break(char * msg, char * answer);
+int cmd_clr_break(char * msg, char * answer);
 
 
 
