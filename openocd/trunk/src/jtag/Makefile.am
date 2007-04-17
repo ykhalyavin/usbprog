@@ -1,0 +1,64 @@
+
+if FTD2XXDIR
+if IS_MINGW
+FTD2XXINC = -I@WITH_FTD2XX@
+else
+FTD2XXINC = -I@WITH_FTD2XX@/
+endif
+else
+FTD2XXINC =
+endif
+
+INCLUDES = -I$(top_srcdir)/src/helper $(FTD2XXINC) $(all_includes)
+METASOURCES = AUTO
+noinst_LIBRARIES = libjtag.a
+
+if BITBANG
+BITBANGFILES = bitbang.c
+else
+BITBANGFILES =
+endif
+
+if PARPORT
+PARPORTFILES = parport.c
+else
+PARPORTFILES =
+endif
+
+if FT2232_LIBFTDI
+FT2232FILES = ft2232.c
+else
+if FT2232_FTD2XX
+FT2232FILES = ft2232.c
+else
+FT2232FILES =
+endif
+endif
+
+if AMTJTAGACCEL
+AMTJTAGACCELFILES = amt_jtagaccel.c
+else
+AMTJTAGACCELFILES =
+endif
+
+if EP93XX
+EP93XXFILES = ep93xx.c
+else
+EP93XXFILES =
+endif
+
+if AT91RM9200
+AT91RM9200FILES = at91rm9200.c
+else
+AT91RM9200FILES =
+endif
+
+if GW16012
+GW16012FILES = gw16012.c
+else
+GW16012FILES =
+endif
+
+libjtag_a_SOURCES = jtag.c $(BITBANGFILES) $(PARPORTFILES) $(FT2232FILES) $(AMTJTAGACCELFILES) $(EP93XXFILES) $(AT91RM9200FILES) $(GW16012FILES)
+
+noinst_HEADERS = bitbang.h jtag.h
