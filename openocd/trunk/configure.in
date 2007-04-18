@@ -40,6 +40,11 @@ AC_ARG_ENABLE(ep93xx,
   AS_HELP_STRING([--enable-ep93xx], [Enable building support for EP93xx based SBCs]), 
   [build_ep93xx=$enableval], [build_ep93xx=no])
 
+AC_ARG_ENABLE(usbprog,
+  AS_HELP_STRING([--enable-usbprog], [Enable building support for usbprog (http://www.embedded-projects.net/usnprog)]), 
+  [build_usbprog=$enableval], [build_usbprog=no])
+
+
 AC_ARG_ENABLE(at91rm9200,
   AS_HELP_STRING([--enable-at91rm9200], [Enable building support for AT91RM9200 based SBCs]),
   [build_at91rm9200=$enableval], [build_at91rm9200=no])
@@ -104,6 +109,13 @@ else
   AC_DEFINE(BUILD_EP93XX, 0, [0 if you don't want ep93xx.])
 fi
 
+if test $build_usbprog = yes; then
+  build_bitbang=yes
+  AC_DEFINE(BUILD_USBPROG, 1, [1 if you want usbprog.])
+else
+  AC_DEFINE(BUILD_USBPROG, 0, [0 if you don't want usbprog.])
+fi
+
 if test $build_at91rm9200 = yes; then
   build_bitbang=yes
   AC_DEFINE(BUILD_AT91RM9200, 1, [1 if you want at91rm9200.])
@@ -159,6 +171,7 @@ AM_INIT_AUTOMAKE(openocd, 0.1)
 AM_CONDITIONAL(PARPORT, test $build_parport = yes)
 AM_CONDITIONAL(GIVEIO, test $parport_use_giveio = yes)
 AM_CONDITIONAL(EP93XX, test $build_ep93xx = yes)
+AM_CONDITIONAL(USBPROG, test $build_usbprog = yes)
 AM_CONDITIONAL(AT91RM9200, test $build_at91rm9200 = yes)
 AM_CONDITIONAL(BITBANG, test $build_bitbang = yes)
 AM_CONDITIONAL(FT2232_LIBFTDI, test $build_ft2232_libftdi = yes)
