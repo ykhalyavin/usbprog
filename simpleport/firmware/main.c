@@ -160,7 +160,7 @@ int main(void)
     _USBNAddStringDescriptor(lang); // language descriptor
 
     USBNDeviceManufacture("B.Sauter");
-    USBNDeviceProduct("JTAG OpenOCD");
+    USBNDeviceProduct("SimplePort");
     USBNDeviceSerialNumber("GNU/GPL2");
 
     conf = USBNAddConfiguration();
