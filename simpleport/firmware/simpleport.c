@@ -34,7 +34,15 @@ void set_direction(uint8_t direction)
 void set_port(uint8_t value)
 {
   // BIT0 - BIT 3
-  BIT0_WRITE = 0x0F & value;
+	//PORTB hinbauen	
+	uint8_t port=0;
+  if(value && 0x01) SETBIT(port,BIT0);
+  if(value && 0x02) SETBIT(port,BIT1);
+  if(value && 0x04) SETBIT(port,BIT2);
+  if(value && 0x08) SETBIT(port,BIT3);
+
+	// all together
+	PORTB = port;
 
   //BIT4 - BIT 5
   if(value && 0x10) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4);

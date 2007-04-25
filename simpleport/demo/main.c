@@ -4,7 +4,7 @@
 
 int main()
 {
-  struct simpleport * vp_handle;
+  struct simpleport * sp_handle;
 
   printf("libsimpleport Demo\n");
 	
@@ -15,14 +15,15 @@ int main()
     fprintf(stderr,"unable to open device\n");
 
 
-  simpleport_set_direction(vp_handle,0xFF);
+  simpleport_set_direction(sp_handle,0xFF);
+
   while(1){
-    simpleport_set_port(vp_handle,0xFF);
-    simpleport_set_port(vp_handle,0x00);
+    simpleport_set_port(sp_handle,0xFF);
+    simpleport_set_port(sp_handle,0x00);
   }
 
 
-  simpleport_close(vp_handle);
+  simpleport_close(sp_handle);
 
   return 0;
 }

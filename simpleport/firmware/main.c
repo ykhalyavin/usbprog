@@ -91,14 +91,14 @@ void CommandAnswer(int length)
 
 }
 
-
-
 /* central command parser */
 void Commands(char *buf)
 {
   switch(buf[0]) {
     case PORT_DIRECTION:
-    
+      set_direction(buf[1]);
+      answer[0] = PORT_DIRECTION; 
+      answer[1] = 0x00;
     break;
     case PORT_SET:
       set_port(buf[1]);
@@ -138,7 +138,7 @@ int main(void)
 
     usbprog.datatogl = 0;   // 1MHz
 
-    DDRA = (1 << PA4);
+    //DDRA = (1 << PA4);
 
     USBNDeviceVendorID(0x1781);	//atmel ids
     USBNDeviceProductID(0x0c62); // atmel ids
@@ -159,14 +159,15 @@ int main(void)
     interf = USBNAddInterface(conf,0);
     USBNAlternateSetting(conf,interf,0);
 
-    USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
-    USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&Commands);
+    USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
+    USBNAddOutEndpoint(conf,interf,1,0x03,BULK,64,0,&Commands);
 
     USBNInitMC();
     sei();
 
     // start usb chip
     USBNStart();
+	
 
 
     while(1);
