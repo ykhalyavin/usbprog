@@ -74,7 +74,7 @@ void set_bit(uint8_t bit, uint8_t value)
 }
 
 
-uint8_t get_get(uint8_t bit)
+uint8_t get_bit(uint8_t bit)
 {
   switch(bit) {
     case 0: return IS_BIT0_SET(); break;

@@ -24,6 +24,13 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
+#define UNKOWN_COMMAND	0x00
+#define PORT_DIRECTION	0x01
+#define PORT_SET	0x02
+#define PORT_GET	0x03
+#define PORT_SETBIT	0x04
+#define PORT_GETBIT	0x05
+
 #define F_CPU 16000000
 #include <util/delay.h>
 
@@ -65,17 +72,6 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
   }
 }
 
-void USBToglAndSend(void)
-{
-  if(usbprog.datatogl == 1) {
-    USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
-    usbprog.datatogl = 0;
-  } else {
-    USBNWrite(TXC1, TX_LAST+TX_EN);
-    usbprog.datatogl = 1;
-  }
-}
-
 void CommandAnswer(int length)
 {
   int i;
@@ -85,13 +81,52 @@ void CommandAnswer(int length)
     USBNWrite(TXD1, answer[i]);
 
   /* control togl bit */
-  USBToglAndSend();
+  if(usbprog.datatogl == 1) {
+    USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
+    usbprog.datatogl = 0;
+  } else {
+    USBNWrite(TXC1, TX_LAST+TX_EN);
+    usbprog.datatogl = 1;
+  }
+
 }
 
+
+
 /* central command parser */
-void USB2Port(char *buf)
+void Commands(char *buf)
 {
-  CommandAnswer(1);
+  switch(buf[0]) {
+    case PORT_DIRECTION:
+    
+    break;
+    case PORT_SET:
+      set_port(buf[1]);
+      answer[0] = PORT_SET; 
+      answer[1] = get_port(buf[1]);
+    break;
+    case PORT_GET:
+      answer[0] = PORT_GET; 
+      answer[1] = get_port();
+    break;
+    case PORT_SETBIT:
+      set_bit(buf[1],buf[2]);
+      answer[0] = PORT_SETBIT; 
+      answer[1] = get_bit(buf[1]);
+    break;
+    case PORT_GETBIT:
+      answer[0] = PORT_GETBIT; 
+      answer[1] = get_bit(buf[1]);
+    break;
+    
+    default:
+      // unkown command
+      answer[0] = UNKOWN_COMMAND; 
+      answer[1] = 0x00; 
+  }
+
+  CommandAnswer(2);
+
 }
 
 
@@ -125,7 +160,7 @@ int main(void)
     USBNAlternateSetting(conf,interf,0);
 
     USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
-    USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USB2Port);
+    USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&Commands);
 
     USBNInitMC();
     sei();

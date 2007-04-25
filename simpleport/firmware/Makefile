@@ -444,9 +444,9 @@ reset:
 	avrdude -p m32 -c bsd -E noreset
 
 ready:
-	mv main.hex jtag_openocd.hex
-	hex2bin jtag_openocd.hex
+	mv main.hex simpleport.hex
+	hex2bin simpleport.hex
 
 upgrade:
-	hex2bin jtag_openocd.hex 
-	usbprog jtag_openocd.bin 
+	hex2bin simpleport.hex 
+	usbprog simpleport.bin 

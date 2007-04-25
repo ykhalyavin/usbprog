@@ -99,5 +99,5 @@ void set_direction(uint8_t direction);
 void set_port(uint8_t value);
 uint8_t get_port();
 void set_bit(uint8_t bit, uint8_t value);
-uint8_t get_get(uint8_t bit);
+uint8_t get_bit(uint8_t bit);
 
