@@ -33,7 +33,7 @@ struct simpleport
 };
 
 struct simpleport* simpleport_open();
-void simpleport_open(struct simpleport *simpleport);
+void simpleport_close(struct simpleport *simpleport);
 unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen);
 
 
@@ -41,6 +41,6 @@ unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int m
 void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
 void simpleport_set_port(struct simpleport *simpleport,unsigned char value);
 unsigned char simpleport_get_port(struct simpleport *simpleport);
-void simpleport_set_bit(struct simpleport *simpleport,unsigned char bit, unsigned char value);
-unsigned char simpleport_get_bit(struct simpleport *simpleport, unsigned char bit);
+void simpleport_set_bit(struct simpleport *simpleport,int bit, int value);
+unsigned char simpleport_get_bit(struct simpleport *simpleport, int bit);
 

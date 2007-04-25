@@ -15,14 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-
 #include "simpleport.h"
 
-struct simpleport 
-{
-  struct usb_dev_handle* usb_handle;
-};
+#include <usb.h>
 
 struct simpleport* simpleport_open()
 {
@@ -62,7 +57,7 @@ struct simpleport* simpleport_open()
 }
 
 
-void simpleport_open(struct simpleport *simpleport)
+void simpleport_close(struct simpleport *simpleport)
 {
   usb_close(simpleport->usb_handle);
   free(simpleport);
@@ -72,12 +67,13 @@ void simpleport_open(struct simpleport *simpleport)
 unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen)
 {
   int res = usb_bulk_write(simpleport->usb_handle,2,msg,msglen,100);
-  if(res == msglen)
+  if(res == msglen) {
     res =  usb_bulk_read(simpleport->usb_handle, 3, msg, 2, 100);
     if (res > 0)
       return (unsigned char)msg[1];
     else 
       return -1;
+  }
   else
     return -1;
 }
@@ -102,7 +98,7 @@ unsigned char simpleport_get_port(struct simpleport *simpleport)
 {
   char tmp[2];
   tmp[0] = PORT_GET;
-  tmp[1] = (char)value;
+  tmp[1] = 0x00;
   return simpleport_message(simpleport,tmp,2);
 }
 
