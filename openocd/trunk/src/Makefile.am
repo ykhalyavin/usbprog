@@ -22,6 +22,12 @@ else
 FTDI2232LIB =
 endif
 
+if USBPROG
+USBPROGLIB = -lusb
+else
+USBPROGLIB =
+endif
+
 if IS_WIN32
 if FTD2XXDIR
 FTD2XXLDADD = @WITH_FTD2XX@/FTD2XX.lib
@@ -44,4 +50,4 @@ openocd_LDADD = $(top_builddir)/src/xsvf/libxsvf.a \
 	$(top_builddir)/src/server/libserver.a $(top_builddir)/src/helper/libhelper.a \
 	$(top_builddir)/src/flash/libflash.a $(top_builddir)/src/target/libtarget.a \
 	$(top_builddir)/src/pld/libpld.a \
-	$(FTDI2232LIB) $(FTD2XXLIB) $(MINGWLDADD)
+	$(FTDI2232LIB) $(FTD2XXLIB) $(MINGWLDADD) $(USBPROGLIB)

@@ -415,7 +415,8 @@ void USBFlash(char *buf)
 
 						case 0x01:	//4MHz
 							SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
-  						    SPSR = 0x00;
+  						    //SPSR = 0x00; //ERROR ????
+  						    SPSR = (1<<SPI2X);
 						break;
 
 						case 0x02:	//2MHz

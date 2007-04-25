@@ -152,6 +152,10 @@ jtag_event_callback_t *jtag_event_callbacks;
 	extern jtag_interface_t ep93xx_interface;
 #endif
 
+#if BUILD_USBPROG == 1
+	extern jtag_interface_t usbprog_interface;
+#endif
+
 #if BUILD_AT91RM9200 == 1
 	extern jtag_interface_t at91rm9200_interface;
 #endif
@@ -175,6 +179,9 @@ jtag_interface_t *jtag_interfaces[] = {
 #endif
 #if BUILD_EP93XX == 1
 	&ep93xx_interface,
+#endif
+#if BUILD_USBPROG == 1
+	&usbprog_interface,
 #endif
 #if BUILD_AT91RM9200 == 1
 	&at91rm9200_interface,

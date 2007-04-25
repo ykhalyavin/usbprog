@@ -611,7 +611,7 @@ USBNWrite(EPC1,EP_EN+0x02);      // enable EP1 at adr 1
 
 
 USBNWrite(RXC1,FLUSH);
-USBNWrite(EPC2,EP_EN+0x02); 
+USBNWrite(EPC2,EP_EN+0x03); 
 USBNWrite(RXC1,RX_EN);
 
 
