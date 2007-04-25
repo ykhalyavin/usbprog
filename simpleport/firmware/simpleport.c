@@ -17,57 +17,34 @@
  */
 
 
-#define BIT(x)            (1 << (x))
-#define SETBIT(addr,x)    (addr |= BIT(x))
-#define CLEARBIT(addr,x)  (addr &= ~BIT(x))
+#include "simpleport.h"
+
+void set_direction(uint8_t direction)
+{
+
+}
 
 
-#define JTAG_PORT_INIT          DDRB
-#define JTAG_PORT_WRITE         PORTB
-#define JTAG_PORT_READ          PINB
+void set_port(uint8_t value)
+{
 
-#define TDI	    PB5
-#define TDO	    PB6
-#define TMS	    PB0
-#define TCK	    PB7
+}
 
-#define LED_PIN     PA4
-#define LED_PORT    PORTA
+uint8_t get_port()
+{
 
-#define LED_ON()     (LED_PORT   |=  (1 << LED_PIN))   // red led
-#define LED_OFF()    (LED_PORT   &= ~(1 << LED_PIN))
+}
 
 
-// check if tdo == 1
-#define JTAG_IS_TDO_SET()		    (JTAG_PORT_READ & BIT(TDO))
+void set_bit(uint8_t bit, uint8_t value)
+{
 
-#define JTAG_SET_TCK()                       SETBIT( JTAG_PORT_WRITE, TCK )
-#define JTAG_CLEAR_TCK()                     CLEARBIT( JTAG_PORT_WRITE, TCK )
-//
-#define JTAG_SET_TMS()                       SETBIT( JTAG_PORT_WRITE, TMS )
-#define JTAG_CLEAR_TMS()                     CLEARBIT( JTAG_PORT_WRITE, TMS )
-
-#define JTAG_SET_TDI()                       SETBIT( JTAG_PORT_WRITE, TDI )
-#define JTAG_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
-
-#define JTAG_SET_TCK()                       SETBIT( JTAG_PORT_WRITE, TCK )
-#define JTAG_CLEAR_TCK()                     CLEARBIT( JTAG_PORT_WRITE, TCK )
+}
 
 
-    // start usb chip
-    USBNStart();
-
-    // led
-    DDRA = (1 << PA4);
+void get_get(uint8_t bit)
+{
 
 
-    // use as output
-    JTAG_PORT_INIT |= (1<<TCK)|(1<<TMS)|(1<<TDI);
-    // use as input
-    JTAG_PORT_INIT &=~(1<<TDO);
-    // pullup
-    JTAG_PORT_WRITE |= (1<<TDO);
-
-
-
+}
 
