@@ -16,6 +16,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+#define VID 0x1781
+#define PID 0x0c62
+
+#define UNKOWN_COMMAND  0x00
+#define PORT_DIRECTION  0x01
+#define PORT_SET        0x02
+#define PORT_GET        0x03
+#define PORT_SETBIT     0x04
+#define PORT_GETBIT     0x05
+
 struct simpleport 
 {
   struct usb_dev_handle* usb_handle;
@@ -23,11 +34,13 @@ struct simpleport
 
 struct simpleport* simpleport_open();
 void simpleport_open(struct simpleport *simpleport);
+unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen);
 
 
-void simpleport_set_direction(struct simpleport *simpleport, uint8_t direction);
-void simpleport_set_port(struct simpleport *simpleport,uint8_t value);
-uint8_t simpleport_get_port(struct simpleport *simpleport);
-void simpleport_set_bit(struct simpleport *simpleport,uint8_t bit, uint8_t value);
-uint8_t simpleport_get_bit(struct simpleport *simpleport, uint8_t bit);
+
+void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
+void simpleport_set_port(struct simpleport *simpleport,unsigned char value);
+unsigned char simpleport_get_port(struct simpleport *simpleport);
+void simpleport_set_bit(struct simpleport *simpleport,unsigned char bit, unsigned char value);
+unsigned char simpleport_get_bit(struct simpleport *simpleport, unsigned char bit);
 
