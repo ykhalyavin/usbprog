@@ -115,11 +115,15 @@ void simpleport_set_bit(struct simpleport *simpleport,int bit, int value)
   simpleport_message(simpleport,tmp,3);
 }
 
-unsigned char simpleport_get_bit(struct simpleport *simpleport, int bit)
+int simpleport_get_bit(struct simpleport *simpleport, int bit)
 {
   char tmp[2];
   tmp[0] = PORT_GETBIT;
   tmp[1] = (char)bit;
-  return simpleport_message(simpleport,tmp,2);
+
+  if(simpleport_message(simpleport,tmp,2)>0)
+    return 1;
+  else
+    return 0;
 }
 

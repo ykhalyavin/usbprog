@@ -42,5 +42,5 @@ void simpleport_set_direction(struct simpleport *simpleport, unsigned char direc
 void simpleport_set_port(struct simpleport *simpleport,unsigned char value);
 unsigned char simpleport_get_port(struct simpleport *simpleport);
 void simpleport_set_bit(struct simpleport *simpleport,int bit, int value);
-unsigned char simpleport_get_bit(struct simpleport *simpleport, int bit);
+int simpleport_get_bit(struct simpleport *simpleport, int bit);
 

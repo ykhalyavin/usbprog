@@ -15,14 +15,22 @@ int main()
     fprintf(stderr,"unable to open device\n");
 
 
-  simpleport_set_direction(sp_handle,0xFF);
+  simpleport_set_direction(sp_handle,0xff);
 
   while(1){
     simpleport_set_port(sp_handle,0xFF);
     simpleport_set_port(sp_handle,0x00);
+    //simpleport_set_bit(sp_handle,0,1);
+    //simpleport_set_bit(sp_handle,0,0);
   }
 
-
+/*
+  int i,j;
+  for(j=0;j<7;j++) {
+    i = simpleport_get_bit(sp_handle,j);
+    printf("Pin %i: %i\n",j,i);
+  }
+*/
   simpleport_close(sp_handle);
 
   return 0;
