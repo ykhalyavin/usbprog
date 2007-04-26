@@ -34,18 +34,19 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <simpleport.h>
+
 
 #define VID 0x1781
 #define PID 0x0c62
 
 
 // pins from avr
-#define TDO_BIT		6
-#define TDI_BIT		5
-#define TCK_BIT		7
-#define TMS_BIT		0	
+#define TDO_BIT		0
+#define TDI_BIT		3
+#define TCK_BIT		2
+#define TMS_BIT		1
 
-#define JTAG_SEQUENCE	1
 
 #include <usb.h>
 
@@ -53,7 +54,7 @@
  */
 
 // need for communication with usbprog
-struct usb_dev_handle* usbprog_handle;
+struct simpleport * sp_handle;
 
 
 int usbprog_read(void);
@@ -92,52 +93,53 @@ bitbang_interface_t usbprog_bitbang =
 // read tdo
 int usbprog_read(void)
 {
-	//command message
-	char buf[1];
-	if(usb_bulk_read(usbprog_handle,0x83,buf,1,10)==1) {;
-	  WARNING("usb successfull read");
-	  if (buf[0] == 0)
-	    return 0;
-	  else
-	    return 1;
-	} else {
-	  WARNING("usb timeout while reading");
-	}
-
+  int i = simpleport_get_bit(sp_handle,0);
+  if(i==0)
+    return 0;
+  else
+    return 1;
 }
 
 void usbprog_write(int tck, int tms, int tdi)
 {
-	char output_value;	
-	output_value = 0x00;	
-	
-	if (tck) 
-		output_value |= (1<<TCK_BIT);
-	else
-		output_value &= ~(1<<TCK_BIT);
+	char output_value=0x00;	
 	
 	if (tms)
 		output_value |= (1<<TMS_BIT);
-	else
-		output_value &= ~(1<<TMS_BIT);
+		//simpleport_set_bit(sp_handle,TMS_BIT,1);
+	//else
+		//simpleport_set_bit(sp_handle,TMS_BIT,0);
+		//output_value &= ~(1<<TMS_BIT);
 	
 	if (tdi)
+		//simpleport_set_bit(sp_handle,TDI_BIT,1);
 		output_value |= (1<<TDI_BIT);
-	else
-		output_value &= ~(1<<TDI_BIT);
+	//else
+		//simpleport_set_bit(sp_handle,TDI_BIT,0);
+		//output_value &= ~(1<<TDI_BIT);
+	
+	if (tck) 
+		output_value |= (1<<TCK_BIT);
+		//simpleport_set_bit(sp_handle,TCK_BIT,1);
+	//else
+		//simpleport_set_bit(sp_handle,TCK_BIT,0);
+		//output_value &= ~(1<<TCK_BIT);
 
-	WARNING("seq %02X",output_value);
-
-	char cmd[2];
-	cmd[0] = JTAG_SEQUENCE;
-	cmd[1] = output_value;
-	nanosleep(usbprog_zzzz);
-	usb_bulk_write(usbprog_handle,2,cmd,2,10);
+	simpleport_set_port(sp_handle,output_value);
 }
 
 /* (1) assert or (0) deassert reset lines */
 void usbprog_reset(int trst, int srst)
 {
+	if(trst)
+		simpleport_set_bit(sp_handle,5,1);
+	else
+		simpleport_set_bit(sp_handle,5,0);
+ 
+	if(srst)
+		simpleport_set_bit(sp_handle,4,1);
+	else
+		simpleport_set_bit(sp_handle,4,0);
 
 }
 
@@ -153,41 +155,25 @@ int usbprog_register_commands(struct command_context_s *cmd_ctx)
 
 int usbprog_init(void)
 {
-	int ret;
+	sp_handle = simpleport_open();
 
-	bitbang_interface = &usbprog_bitbang;	
-  
-	usbprog_zzzz.tv_sec = 1;
-  usbprog_zzzz.tv_nsec = 10000000;
-
-	struct usb_bus *busses;
-	struct usb_bus *bus;
-
-	usb_init();
-	usb_find_busses();
-	usb_find_devices();
-
-	busses = usb_get_busses();
-	for (bus = busses; bus; bus = bus->next) {
-		struct usb_device *dev;
-		for (dev = bus->devices; dev; dev = dev->next){
-			if(dev->descriptor.idVendor==VID && dev->descriptor.idProduct==PID ) {
-			        usbprog_handle = usb_open(dev);
-				usb_set_configuration (usbprog_handle,1);
-				usb_claim_interface(usbprog_handle,0);
-				usb_set_altinterface(usbprog_handle,0);
-				WARNING("Find usbprog adapter!");
-				return ERROR_OK;
-			}	
-		}
+        if(sp_handle==0){
+	      WARNING("Can't find usbprog adapter! Please check connection and permissions.");
+	      return ERROR_JTAG_INIT_FAILED;
 	}
 	
-	WARNING("Can't find usbprog adapter! Please check connection and permissions.");
-	return ERROR_JTAG_INIT_FAILED;
+	INFO("Find usbprog (SimplePort) adapter!");
+	
+	bitbang_interface = &usbprog_bitbang;
+
+	simpleport_set_direction(sp_handle,0xFE);
+	
+	return ERROR_OK;
 }
 
 int usbprog_quit(void)
 {
-	usb_close(usbprog_handle);
+	simpleport_set_bit(sp_handle,6,1);
+	simpleport_close(sp_handle);
 	return ERROR_OK;
 }
