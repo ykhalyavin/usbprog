@@ -1,0 +1,8 @@
+
+
+
+Bit numbers	  | BIT6	| BIT5	    | BIT4	| BIT3  | BIT2  | BIT1  | BIT0
+AVR PORTs	  | PA4		| PD1	    | PD0	| PB6	| PB7	| PB0	| PB5
+AVRISP mkII Klon  | red led	| jp2 left  | jp2 rigth | MISO  | SCK   | Reset | MOSI
+JTAGICE mkII Klon | red led	|	    |		| TDI   | TCK   | TMS   | TDO
+SimplePort	  | red led(6)	| 5	    | 4		| 3	| 2	| 1	| 0
