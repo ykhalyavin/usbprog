@@ -56,7 +56,6 @@
 // need for communication with usbprog
 struct simpleport * sp_handle;
 
-
 int usbprog_read(void);
 void usbprog_write(int tck, int tms, int tdi);
 void usbprog_reset(int trst, int srst);
@@ -68,14 +67,13 @@ int usbprog_quit(void);
 
 struct timespec usbprog_zzzz;
 
-
 jtag_interface_t usbprog_interface = 
 {
 	.name = "usbprog",
 	
 	.execute_queue = bitbang_execute_queue,
 
-	.support_pathmove = 1,
+	.support_pathmove = 0,
 
 	.speed = usbprog_speed,	
 	.register_commands = usbprog_register_commands,
@@ -102,45 +100,32 @@ int usbprog_read(void)
 
 void usbprog_write(int tck, int tms, int tdi)
 {
-	char output_value=0x00;	
+	unsigned char output_value=0x00;	
 	
 	if (tms)
 		output_value |= (1<<TMS_BIT);
-		//simpleport_set_bit(sp_handle,TMS_BIT,1);
-	//else
-		//simpleport_set_bit(sp_handle,TMS_BIT,0);
-		//output_value &= ~(1<<TMS_BIT);
-	
 	if (tdi)
-		//simpleport_set_bit(sp_handle,TDI_BIT,1);
 		output_value |= (1<<TDI_BIT);
-	//else
-		//simpleport_set_bit(sp_handle,TDI_BIT,0);
-		//output_value &= ~(1<<TDI_BIT);
-	
 	if (tck) 
 		output_value |= (1<<TCK_BIT);
-		//simpleport_set_bit(sp_handle,TCK_BIT,1);
-	//else
-		//simpleport_set_bit(sp_handle,TCK_BIT,0);
-		//output_value &= ~(1<<TCK_BIT);
-
-	simpleport_set_port(sp_handle,output_value);
+	
+	simpleport_set_port(sp_handle,output_value,0x0E);
 }
 
 /* (1) assert or (0) deassert reset lines */
 void usbprog_reset(int trst, int srst)
 {
-	if(trst)
-		simpleport_set_bit(sp_handle,5,1);
-	else
-		simpleport_set_bit(sp_handle,5,0);
- 
-	if(srst)
-		simpleport_set_bit(sp_handle,4,1);
-	else
-		simpleport_set_bit(sp_handle,4,0);
+	DEBUG("trst: %i, srst: %i", trst, srst);
 
+	if(trst)
+		simpleport_set_bit(sp_handle,5,0);
+	else
+		simpleport_set_bit(sp_handle,5,1);
+ 
+	if(srst) 
+		simpleport_set_bit(sp_handle,4,0);
+	else
+		simpleport_set_bit(sp_handle,4,1);
 }
 
 int usbprog_speed(int speed)
@@ -158,12 +143,15 @@ int usbprog_init(void)
 	sp_handle = simpleport_open();
 
         if(sp_handle==0){
-	      WARNING("Can't find usbprog adapter! Please check connection and permissions.");
+	      ERROR("Can't find usbprog adapter! Please check connection and permissions.");
 	      return ERROR_JTAG_INIT_FAILED;
 	}
 	
 	INFO("Find usbprog (SimplePort) adapter!");
 	
+        usbprog_reset(0, 0);
+        usbprog_write(0, 0, 0);
+
 	bitbang_interface = &usbprog_bitbang;
 
 	simpleport_set_direction(sp_handle,0xFE);
@@ -173,7 +161,6 @@ int usbprog_init(void)
 
 int usbprog_quit(void)
 {
-	simpleport_set_bit(sp_handle,6,1);
 	simpleport_close(sp_handle);
 	return ERROR_OK;
 }
