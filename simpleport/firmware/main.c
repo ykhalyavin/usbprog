@@ -96,27 +96,27 @@ void Commands(char *buf)
 {
   switch(buf[0]) {
     case PORT_DIRECTION:
-      set_direction(buf[1]);
+      set_direction((uint8_t)buf[1]);
       answer[0] = PORT_DIRECTION; 
       answer[1] = 0x00;
     break;
     case PORT_SET:
-      set_port(buf[1]);
+      set_port((uint8_t)buf[1], (uint8_t)buf[2]);
       answer[0] = PORT_SET; 
-      answer[1] = get_port(buf[1]);
+      answer[1] = 0x00;
     break;
     case PORT_GET:
       answer[0] = PORT_GET; 
       answer[1] = get_port();
     break;
     case PORT_SETBIT:
-      set_bit(buf[1],buf[2]);
+      set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
       answer[0] = PORT_SETBIT; 
-      answer[1] = get_bit(buf[1]);
+      answer[1] = 0x00;
     break;
     case PORT_GETBIT:
       answer[0] = PORT_GETBIT; 
-      answer[1] = get_bit(buf[1]);
+      answer[1] = (char)get_bit((uint8_t)buf[1]);
     break;
     
     default:

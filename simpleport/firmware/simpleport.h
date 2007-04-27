@@ -64,7 +64,7 @@
 
 // check if tdo == 1
 #define IS_BIT0_SET()			    (BIT0_READ & BIT(BIT0))
-#define IS_BIT1_SET()			    (BIT1_READ & BIT(BIT1))
+#define IS_BIT1_SET()			    (BIT1_READ & BIT(BIT1)) 
 #define IS_BIT2_SET()			    (BIT2_READ & BIT(BIT2))
 #define IS_BIT3_SET()			    (BIT3_READ & BIT(BIT3))
 
@@ -96,7 +96,7 @@
 
 
 void set_direction(uint8_t direction);
-void set_port(uint8_t value);
+void set_port(uint8_t value, uint8_t mask);
 uint8_t get_port();
 void set_bit(uint8_t bit, uint8_t value);
 uint8_t get_bit(uint8_t bit);
