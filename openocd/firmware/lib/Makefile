@@ -1,10 +1,10 @@
 all:
-	gcc -c simpleport.c
-	ar rcs libsimpleport.a simpleport.o
+	gcc -c jtagusb.c
+	ar rcs libjtagusb.a jtagusb.o
 
 clean:
 	rm *.o
 
 install:
-	cp libsimpleport.a /lib/libsimpleport.a
+	cp libjtagusb.a /lib/libjtagusb.a
 
