@@ -3,7 +3,7 @@ all:
 	ar rcs libjtagusb.a jtagusb.o
 
 clean:
-	rm *.o
+	rm *.o *.a
 
 install:
 	cp libjtagusb.a /lib/libjtagusb.a
