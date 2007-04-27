@@ -1,9 +1,9 @@
 all:
 	gcc -g -c main.c -I ../lib/ -pg
-	gcc -g -o demo main.o -lusb -I ../lib/  -lsimpleport -pg
+	gcc -g -o demo main.o -lusb -I ../lib/  -ljtagusb -pg
 
 install:
-	cp simpleport /usr/bin
+	cp jtagusb /usr/bin
 	
 clean:
-	rm *.o simpleport
+	rm *.o jtagusb
