@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "usbprog_jtag.h"
+#include "usbprogjtag.h"
 
 #include <usb.h>
 
@@ -78,6 +78,11 @@ unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg,
     return -1;
 }
 
+void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag)
+{
+	usbprog_jtag_set_direction(usbprog_jtag, 0xFE);
+}
+
 void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction)
 {
   char tmp[2];
@@ -88,11 +93,10 @@ void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char
 
 void usbprog_jtag_write_slice(struct usbprog_jtag *usbprog_jtag,unsigned char value)
 {
-  char tmp[3];
+  char tmp[2];
   tmp[0] = PORT_SET;
   tmp[1] = (char)value;
-  tmp[2] = (char)mask;
-  usbprog_jtag_message(usbprog_jtag,tmp,3);
+  usbprog_jtag_message(usbprog_jtag,tmp,2);
 }
 
 unsigned char usbprog_jtag_get_port(struct usbprog_jtag *usbprog_jtag)

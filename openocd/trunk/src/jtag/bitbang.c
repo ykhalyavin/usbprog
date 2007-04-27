@@ -23,6 +23,8 @@
 
 #include "bitbang.h"
 
+#define USBPROG 1		//TODO
+
 /* project specific includes */
 #include "log.h"
 #include "types.h"
@@ -139,7 +141,12 @@ void bitbang_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 
 	bitbang_state_move();
 	bitbang_end_state(saved_end_state);
-
+#if USBPROG
+	if (type != SCAN_IN) 
+		bitbang_interface->write_tdi(buffer, scan_size);
+	if (type != SCAN_OUT) 
+		bitbang_interface->read_tdo(buffer, scan_size);
+#else
 	for (bit_cnt = 0; bit_cnt < scan_size; bit_cnt++)
 	{
 		/* if we're just reading the scan, but don't care about the output
@@ -162,7 +169,7 @@ void bitbang_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 				buffer[(bit_cnt)/8] &= ~(1 << ((bit_cnt) % 8));
 		}
 	}
-	
+#endif
 	/* Exit1 -> Pause */
 	bitbang_interface->write(0, 0, 0);
 	bitbang_interface->write(1, 0, 0);

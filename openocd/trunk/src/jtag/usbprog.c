@@ -34,7 +34,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <simpleport.h>
+#include <usbprogjtag.h>
 
 
 #define VID 0x1781
@@ -54,10 +54,12 @@
  */
 
 // need for communication with usbprog
-struct simpleport * sp_handle;
+struct usbprog_jtag * usbprog_jtag_handle;
 
 int usbprog_read(void);
 void usbprog_write(int tck, int tms, int tdi);
+void usbprog_write_tdi(u8 *buffer, int scan_size);
+void usbprog_read_tdo(u8 *buffer, int scan_size);
 void usbprog_reset(int trst, int srst);
 
 int usbprog_speed(int speed);
@@ -85,18 +87,38 @@ bitbang_interface_t usbprog_bitbang =
 {
 	.read = usbprog_read,
 	.write = usbprog_write,
+	.write_tdi = usbprog_write_tdi,
+	.read_tdo = usbprog_read_tdo,
 	.reset = usbprog_reset
 };
 
 // read tdo
 int usbprog_read(void)
 {
-  int i = simpleport_get_bit(sp_handle,0);
+  int i = usbprog_jtag_get_bit(usbprog_jtag_handle,0);
   if(i==0)
     return 0;
   else
     return 1;
 }
+
+void usbprog_write_tdi(u8 *buffer, int scan_size)
+{
+	DEBUG("write tdi %i",scan_size);
+
+	// cut into 64 byte big parts
+
+}
+
+void usbprog_read_tdo(u8 *buffer, int scan_size)
+{
+	DEBUG("write tdi %i",scan_size);
+	int i;
+
+	// cut into 64 byte big parts
+}
+
+
 
 void usbprog_write(int tck, int tms, int tdi)
 {
@@ -109,7 +131,7 @@ void usbprog_write(int tck, int tms, int tdi)
 	if (tck) 
 		output_value |= (1<<TCK_BIT);
 	
-	simpleport_set_port(sp_handle,output_value,0x0E);
+	usbprog_jtag_write_slice(usbprog_jtag_handle,output_value);
 }
 
 /* (1) assert or (0) deassert reset lines */
@@ -118,14 +140,14 @@ void usbprog_reset(int trst, int srst)
 	DEBUG("trst: %i, srst: %i", trst, srst);
 
 	if(trst)
-		simpleport_set_bit(sp_handle,5,0);
+		usbprog_jtag_set_bit(usbprog_jtag_handle,5,0);
 	else
-		simpleport_set_bit(sp_handle,5,1);
+		usbprog_jtag_set_bit(usbprog_jtag_handle,5,1);
  
 	if(srst) 
-		simpleport_set_bit(sp_handle,4,0);
+		usbprog_jtag_set_bit(usbprog_jtag_handle,4,0);
 	else
-		simpleport_set_bit(sp_handle,4,1);
+		usbprog_jtag_set_bit(usbprog_jtag_handle,4,1);
 }
 
 int usbprog_speed(int speed)
@@ -140,27 +162,27 @@ int usbprog_register_commands(struct command_context_s *cmd_ctx)
 
 int usbprog_init(void)
 {
-	sp_handle = simpleport_open();
+	usbprog_jtag_handle = usbprog_jtag_open();
 
-        if(sp_handle==0){
-	      ERROR("Can't find usbprog adapter! Please check connection and permissions.");
+        if(usbprog_jtag_handle==0){
+	      ERROR("Can't find USB JTAG Interface (B.Sauter)! Please check connection and permissions.");
 	      return ERROR_JTAG_INIT_FAILED;
 	}
 	
-	INFO("Find usbprog (SimplePort) adapter!");
+	INFO("USB JTAG Interface ready!");
 	
         usbprog_reset(0, 0);
         usbprog_write(0, 0, 0);
 
 	bitbang_interface = &usbprog_bitbang;
 
-	simpleport_set_direction(sp_handle,0xFE);
+	usbprog_jtag_init(usbprog_jtag_handle);
 	
 	return ERROR_OK;
 }
 
 int usbprog_quit(void)
 {
-	simpleport_close(sp_handle);
+	usbprog_jtag_close(usbprog_jtag_handle);
 	return ERROR_OK;
 }

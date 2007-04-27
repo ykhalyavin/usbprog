@@ -23,7 +23,7 @@ FTDI2232LIB =
 endif
 
 if USBPROG
-USBPROGLIB = -lusb -lsimpleport
+USBPROGLIB = -lusb -lusbprogjtag
 else
 USBPROGLIB =
 endif

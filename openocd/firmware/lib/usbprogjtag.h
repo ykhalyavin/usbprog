@@ -27,20 +27,21 @@
 #define PORT_SETBIT     0x04
 #define PORT_GETBIT     0x05
 
-struct simpleport 
+struct usbprog_jtag 
 {
   struct usb_dev_handle* usb_handle;
 };
 
-struct simpleport* simpleport_open();
-void simpleport_close(struct simpleport *simpleport);
-unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen);
+struct usbprog_jtag* usbprog_jtag_open();
+void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag);
+void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag);
+unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen);
 
 
 
-void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
-void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsigned char mask);
-unsigned char simpleport_get_port(struct simpleport *simpleport);
-void simpleport_set_bit(struct simpleport *simpleport,int bit, int value);
-int simpleport_get_bit(struct simpleport *simpleport, int bit);
+void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction);
+void usbprog_jtag_write_slice(struct usbprog_jtag *usbprog_jtag,unsigned char value);
+unsigned char usbprog_jtag_get_port(struct usbprog_jtag *usbprog_jtag);
+void usbprog_jtag_set_bit(struct usbprog_jtag *usbprog_jtag,int bit, int value);
+int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit);
 

@@ -1,10 +1,10 @@
 all:
-	gcc -c jtagusb.c
-	ar rcs libjtagusb.a jtagusb.o
+	gcc -c usbprogjtag.c
+	ar rcs libusbprogjtag.a usbprogjtag.o
 
 clean:
 	rm *.o *.a
 
 install:
-	cp libjtagusb.a /lib/libjtagusb.a
+	cp libusbprogjtag.a /lib/libusbprogjtag.a
 
