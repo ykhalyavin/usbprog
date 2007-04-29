@@ -59,14 +59,17 @@ void bitbang_state_move(void) {
 	int i=0, tms=0;
 	u8 tms_scan = TAP_MOVE(cur_state, end_state);
 	
-//#if USBPROG
+#if USBPROG
 	bitbang_interface->write_tms((char)tms_scan);
-//#endif
+#endif
 	for (i = 0; i < 7; i++)
 	{
 		tms = (tms_scan >> i) & 1;
-		//bitbang_interface->write(0, tms, 0);
-		//bitbang_interface->write(1, tms, 0);
+		#if USBPROG
+		#else
+		bitbang_interface->write(0, tms, 0);
+		bitbang_interface->write(1, tms, 0);
+		#endif
 	}
 	bitbang_interface->write(0, tms, 0);
 	
