@@ -96,6 +96,7 @@
 
 
 void write_tdi(char * buf, uint16_t size);
+void write_tms(uint8_t  buf);
 void write_and_read(char * buf, uint16_t size);
 void read_tdo(char * buf, uint16_t size);
 

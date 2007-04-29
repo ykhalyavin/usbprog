@@ -87,6 +87,32 @@ void write_tdi(char * buf, uint16_t size)
   }
 }
 
+void write_tms(uint8_t buf)
+{
+
+  uint8_t i;
+  CLEARBIT(BIT3_WRITE,BIT3);
+  // until byte 3 (0=cmd,1,2=size,3... data)
+  uint8_t tms; 
+  for (i = 0; i < 7; i++) {
+    // write tdi
+    
+    // control tdi
+    if ((buf >> i) & 1) //tdi 1
+      SETBIT(BIT1_WRITE,BIT1);
+    else // tdi 0
+      CLEARBIT(BIT1_WRITE,BIT1);
+    
+    // clock
+    CLEARBIT(BIT2_WRITE,BIT2);
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    SETBIT(BIT2_WRITE,BIT2);
+  }
+}
+
 void read_tdo(char * buf, uint16_t size)
 {
   uint16_t i,j;

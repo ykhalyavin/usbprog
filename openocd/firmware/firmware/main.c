@@ -33,6 +33,7 @@
 #define WRITE_TDI	0x06
 #define READ_TDO	0x07
 #define WRITE_AND_READ	0x08
+#define WRITE_TMS	0x09
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -130,6 +131,13 @@ void Commands(char *buf)
     
     case WRITE_TDI:
       write_tdi(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      //answer[0] = WRITE_TDI; 
+      //answer[1] = 0x00;
+      //CommandAnswer(2);
+    break;
+ 
+    case WRITE_TMS:
+      write_tms((uint8_t)buf[1]);
       //answer[0] = WRITE_TDI; 
       //answer[1] = 0x00;
       //CommandAnswer(2);

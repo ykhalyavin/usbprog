@@ -59,6 +59,7 @@ struct usbprog_jtag * usbprog_jtag_handle;
 int usbprog_read(void);
 void usbprog_write(int tck, int tms, int tdi);
 void usbprog_write_tdi(u8 *buffer, int scan_size);
+void usbprog_write_tms(u8 tms_scan);
 void usbprog_read_tdo(u8 *buffer, int scan_size);
 void usbprog_write_and_read(u8 *buffer, int scan_size);
 void usbprog_reset(int trst, int srst);
@@ -89,6 +90,7 @@ bitbang_interface_t usbprog_bitbang =
 	.read = usbprog_read,
 	.write = usbprog_write,
 	.write_tdi = usbprog_write_tdi,
+	.write_tms = usbprog_write_tms,
 	.read_tdo = usbprog_read_tdo,
 	.write_and_read = usbprog_write_and_read,
 	.reset = usbprog_reset
@@ -114,6 +116,12 @@ void usbprog_write_tdi(u8 *buffer, int scan_size)
 {
 	DEBUG("write tdi %i",scan_size);
 	usbprog_jtag_write_tdi(usbprog_jtag_handle,buffer,scan_size);
+}
+
+void usbprog_write_tms(u8 tms_scan)
+{
+	//DEBUG("write tms %i",scan_size);
+	usbprog_jtag_write_tms(usbprog_jtag_handle,tms_scan);
 }
 
 void usbprog_read_tdo(u8 *buffer, int scan_size)

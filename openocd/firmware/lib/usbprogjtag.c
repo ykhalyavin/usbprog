@@ -197,10 +197,17 @@ void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, in
     }
     usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
   }
-  usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 2, 100);
-
+  //usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 2, 100);
 }
 
+
+void usbprog_jtag_write_tms(struct usbprog_jtag *usbprog_jtag, char tms_scan)
+{
+  char tmp[2];	// fastes packet size for usb controller
+  tmp[0] = WRITE_TMS;
+  tmp[1] = tms_scan;
+  usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,2,1000);
+}
 
 
 void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction)

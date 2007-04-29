@@ -29,6 +29,7 @@
 #define WRITE_TDI     	0x06
 #define READ_TDO     	0x07
 #define WRITE_AND_READ 	0x08
+#define WRITE_TMS     	0x09
 
 struct usbprog_jtag 
 {
@@ -44,6 +45,7 @@ unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg,
 void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
+void usbprog_jtag_write_tms(struct usbprog_jtag *usbprog_jtag, char tms_scan);
 
 
 void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction);
