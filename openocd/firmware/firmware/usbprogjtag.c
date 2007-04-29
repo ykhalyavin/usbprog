@@ -16,7 +16,111 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "simpleport.h"
+#include "usbprogjtag.h"
+
+void write_and_read(char * buf, uint16_t size)
+{
+  uint16_t i,j;
+  // until byte 3 (0=cmd,1,2=size,3... data)
+  uint16_t bit_cnt;
+  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
+    // write tdi
+    
+    // control tdi
+    if ((buf[(bit_cnt+24)/8] >> ((bit_cnt+24) % 8)) & 0x1) //tdi 1
+      SETBIT(BIT3_WRITE,BIT3);
+    else // tdi 0
+      CLEARBIT(BIT3_WRITE,BIT3);
+    
+    // control tms line - goes to high at last bit
+    if(size != 488){
+      if(bit_cnt==(size-1))
+	SETBIT(BIT1_WRITE,BIT1);
+      else
+	CLEARBIT(BIT1_WRITE,BIT1);
+    }
+    
+    // clock
+    CLEARBIT(BIT2_WRITE,BIT2);
+    //asm("nop");
+    //for(i=0;i<0xFF;i++)asm("nop");
+    asm("nop");
+    SETBIT(BIT2_WRITE,BIT2);
+
+    // read tdo
+    if(IS_BIT0_SET())
+      buf[(bit_cnt+24)/8] |= 1 << ((bit_cnt+24) % 8);
+    else
+      buf[(bit_cnt+24)/8] &= ~(1 << ((bit_cnt+24) % 8));
+  }
+}
+
+
+void write_tdi(char * buf, uint16_t size)
+{
+
+  uint16_t i,j;
+  // until byte 3 (0=cmd,1,2=size,3... data)
+  uint16_t bit_cnt;
+  
+  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
+    // write tdi
+    
+    // control tdi
+    if ((buf[(bit_cnt+24)/8] >> ((bit_cnt+24) % 8)) & 0x1) //tdi 1
+      SETBIT(BIT3_WRITE,BIT3);
+    else // tdi 0
+      CLEARBIT(BIT3_WRITE,BIT3);
+    // control tms line - goes to high at last bit
+    if(size != 488){
+      if(bit_cnt==(size-1))
+	SETBIT(BIT1_WRITE,BIT1);
+      else
+	CLEARBIT(BIT1_WRITE,BIT1);
+    }
+    // clock
+    CLEARBIT(BIT2_WRITE,BIT2);
+    asm("nop");
+    //for(i=0;i<0xFF;i++)asm("nop");
+    //asm("nop");
+    SETBIT(BIT2_WRITE,BIT2);
+  }
+}
+
+void read_tdo(char * buf, uint16_t size)
+{
+  uint16_t i,j;
+  // until byte 3 (0=cmd,1,2=size,3... data)
+  uint16_t bit_cnt;
+  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
+    
+    // control tms line - goes to high at last bit
+    if(size != 488){
+      if(bit_cnt==(size-1))
+	SETBIT(BIT1_WRITE,BIT1);
+      else
+	CLEARBIT(BIT1_WRITE,BIT1);
+    }
+    
+    // clock
+    CLEARBIT(BIT2_WRITE,BIT2);
+    asm("nop");
+    //for(i=0;i<0xFF;i++)asm("nop");
+    //asm("nop");
+    SETBIT(BIT2_WRITE,BIT2);
+
+    // read tdo
+    if(IS_BIT0_SET())
+      buf[(bit_cnt+24)/8] |= 1 << ((bit_cnt+24) % 8);
+    else
+      buf[(bit_cnt+24)/8] &= ~(1 << ((bit_cnt+24) % 8));
+  }
+
+}
+
+
+
+
 
 void set_direction(uint8_t direction)
 {
@@ -31,7 +135,7 @@ void set_direction(uint8_t direction)
 }
 
 
-void set_port(uint8_t value, uint8_t mask)
+void set_port(uint8_t value)
 {
   // BIT0 - BIT 3
   //PORTB hinbauen	
@@ -46,7 +150,7 @@ void set_port(uint8_t value, uint8_t mask)
   //PORTB = port;
 */ 
   
-	if(value & 0x01) SETBIT(BIT0_WRITE,BIT0); else CLEARBIT(BIT0_WRITE,BIT0);
+  if(value & 0x01) SETBIT(BIT0_WRITE,BIT0); else CLEARBIT(BIT0_WRITE,BIT0);
   if(value & 0x02) SETBIT(BIT1_WRITE,BIT1); else CLEARBIT(BIT1_WRITE,BIT1);
   if(value & 0x04) SETBIT(BIT2_WRITE,BIT2); else CLEARBIT(BIT2_WRITE,BIT2);
   if(value & 0x08) SETBIT(BIT3_WRITE,BIT3); else CLEARBIT(BIT3_WRITE,BIT3);

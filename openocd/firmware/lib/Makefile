@@ -7,4 +7,5 @@ clean:
 
 install:
 	cp libusbprogjtag.a /lib/libusbprogjtag.a
+	cp usbprogjtag.h /usr/include/
 

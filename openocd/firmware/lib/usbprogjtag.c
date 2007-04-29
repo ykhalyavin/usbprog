@@ -67,7 +67,9 @@ void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag)
 unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen)
 {
   int res = usb_bulk_write(usbprog_jtag->usb_handle,3,msg,msglen,100);
-  if(res == msglen) {
+	if(msg[0]==2)
+		return 1;  
+	if(res == msglen) {
     res =  usb_bulk_read(usbprog_jtag->usb_handle,2, msg, 2, 100);
     if (res > 0)
       return (unsigned char)msg[1];
@@ -76,12 +78,130 @@ unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg,
   }
   else
     return -1;
+	
+	return 0;
 }
 
 void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag)
 {
 	usbprog_jtag_set_direction(usbprog_jtag, 0xFE);
 }
+
+
+void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffer, int size)
+{
+  char tmp[64];	// fastes packet size for usb controller
+  int send_bits,bufindex=0,fillindex=0,i,j,complete=size,loops;
+
+  char swap;
+  // 61 byte can be transfered (488 bit)
+    
+  while(size > 0) {  
+    
+    if(size > 488) {
+      send_bits = 488;
+      size = size - 488;
+      loops = 61;
+    } else {
+      send_bits = size;
+      loops = size/8;
+      //if(loops==0)
+			loops++;
+      size = 0;
+    }
+    tmp[0] = WRITE_AND_READ;
+    tmp[1] = (char)(send_bits>>8); // high 
+    tmp[2] = (char)(send_bits);    // low
+    i=0; 
+
+    for(i=0;i < loops ;i++) {
+			tmp[3+i]=buffer[bufindex];
+			bufindex++;
+    }
+    
+    usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
+    
+    while(usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 64, 1000) < 1);
+
+    for(i=0;i<loops ;i++) {
+      swap =  tmp[3+i];
+      buffer[fillindex++] = swap;
+     } 
+  }
+}
+
+
+void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int size)
+{
+  char tmp[64];	// fastes packet size for usb controller
+  int send_bits,bufindex=0,fillindex=0,i,j,complete=size,loops;
+
+  char swap;
+  // 61 byte can be transfered (488 bit)
+    
+  while(size > 0) {  
+    
+    if(size > 488) {
+      send_bits = 488;
+      size = size - 488;
+      loops = 61;
+    } else {
+      send_bits = size;
+      loops = size/8;
+      //if(loops==0)
+			loops++;
+      size = 0;
+    }
+    tmp[0] = WRITE_AND_READ;
+    tmp[1] = (char)(send_bits>>8); // high 
+    tmp[2] = (char)(send_bits);    // low
+    
+    usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,3,1000);
+    
+    while(usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 64, 10) < 1);
+
+    for(i=0;i<loops ;i++) {
+      swap =  tmp[3+i];
+      buffer[fillindex++] = swap;
+     } 
+  }
+
+}
+
+void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, int size)
+{
+  char tmp[64];	// fastes packet size for usb controller
+  int send_bits,bufindex=0,fillindex=0,i,j,complete=size,loops;
+  char swap;
+  // 61 byte can be transfered (488 bit)
+  while(size > 0) {  
+    if(size > 488) {
+      send_bits = 488;
+      size = size - 488;
+      loops = 61;
+    } else {
+      send_bits = size;
+      loops = size/8;
+      //if(loops==0)
+			loops++;
+      size = 0;
+    }
+    tmp[0] = WRITE_TDI;
+    tmp[1] = (char)(send_bits>>8); // high 
+    tmp[2] = (char)(send_bits);    // low
+    i=0; 
+
+    for(i=0;i < loops ;i++) {
+			tmp[3+i]=buffer[bufindex];
+			bufindex++;
+    }
+    usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
+  }
+  usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 2, 100);
+
+}
+
+
 
 void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction)
 {

@@ -23,7 +23,7 @@
 
 #include "bitbang.h"
 
-#define USBPROG 1		//TODO
+#define USBPROG 1	//TODO
 
 /* project specific includes */
 #include "log.h"
@@ -141,11 +141,18 @@ void bitbang_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 
 	bitbang_state_move();
 	bitbang_end_state(saved_end_state);
+
 #if USBPROG
-	if (type != SCAN_IN) 
+
+	if (type == SCAN_OUT) {
 		bitbang_interface->write_tdi(buffer, scan_size);
-	if (type != SCAN_OUT) 
+	}
+	if (type == SCAN_IN) {
 		bitbang_interface->read_tdo(buffer, scan_size);
+	}
+	if (type == SCAN_IO) {
+		bitbang_interface->write_and_read(buffer, scan_size);
+	}
 #else
 	for (bit_cnt = 0; bit_cnt < scan_size; bit_cnt++)
 	{
@@ -154,15 +161,18 @@ void bitbang_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 		 * as it removes the dependency on an uninitialised value
 		 */ 
 		if ((type != SCAN_IN) && ((buffer[bit_cnt/8] >> (bit_cnt % 8)) & 0x1)) {
+			//DEBUG("bb: tdi 1 (%i)",bit_cnt);
 			bitbang_interface->write(0, (bit_cnt==scan_size-1) ? 1 : 0, 1);
 			bitbang_interface->write(1, (bit_cnt==scan_size-1) ? 1 : 0, 1);
 		} else {
+			//DEBUG("bb: tdi 0 (%i)",bit_cnt);
 			bitbang_interface->write(0, (bit_cnt==scan_size-1) ? 1 : 0, 0);
 			bitbang_interface->write(1, (bit_cnt==scan_size-1) ? 1 : 0, 0);
 		}
 		
 		if (type != SCAN_OUT)
 		{
+			//DEBUG("bb: read (%i)",bit_cnt);
 			if (bitbang_interface->read())
 				buffer[(bit_cnt)/8] |= 1 << ((bit_cnt) % 8);
 			else

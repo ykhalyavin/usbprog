@@ -26,6 +26,9 @@
 #define PORT_GET        0x03
 #define PORT_SETBIT     0x04
 #define PORT_GETBIT     0x05
+#define WRITE_TDI     	0x06
+#define READ_TDO     	0x07
+#define WRITE_AND_READ 	0x08
 
 struct usbprog_jtag 
 {
@@ -37,6 +40,10 @@ void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag);
 void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag);
 unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen);
 
+
+void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
+void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
+void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 
 
 void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction);

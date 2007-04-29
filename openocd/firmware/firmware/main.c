@@ -30,6 +30,9 @@
 #define PORT_GET	0x03
 #define PORT_SETBIT	0x04
 #define PORT_GETBIT	0x05
+#define WRITE_TDI	0x06
+#define READ_TDO	0x07
+#define WRITE_AND_READ	0x08
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -39,7 +42,7 @@
 #include "../../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
-#include "simpleport.h"
+#include "usbprogjtag.h"
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -94,38 +97,65 @@ void CommandAnswer(int length)
 /* central command parser */
 void Commands(char *buf)
 {
+  int i;
   switch(buf[0]) {
     case PORT_DIRECTION:
       set_direction((uint8_t)buf[1]);
-      answer[0] = PORT_DIRECTION; 
-      answer[1] = 0x00;
+      //answer[0] = PORT_DIRECTION; 
+      //answer[1] = 0x00;
+      //CommandAnswer(2);
     break;
     case PORT_SET:
-      set_port((uint8_t)buf[1], (uint8_t)buf[2]);
-      answer[0] = PORT_SET; 
-      answer[1] = 0x00;
+      set_port((uint8_t)buf[1]);
+      //answer[0] = PORT_SET; 
+      //answer[1] = 0x00;
+      //CommandAnswer(2);
     break;
     case PORT_GET:
       answer[0] = PORT_GET; 
       answer[1] = get_port();
+      CommandAnswer(2);
     break;
     case PORT_SETBIT:
       set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
-      answer[0] = PORT_SETBIT; 
-      answer[1] = 0x00;
+      //answer[0] = PORT_SETBIT; 
+      //answer[1] = 0x00;
+      //CommandAnswer(2);
     break;
     case PORT_GETBIT:
       answer[0] = PORT_GETBIT; 
       answer[1] = (char)get_bit((uint8_t)buf[1]);
+      CommandAnswer(2);
+    break;
+    
+    case WRITE_TDI:
+      write_tdi(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      //answer[0] = WRITE_TDI; 
+      //answer[1] = 0x00;
+      //CommandAnswer(2);
+    break;
+
+    case READ_TDO:
+      read_tdo(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      for(i=0;i<64;i++)
+	answer[i]=buf[i];
+      CommandAnswer(64);
+    break;
+
+    case WRITE_AND_READ:
+      write_and_read(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      for(i=0;i<64;i++)
+	answer[i]=buf[i];
+      CommandAnswer(64);
     break;
     
     default:
       // unkown command
       answer[0] = UNKOWN_COMMAND; 
       answer[1] = 0x00; 
+      CommandAnswer(2);
   }
 
-  CommandAnswer(2);
 
 }
 

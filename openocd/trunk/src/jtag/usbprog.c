@@ -60,6 +60,7 @@ int usbprog_read(void);
 void usbprog_write(int tck, int tms, int tdi);
 void usbprog_write_tdi(u8 *buffer, int scan_size);
 void usbprog_read_tdo(u8 *buffer, int scan_size);
+void usbprog_write_and_read(u8 *buffer, int scan_size);
 void usbprog_reset(int trst, int srst);
 
 int usbprog_speed(int speed);
@@ -89,6 +90,7 @@ bitbang_interface_t usbprog_bitbang =
 	.write = usbprog_write,
 	.write_tdi = usbprog_write_tdi,
 	.read_tdo = usbprog_read_tdo,
+	.write_and_read = usbprog_write_and_read,
 	.reset = usbprog_reset
 };
 
@@ -102,26 +104,28 @@ int usbprog_read(void)
     return 1;
 }
 
+void usbprog_write_and_read(u8 *buffer, int scan_size)
+{
+	DEBUG("write and read %i",scan_size);
+	usbprog_jtag_write_and_read(usbprog_jtag_handle,buffer,scan_size);	
+}
+
 void usbprog_write_tdi(u8 *buffer, int scan_size)
 {
 	DEBUG("write tdi %i",scan_size);
-
-	// cut into 64 byte big parts
-
+	usbprog_jtag_write_tdi(usbprog_jtag_handle,buffer,scan_size);
 }
 
 void usbprog_read_tdo(u8 *buffer, int scan_size)
 {
-	DEBUG("write tdi %i",scan_size);
-	int i;
-
-	// cut into 64 byte big parts
+	DEBUG("read tdo %i",scan_size);
+	usbprog_jtag_read_tdo(usbprog_jtag_handle,buffer,scan_size);
 }
-
 
 
 void usbprog_write(int tck, int tms, int tdi)
 {
+	//DEBUG("slice tck %i tms %i tdi %i",tck,tms,tdi);
 	unsigned char output_value=0x00;	
 	
 	if (tms)

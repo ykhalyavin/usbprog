@@ -32,6 +32,7 @@ typedef struct bitbang_interface_s
 	#if USBPROG
 	void (*write_tdi)(u8 *buffer, int scan_size);
 	void (*read_tdo)(u8 *buffer, int scan_size);
+	void (*write_and_read)(u8 *buffer, int scan_size);
 	#endif
 	void (*reset)(int trst, int srst);
 } bitbang_interface_t;
