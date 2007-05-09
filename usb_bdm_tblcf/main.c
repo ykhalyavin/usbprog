@@ -87,8 +87,8 @@ int main(void)
 
     //DDRA = (1 << PA4);
 
-    USBNDeviceVendorID(0x1781);	//atmel ids
-    USBNDeviceProductID(0x0c62); // atmel ids
+    USBNDeviceVendorID(0x2504);	//atmel ids
+    USBNDeviceProductID(0x0110); // atmel ids
 
     USBNDeviceBCDDevice(0x0200);
 
@@ -96,8 +96,8 @@ int main(void)
     _USBNAddStringDescriptor(lang); // language descriptor
 
     /* we are using Freescale VID so it is only fair to say that this is a Freescale product :-) */
-    USBNDeviceManufacture("Freescale");
-    USBNDeviceProduct("Turbo BDM Light ColdFire v0.4");
+    USBNDeviceManufacture("B.Sauter");
+    USBNDeviceProduct("usbprog BDM Interface");
     USBNDeviceSerialNumber("GNU/GPL2");
 
     conf = USBNAddConfiguration();

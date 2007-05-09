@@ -18,7 +18,7 @@
 
 #include <avr/io.h>
 #include "usbn2mc.h"
-#include "uart.h"
+//#include "uart.h"
 
 // ********************************************************************
 // This subroutine handles the communication with usbn9604          
@@ -89,6 +89,6 @@ inline void USBNBurstWrite(unsigned char Data)
 
 void USBNDebug(char *msg)
 {
-  UARTWrite(msg);
+  //UARTWrite(msg);
 }
 
