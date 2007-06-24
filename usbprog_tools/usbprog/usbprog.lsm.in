@@ -1,0 +1,21 @@
+Begin3
+Title:		usbprog
+Version:	@VERSION@
+Entered-date:	@ISODATE@
+Description:	Change easy the firmware on the usbprog adapter.
+		@configure_input@
+		Please edit usbprog.lsm.in to fix the Keywords and
+		Primary-site entries, add several more lines of
+		description here if appropriate, and to delete these
+		instructions.
+Keywords:	[substitute your keywords here]
+Author: 	sauter@ixbat.de (Benedikt Sauter)
+Maintained-by:	sauter@ixbat.de (Benedikt Sauter)
+Primary-site:	metlab.unc.edu pub/Linux/apps/some/directory
+		31k usbprog-@VERSION@.tar.gz
+		500  usbprog.lsm
+Alternate-site: 
+Original-site:  
+Platforms:      
+Copying-policy:	GNU copyleft
+End

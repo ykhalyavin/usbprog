@@ -48,7 +48,6 @@ void avrupdate_net_flash_version(char * url,int number,int vendorid, int product
 struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number);
 
 
-
 /* implicit function */
 
 void avrupdate_flash_version(int version);
