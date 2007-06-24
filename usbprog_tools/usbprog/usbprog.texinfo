@@ -2,7 +2,7 @@
 @c This file uses the @command command introduced in Texinfo 4.0.
 @c %**start of header
 @setfilename usbprog.info
-@settitle Change easy the firmware on the usbprog adapter.
+@settitle Change easy the firmware of the usbprog adapter
 @finalout
 @setchapternewpage odd
 @c %**end of header

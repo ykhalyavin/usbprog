@@ -29,6 +29,7 @@ struct usb_dev_handle* usbprog_open_serial(short vendorid, short productid, char
 
 
 int usbprog_close(usb_dev_handle* dev);
+
 int usbprog_print_devices();
 int usbprog_vendor_mode(usb_dev_handle* dev);
 

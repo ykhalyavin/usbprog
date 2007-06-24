@@ -52,6 +52,7 @@ static struct option const long_options[] =
   {"verbose", no_argument, 0, 'v'},
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
+  {"devices", no_argument, 0, 'd'},
   {NULL, 0, NULL, 0}
 };
 
@@ -83,7 +84,8 @@ decode_switches (int argc, char **argv)
   while ((c = getopt_long (argc, argv, 
 			   "v"	/* verbose */
 			   "h"	/* help */
-			   "V",	/* version */
+			   "V"	/* version */
+			   "d",	/* devices */
 			   long_options, (int *) 0)) != EOF)
     {
       switch (c)
@@ -96,6 +98,9 @@ decode_switches (int argc, char **argv)
 	  exit (0);
 
 	case 'h':
+	  usage (0);
+	
+	case 'd':
 	  usage (0);
 
 	default:
@@ -111,13 +116,17 @@ static void
 usage (int status)
 {
   printf (_("%s - \
-Change easy the firmware on the usbprog adapter.\n"), program_name);
+Change easy the firmware of the usbprog adapter\n"), program_name);
   printf (_("Usage: %s [OPTION]... [FILE]...\n"), program_name);
   printf (_("\
 Options:\n\
   --verbose                  print more information\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
+  -d, --devices              print all connected usb devices\n\
+  -n, --netlist              print online files on the netlist\n\
+  -U <devicenumber>:<local or online:<filename or filenumber>\n\
+			     update the firmware on the usbprog adapter\n\
 "));
   exit (status);
 }

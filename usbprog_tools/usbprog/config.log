@@ -662,6 +662,7 @@ config.status:645: creating Makefile
 config.status:645: creating usbprog.lsm
 config.status:645: creating usbprog.spec
 config.status:645: creating config.h
+config.status:884: config.h is unchanged
 config.status:930: executing depfiles commands
 
 ## ---------------- ##
