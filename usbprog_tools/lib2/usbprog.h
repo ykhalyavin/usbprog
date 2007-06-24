@@ -20,5 +20,34 @@
 */
 
 
-void 
+
+int usbprog_init();
+
+struct usb_dev_handle* usbprog_open(short vendorid, short productid);
+struct usb_dev_handle* usbprog_open_number(int number);
+struct usb_dev_handle* usbprog_open_serial(short vendorid, short productid, char *serial);
+
+
+int usbprog_close(usb_dev_handle* dev);
+int usbprog_print_devices();
+int usbprog_vendor_mode(usb_dev_handle* dev);
+
+/**
+ * ask the usb device for the version id to check if the vendor request
+ * is implemented and the device is so an usbprog compatible.
+ */
+int usbprog_vendor_ask(usb_dev_handle* dev);
+
+
+void usbprog_flash_bin(struct usb_dev_handle* dev,char *file);
+
+void usbprog_print_netlist(char * url);
+int usbprog_download(char * url, int filenumber);
+
+
+
+
+
+
+
 
