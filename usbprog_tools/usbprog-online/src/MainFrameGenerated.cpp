@@ -19,7 +19,8 @@
 
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE( MainFrameGenerated, wxFrame )
-	EVT_BUTTON( wxIDBtnFindAdapter, MainFrameGenerated::_wxFB_OnBtnFindAdapterClick )
+	EVT_BUTTON( wxIDBtnRefreshList, MainFrameGenerated::_wxFB_OnBtnRefreshListClick )
+	EVT_BUTTON( wxIDBtnConnect, MainFrameGenerated::_wxFB_OnBtnConnectClick )
 	EVT_LIST_ITEM_DESELECTED( wxIDListCtrlOnlineVersions, MainFrameGenerated::_wxFB_OnListCtrlOnlineVersionsItemDeselected )
 	EVT_LIST_ITEM_SELECTED( wxIDListCtrlOnlineVersions, MainFrameGenerated::_wxFB_OnListCtrlOnlineVersionsItemSelected )
 	EVT_BUTTON( wxIDBtnDownloadAndFlash, MainFrameGenerated::_wxFB_OnBtnFlashClick )
@@ -53,7 +54,7 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	
 	bSizer2->Add( m_staticText3, 1, wxALL, 5 );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("For more Information please visit:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Find more information on "), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_staticText4, 0, wxALL, 5 );
 	
 	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("http://www.embedded-projects.net"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -73,6 +74,25 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
+	m_staticText6211 = new wxStaticText( panelStatus, wxID_ANY, wxT("Selected Adapter:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6211->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
+	
+	bSizer9->Add( m_staticText6211, 0, wxALL, 5 );
+	
+	listCtrlUSBDevices = new wxListCtrl( panelStatus, wxIDListCtrlUSBDevices, wxDefaultPosition, wxSize( -1,-1 ), wxLC_REPORT );
+	bSizer9->Add( listCtrlUSBDevices, 5, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer101;
+	bSizer101 = new wxBoxSizer( wxHORIZONTAL );
+	
+	btnRefreshList = new wxButton( panelStatus, wxIDBtnRefreshList, wxT("Refresh List"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer101->Add( btnRefreshList, 0, wxALL, 5 );
+	
+	btnConnect = new wxButton( panelStatus, wxIDBtnConnect, wxT("Connect to usbprog-adapter"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer101->Add( btnConnect, 0, wxALL, 5 );
+	
+	bSizer9->Add( bSizer101, 1, wxEXPAND, 5 );
+	
 	m_staticText621 = new wxStaticText( panelStatus, wxID_ANY, wxT("Connection status:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText621->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
 	
@@ -80,21 +100,6 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	
 	lblConnectionStatus = new wxStaticText( panelStatus, wxID_ANY, wxT("Not connected to usbprog-adapter"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
 	bSizer9->Add( lblConnectionStatus, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer9->Add( 0, 10, 0, wxEXPAND, 0 );
-	
-	m_staticText62 = new wxStaticText( panelStatus, wxID_ANY, wxT("Current firmware:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText62->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
-	
-	bSizer9->Add( m_staticText62, 0, wxALL, 5 );
-	
-	lblCurrentFirmware = new wxStaticText( panelStatus, wxID_ANY, wxT("No usbprog-adapter found"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
-	bSizer9->Add( lblCurrentFirmware, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer9->Add( 0, 10, 1, wxEXPAND, 0 );
-	
-	btnFindAdapter = new wxButton( panelStatus, wxIDBtnFindAdapter, wxT("ReConnect usbprog-adapter"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer9->Add( btnFindAdapter, 0, wxALL, 5 );
 	
 	panelStatus->SetSizer( bSizer9 );
 	panelStatus->Layout();

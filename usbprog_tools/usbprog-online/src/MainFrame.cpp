@@ -20,6 +20,12 @@
 #include <iostream>
 #include <wx/filename.h>
 #include "../images/hardware.xpm"
+#include <stdexcept>
+
+
+using namespace std;
+
+using std::runtime_error;
 
 
 //helper functions
@@ -52,7 +58,6 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 MainFrame::MainFrame(wxFrame *frame)
 	: MainFrameGenerated(frame)
 {
-
 		wxLog *logger=new wxLogTextCtrl(textCtrlAppLog);
   		wxLog::SetActiveTarget(logger);
   		wxLog::SetVerbose(true);
@@ -62,15 +67,17 @@ MainFrame::MainFrame(wxFrame *frame)
 		listCtrlOnlineVersions->InsertColumn(2,_T("Vers."),wxLIST_FORMAT_LEFT, 40);
 		listCtrlOnlineVersions->InsertColumn(3,_T("Description"),wxLIST_FORMAT_LEFT,330);
 	
+		listCtrlUSBDevices->InsertColumn(2,_T("Manufacturer"),wxLIST_FORMAT_LEFT, 260);
+		listCtrlUSBDevices->InsertColumn(3,_T("Product"),wxLIST_FORMAT_LEFT,260);
+	
 		btnDownloadAndFlash->Enable(false);
 		
-		//teUSBUpdateVID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_VENDOR_ID));
-		//teUSBUpdatePID->SetValue(wxString::Format(_T("0x%4X"),UPDATE_PRODUCT_ID));
-		lblCurrentFirmware->SetLabel(_T(""));
 		hardware = new wxBitmap((const char **) hardware_xpm);
 		m_bitmap1->SetBitmap(*hardware);
-		FindAdapter();
 		RefreshOnlineVersions();
+		RefreshUSBDevices();
+		CloseSession();
+		SwitchToAdapterSelection();
 }
 
 MainFrame::~MainFrame()
@@ -87,22 +94,70 @@ void MainFrame::OnQuit(wxCommandEvent &event)
 {
     Destroy();
 }
-
-void MainFrame::FindAdapter()
+void MainFrame::RefreshUSBDevices()
+{
+	
+	try{
+	    usbDevices.Update();
+	
+    	//clear the listCtrlUSBDevices
+		listCtrlUSBDevices->DeleteAllItems();
+    	for (int i =0; i < usbDevices.Count();i++){
+			int itemIndex;
+			itemIndex = listCtrlUSBDevices->InsertItem(listCtrlOnlineVersions->GetItemCount(),_T(""));
+			//USB Device Manufacturer
+			listCtrlUSBDevices->SetItem(itemIndex,0,usbDevices[i]->Manufacturer);
+		
+			//Application Product
+			listCtrlUSBDevices->SetItem(itemIndex,1,usbDevices[i]->Product);
+   		}
+   	}catch(std::exception &e){
+		wxLogError(_T("%s"), e.what());
+   	}
+}
+void MainFrame::StartSession()
 {
 	try{
-		int deviceID = usbProg.getUSBDeviceID();
-		if (deviceID >= 0){
-			lblConnectionStatus->SetLabel(_T("Connected to usbprog-adapter"));
-			lblCurrentFirmware->SetLabel(usbProg.getUSBDeviceName(deviceID));
+		
+		if (listCtrlUSBDevices->GetSelectedItemCount() == 1){
+			long firstSelectedItem =-1;
+			firstSelectedItem = listCtrlUSBDevices->GetNextItem(firstSelectedItem,
+											 wxLIST_NEXT_ALL,
+											 wxLIST_STATE_SELECTED);
+			lblConnectionStatus->SetLabel(wxString::Format(_T("Connected to %s"),usbDevices[firstSelectedItem]->Product.c_str()));
+
 			panelOnline->Enable(true);
 			panelLocal->Enable(true);
-		}else{
+			deviceInfo = usbDevices[firstSelectedItem];
+		} else{
+			wxLogError(_T("One Device has to be selected to connect"));
+		}
+		//if (deviceID >= 0){
+		/*}else{
 			lblConnectionStatus->SetLabel(_T("NOT Connected to usbprog-adapter"));
 			lblCurrentFirmware->SetLabel(wxEmptyString);
 			panelOnline->Enable(false);
 			panelLocal->Enable(false);
-		}
+		}*/
+		
+		//teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
+		//teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
+	}catch(std::exception &e){
+		wxLogError(_T("%s"), e.what());
+		SwitchToAppLog();
+	}
+	
+}
+
+void MainFrame::CloseSession()
+{
+	try{
+		deviceInfo = NULL;
+		lblConnectionStatus->SetLabel(_T("NOT Connected to usbprog-adapter"));
+
+		panelOnline->Enable(false);
+		panelLocal->Enable(false);
+	
 		
 		//teUSBDeviceVID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getVendorID(deviceID)));
 		//teUSBDevicePID->SetValue(wxString::Format(_T("0x%4X"),usbProg.getProductID(deviceID)));
@@ -118,9 +173,14 @@ void MainFrame::SwitchToAppLog()
 	notebookSource->SetSelection(3);
 }
 
-void MainFrame::OnBtnFindAdapterClick( wxCommandEvent& event )
+void MainFrame::SwitchToAdapterSelection()
 {
-	FindAdapter();	
+	notebookSource->SetSelection(0);
+}
+
+void MainFrame::OnBtnConnectClick( wxCommandEvent& event )
+{
+	StartSession();
 }
 
 
@@ -132,7 +192,10 @@ void MainFrame::OnBtnSelectFileClick( wxCommandEvent& event )
 	textCtrlFileName->SetValue(fileDialog.GetPath());
 }
 
-
+void MainFrame::OnBtnRefreshListClick( wxCommandEvent& event )
+{
+	RefreshUSBDevices();
+}
 void MainFrame::RefreshOnlineVersions()
 {   
 	// wxString url = teVersionsFileURL->GetLineText(0);
@@ -183,16 +246,8 @@ void MainFrame::OnBtnFlashClick( wxCommandEvent& event )
 			onlineVersions.DownloadOnlineVersion(firstSelectedItem,tmpFileName);
 			wxLogInfo(_T("Saved online version to %s"),tmpFileName.c_str());
 			
+				UpdateFirmware(tmpFileName);
 			
-			if (usbProg.getOpened()){
-				usbProg.close();
-			}
-			usbProg.open(update);
-			usbProg.flashFile(tmpFileName);
-			usbProg.startApplication();
-			usbProg.close();
-			
-			OnBtnFindAdapterClick(event)  ;     
 			wxLogInfo(_T("Deleting temporary file %s"),	tmpFileName.c_str());
 			wxRemoveFile(tmpFileName);	
 		} else{
@@ -210,20 +265,14 @@ void MainFrame::OnBtnFlashLocalFile( wxCommandEvent& event )
 		wxString fileName = textCtrlFileName->GetLineText(0);
 		if (wxFile::Exists(fileName)){
 			SwitchToAppLog();
-			if (usbProg.getOpened()){
-				usbProg.close();
-			}
-			usbProg.open(update);
-			usbProg.flashFile(fileName);
-			usbProg.startApplication();
-			usbProg.close();
 			
-			OnBtnFindAdapterClick(event)  ;
+			UpdateFirmware(fileName);
 		}			
 	}catch(std::exception &e){
 		wxLogError(_T("%s"), e.what());
    	}	
 }
+
 void MainFrame::OnBtnClearLog( wxCommandEvent& event )
 {
 	textCtrlAppLog->Clear();
@@ -244,4 +293,76 @@ void MainFrame::OnListCtrlOnlineVersionsItemSelected( wxListEvent& event )
 	}else{
 		btnDownloadAndFlash->Enable(false);
 	}
+}
+
+void MainFrame::UpdateFirmware(wxString filename)
+{
+		
+	try{
+		if (deviceInfo == NULL){
+				throw runtime_error("Not connected to device");
+		}
+		int vendorId = 0;
+		int productId = 0;
+		//Falls wir noch nicht im Update-Mode sind in diesen schalten
+		if ((deviceInfo->VendorID != 6017) || (deviceInfo->ProductID != 0x0c62)|| (deviceInfo->BcdDevice != AVRUPDATE)){
+			wxLogDebug(_T("Try to switch usbprog to update mode"));
+			wxLogInfo(_T("usbprog found with: %s"),deviceInfo->Product.c_str());
+			wxLogInfo(_T("start update mode"));
+			avrupdate_start_with_vendor_request(deviceInfo->VendorID,deviceInfo->ProductID);
+			#if _WIN32
+			Sleep(7000);
+			#else
+			sleep(3);
+			#endif
+			//now there should be a USBDevice AVRUPDATE
+			USBDevices devices;
+			devices.Update();
+			bool updateDeviceFound = false;
+			
+			for (int i = 0 ; i< devices.Count();i++){
+				if ((devices[i]->VendorID == 6017) && (devices[i]->ProductID == 0x0c62)&& (devices[i]->BcdDevice == AVRUPDATE)){
+					vendorId = devices[i]->VendorID;
+					productId = devices[i]->ProductID;
+					updateDeviceFound = true;
+				}
+			}
+			if (!updateDeviceFound) {
+					wxLogError(_T("Could not switch usbprog to update mode. Perhaps the device is not a usbprog adapter"));
+					throw runtime_error("Could not switch usbprog to update mode. Perhaps the device is not a usbprog adapter");
+			}
+		}else{
+			wxLogDebug(_T("usbprog is already in update mode"));
+			vendorId = deviceInfo->VendorID;
+			productId = deviceInfo->ProductID;
+		}
+		
+		if ((vendorId > 0) and (productId > 0)) {
+			usb_dev_handle* usb_handle = avrupdate_open(vendorId,productId);	
+			//at the moment we have to copy the filename string to provide
+			//a non const char* as filename
+			int wxchar_len = filename.Len()+1; 
+			int char_len = wxchar_len*sizeof(wxChar)/sizeof(char);
+		
+			char * buf  = new char[char_len];
+			try{
+				memcpy( buf, filename.mb_str() , char_len*sizeof(char) ); 
+			
+				wxLogInfo(_T("Starting to flash %s"),filename.c_str());
+				avrupdate_flash_bin(usb_handle,buf);
+			}catch(...){
+				delete(buf);
+				throw;
+			}
+			delete(buf);
+			
+			sleep(3);
+			wxLogInfo(_T("Completed flashing"),filename.c_str());
+			avrupdate_startapp(usb_handle);
+			avrupdate_close(usb_handle);
+		}	
+		CloseSession();
+	}catch(std::exception &e){
+		wxLogError(_T("%s"), e.what());
+	}	
 }

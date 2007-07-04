@@ -75,14 +75,14 @@ module.source.files=\
 	CsvReader.h\
 	OnlineVersions.cpp\
 	OnlineVersions.h\
-	usbprog.cpp\
-	usbprog.h\
 	usbprogonlineApp.cpp\
 	usbprogonlineApp.h\
 	MainFrameGenerated.cpp\
 	MainFrameGenerated.h\
 	MainFrame.cpp\
-	MainFrame.h
+	MainFrame.h\
+	USBDevices.cpp\
+	USBDevices.h
 
 module.pixmap.name=pixmaps
 module.pixmap.type=

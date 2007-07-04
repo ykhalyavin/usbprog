@@ -14,25 +14,39 @@
 #include <wx/log.h>
 
 #include "MainFrameGenerated.h"
-#include "usbprog.h"
 #include "OnlineVersions.h"
+#include "USBDevices.h"
+#include <exception>
+
+extern "C"
+{
+  #include "../lib/avrupdate.h"
+}
+
+const wxString ONLINE_VERSIONS_FILE = _T("http://www.ixbat.de/usbprog/versions.conf");
 
 class MainFrame: public MainFrameGenerated
 {
 	wxBitmap* hardware;
-	usbprog usbProg;
     OnlineVersions onlineVersions;
+	USBDevices	usbDevices;
+	USBDeviceInfo* deviceInfo;
 	public:
 		MainFrame(wxFrame *frame);
 		~MainFrame();
 	private:
 		virtual void OnClose(wxCloseEvent& event);
 		virtual void OnQuit(wxCommandEvent& event);
-		void FindAdapter();
+		void RefreshUSBDevices();
 		void RefreshOnlineVersions();
 		void SwitchToAppLog();
+		void SwitchToAdapterSelection();
+	    void StartSession();
+	    void CloseSession();
+		void UpdateFirmware(wxString filename);
     protected:
-  		virtual void OnBtnFindAdapterClick( wxCommandEvent& event );
+  		virtual void OnBtnRefreshListClick( wxCommandEvent& event );
+  		virtual void OnBtnConnectClick( wxCommandEvent& event );
 		virtual void OnBtnFlashClick( wxCommandEvent& event );
 		virtual void OnBtnRefreshOnlineVersionsClick( wxCommandEvent& event );	
 		virtual void OnBtnSelectFileClick( wxCommandEvent& event );

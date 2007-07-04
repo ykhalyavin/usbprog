@@ -14,7 +14,7 @@
         <property name="relative_path">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Frame" expanded="1">
+        <object class="Frame" expanded="0">
             <property name="bg">wxSYS_COLOUR_WINDOW</property>
             <property name="center"></property>
             <property name="enabled">1</property>
@@ -118,7 +118,7 @@
                                         <property name="font"></property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">For more Information please visit:</property>
+                                        <property name="label">Find more information on </property>
                                         <property name="maximum_size"></property>
                                         <property name="minimum_size"></property>
                                         <property name="name">m_staticText4</property>
@@ -244,6 +244,137 @@
                                             <property name="font">Sans,90,92,10</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
+                                            <property name="label">Selected Adapter:</property>
+                                            <property name="maximum_size"></property>
+                                            <property name="minimum_size"></property>
+                                            <property name="name">m_staticText6211</property>
+                                            <property name="permission">protected</property>
+                                            <property name="pos"></property>
+                                            <property name="size"></property>
+                                            <property name="style"></property>
+                                            <property name="subclass"></property>
+                                            <property name="tooltip"></property>
+                                            <property name="window_extra_style"></property>
+                                            <property name="window_style"></property>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem" expanded="1">
+                                        <property name="border">5</property>
+                                        <property name="flag">wxALL|wxEXPAND</property>
+                                        <property name="proportion">5</property>
+                                        <object class="wxListCtrl" expanded="1">
+                                            <property name="bg"></property>
+                                            <property name="enabled">1</property>
+                                            <property name="fg"></property>
+                                            <property name="font"></property>
+                                            <property name="hidden">0</property>
+                                            <property name="id">wxIDListCtrlUSBDevices</property>
+                                            <property name="maximum_size"></property>
+                                            <property name="minimum_size">-1,-1</property>
+                                            <property name="name">listCtrlUSBDevices</property>
+                                            <property name="permission">protected</property>
+                                            <property name="pos"></property>
+                                            <property name="size">-1,-1</property>
+                                            <property name="style">wxLC_REPORT</property>
+                                            <property name="subclass"></property>
+                                            <property name="tooltip"></property>
+                                            <property name="window_extra_style"></property>
+                                            <property name="window_style"></property>
+                                            <event name="OnListBeginDrag"></event>
+                                            <event name="OnListBeginLabelEdit"></event>
+                                            <event name="OnListBeginRDrag"></event>
+                                            <event name="OnListCasheHint"></event>
+                                            <event name="OnListColBeginDrag"></event>
+                                            <event name="OnListColClick"></event>
+                                            <event name="OnListColDragging"></event>
+                                            <event name="OnListColEndDrag"></event>
+                                            <event name="OnListColRightClick"></event>
+                                            <event name="OnListDeleteAllItems"></event>
+                                            <event name="OnListDeleteItem"></event>
+                                            <event name="OnListEndLabelEdit"></event>
+                                            <event name="OnListIsertItem"></event>
+                                            <event name="OnListItemActivated"></event>
+                                            <event name="OnListItemDeselected"></event>
+                                            <event name="OnListItemFocused"></event>
+                                            <event name="OnListItemMiddleClick"></event>
+                                            <event name="OnListItemRightClick"></event>
+                                            <event name="OnListItemSelected"></event>
+                                            <event name="OnListKeyDown"></event>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem" expanded="1">
+                                        <property name="border">5</property>
+                                        <property name="flag">wxEXPAND</property>
+                                        <property name="proportion">1</property>
+                                        <object class="wxBoxSizer" expanded="1">
+                                            <property name="minimum_size"></property>
+                                            <property name="name">bSizer101</property>
+                                            <property name="orient">wxHORIZONTAL</property>
+                                            <object class="sizeritem" expanded="1">
+                                                <property name="border">5</property>
+                                                <property name="flag">wxALL</property>
+                                                <property name="proportion">0</property>
+                                                <object class="wxButton" expanded="1">
+                                                    <property name="bg"></property>
+                                                    <property name="enabled">1</property>
+                                                    <property name="fg"></property>
+                                                    <property name="font"></property>
+                                                    <property name="hidden">0</property>
+                                                    <property name="id">wxIDBtnRefreshList</property>
+                                                    <property name="label">Refresh List</property>
+                                                    <property name="maximum_size"></property>
+                                                    <property name="minimum_size"></property>
+                                                    <property name="name">btnRefreshList</property>
+                                                    <property name="permission">protected</property>
+                                                    <property name="pos"></property>
+                                                    <property name="size"></property>
+                                                    <property name="style"></property>
+                                                    <property name="subclass"></property>
+                                                    <property name="tooltip"></property>
+                                                    <property name="window_extra_style"></property>
+                                                    <property name="window_style"></property>
+                                                    <event name="OnButtonClick">OnBtnRefreshListClick</event>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem" expanded="1">
+                                                <property name="border">5</property>
+                                                <property name="flag">wxALL</property>
+                                                <property name="proportion">0</property>
+                                                <object class="wxButton" expanded="1">
+                                                    <property name="bg"></property>
+                                                    <property name="enabled">1</property>
+                                                    <property name="fg"></property>
+                                                    <property name="font"></property>
+                                                    <property name="hidden">0</property>
+                                                    <property name="id">wxIDBtnConnect</property>
+                                                    <property name="label">Connect to usbprog-adapter</property>
+                                                    <property name="maximum_size"></property>
+                                                    <property name="minimum_size"></property>
+                                                    <property name="name">btnConnect</property>
+                                                    <property name="permission">protected</property>
+                                                    <property name="pos"></property>
+                                                    <property name="size"></property>
+                                                    <property name="style"></property>
+                                                    <property name="subclass"></property>
+                                                    <property name="tooltip"></property>
+                                                    <property name="window_extra_style"></property>
+                                                    <property name="window_style"></property>
+                                                    <event name="OnButtonClick">OnBtnConnectClick</event>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem" expanded="1">
+                                        <property name="border">5</property>
+                                        <property name="flag">wxALL</property>
+                                        <property name="proportion">0</property>
+                                        <object class="wxStaticText" expanded="1">
+                                            <property name="bg"></property>
+                                            <property name="enabled">1</property>
+                                            <property name="fg"></property>
+                                            <property name="font">Sans,90,92,10</property>
+                                            <property name="hidden">0</property>
+                                            <property name="id">wxID_ANY</property>
                                             <property name="label">Connection status:</property>
                                             <property name="maximum_size"></property>
                                             <property name="minimum_size"></property>
@@ -281,96 +412,6 @@
                                             <property name="tooltip"></property>
                                             <property name="window_extra_style"></property>
                                             <property name="window_style"></property>
-                                        </object>
-                                    </object>
-                                    <object class="spacer" expanded="1">
-                                        <property name="border">0</property>
-                                        <property name="flag">wxEXPAND</property>
-                                        <property name="height">10</property>
-                                        <property name="proportion">0</property>
-                                        <property name="width">0</property>
-                                    </object>
-                                    <object class="sizeritem" expanded="1">
-                                        <property name="border">5</property>
-                                        <property name="flag">wxALL</property>
-                                        <property name="proportion">0</property>
-                                        <object class="wxStaticText" expanded="1">
-                                            <property name="bg"></property>
-                                            <property name="enabled">1</property>
-                                            <property name="fg"></property>
-                                            <property name="font">Sans,90,92,10</property>
-                                            <property name="hidden">0</property>
-                                            <property name="id">wxID_ANY</property>
-                                            <property name="label">Current firmware:</property>
-                                            <property name="maximum_size"></property>
-                                            <property name="minimum_size"></property>
-                                            <property name="name">m_staticText62</property>
-                                            <property name="permission">protected</property>
-                                            <property name="pos"></property>
-                                            <property name="size"></property>
-                                            <property name="style"></property>
-                                            <property name="subclass"></property>
-                                            <property name="tooltip"></property>
-                                            <property name="window_extra_style"></property>
-                                            <property name="window_style"></property>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem" expanded="1">
-                                        <property name="border">5</property>
-                                        <property name="flag">wxALL|wxEXPAND</property>
-                                        <property name="proportion">0</property>
-                                        <object class="wxStaticText" expanded="1">
-                                            <property name="bg"></property>
-                                            <property name="enabled">1</property>
-                                            <property name="fg"></property>
-                                            <property name="font"></property>
-                                            <property name="hidden">0</property>
-                                            <property name="id">wxID_ANY</property>
-                                            <property name="label">No usbprog-adapter found</property>
-                                            <property name="maximum_size"></property>
-                                            <property name="minimum_size"></property>
-                                            <property name="name">lblCurrentFirmware</property>
-                                            <property name="permission">protected</property>
-                                            <property name="pos"></property>
-                                            <property name="size"></property>
-                                            <property name="style">wxALIGN_CENTRE</property>
-                                            <property name="subclass"></property>
-                                            <property name="tooltip"></property>
-                                            <property name="window_extra_style"></property>
-                                            <property name="window_style"></property>
-                                        </object>
-                                    </object>
-                                    <object class="spacer" expanded="1">
-                                        <property name="border">0</property>
-                                        <property name="flag">wxEXPAND</property>
-                                        <property name="height">10</property>
-                                        <property name="proportion">1</property>
-                                        <property name="width">0</property>
-                                    </object>
-                                    <object class="sizeritem" expanded="1">
-                                        <property name="border">5</property>
-                                        <property name="flag">wxALL</property>
-                                        <property name="proportion">0</property>
-                                        <object class="wxButton" expanded="1">
-                                            <property name="bg"></property>
-                                            <property name="enabled">1</property>
-                                            <property name="fg"></property>
-                                            <property name="font"></property>
-                                            <property name="hidden">0</property>
-                                            <property name="id">wxIDBtnFindAdapter</property>
-                                            <property name="label">ReConnect usbprog-adapter</property>
-                                            <property name="maximum_size"></property>
-                                            <property name="minimum_size"></property>
-                                            <property name="name">btnFindAdapter</property>
-                                            <property name="permission">protected</property>
-                                            <property name="pos"></property>
-                                            <property name="size"></property>
-                                            <property name="style"></property>
-                                            <property name="subclass"></property>
-                                            <property name="tooltip"></property>
-                                            <property name="window_extra_style"></property>
-                                            <property name="window_style"></property>
-                                            <event name="OnButtonClick">OnBtnFindAdapterClick</event>
                                         </object>
                                     </object>
                                 </object>

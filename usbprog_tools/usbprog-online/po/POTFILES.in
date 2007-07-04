@@ -9,13 +9,13 @@ src/CsvReader.cpp
 src/CsvReader.h
 src/OnlineVersions.cpp
 src/OnlineVersions.h
-src/usbprog.cpp
-src/usbprog.h
 src/usbprogonlineApp.cpp
 src/usbprogonlineApp.h
 src/MainFrameGenerated.cpp
 src/MainFrameGenerated.h
 src/MainFrame.cpp
 src/MainFrame.h
+src/USBDevices.cpp
+src/USBDevices.h
 
 

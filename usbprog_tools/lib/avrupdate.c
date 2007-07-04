@@ -92,7 +92,7 @@ void avrupdate_startapp(struct usb_dev_handle* usb_handle)
 
 int avrupdate_find_usbdevice()
 {
-  struct usb_bus *busses;
+   struct usb_bus *busses;
 
     //usb_set_debug(2);
     usb_init();
@@ -102,7 +102,7 @@ int avrupdate_find_usbdevice()
     busses = usb_get_busses();
 
    struct usb_dev_handle* usb_handle;
-    struct usb_bus *bus;
+   struct usb_bus *bus;
 
 
     unsigned char send_data=0xff;

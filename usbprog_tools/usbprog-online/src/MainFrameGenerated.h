@@ -20,22 +20,24 @@
 #endif
 
 #include <wx/statbmp.h>
+#include <wx/listctrl.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/listctrl.h>
 #include <wx/notebook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
 #define wxIDNotebookSource 1000
-#define wxIDBtnFindAdapter 1001
-#define wxIDListCtrlOnlineVersions 1002
-#define wxIDBtnDownloadAndFlash 1003
-#define wxIDBtnRefreshOnlineVersions 1004
-#define wxIDBtnSelectFile 1005
-#define wxIDBtnFlashLocalFile 1006
-#define wxIDTextCtrlAppLog 1007
-#define wxIDBtnClearLog 1008
+#define wxIDListCtrlUSBDevices 1001
+#define wxIDBtnRefreshList 1002
+#define wxIDBtnConnect 1003
+#define wxIDListCtrlOnlineVersions 1004
+#define wxIDBtnDownloadAndFlash 1005
+#define wxIDBtnRefreshOnlineVersions 1006
+#define wxIDBtnSelectFile 1007
+#define wxIDBtnFlashLocalFile 1008
+#define wxIDTextCtrlAppLog 1009
+#define wxIDBtnClearLog 1010
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameGenerated
@@ -46,7 +48,8 @@ class MainFrameGenerated : public wxFrame
 	private:
 		
 		// Private event handlers
-		void _wxFB_OnBtnFindAdapterClick( wxCommandEvent& event ){ OnBtnFindAdapterClick( event ); }
+		void _wxFB_OnBtnRefreshListClick( wxCommandEvent& event ){ OnBtnRefreshListClick( event ); }
+		void _wxFB_OnBtnConnectClick( wxCommandEvent& event ){ OnBtnConnectClick( event ); }
 		void _wxFB_OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event ){ OnListCtrlOnlineVersionsItemDeselected( event ); }
 		void _wxFB_OnListCtrlOnlineVersionsItemSelected( wxListEvent& event ){ OnListCtrlOnlineVersionsItemSelected( event ); }
 		void _wxFB_OnBtnFlashClick( wxCommandEvent& event ){ OnBtnFlashClick( event ); }
@@ -64,11 +67,12 @@ class MainFrameGenerated : public wxFrame
 		wxStaticBitmap* m_bitmap1;
 		wxNotebook* notebookSource;
 		wxPanel* panelStatus;
+		wxStaticText* m_staticText6211;
+		wxListCtrl* listCtrlUSBDevices;
+		wxButton* btnRefreshList;
+		wxButton* btnConnect;
 		wxStaticText* m_staticText621;
 		wxStaticText* lblConnectionStatus;
-		wxStaticText* m_staticText62;
-		wxStaticText* lblCurrentFirmware;
-		wxButton* btnFindAdapter;
 		wxPanel* panelOnline;
 		wxStaticText* m_staticText6;
 		wxListCtrl* listCtrlOnlineVersions;
@@ -85,7 +89,8 @@ class MainFrameGenerated : public wxFrame
 		wxButton* btnClearLog;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnBtnFindAdapterClick( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBtnRefreshListClick( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBtnConnectClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event ){ event.Skip(); }
 		virtual void OnListCtrlOnlineVersionsItemSelected( wxListEvent& event ){ event.Skip(); }
 		virtual void OnBtnFlashClick( wxCommandEvent& event ){ event.Skip(); }

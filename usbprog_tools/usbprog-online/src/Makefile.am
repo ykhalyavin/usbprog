@@ -18,14 +18,14 @@ usbprog_online_SOURCES = \
 	CsvReader.h\
 	OnlineVersions.cpp\
 	OnlineVersions.h\
-	usbprog.cpp\
-	usbprog.h\
 	usbprogonlineApp.cpp\
 	usbprogonlineApp.h\
 	MainFrameGenerated.cpp\
 	MainFrameGenerated.h\
 	MainFrame.cpp\
-	MainFrame.h
+	MainFrame.h\
+	USBDevices.cpp\
+	USBDevices.h
 
 usbprog_online_LDFLAGS = \
 	-lavrupdate
