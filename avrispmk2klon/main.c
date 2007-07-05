@@ -530,47 +530,34 @@ void USBFlash(char *buf)
     case CMD_ENTER_PROGMODE_ISP:
       pgmmode.address = 0;
       spi_active();
+      LED_on;
+      //spi_out(0xFF);
   
       //cbi  portb,SCK  ; clear SCK
       PORTB &= ~(1<<SCK);
+      //PORTB |=(1<<SCK);
+      //PORTB &= ~(1<<SCK);
+      //PORTB |=(1<<SCK);
+      //PORTB &= ~(1<<SCK);
       // set_reset    ;  set RESET = 1
       PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
       wait_ms(10);
-      // clr_reset    ;  set RESET = 0
-      //      asm("nop");
-      asm("nop");
-      asm("nop");
-      asm("nop");
-  
       PORTB &= ~(1<<RESET_PIN);
-      asm("nop");
-      asm("nop");
-      asm("nop");
-      asm("nop");
-  
-      wait_ms(25);
-      spi_out(0xac);
-      spi_out(0x53);
-  
-      LED_on;
-      /*
-      RESET_high;
-      asm("nop");
-      asm("nop");
-      asm("nop");
-      asm("nop");
-      RESET_low;
-  
-      wait_ms(25);
-  
-      spi_out(0xac);
-      spi_out(0x53);
-      */
+      wait_ms(10);
+      
       answer[0] = CMD_ENTER_PROGMODE_ISP;
       answer[1] = STATUS_CMD_FAILED;
+
+      spi_out(0xac);
+      spi_out(0x53);
+  
+      //RESET_high;
+      //RESET_low;
+      
       //int syncloops = buf[4];
       int syncloops = 5;
       for (;syncloops > 0; syncloops--) {
+	wait_ms(10);
         result = spi_in();
         //SendHex(result);
         if (result == buf[6]) {  //0x53 for avr
