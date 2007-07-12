@@ -43,13 +43,13 @@ struct usbprog_jtag* usbprog_jtag_open()
     for (dev = bus->devices; dev; dev = dev->next){
       /* condition for sucessfully hit (too bad, I only check the vendor id)*/
       if (dev->descriptor.idVendor == VID && dev->descriptor.idProduct == PID) {
-				tmp->usb_handle = usb_open(dev);
+	tmp->usb_handle = usb_open(dev);
 
-				usb_set_configuration (tmp->usb_handle,dev->config[0].bConfigurationValue);
-				usb_claim_interface(tmp->usb_handle, 0);
-				usb_set_altinterface(tmp->usb_handle,0);
+	usb_set_configuration (tmp->usb_handle,dev->config[0].bConfigurationValue);
+	usb_claim_interface(tmp->usb_handle, 0);
+	usb_set_altinterface(tmp->usb_handle,0);
 
-				return tmp;
+	return tmp;
       }
     } 
   }
@@ -67,9 +67,9 @@ void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag)
 unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen)
 {
   int res = usb_bulk_write(usbprog_jtag->usb_handle,3,msg,msglen,100);
-	if(msg[0]==2)
-		return 1;  
-	if(res == msglen) {
+    if(msg[0]==2)
+      return 1;  
+  if(res == msglen) {
     res =  usb_bulk_read(usbprog_jtag->usb_handle,2, msg, 2, 100);
     if (res > 0)
       return (unsigned char)msg[1];
@@ -78,13 +78,12 @@ unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg,
   }
   else
     return -1;
-	
-	return 0;
+  return 0;
 }
 
 void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag)
 {
-	usbprog_jtag_set_direction(usbprog_jtag, 0xFE);
+  usbprog_jtag_set_direction(usbprog_jtag, 0xFE);
 }
 
 
@@ -115,8 +114,8 @@ void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffe
     i=0; 
 
     for(i=0;i < loops ;i++) {
-			tmp[3+i]=buffer[bufindex];
-			bufindex++;
+      tmp[3+i]=buffer[bufindex];
+      bufindex++;
     }
     
     usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
@@ -126,7 +125,7 @@ void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffe
     for(i=0;i<loops ;i++) {
       swap =  tmp[3+i];
       buffer[fillindex++] = swap;
-     } 
+    } 
   }
 }
 
@@ -163,9 +162,8 @@ void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int
     for(i=0;i<loops ;i++) {
       swap =  tmp[3+i];
       buffer[fillindex++] = swap;
-     } 
+    } 
   }
-
 }
 
 void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, int size)
@@ -192,8 +190,8 @@ void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, in
     i=0; 
 
     for(i=0;i < loops ;i++) {
-			tmp[3+i]=buffer[bufindex];
-			bufindex++;
+      tmp[3+i]=buffer[bufindex];
+      bufindex++;
     }
     usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
   }
