@@ -148,7 +148,7 @@ void USBReceive(char *buf)
 			break;
 		
 			case CMND_READ_MEMORY:
-				cmdlength = cmd_read_memory(&buf,&answer);
+				cmdlength = cmd_read_memory(buf,answer);
 			break;
 			
 			case CMND_GET_PARAMETER:

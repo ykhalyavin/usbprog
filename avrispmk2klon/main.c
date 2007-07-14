@@ -104,6 +104,7 @@ void spi_init(void)
 void spi_idle(void)
 {
   DDR_SPI = 0x00;
+  PORTB = 0xFF;	// only temp for jar
 }
 
 void spi_active(void)
