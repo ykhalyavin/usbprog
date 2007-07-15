@@ -131,6 +131,15 @@ void Commands(char *buf)
     
     case WRITE_TDI:
       write_tdi(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      #if 1
+      // tck 0 tms 0 tdi 0
+      CLEARBIT(BIT2_WRITE,BIT2);  // clk
+      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      
+      // tck 1 tms 0 tdi 0
+      SETBIT(BIT2_WRITE,BIT2);  // clk
+      #endif
       //answer[0] = WRITE_TDI; 
       //answer[1] = 0x00;
       //CommandAnswer(2);
@@ -145,6 +154,15 @@ void Commands(char *buf)
 
     case READ_TDO:
       read_tdo(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      #if 1
+      // tck 0 tms 0 tdi 0
+      CLEARBIT(BIT2_WRITE,BIT2);  // clk
+      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      
+      // tck 1 tms 0 tdi 0
+      SETBIT(BIT2_WRITE,BIT2);  // clk
+      #endif
       for(i=0;i<64;i++)
 	answer[i]=buf[i];
       CommandAnswer(64);
@@ -152,6 +170,16 @@ void Commands(char *buf)
 
     case WRITE_AND_READ:
       write_and_read(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      
+      #if 1
+      // tck 0 tms 0 tdi 0
+      CLEARBIT(BIT2_WRITE,BIT2);  // clk
+      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      
+      // tck 1 tms 0 tdi 0
+      SETBIT(BIT2_WRITE,BIT2);  // clk
+      #endif
       for(i=0;i<64;i++)
 	answer[i]=buf[i];
       CommandAnswer(64);
