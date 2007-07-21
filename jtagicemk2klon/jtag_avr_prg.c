@@ -21,15 +21,16 @@
 #include "jtag_avr_prg.h"
 #include "jtag_avr.h"
 #include "jtag_avr_defines.h"
+#include "jtag.h"
 
 
 char rd_lock_avr ()
 {
 	char jtagbuf[2];
 	
-	avr_sequence(0x23,0x04,&jtagbuf);	//enter fuse lock bits
-	avr_sequence(0x36,0x00,&jtagbuf);	// select lfuse
-	avr_sequence(0x3,0x00,&jtagbuf); // read lfuse
+	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
+	avr_sequence(0x36,0x00,jtagbuf);	// select lfuse
+	avr_sequence(0x3,0x00,jtagbuf); // read lfuse
 
 	return jtagbuf[0];
 }
@@ -50,9 +51,9 @@ char rd_lfuse_avr ()
 {
 	char jtagbuf[2];
 	
-	avr_sequence(0x23,0x04,&jtagbuf);	//enter fuse lock bits
-	avr_sequence(0x32,0x00,&jtagbuf);	// select lfuse
-	avr_sequence(0x33,0x00,&jtagbuf); // read lfuse
+	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
+	avr_sequence(0x32,0x00,jtagbuf);	// select lfuse
+	avr_sequence(0x33,0x00,jtagbuf); // read lfuse
 
 	return jtagbuf[0];
 }
@@ -62,9 +63,9 @@ char rd_hfuse_avr ()
 {
 	char jtagbuf[2];
 	
-	avr_sequence(0x23,0x04,&jtagbuf);	//enter fuse lock bits
-	avr_sequence(0x3E,0x00,&jtagbuf);	// select hfuse
-	avr_sequence(0x3F,0x00,&jtagbuf); // read hfuse
+	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
+	avr_sequence(0x3E,0x00,jtagbuf);	// select hfuse
+	avr_sequence(0x3F,0x00,jtagbuf); // read hfuse
 
 	return jtagbuf[0];
 }
@@ -73,9 +74,9 @@ int rd_fuse_avr (char *buf, int withextend)
 {
 	char jtagbuf[2];
 
-	avr_sequence(0x04,0x23,&jtagbuf);
-	avr_sequence(0x00,0x32,&jtagbuf);
-	avr_sequence(0x00,0x33,&jtagbuf);
+	avr_sequence(0x04,0x23,jtagbuf);
+	avr_sequence(0x00,0x32,jtagbuf);
+	avr_sequence(0x00,0x33,jtagbuf);
 
 	return 1;
 }
@@ -91,6 +92,30 @@ int rd_signature_avr (char *signature)
 	avr_sequence(0x33,0x00,&jtagbuf);	//restult
 */
 	return 1;
+}
+
+void wr_lfuse_avr(char lfuse)
+{
+}
+
+void wr_hfuse_avr(char hfuse)
+{
+	unsigned char jtagbuf[14] = {0x40, 0x23, 0x00, 0x13, 0x00, 
+									0x37, 0x00, 0x35, 0x00, 0x37, 
+									0x00, 0x37, 0x00, 0x37};
+	jtagbuf[2] = hfuse;
+	
+	jtag_goto_state(SHIFT_DR);
+	jtag_write(112, &jtagbuf[0]);
+	jtag_goto_state(RUN_TEST_IDLE);
+}
+
+void wr_efuse_avr(char efuse)
+{
+}
+
+void wr_lock_avr(char lock)
+{
 }
 
 

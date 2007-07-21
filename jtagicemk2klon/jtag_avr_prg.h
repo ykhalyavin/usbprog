@@ -1,6 +1,7 @@
 /*-------------------------------------------------------------------------
  * JTAG_AVR_PRG.H
  * Copyright (C) 2007 Benedikt sauter <sauter@sistecs.de>
+ *				 2007 Robert Schilling robert.schilling@gmx.at
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +22,16 @@
 #ifndef JTAG_AVR_PRG_H
 #define JTAG_AVR_PRG_H
 
-char rd_efuse_avr ();
-char rd_hfuse_avr ();
-char rd_lfuse_avr ();
-char rd_lock_avr ();
+char rd_efuse_avr (void);
+char rd_hfuse_avr (void);
+char rd_lfuse_avr (void);
+char rd_lock_avr (void);
 int rd_fuse_avr (char *buf, int withextend);
 int rd_signature_avr (char *signature);
+void wr_lfuse_avr(char lfuse);
+void wr_hfuse_avr(char hfuse);
+void wr_efuse_avr(char efuse);
+void wr_lock_avr(char lock);
 
 void avr_sequence(char tdi2, char tdi1, char * tdo);
 

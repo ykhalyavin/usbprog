@@ -28,7 +28,6 @@
 #include <util/delay.h>
 
 #include "wait.h"
-
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
 #include "usbn2mc.h"
@@ -61,8 +60,6 @@ SIGNAL(SIG_INTERRUPT0)
 /* id need for live update of firmware */
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
-	//UARTWrite("vendor request check ");
-	//SendHex(req->bRequest);
 	switch(req->bRequest)
 	{
 		case STARTAVRUPDATE:
@@ -94,7 +91,7 @@ void CommandAnswer(int length)
 }
 
 /* called after data where send to pc */
-void USBSend()
+void USBSend(void)
 {
 
 }
@@ -136,68 +133,75 @@ void USBReceive(char *buf)
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				cmdlength = cmd_get_sign_on(&buf,&answer);
+				cmdlength = cmd_get_sign_on((char*)buf,(char *)answer);
 			break;
 
 			case CMND_GET_SIGN_OFF:
-				cmdlength = cmd_sign_off(&buf,&answer);
+				cmdlength = cmd_sign_off((char*)buf,(char*)answer);
 			break;
 
 			case CMND_SET_PARAMETER:
-				cmdlength = cmd_set_parameter(&buf,&answer);
+				cmdlength = cmd_set_parameter((char*)buf,(char*)answer);
 			break;
 		
 			case CMND_READ_MEMORY:
-				cmdlength = cmd_read_memory(buf,answer);
+				cmdlength = cmd_read_memory((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_GET_PARAMETER:
-				cmdlength = cmd_get_parameter(&buf,&answer);
+				cmdlength = cmd_get_parameter((char*)buf,(char*)answer);
 			break;
 
 			case CMND_FORCED_STOP:
-				cmdlength = cmd_forced_stop(&buf,&answer);
+				cmdlength = cmd_forced_stop((char*)buf,(char*)answer);
 			break;
 
 			case CMND_SET_DEVICE_DESCRIPTOR:
-				cmdlength = cmd_set_device_descriptor(&buf,&answer);
+				cmdlength = cmd_set_device_descriptor((char*)buf,(char*)answer);
 			break;
 	
 			case CMND_GO:
-				cmdlength = cmd_go(&buf,&answer);
+				cmdlength = cmd_go((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_RESTORE_TARGET:
-				cmdlength = cmd_restore_target(&buf,&answer);
+				cmdlength = cmd_restore_target((char*)buf,(char*)answer);
 			break;
 
 			case CMND_LEAVE_PROGMODE:
-				cmdlength = cmd_leave_progmode(&buf,&answer);
+				cmdlength = cmd_leave_progmode((char*)buf,(char*)answer);
 			break;
 
 			case CMND_ENTER_PROGMODE:
-				cmdlength = cmd_enter_progmode(&buf,&answer);
+				cmdlength = cmd_enter_progmode((char*)buf,(char*)answer);
 			break;
 
 			case CMND_RESET:
-				cmdlength = cmd_reset(&buf,&answer);
+				cmdlength = cmd_reset((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_READ_PC:
-				cmdlength = cmd_read_pc(&buf,&answer);
+				cmdlength = cmd_read_pc((char*)buf,(char*)answer);
 			break;
 	
 			case CMND_SET_BREAK:
-				cmdlength = cmd_set_break(&buf,&answer);
+				cmdlength = cmd_set_break((char*)buf,(char*)answer);
 			break;
 
 			case CMND_CLR_BREAK:
-				cmdlength = cmd_clr_break(&buf,&answer);
+				cmdlength = cmd_clr_break((char*)buf,(char*)answer);
 			break;
 
-
 			case CMND_SINGLE_STEP:
-				cmdlength = cmd_single_step(&buf,&answer);
+				cmdlength = cmd_single_step((char*)buf,(char*)answer);
+			break;
+			
+			case CMND_SELFTEST:
+				cmdlength = cmd_selftest((char*)buf, (char*)answer);
+			break;
+			
+			case CMND_WRITE_MEMORY:
+				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
 			break;
 
 	
