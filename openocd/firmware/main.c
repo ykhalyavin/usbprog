@@ -40,7 +40,7 @@
 
 #include "wait.h"
 
-#include "../../../usbprog_base/firmwarelib/avrupdate.h"
+#include "../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
 #include "usbprogjtag.h"
