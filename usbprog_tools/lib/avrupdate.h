@@ -8,7 +8,8 @@
 #define	AVRUPDATE		0x00
 #define	BLINKDEMO		0x01
 #define	USBPROG			0x02
-#define AVRISPMKII	0x03
+#define AVRISPMKII		0x03
+#define JTAGICEMKII		0x04
 
 void avrupdate_start_with_vendor_request(short vendorid, short productid);
 

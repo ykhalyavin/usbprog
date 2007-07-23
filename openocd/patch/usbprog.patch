@@ -69,7 +69,7 @@ Index: src/jtag/usbprog.c
 ===================================================================
 --- src/jtag/usbprog.c	(revision 0)
 +++ src/jtag/usbprog.c	(revision 0)
-@@ -0,0 +1,624 @@
+@@ -0,0 +1,647 @@
 +/***************************************************************************
 + *   Copyright (C) 2007 by Benedikt Sauter sauter@ixbat.de		   *
 + *   based on Dominic Rath's usbprog.c				   *
@@ -281,6 +281,9 @@ Index: src/jtag/usbprog.c
 +	INFO("USB JTAG Interface ready!");
 +				    
 +	usbprog_jtag_init(usbprog_jtag_handle);
++	usbprog_reset(0, 0);
++	usbprog_write(0, 0, 0);
++
 +	return ERROR_OK;
 +}
 +
@@ -318,7 +321,11 @@ Index: src/jtag/usbprog.c
 +                //usbprog_write(1, tms, 0);
 +                //#endif
 +        }
-+        usbprog_write(0, tms, 0);
++	
++	// moved into firmware
++	//INFO("4");
++	// koennte man in tms verlagern
++	//usbprog_write(0, tms, 0);
 +
 +        cur_state = end_state;
 +}
@@ -334,11 +341,13 @@ Index: src/jtag/usbprog.c
 +        {
 +                if (tap_transitions[cur_state].low == cmd->path[state_count])
 +                {
++			INFO("1");
 +                        usbprog_write(0, 0, 0);
 +                        usbprog_write(1, 0, 0);
 +                }
 +                else if (tap_transitions[cur_state].high == cmd->path[state_count])
 +                {
++			INFO("2");
 +                        usbprog_write(0, 1, 0);
 +                        usbprog_write(1, 1, 0);
 +                }
@@ -367,21 +376,29 @@ Index: src/jtag/usbprog.c
 +        if (cur_state != TAP_RTI)
 +        {
 +                usbprog_end_state(TAP_RTI);
++		//INFO("6");
 +                usbprog_state_move();
 +        }
 +
 +        /* execute num_cycles */
-+        usbprog_write(0, 0, 0);
++	if(num_cycles>0)
++	{
++		INFO("5");
++		usbprog_write(0, 0, 0);
++	}
 +        for (i = 0; i < num_cycles; i++)
 +        {
++		INFO("3");
 +                usbprog_write(1, 0, 0);
 +                usbprog_write(0, 0, 0);
 +        }
 +
 +        /* finish in end_state */
++	/*
 +        usbprog_end_state(saved_end_state);
 +        if (cur_state != end_state)
 +                usbprog_state_move();
++	*/
 +}
 +
 +
@@ -396,23 +413,29 @@ Index: src/jtag/usbprog.c
 +        else
 +                usbprog_end_state(TAP_SD);
 +
++	//INFO("7");
 +        usbprog_state_move();
 +        usbprog_end_state(saved_end_state);
 +
-+        INFO("->USBPROG SCAN");
++        //INFO("->USBPROG SCAN");
 +        if (type == SCAN_OUT) {
 +                usbprog_jtag_write_tdi(usbprog_jtag_handle,buffer, scan_size);
++        //usbprog_write(0, 0, 0);
++        //usbprog_write(1, 0, 0);
 +        }
 +        if (type == SCAN_IN) {
 +                usbprog_jtag_read_tdo(usbprog_jtag_handle,buffer, scan_size);
++        ///usbprog_write(0, 0, 0);
++        //usbprog_write(1, 0, 0);
 +        }
 +        if (type == SCAN_IO) {
 +                usbprog_jtag_write_and_read(usbprog_jtag_handle,buffer, scan_size);
 +        }
 +        
 +	/* Exit1 -> Pause */
-+        usbprog_write(0, 0, 0);
-+        usbprog_write(1, 0, 0);
++	//INFO("PAUSE");
++        //usbprog_write(0, 0, 0);
++        //usbprog_write(1, 0, 0);
 +
 +        if (ir_scan)
 +                cur_state = TAP_PI;
@@ -427,7 +450,7 @@ Index: src/jtag/usbprog.c
 +
 +void usbprog_write(int tck, int tms, int tdi)
 +{
-+        INFO("->USBPROG SLICE");
++        //INFO("->USBPROG SLICE");
 +	//DEBUG("slice tck %i tms %i tdi %i",tck,tms,tdi);
 +        unsigned char output_value=0x00;
 +

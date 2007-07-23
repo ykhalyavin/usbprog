@@ -117,6 +117,9 @@ int avrupdate_find_usbdevice()
             case 1003:
               if(dev->descriptor.idProduct==0x2104)
                 return AVRISPMKII;
+	      if(dev->descriptor.idProduct==0x2103)
+                return JTAGICEMKII;
+
             break;
             case 6017:
               if(dev->descriptor.idProduct==0x0c62){

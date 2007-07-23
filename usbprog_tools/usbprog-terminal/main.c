@@ -24,6 +24,7 @@
 #define BLINKDEMO   0x01
 #define USBPROG     0x02
 #define AVRISPMKII  0x03
+#define JTAGICEMKII 0x04
 
 
 int main(int argc, char **argv)
@@ -78,6 +79,19 @@ int main(int argc, char **argv)
 			#endif
 
 		break;
+		case JTAGICEMKII:
+			printf("usbprog found with: JTAGICE mk2 Klon\n");
+			printf("start update mode\n");
+			avrupdate_start_with_vendor_request(0x03eb,0x2103);
+			printf("please wait some seconds...\n");
+			#if _WIN32
+			Sleep(7000);
+			#else
+			sleep(3);
+			#endif
+
+		break;
+
 		default:
 			printf("Error: Can't find vaild usbprog adapter on usb bus.\n \
 			Be sure that you are root or have enough permissions to access usb.\n");

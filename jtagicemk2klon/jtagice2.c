@@ -188,6 +188,8 @@ int cmd_get_parameter(char *msg, char * answer)
 	default:
 	break;
 	}
+
+	return 0; 
 }
 
 
