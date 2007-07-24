@@ -18,6 +18,7 @@
 #include "usbprogonlineApp.h"
 #include "MainFrame.h"
 
+
 IMPLEMENT_APP(usbprogonlineApp);
 
 bool usbprogonlineApp::OnInit()

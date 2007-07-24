@@ -19,6 +19,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE( MainFrameGenerated, wxFrame )
+	EVT_BUTTON( wxIDBtnAbout, MainFrameGenerated::_wxFB_OnBtnAboutClick )
 	EVT_BUTTON( wxIDBtnRefreshList, MainFrameGenerated::_wxFB_OnBtnRefreshListClick )
 	EVT_BUTTON( wxIDBtnConnect, MainFrameGenerated::_wxFB_OnBtnConnectClick )
 	EVT_LIST_ITEM_DESELECTED( wxIDListCtrlOnlineVersions, MainFrameGenerated::_wxFB_OnListCtrlOnlineVersionsItemDeselected )
@@ -44,21 +45,23 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("USBProg - Online"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxBoxSizer* bSizer121;
+	bSizer121 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("usbprog-online"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->SetFont( wxFont( 12, 74, 90, 92, false, wxT("Sans") ) );
 	
-	bSizer2->Add( m_staticText2, 0, wxALL, 5 );
+	bSizer121->Add( m_staticText2, 2, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("A tool to download and flash new \nfirmware to your usbprog-adapter"), wxDefaultPosition, wxDefaultSize, 0 );
+	btn_about = new wxBitmapButton( this, wxIDBtnAbout, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	bSizer121->Add( btn_about, 0, wxALL, 5 );
+	
+	bSizer2->Add( bSizer121, 1, wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("A tool to download and flash new \nfirmware to usbprog"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
 	
-	bSizer2->Add( m_staticText3, 1, wxALL, 5 );
-	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Find more information on "), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_staticText4, 0, wxALL, 5 );
-	
-	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("http://www.embedded-projects.net"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_staticText5, 0, wxALL, 5 );
+	bSizer2->Add( m_staticText3, 2, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 1, wxEXPAND, 5 );
 	
@@ -73,6 +76,25 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText621 = new wxStaticText( panelStatus, wxID_ANY, wxT("Connection status:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText621->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
+	
+	bSizer9->Add( m_staticText621, 0, wxALL, 5 );
+	
+	m_panel5 = new wxPanel( panelStatus, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel5->SetBackgroundColour( wxColour( 255, 255, 255 ) );
+	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxVERTICAL );
+	
+	lblConnectionStatus = new wxStaticText( m_panel5, wxID_ANY, wxT("Not connected to usbprog-adapter"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
+	bSizer12->Add( lblConnectionStatus, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_panel5->SetSizer( bSizer12 );
+	m_panel5->Layout();
+	bSizer12->Fit( m_panel5 );
+	bSizer9->Add( m_panel5, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticText6211 = new wxStaticText( panelStatus, wxID_ANY, wxT("Selected Adapter:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6211->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
@@ -92,14 +114,6 @@ MainFrameGenerated::MainFrameGenerated( wxWindow* parent, int id, wxString title
 	bSizer101->Add( btnConnect, 0, wxALL, 5 );
 	
 	bSizer9->Add( bSizer101, 1, wxEXPAND, 5 );
-	
-	m_staticText621 = new wxStaticText( panelStatus, wxID_ANY, wxT("Connection status:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText621->SetFont( wxFont( 10, 74, 90, 92, false, wxT("Sans") ) );
-	
-	bSizer9->Add( m_staticText621, 0, wxALL, 5 );
-	
-	lblConnectionStatus = new wxStaticText( panelStatus, wxID_ANY, wxT("Not connected to usbprog-adapter"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
-	bSizer9->Add( lblConnectionStatus, 0, wxALL|wxEXPAND, 5 );
 	
 	panelStatus->SetSizer( bSizer9 );
 	panelStatus->Layout();

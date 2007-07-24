@@ -1,7 +1,7 @@
 Begin3
 Title:		usbprog
 Version:	0.1.0
-Entered-date:	2007-06-24
+Entered-date:	2007-07-13
 Description:	Change easy the firmware on the usbprog adapter.
 		usbprog.lsm.  Generated from usbprog.lsm.in by configure.
 		Please edit usbprog.lsm.in to fix the Keywords and

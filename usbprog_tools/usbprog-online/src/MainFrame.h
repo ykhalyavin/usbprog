@@ -28,6 +28,7 @@ const wxString ONLINE_VERSIONS_FILE = _T("http://www.ixbat.de/usbprog/versions.c
 class MainFrame: public MainFrameGenerated
 {
 	wxBitmap* hardware;
+	wxBitmap* aboutBtnBmp;
     OnlineVersions onlineVersions;
 	USBDevices	usbDevices;
 	USBDeviceInfo* deviceInfo;
@@ -45,6 +46,7 @@ class MainFrame: public MainFrameGenerated
 	    void CloseSession();
 		void UpdateFirmware(wxString filename);
     protected:
+  		virtual void OnBtnAboutClick( wxCommandEvent& event );
   		virtual void OnBtnRefreshListClick( wxCommandEvent& event );
   		virtual void OnBtnConnectClick( wxCommandEvent& event );
 		virtual void OnBtnFlashClick( wxCommandEvent& event );

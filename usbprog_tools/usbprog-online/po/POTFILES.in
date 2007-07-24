@@ -17,5 +17,9 @@ src/MainFrame.cpp
 src/MainFrame.h
 src/USBDevices.cpp
 src/USBDevices.h
+src/AboutDialogGenerated.cpp
+src/AboutDialogGenerated.h
+src/AboutDialog.h
+src/AboutDialog.cpp
 
 

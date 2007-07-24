@@ -25,7 +25,11 @@ usbprog_online_SOURCES = \
 	MainFrame.cpp\
 	MainFrame.h\
 	USBDevices.cpp\
-	USBDevices.h
+	USBDevices.h\
+	AboutDialogGenerated.cpp\
+	AboutDialogGenerated.h\
+	AboutDialog.h\
+	AboutDialog.cpp
 
 usbprog_online_LDFLAGS = \
 	-lavrupdate

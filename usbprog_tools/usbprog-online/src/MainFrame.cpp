@@ -17,9 +17,12 @@
 
 #include "MainFrame.h"
 #include "wx/protocol/http.h"
+#include "AboutDialog.h"
+
 #include <iostream>
 #include <wx/filename.h>
 #include "../images/hardware.xpm"
+#include "../images/IconAbout24.xpm"
 #include <stdexcept>
 
 
@@ -74,6 +77,11 @@ MainFrame::MainFrame(wxFrame *frame)
 		
 		hardware = new wxBitmap((const char **) hardware_xpm);
 		m_bitmap1->SetBitmap(*hardware);
+	
+	
+		aboutBtnBmp = new wxBitmap((const char **) IconAbout24_xpm);
+		btn_about->SetBitmapLabel(*aboutBtnBmp);
+	
 		RefreshOnlineVersions();
 		RefreshUSBDevices();
 		CloseSession();
@@ -245,8 +253,8 @@ void MainFrame::OnBtnFlashClick( wxCommandEvent& event )
 										 wxLIST_STATE_SELECTED);
 			onlineVersions.DownloadOnlineVersion(firstSelectedItem,tmpFileName);
 			wxLogInfo(_T("Saved online version to %s"),tmpFileName.c_str());
-			
-				UpdateFirmware(tmpFileName);
+
+			UpdateFirmware(tmpFileName);
 			
 			wxLogInfo(_T("Deleting temporary file %s"),	tmpFileName.c_str());
 			wxRemoveFile(tmpFileName);	
@@ -305,29 +313,35 @@ void MainFrame::UpdateFirmware(wxString filename)
 		int vendorId = 0;
 		int productId = 0;
 		//Falls wir noch nicht im Update-Mode sind in diesen schalten
-		if ((deviceInfo->VendorID != 6017) || (deviceInfo->ProductID != 0x0c62)|| (deviceInfo->BcdDevice != AVRUPDATE)){
+		if ((deviceInfo->VendorID != 0x1781) || (deviceInfo->ProductID != 0x0c62)|| (deviceInfo->BcdDevice != AVRUPDATE)){
 			wxLogDebug(_T("Try to switch usbprog to update mode"));
 			wxLogInfo(_T("usbprog found with: %s"),deviceInfo->Product.c_str());
 			wxLogInfo(_T("start update mode"));
 			avrupdate_start_with_vendor_request(deviceInfo->VendorID,deviceInfo->ProductID);
+			wxLogInfo(_T("update mode started"));
+			//now there should be a USBDevice AVRUPDATE
+			USBDevices devices;
+			
+			wxLogInfo(_T("waiting some seconds"));
+			
 			#if _WIN32
 			Sleep(7000);
 			#else
 			sleep(3);
 			#endif
-			//now there should be a USBDevice AVRUPDATE
-			USBDevices devices;
 			devices.Update();
 			bool updateDeviceFound = false;
 			
 			for (int i = 0 ; i< devices.Count();i++){
-				if ((devices[i]->VendorID == 6017) && (devices[i]->ProductID == 0x0c62)&& (devices[i]->BcdDevice == AVRUPDATE)){
+				if ((devices[i]->VendorID ==  0x1781) && (devices[i]->ProductID == 0x0c62)&& (devices[i]->BcdDevice == AVRUPDATE)){
 					vendorId = devices[i]->VendorID;
 					productId = devices[i]->ProductID;
 					updateDeviceFound = true;
 				}
 			}
+			
 			if (!updateDeviceFound) {
+					wxLogError(_T("Update device not found"));
 					wxLogError(_T("Could not switch usbprog to update mode. Perhaps the device is not a usbprog adapter"));
 					throw runtime_error("Could not switch usbprog to update mode. Perhaps the device is not a usbprog adapter");
 			}
@@ -337,7 +351,7 @@ void MainFrame::UpdateFirmware(wxString filename)
 			productId = deviceInfo->ProductID;
 		}
 		
-		if ((vendorId > 0) and (productId > 0)) {
+		if ((vendorId == 0x1781) and (productId == 0x0c62)) {
 			usb_dev_handle* usb_handle = avrupdate_open(vendorId,productId);	
 			//at the moment we have to copy the filename string to provide
 			//a non const char* as filename
@@ -364,5 +378,13 @@ void MainFrame::UpdateFirmware(wxString filename)
 		CloseSession();
 	}catch(std::exception &e){
 		wxLogError(_T("%s"), e.what());
-	}	
+	}catch(...){
+		wxLogError(_T("Fehler beim Update"));
+	}
+}
+void MainFrame::OnBtnAboutClick( wxCommandEvent& event )
+{
+	AboutDialog* aboutDlg = new AboutDialog(this);
+	aboutDlg->ShowModal();
+	delete(aboutDlg);
 }

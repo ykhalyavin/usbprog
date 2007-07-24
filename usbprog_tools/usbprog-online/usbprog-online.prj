@@ -28,7 +28,7 @@ anjuta.compatibility.level=1
 project.name=usbprog-online
 project.type=wxWINDOWS
 project.target.type=EXECUTABLE
-project.version=0.1
+project.version=0.2
 project.author=User
 project.source.target=usbprog-online
 project.has.gettext=1
@@ -82,7 +82,11 @@ module.source.files=\
 	MainFrame.cpp\
 	MainFrame.h\
 	USBDevices.cpp\
-	USBDevices.h
+	USBDevices.h\
+	AboutDialogGenerated.cpp\
+	AboutDialogGenerated.h\
+	AboutDialog.h\
+	AboutDialog.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=

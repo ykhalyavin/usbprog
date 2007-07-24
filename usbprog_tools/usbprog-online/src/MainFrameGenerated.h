@@ -19,25 +19,27 @@
 #include <wx/wx.h>
 #endif
 
+#include <wx/bmpbuttn.h>
 #include <wx/statbmp.h>
+#include <wx/panel.h>
 #include <wx/listctrl.h>
 #include <wx/button.h>
-#include <wx/panel.h>
 #include <wx/notebook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
-#define wxIDNotebookSource 1000
-#define wxIDListCtrlUSBDevices 1001
-#define wxIDBtnRefreshList 1002
-#define wxIDBtnConnect 1003
-#define wxIDListCtrlOnlineVersions 1004
-#define wxIDBtnDownloadAndFlash 1005
-#define wxIDBtnRefreshOnlineVersions 1006
-#define wxIDBtnSelectFile 1007
-#define wxIDBtnFlashLocalFile 1008
-#define wxIDTextCtrlAppLog 1009
-#define wxIDBtnClearLog 1010
+#define wxIDBtnAbout 1000
+#define wxIDNotebookSource 1001
+#define wxIDListCtrlUSBDevices 1002
+#define wxIDBtnRefreshList 1003
+#define wxIDBtnConnect 1004
+#define wxIDListCtrlOnlineVersions 1005
+#define wxIDBtnDownloadAndFlash 1006
+#define wxIDBtnRefreshOnlineVersions 1007
+#define wxIDBtnSelectFile 1008
+#define wxIDBtnFlashLocalFile 1009
+#define wxIDTextCtrlAppLog 1010
+#define wxIDBtnClearLog 1011
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameGenerated
@@ -48,6 +50,7 @@ class MainFrameGenerated : public wxFrame
 	private:
 		
 		// Private event handlers
+		void _wxFB_OnBtnAboutClick( wxCommandEvent& event ){ OnBtnAboutClick( event ); }
 		void _wxFB_OnBtnRefreshListClick( wxCommandEvent& event ){ OnBtnRefreshListClick( event ); }
 		void _wxFB_OnBtnConnectClick( wxCommandEvent& event ){ OnBtnConnectClick( event ); }
 		void _wxFB_OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event ){ OnListCtrlOnlineVersionsItemDeselected( event ); }
@@ -61,18 +64,18 @@ class MainFrameGenerated : public wxFrame
 	
 	protected:
 		wxStaticText* m_staticText2;
+		wxBitmapButton* btn_about;
 		wxStaticText* m_staticText3;
-		wxStaticText* m_staticText4;
-		wxStaticText* m_staticText5;
 		wxStaticBitmap* m_bitmap1;
 		wxNotebook* notebookSource;
 		wxPanel* panelStatus;
+		wxStaticText* m_staticText621;
+		wxPanel* m_panel5;
+		wxStaticText* lblConnectionStatus;
 		wxStaticText* m_staticText6211;
 		wxListCtrl* listCtrlUSBDevices;
 		wxButton* btnRefreshList;
 		wxButton* btnConnect;
-		wxStaticText* m_staticText621;
-		wxStaticText* lblConnectionStatus;
 		wxPanel* panelOnline;
 		wxStaticText* m_staticText6;
 		wxListCtrl* listCtrlOnlineVersions;
@@ -89,6 +92,7 @@ class MainFrameGenerated : public wxFrame
 		wxButton* btnClearLog;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnBtnAboutClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBtnRefreshListClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBtnConnectClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnListCtrlOnlineVersionsItemDeselected( wxListEvent& event ){ event.Skip(); }
@@ -101,7 +105,7 @@ class MainFrameGenerated : public wxFrame
 		
 	
 	public:
-		MainFrameGenerated( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("USBProg - Online"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 553,553 ), int style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrameGenerated( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("usbprog-online"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 553,553 ), int style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 	
 };
 
