@@ -1,0 +1,31 @@
+Stueckliste/Partlist usbprog
+
+Part     Value          Device          Package      notice
+
+C6       100n           C-EUC1206       C1206        (gelb markiert, yellow marked)
+C8       15p            C-EUC1206       C1206        (blau markiert, blue marked) 
+C9       15p            C-EUC1206       C1206        (blau markiert, blue marked)
+C10      100n           C-EUC1206       C1206        (gelb markiert, yellow marked) 
+C11      1µ             C-EUC1206       C1206        
+IC1      MEGA32-A       MEGA32-A        TQFP44       
+JP1      3 Pins         JP2E            JP2          
+JP2      2 Pins         JP1E            JP1          jumper         1
+LED1     (green)        LEDCHIP-LED0805 CHIP-LED0805 (schwarz markiert, black marked) 
+LED2     (red)          LEDCHIP-LED0805 CHIP-LED0805 
+M1       USBN9604       USBN9604        SO28-3       
+Q1       24MHz          XTAL/S          QS          
+R1       1M             R-EU_R1206      R1206        (1004) 
+R2       270            R-EU_M1206      M1206        (2700) 
+R3       270            R-EU_M1206      M1206        (2700)	 
+R4       1,5K           R-EU_M1206      M1206        (1501) 
+R5       100K           R-EU_R1206      R1206        (1003) 
+R6       10k            R-EU_R1206      R1206        (1002) 
+SV2                     ML10L           ML10L 
+X1       USB Buchse B   PN61729         PN61729      
+
+
+
+> 3:TMBYV 10-40 1 0,30 0,30 Schottky 40V 1A
+> MELF(SMD)
+
+Der Typ TMBYV 10-40 hat das richtige Gehäuse für uns.
