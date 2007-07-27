@@ -1,7 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Benedikt Sauter sauter@ixbat.de		   *
- *   http://www.embedded-projects.net/usbprog				   *
- *   based on Dominic Rath's amt_jtagaccel.c				   *
+ *   based on Dominic Rath's usbprog.c				   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -77,6 +76,7 @@ jtag_interface_t usbprog_interface =
 #define READ_TDO     	0x07
 #define WRITE_AND_READ 	0x08
 #define WRITE_TMS     	0x09
+#define WRITE_TMS_CHAIN 0x0A
 
 struct usbprog_jtag 
 {
@@ -95,6 +95,11 @@ void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int
 void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_tms(struct usbprog_jtag *usbprog_jtag, char tms_scan);
+
+char tms_chain[64];
+int tms_chain_index;
+void usbprog_jtag_tms_collect(char tms_scan);
+void usbprog_jtag_tms_send(struct usbprog_jtag *usbprog_jtag);
 
 void usbprog_write(int tck, int tms, int tdi);
 void usbprog_reset(int trst, int srst);
@@ -202,6 +207,7 @@ int usbprog_init(void)
 {
 	usbprog_jtag_handle = usbprog_jtag_open();
 
+	tms_chain_index=0;
 	if(usbprog_jtag_handle==0){
 		ERROR("Can't find USB JTAG Interface! Please check connection and permissions.");
 		return ERROR_JTAG_INIT_FAILED;
@@ -210,7 +216,6 @@ int usbprog_init(void)
 	INFO("USB JTAG Interface ready!");
 				    
 	usbprog_jtag_init(usbprog_jtag_handle);
-	//usbprog_reset(1, 1);
 	usbprog_reset(0, 0);
 	usbprog_write(0, 0, 0);
 
@@ -247,6 +252,11 @@ void usbprog_state_move(void) {
                 tms = (tms_scan >> i) & 1;
         }
 	
+	// moved into firmware
+	// INFO("4");
+	// koennte man in tms verlagern
+	//usbprog_write(0, tms, 0);
+
         cur_state = end_state;
 }
 
@@ -261,13 +271,13 @@ void usbprog_path_move(pathmove_command_t *cmd)
         {
                 if (tap_transitions[cur_state].low == cmd->path[state_count])
                 {
-			//INFO("1");
+			INFO("1");
                         usbprog_write(0, 0, 0);
                         usbprog_write(1, 0, 0);
                 }
                 else if (tap_transitions[cur_state].high == cmd->path[state_count])
                 {
-			//INFO("2");
+			INFO("2");
                         usbprog_write(0, 1, 0);
                         usbprog_write(1, 1, 0);
                 }
@@ -292,7 +302,8 @@ void usbprog_runtest(int num_cycles)
 
         enum tap_state saved_end_state = end_state;
 
-        /* only do a state_move when we're not already in RTI */
+        
+	/* only do a state_move when we're not already in RTI */
         if (cur_state != TAP_RTI)
         {
                 usbprog_end_state(TAP_RTI);
@@ -306,6 +317,8 @@ void usbprog_runtest(int num_cycles)
 		//INFO("5");
 		usbprog_write(0, 0, 0);
 	}
+	else 
+		usbprog_jtag_tms_send(usbprog_jtag_handle);
         for (i = 0; i < num_cycles; i++)
         {
 		//INFO("3");
@@ -336,6 +349,8 @@ void usbprog_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 	//INFO("7");
         usbprog_state_move();
         usbprog_end_state(saved_end_state);
+
+	usbprog_jtag_tms_send(usbprog_jtag_handle);
 
         if (type == SCAN_OUT) {
                 usbprog_jtag_write_tdi(usbprog_jtag_handle,buffer, scan_size);
@@ -571,10 +586,11 @@ void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, in
 
 void usbprog_jtag_write_tms(struct usbprog_jtag *usbprog_jtag, char tms_scan)
 {
-	char tmp[2];	// fastes packet size for usb controller
-	tmp[0] = WRITE_TMS;
-	tmp[1] = tms_scan;
-	usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,2,1000);
+	//char tmp[2];	// fastes packet size for usb controller
+	//tmp[0] = WRITE_TMS;
+	//tmp[1] = tms_scan;
+	//usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,2,1000);
+	usbprog_jtag_tms_collect(tms_scan);
 }
 
 
@@ -625,5 +641,23 @@ int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit)
 		return 1;
 	else
 		return 0;
+}
+
+void usbprog_jtag_tms_collect(char tms_scan){
+	tms_chain[tms_chain_index]=tms_scan;
+	tms_chain_index++;
+}
+
+void usbprog_jtag_tms_send(struct usbprog_jtag *usbprog_jtag){
+	int i;
+	if(tms_chain_index>0) {
+		char tmp[tms_chain_index+2];
+		tmp[0] = WRITE_TMS_CHAIN;
+		tmp[1] = (char)(tms_chain_index);
+		for(i=0;i<tms_chain_index+1;i++)
+			tmp[2+i] = tms_chain[i];
+		usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,tms_chain_index+2,1000);
+		tms_chain_index=0;
+	}
 }
 

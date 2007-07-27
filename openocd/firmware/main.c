@@ -34,6 +34,7 @@
 #define READ_TDO	0x07
 #define WRITE_AND_READ	0x08
 #define WRITE_TMS	0x09
+#define WRITE_TMS_CHAIN	0x0A
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -102,15 +103,9 @@ void Commands(char *buf)
   switch(buf[0]) {
     case PORT_DIRECTION:
       set_direction((uint8_t)buf[1]);
-      //answer[0] = PORT_DIRECTION; 
-      //answer[1] = 0x00;
-      //CommandAnswer(2);
     break;
     case PORT_SET:
       set_port((uint8_t)buf[1]);
-      //answer[0] = PORT_SET; 
-      //answer[1] = 0x00;
-      //CommandAnswer(2);
     break;
     case PORT_GET:
       answer[0] = PORT_GET; 
@@ -119,9 +114,6 @@ void Commands(char *buf)
     break;
     case PORT_SETBIT:
       set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
-      //answer[0] = PORT_SETBIT; 
-      //answer[1] = 0x00;
-      //CommandAnswer(2);
     break;
     case PORT_GETBIT:
       answer[0] = PORT_GETBIT; 
@@ -131,7 +123,6 @@ void Commands(char *buf)
     
     case WRITE_TDI:
       write_tdi(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
-      #if 1
       // tck 0 tms 0 tdi 0
       CLEARBIT(BIT2_WRITE,BIT2);  // clk
       CLEARBIT(BIT1_WRITE,BIT1);  // tdi
@@ -139,17 +130,18 @@ void Commands(char *buf)
       
       // tck 1 tms 0 tdi 0
       SETBIT(BIT2_WRITE,BIT2);  // clk
-      #endif
-      //answer[0] = WRITE_TDI; 
-      //answer[1] = 0x00;
-      //CommandAnswer(2);
     break;
  
     case WRITE_TMS:
       write_tms((uint8_t)buf[1]);
-      //answer[0] = WRITE_TDI; 
-      //answer[1] = 0x00;
-      //CommandAnswer(2);
+    break;
+   
+    case WRITE_TMS_CHAIN:
+      for(i=0;i<(int)buf[1];i++){
+	write_tms((uint8_t)buf[2+i]);
+	asm("nop");
+	asm("nop");
+      }
     break;
 
     case READ_TDO:
