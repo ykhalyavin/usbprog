@@ -1,6 +1,14 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Benedikt Sauter sauter@ixbat.de		   *
- *   based on Dominic Rath's usbprog.c				   *
+ *   based on Dominic Rath's amt_jtagaccel.c			           *
+ *									   * 
+ *   usbprog is a free programming adapter. You can easily install	   *
+ *   different firmware versions from an "online pool" over USB.	   * 
+ *   The adapter can be used for programming and debugging AVR and ARM	   *
+ *   processors, as USB to RS232 converter, as JTAG interface or as	   *
+ *   simple I/O interface (5 lines).					   *
+ *									   *
+ *   http://www.embedded-projects.net/usbprog				   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,6 +25,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -32,6 +41,12 @@
 
 #define VID 0x1781
 #define PID 0x0c62
+
+// Pins at usbprog
+#define TDO_BIT         0
+#define TDI_BIT         3
+#define TCK_BIT         2
+#define TMS_BIT         1
 
 int usbprog_execute_queue(void);
 int usbprog_speed(int speed);
@@ -49,22 +64,13 @@ void usbprog_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size);
 jtag_interface_t usbprog_interface = 
 {
 	.name = "usbprog",
-	
 	.execute_queue = usbprog_execute_queue,
-
 	.support_pathmove = 0,
-
 	.speed = usbprog_speed,	
 	.register_commands = usbprog_register_commands,
 	.init = usbprog_init,
 	.quit = usbprog_quit
 };
-
-// pins from avr
-#define TDO_BIT         0
-#define TDI_BIT         3
-#define TCK_BIT         2
-#define TMS_BIT         1
 
 #define UNKOWN_COMMAND  0x00
 #define PORT_DIRECTION  0x01
@@ -252,11 +258,6 @@ void usbprog_state_move(void) {
                 tms = (tms_scan >> i) & 1;
         }
 	
-	// moved into firmware
-	// INFO("4");
-	// koennte man in tms verlagern
-	//usbprog_write(0, tms, 0);
-
         cur_state = end_state;
 }
 
@@ -307,21 +308,20 @@ void usbprog_runtest(int num_cycles)
         if (cur_state != TAP_RTI)
         {
                 usbprog_end_state(TAP_RTI);
-		//INFO("6");
                 usbprog_state_move();
         }
 
         /* execute num_cycles */
 	if(num_cycles>0)
 	{
-		//INFO("5");
 		usbprog_write(0, 0, 0);
 	}
-	else 
+	else {
 		usbprog_jtag_tms_send(usbprog_jtag_handle);
+	}
+
         for (i = 0; i < num_cycles; i++)
         {
-		//INFO("3");
                 usbprog_write(1, 0, 0);
                 usbprog_write(0, 0, 0);
         }
@@ -346,7 +346,6 @@ void usbprog_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
         else
                 usbprog_end_state(TAP_SD);
 
-	//INFO("7");
         usbprog_state_move();
         usbprog_end_state(saved_end_state);
 
@@ -375,8 +374,6 @@ void usbprog_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 
 void usbprog_write(int tck, int tms, int tdi)
 {
-        //INFO("->USBPROG SLICE");
-	//DEBUG("slice tck %i tms %i tdi %i",tck,tms,tdi);
         unsigned char output_value=0x00;
 
         if (tms)
@@ -392,7 +389,6 @@ void usbprog_write(int tck, int tms, int tdi)
 /* (1) assert or (0) deassert reset lines */
 void usbprog_reset(int trst, int srst)
 {
-        //INFO("->USBPROG RESET");
         DEBUG("trst: %i, srst: %i", trst, srst);
 
         if(trst)
@@ -586,10 +582,6 @@ void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, in
 
 void usbprog_jtag_write_tms(struct usbprog_jtag *usbprog_jtag, char tms_scan)
 {
-	//char tmp[2];	// fastes packet size for usb controller
-	//tmp[0] = WRITE_TMS;
-	//tmp[1] = tms_scan;
-	//usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,2,1000);
 	usbprog_jtag_tms_collect(tms_scan);
 }
 
