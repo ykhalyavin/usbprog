@@ -29,3 +29,10 @@ X1       USB Buchse B   PN61729         PN61729
 > MELF(SMD)
 
 Der Typ TMBYV 10-40 hat das richtige Gehäuse für uns.
+
+
+Kondensator nehmen: Best.Nr. 115-08R001 (neuen Kondensatoren)
+
+
+Denk an die Dioden! Du kannst auch die MBRS120T3 von CSD
+Best.Nr. 11151 verwenden (passen auch auf die Pads).
