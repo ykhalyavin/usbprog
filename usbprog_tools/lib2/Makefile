@@ -19,4 +19,4 @@ http_error_codes.o: http_error_codes.c http_error_codes.h
 	gcc -c http_error_codes.c
 
 clean:
-	rm *.o demo_xml demo
+	rm *.o demo_xml demo demo_http
