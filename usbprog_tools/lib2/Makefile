@@ -1,9 +1,12 @@
-all:	xmldemo demo http_fetcher.o http_error_codes.o
+all:	demo_xml demo demo_http
 
-xmldemo: xmlparser
-	g++ -o xmldemo xmldemo.cpp xmlParser.o
+demo_xml: xmlparser
+	g++ -o demo_xml demo_xml.cpp xmlParser.o
 
-demo: xmlparser
+demo_http: http_fetcher.o http_error_codes.o demo_http.cpp
+	g++ -o demo_http demo_http.cpp http_fetcher.o http_error_codes.o 
+
+demo: xmlparser demo.cpp
 	g++ -o demo demo.cpp xmlParser.o
 
 xmlparser: xmlParser.h xmlParser.cpp
@@ -16,4 +19,4 @@ http_error_codes.o: http_error_codes.c http_error_codes.h
 	gcc -c http_error_codes.c
 
 clean:
-	rm *.o xmldemo demo
+	rm *.o demo_xml demo
