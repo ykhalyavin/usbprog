@@ -303,7 +303,7 @@ void usbprog_runtest(int num_cycles)
 
         enum tap_state saved_end_state = end_state;
 
-        
+
 	/* only do a state_move when we're not already in RTI */
         if (cur_state != TAP_RTI)
         {
@@ -314,10 +314,12 @@ void usbprog_runtest(int num_cycles)
         /* execute num_cycles */
 	if(num_cycles>0)
 	{
+		usbprog_jtag_tms_send(usbprog_jtag_handle);
 		usbprog_write(0, 0, 0);
 	}
 	else {
-		usbprog_jtag_tms_send(usbprog_jtag_handle);
+		//usbprog_jtag_tms_send(usbprog_jtag_handle);
+		//INFO("NUM CYCLES %i",num_cycles);
 	}
 
         for (i = 0; i < num_cycles; i++)
@@ -345,6 +347,8 @@ void usbprog_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
                 usbprog_end_state(TAP_SI);
         else
                 usbprog_end_state(TAP_SD);
+
+	//usbprog_jtag_tms_send(usbprog_jtag_handle);
 
         usbprog_state_move();
         usbprog_end_state(saved_end_state);
@@ -374,16 +378,16 @@ void usbprog_scan(int ir_scan, enum scan_type type, u8 *buffer, int scan_size)
 
 void usbprog_write(int tck, int tms, int tdi)
 {
-        unsigned char output_value=0x00;
+	 unsigned char output_value=0x00;
 
-        if (tms)
+	 if (tms)
                 output_value |= (1<<TMS_BIT);
-        if (tdi)
+	 if (tdi)
                 output_value |= (1<<TDI_BIT);
-        if (tck)
+	 if (tck)
                 output_value |= (1<<TCK_BIT);
 
-        usbprog_jtag_write_slice(usbprog_jtag_handle,output_value);
+	 usbprog_jtag_write_slice(usbprog_jtag_handle,output_value);
 }
 
 /* (1) assert or (0) deassert reset lines */
@@ -642,6 +646,7 @@ void usbprog_jtag_tms_collect(char tms_scan){
 
 void usbprog_jtag_tms_send(struct usbprog_jtag *usbprog_jtag){
 	int i;
+	//INFO("TMS SEND");
 	if(tms_chain_index>0) {
 		char tmp[tms_chain_index+2];
 		tmp[0] = WRITE_TMS_CHAIN;
