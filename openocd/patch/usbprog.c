@@ -40,7 +40,7 @@
 #include "log.h"
 
 #define VID 0x1781
-#define PID 0x0c62
+#define PID 0x0c63
 
 // Pins at usbprog
 #define TDO_BIT         0
@@ -272,13 +272,13 @@ void usbprog_path_move(pathmove_command_t *cmd)
         {
                 if (tap_transitions[cur_state].low == cmd->path[state_count])
                 {
-			INFO("1");
+			//INFO("1");
                         usbprog_write(0, 0, 0);
                         usbprog_write(1, 0, 0);
                 }
                 else if (tap_transitions[cur_state].high == cmd->path[state_count])
                 {
-			INFO("2");
+			//INFO("2");
                         usbprog_write(0, 1, 0);
                         usbprog_write(1, 1, 0);
                 }
@@ -318,7 +318,7 @@ void usbprog_runtest(int num_cycles)
 		usbprog_write(0, 0, 0);
 	}
 	else {
-		//usbprog_jtag_tms_send(usbprog_jtag_handle);
+		usbprog_jtag_tms_send(usbprog_jtag_handle);
 		//INFO("NUM CYCLES %i",num_cycles);
 	}
 
@@ -411,9 +411,9 @@ void usbprog_reset(int trst, int srst)
 /*************** jtag lowlevel functions ********************/
 
 
+	struct usb_bus *busses;
 struct usbprog_jtag* usbprog_jtag_open()
 {
-	struct usb_bus *busses;
 	struct usb_dev_handle* usb_handle;
 	struct usb_bus *bus;
 	struct usb_device *dev;
@@ -422,11 +422,12 @@ struct usbprog_jtag* usbprog_jtag_open()
 
 	tmp = (struct usbprog_jtag*)malloc(sizeof(struct usbprog_jtag));
 
-
+usb_set_debug(10);	
 	usb_init();
 	usb_find_busses();
 	usb_find_devices();
 
+	
 	busses = usb_get_busses();
 
 	/* find usbprog_jtag device in usb bus */
@@ -436,7 +437,7 @@ struct usbprog_jtag* usbprog_jtag_open()
 			/* condition for sucessfully hit (too bad, I only check the vendor id)*/
 			if (dev->descriptor.idVendor == VID && dev->descriptor.idProduct == PID) {
 				tmp->usb_handle = usb_open(dev);
-				usb_set_configuration (tmp->usb_handle,dev->config[0].bConfigurationValue);
+				usb_set_configuration (tmp->usb_handle,1);
 				usb_claim_interface(tmp->usb_handle, 0);
 				usb_set_altinterface(tmp->usb_handle,0);
 				return tmp;
@@ -457,9 +458,10 @@ void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag)
 unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen)
 {
 	int res = usb_bulk_write(usbprog_jtag->usb_handle,3,msg,msglen,100);
-	if(msg[0]==2)
+	if(msg[0]==2||msg[0]==1||msg[0]==4||msg[0]==0||msg[0]==6||msg[0]==0x0A||msg[0]==9)
 		return 1;  
 	if(res == msglen) {
+		//INFO("HALLLLOOO %i",(int)msg[0]);
 		res =  usb_bulk_read(usbprog_jtag->usb_handle,0x82, msg, 2, 100);
 		if (res > 0)
 			return (unsigned char)msg[1];
@@ -506,14 +508,22 @@ void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffe
 			bufindex++;
 		}
     
-		usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
-		
-		while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 1000) < 1);
+		if(usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000)==64)
+		{
+			//INFO("HALLLLOOO2 %i",(int)tmp[0]);
+			usleep(1);
+			int timeout=0;
+			while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 1000) < 1){
+				timeout++;
+				if(timeout>10)
+					break;
+			}	
 
-		for(i=0;i<loops ;i++) {
-			swap =  tmp[3+i];
-			buffer[fillindex++] = swap;
-		} 
+			for(i=0;i<loops ;i++) {
+				swap =  tmp[3+i];
+				buffer[fillindex++] = swap;
+			} 
+		}
 	}
 }
 
@@ -543,7 +553,14 @@ void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int
     
 		usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,3,1000);
     
-		while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 10) < 1);
+		//INFO("HALLLLOOO3 %i",(int)tmp[0]);
+		int timeout=0;
+		usleep(1);
+		while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 10) < 1){
+			timeout++;
+			if(timeout>10)
+				break;
+		}
 
 		for(i=0;i<loops ;i++) {
 			swap =  tmp[3+i];

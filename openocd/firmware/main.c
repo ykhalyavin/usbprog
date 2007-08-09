@@ -199,7 +199,7 @@ int main(void)
     //DDRA = (1 << PA4);
 
     USBNDeviceVendorID(0x1781);	// fha
-    USBNDeviceProductID(0x0c62); // fha
+    USBNDeviceProductID(0x0c63); // fha
 
     USBNDeviceBCDDevice(0x0200);
 
