@@ -4,15 +4,15 @@
   <pool>
     <firmware name="avrispmk2" label="AVRISP mk2 Clone">
       <binary file="avrispmk2.bin" url="http://www.ixbat.de/usbprog/" />
-      <info version="2" author="Benedikt Sauter" />
+      <info version="2" author="Benedikt Sauter" date="2007-08-01"/>
       <description>
 	A reproduction of the original AVRISP mk2. It can be used with
 	all Softwares, which are supported AVRISP mk2 such as AVR Studio, avrdude, etc.
       </description>
     </firmware>
-    <firmware name="openocd" label="AVRISP mk2 Clone">
+    <firmware name="openocd" label="OpenOCD Debugger">
       <binary file="openocd.bin" url="http://www.ixbat.de/usbprog/" />
-      <info version="1" author="Benedikt Sauter" />
+      <info version="1" author="Benedikt Sauter" date="2007-08-01"/>
       <description>
 	OpenOCD is a free open-source JTAG debugger for microprocessors with ARM7,
 	ARM9 and related cores. OpenOCD is an ideal component for the GNU GCC toolchain
