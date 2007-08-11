@@ -351,7 +351,7 @@ void _USBNReceiveFIFO0(void)
   }
   else                              // if not a setuppacket
   {
-    //USBNDebug("error transmit\r\n");
+    USBNDebug("error transmit\r\n");
     if (EP0tx.Size > EP0tx.usbnfifo)   // multi-pkt status stage? 
     {
       if ((rxstatus& 0x5F)!=0x10)   // length error??          
@@ -545,14 +545,20 @@ void _USBNGetDescriptor(DeviceRequest *req)
   switch (type)
   {
     case DEVICE:
-      #if DEBUG 
+      //#if DEBUG 
       USBNDebug("DEVICE DESCRIPTOR\n\r");  
-      #endif
+      //#endif
       EP0tx.Size = DeviceDescriptor.bLength;
       EP0tx.Buf = (char*)&(DeviceDescriptor);
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
+      SendHex(req->wLength);
+      
+      if(req->wLength==0x08)
+	req->wLength=0x40;
+
+
       if(req->wLength==0x40)
         EP0tx.Size = 8;
     break;

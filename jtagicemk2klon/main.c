@@ -225,7 +225,9 @@ int main(void)
 	// only for testing
   UARTInit();
   
-	USBNInit();   
+  USBNInit();   
+
+  UARTWrite("Hallo\r\n");
   
   jtagice.longpackage=0;
   jtagice.datatogl=1;

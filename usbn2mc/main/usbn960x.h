@@ -19,7 +19,7 @@
 #ifndef _USBN960X_H
 #define _USBN960X_H
 
-#define DEBUG 0 
+#define DEBUG 0
 
 #include "../usbn960xreg.h"
 #include "../usb11spec.h"

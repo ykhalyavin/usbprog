@@ -51,7 +51,7 @@ unsigned char UARTGetChar(void)
 
 void UARTWrite(char* msg)
 {
-	#if 0
+	#if 1
   	while(*msg != '\0')
   	{
      	UARTPutChar (*msg++);

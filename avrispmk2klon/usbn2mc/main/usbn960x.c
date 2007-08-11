@@ -552,6 +552,8 @@ void _USBNGetDescriptor(DeviceRequest *req)
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
+      if(req->wLength==0x08)
+	req->wLength=0x40;
       if(req->wLength==0x40)
         EP0tx.Size = 8;
     break;
