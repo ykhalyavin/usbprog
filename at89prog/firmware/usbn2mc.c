@@ -20,37 +20,6 @@
 #include "usbn2mc.h"
 #include "uart.h"
 
-//*******************************************************************
-// add own vendor requests          
-// ********************************************************************
-/*
-// decode your own vendor requests
-
-void USBNDecodeVendorRequest(DeviceRequest *req)
-{
-  //SendHex(req->bRequest);       // decode request code
-  SendHex(req->wLength);       // decode request code
-  USBNWrite(RXC0,RX_EN);
-  USBNRead(RXD0);
-  USBNRead(RXD0);
-  
-  //USBNWrite(TXC0,FLUSH);
-  //USBNWrite(TXD0,0x24);
-  //USBNWrite(TXD0,0x25);
-}
-
-
-void USBNDecodeClassRequest(DeviceRequest *req)
-{
-  //SendHex(req->bRequest);       // decode request code
-  SendHex(req->wLength);       // decode request code
-  USBNWrite(RXC0,RX_EN);
-  USBNRead(RXD0);
-  USBNRead(RXD0);
-}
-*/
-
-
 // ********************************************************************
 // This subroutine handles the communication with usbn9604          
 // ********************************************************************
@@ -60,6 +29,9 @@ void USBNDecodeClassRequest(DeviceRequest *req)
 
 void USBNInitMC(void)
 {
+  MCUCR |=  (1 << ISC01); // fallende flanke
+  GICR |= (1 << INT0);
+
   USB_CTRL_DDR = 0xf8;
   //USB_CTRL_DDR = 0xff;
   //USB_CTRL_PORT |= ((PF_RD | PF_WR | PF_CS | PF_RESET) & ~(PF_A0));

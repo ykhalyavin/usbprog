@@ -7,7 +7,7 @@
 
 #include "uart.h"
 
-#include "utils.h"
+#include "wait.h"
 
 #include "at89.h"
 
