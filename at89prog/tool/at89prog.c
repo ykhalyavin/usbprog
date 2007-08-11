@@ -50,7 +50,7 @@
 #define UPLOAD 0x02
 
 usb_dev_handle *locate_at89prog(void);
-void usbprog_open(usb_dev_handle * usb_handle);
+void at89prog_open(usb_dev_handle * usb_handle);
 
 void at89_reset(usb_dev_handle * usb_handle,char type);
 void at89_erase(usb_dev_handle * usb_handle,char type);
@@ -65,7 +65,7 @@ void show_help(void) {
 	printf("\nAuthor: Benedikt Sauter <sauter@ixbat.de>"\
 		"\nLicense: GNU General Public License V2\n"\
 		"\nat89prog is software for programming Microcontrollers.\n"\
-   		"\nUsage: usbprog [OPTION]\n"\
+   		"\nUsage: at89prog [OPTION]\n"\
        	"\t-r  reset controller\n"\
        	"\t-e  erase code memory\n"\
        	"\t-u  load .bin into code memory\n "\
@@ -93,7 +93,7 @@ int main (int argc,char **argv)
   	usb_init();
   	//usb_set_debug(2);
   	if ((usb_handle = locate_at89prog())) {
-   		usbprog_open(usb_handle);
+   		at89prog_open(usb_handle);
   	}  
 	else {
     	fprintf(stderr,"Could not open at89prog\n");
@@ -279,7 +279,7 @@ void atmega_upload(usb_dev_handle * usb_handle,char type,char *file)
 /******************************************/
 /* at89prog main prog functions */
 
-void usbprog_open(usb_dev_handle * usb_handle)
+void at89prog_open(usb_dev_handle * usb_handle)
 {
   usb_set_configuration(usb_handle,1);
   usb_claim_interface(usb_handle,0);
