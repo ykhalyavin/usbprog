@@ -1,4 +1,4 @@
 all:
-	gcc -o usbflash usbflash.c -lusb
+	gcc -o at89prog at89prog.c -lusb
 clean:
-	rm usbflash
+	rm at89prog

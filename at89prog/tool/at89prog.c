@@ -2,16 +2,16 @@
  * Benedikt Sauter <sauter@ixbat.de> 2006-04-10
  *
  *  Using:
- *  usbflash -t at89 -r	  // reset 
- *  usbflash -t at89 -e	  // erase
- *  usbflash -t at89 -u test.bin // upload 
+ *  at89prog -t at89 -r	  // reset 
+ *  at89prog -t at89 -e	  // erase
+ *  at89prog -t at89 -u test.bin // upload 
  *
  *  Types:
  *  at89 	- AT89...
  *  m8		- atmega8
  *	m32		- atmega32
  *
- *	Message to usbflash Hardware:
+ *	Message to at89prog Hardware:
  *
  * 	type cmd 
  * 	
@@ -49,7 +49,7 @@
 #define ERASE 0x01
 #define UPLOAD 0x02
 
-usb_dev_handle *locate_usbflash(void);
+usb_dev_handle *locate_at89prog(void);
 void usbprog_open(usb_dev_handle * usb_handle);
 
 void at89_reset(usb_dev_handle * usb_handle,char type);
@@ -64,7 +64,7 @@ void atmega_upload(usb_dev_handle * usb_handle,char type,char *file);
 void show_help(void) {
 	printf("\nAuthor: Benedikt Sauter <sauter@ixbat.de>"\
 		"\nLicense: GNU General Public License V2\n"\
-		"\nusbflash is software for programming Microcontrollers.\n"\
+		"\nat89prog is software for programming Microcontrollers.\n"\
    		"\nUsage: usbprog [OPTION]\n"\
        	"\t-r  reset controller\n"\
        	"\t-e  erase code memory\n"\
@@ -92,11 +92,11 @@ int main (int argc,char **argv)
 
   	usb_init();
   	//usb_set_debug(2);
-  	if ((usb_handle = locate_usbflash())) {
+  	if ((usb_handle = locate_at89prog())) {
    		usbprog_open(usb_handle);
   	}  
 	else {
-    	fprintf(stderr,"Could not open usbflash\n");
+    	fprintf(stderr,"Could not open at89prog\n");
 	}
 
 
@@ -277,7 +277,7 @@ void atmega_upload(usb_dev_handle * usb_handle,char type,char *file)
 
 
 /******************************************/
-/* usbflash main prog functions */
+/* at89prog main prog functions */
 
 void usbprog_open(usb_dev_handle * usb_handle)
 {
@@ -287,7 +287,7 @@ void usbprog_open(usb_dev_handle * usb_handle)
  
 }
 
-usb_dev_handle *locate_usbflash(void) 
+usb_dev_handle *locate_at89prog(void) 
 {
   unsigned char located = 0;
   struct usb_bus *bus;
