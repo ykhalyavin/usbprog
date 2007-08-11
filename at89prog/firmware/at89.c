@@ -38,11 +38,11 @@ void At89FlashWrite(char *buf)
   
   SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
 
-  PORTB=0x10;  // reset on led on and sck = low 
+  PORTB=0x01;  // reset on led on and sck = low 
   wait_ms(5);
   PORTB=0x00;  // reset on led on and sck = low 
   wait_ms(5);
-  PORTB=0x10;  // reset on led on and sck = low 
+  PORTB=0x01;  // reset on led on and sck = low 
 
 
   //before the at89 accepts any commands, it needs to be put into command mode
@@ -80,11 +80,11 @@ void At89FlashErase()
   
   SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
 
-  PORTB=0x10;  // reset on led on and sck = low 
+  PORTB=0x01;  // reset on led on and sck = low 
   wait_ms(5);
   PORTB=0x00;  // reset on led on and sck = low 
   wait_ms(5);
-  PORTB=0x10;  // reset on led on and sck = low 
+  PORTB=0x01;  // reset on led on and sck = low 
 
 
   //before the at89 accepts any commands, it needs to be put into command mode
