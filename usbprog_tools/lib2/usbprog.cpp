@@ -95,9 +95,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 
-	printf("%i %i\n",vendorlen,productlen);
-
-	if(vendorlen<=0 || productlen<=0){
+	if(vendorlen<=0 && productlen<=0){
 	  usb_close(tmp_handle);
 	  continue;
 	}
@@ -153,9 +151,8 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
 	if(productlen<=0) sprintf(product,"unkown product");
 	if(seriallen<=0) sprintf(serial,"none");
-	printf("%i %i\n",vendorlen,productlen);
 
-	if(vendorlen<=0 || productlen<=0){
+	if(vendorlen<=0 && productlen<=0){
 	  usb_close(tmp_handle);
 	  continue;
 	}
