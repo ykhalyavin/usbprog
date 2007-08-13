@@ -268,8 +268,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
 	usb_claim_interface(tmp_handle,0);
 
-	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000);
-
+	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
 
 	usb_close(tmp_handle);
 	return 0;
