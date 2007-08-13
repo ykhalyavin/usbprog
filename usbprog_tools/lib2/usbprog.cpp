@@ -86,7 +86,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 
 	#ifndef _WIN32
 	if(dev->descriptor.bDeviceClass==0x09) // hub devices
-	  break;
+	  continue;
 	#endif
 
 	usb_dev_handle * tmp_handle = usb_open(dev);
@@ -99,7 +99,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 
 	if(vendorlen<=0 || productlen<=0){
 	  usb_close(tmp_handle);
-	  break;
+	  continue;
 	}
 
 	i++;
@@ -140,7 +140,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 
 	#ifndef _WIN32
 	if(dev->descriptor.bDeviceClass==0x09) // hub devices
-	  break;
+	  continue;
 	#endif
 
 	usb_dev_handle * tmp_handle = usb_open(dev);
@@ -153,11 +153,11 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
 	if(productlen<=0) sprintf(product,"unkown product");
 	if(seriallen<=0) sprintf(serial,"none");
-
 	printf("%i %i\n",vendorlen,productlen);
+
 	if(vendorlen<=0 || productlen<=0){
 	  usb_close(tmp_handle);
-	  break;
+	  continue;
 	}
 
 	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+20)); 
