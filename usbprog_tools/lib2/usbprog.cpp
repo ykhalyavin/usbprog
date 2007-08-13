@@ -204,7 +204,23 @@ int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
   return -1;
 }
 
-
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, int numberof_firmwares)
+{
+  XMLNode xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
+  XMLNode xNode=xMainNode.getChildNode("pool");
+  for (int i=0; i<numberof_firmwares; i++){
+    char * complete = (char*) malloc(sizeof(char)*255);
+    sprintf(complete,"%s",xNode.getChildNode("firmware",i).getAttribute("label"));
+    buf[i]=complete;
+  }
+}
 
 
 /**

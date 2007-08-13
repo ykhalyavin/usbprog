@@ -39,13 +39,12 @@ int main(int argc, char **argv)
   i = usbprog_online_numberof_firmwares(&usbprog);
   printf("%i versions are online\n",i);
  
- /* 
+ 
   char *versions[i];
-  usbprog_print_netlist(&usbprog,versions)
+  usbprog_online_print_netlist(&usbprog, versions,i);
   for(i;i>0;i--)
-    printf("%i %s\n",i,buf[i-1]);
+    printf("%i %s\n",i,versions[i-1]);
 
-*/
   
   
   //if(usbprog.error_str!=NULL);
