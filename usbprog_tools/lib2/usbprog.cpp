@@ -95,6 +95,8 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 
+	printf("%i %i\n",vendorlen,productlen);
+
 	if(vendorlen<=0 || productlen<=0){
 	  usb_close(tmp_handle);
 	  break;
