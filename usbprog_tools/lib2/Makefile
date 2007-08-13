@@ -1,5 +1,8 @@
 all:	demo_xml demo demo_http
 
+usbprog: usbprog.o demo.cpp
+	g++ -o demo usbprog.o http_error_codes.o http_fetcher.o xmlParser.o
+
 demo_xml: xmlparser
 	g++ -o demo_xml demo_xml.cpp xmlParser.o
 
@@ -17,6 +20,9 @@ http_fetcher.o: http_fetcher.c http_fetcher.h
 	
 http_error_codes.o: http_error_codes.c http_error_codes.h
 	gcc -c http_error_codes.c
+
+usbprog.o: usbprog.c usbprog.h
+	gcc -c usbprog.c
 
 clean:
 	rm *.o demo_xml demo demo_http
