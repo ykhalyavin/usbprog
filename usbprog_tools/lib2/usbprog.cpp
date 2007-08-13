@@ -79,8 +79,8 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
   
   for(bus = busses; bus; bus = bus->next) {
     for(dev = bus->devices; dev; dev = dev->next){
-      if(dev->descriptor.bDeviceClass==0x09) // hub devices
-	break;
+      //if(dev->descriptor.bDeviceClass==0x09) // hub devices
+//	break;
       i++;
     }
   }
@@ -111,18 +111,16 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
   char vendor[255];
   char product[255];
   char serial[255];
-  int vendorlen, productlen, seriallen;
+  int vendorlen=0, productlen=0, seriallen=0;
 
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
-	
+
+	/*
 	if(dev->descriptor.bDeviceClass==0x09) // hub devices
 	  break;
-
+	*/
 	usb_dev_handle * tmp_handle = usb_open(dev);
-	usb_set_configuration (tmp_handle,dev->config[0].bConfigurationValue);
-	usb_claim_interface(tmp_handle, 0);
-	usb_set_altinterface(tmp_handle,0);
 
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
