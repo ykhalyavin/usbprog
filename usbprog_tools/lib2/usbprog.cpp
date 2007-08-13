@@ -23,7 +23,8 @@
 #include <string.h>
 
 #include "usbprog.h"
-//#include "http_fetcher.h"
+#include "xmlParser.h"
+
 extern "C" int http_fetch(const char *url, char **fileBuf);
 
 
@@ -186,7 +187,22 @@ int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
   return http_fetch(url, &(usbprog->versions_xml));
 }
 
-
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
+{
+  XMLNode xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
+  XMLNode xNode=xMainNode.getChildNode("pool");
+  int n = xNode.nChildNode("firmware");
+  if(n)
+      return n;
+  return -1;
+}
 
 
 

@@ -43,7 +43,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf);
 int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url);
 
 /* get number of firmwares */
-int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog, char** buf);
+int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog);
 
 /* get array for firmware select field */
 int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf);

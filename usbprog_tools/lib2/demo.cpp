@@ -36,7 +36,8 @@ int main(int argc, char **argv)
  
   
   /**** get number of firmware which are in versions.xml *****/
-  //i = usbprog_get_numberof_netlist(&usbprog);
+  i = usbprog_online_numberof_firmwares(&usbprog);
+  printf("%i versions are online\n",i);
  
  /* 
   char *versions[i];
