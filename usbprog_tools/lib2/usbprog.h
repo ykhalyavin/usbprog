@@ -20,11 +20,13 @@
 */
 
 #include <usb.h>
+#include "xmlParser.h"
 
 struct usbprog_context{
   char * error_str;
   char * url;
   char * versions_xml;
+  XMLNode xMainNode;
   usb_dev_handle *usb_handle;
 };
 
@@ -48,11 +50,12 @@ int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog);
 /* get array for firmware select field */
 int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf,int numberof_firmwares);
 
-
-
+/* activate update mode */
+int usbprog_update_mode_number(struct usbprog_context* usbprog, int number);
 
 int usbprog_update_mode(struct usbprog_context* usbprog, short vendorid, short productid);
-int usbprog_update_mode_number(struct usbprog_context* usbprog, int number);
+
+
 int usbprog_update_mode_serial(struct usbprog_context* usbprog, short vendorid, short productid, char* serial);
 
 int usbprog_get_file(struct usbprog_context* usbprog, char* file);

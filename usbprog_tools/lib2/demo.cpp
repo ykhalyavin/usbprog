@@ -18,8 +18,11 @@ int main(int argc, char **argv)
   char *buf[i];
   usbprog_print_devices(&usbprog,buf);
 
-  for(i;i>0;i--)
-    printf("%i %s\n",i,buf[i-1]);
+  int j=1;
+  for(i;i>0;i--){
+    printf("%i %s\n",j,buf[i-1]);
+    j++;
+  }
 
   /**** get online versions.xml !!!! *****/
   printf("\n\nGet versions.xml\n++++++++++++++++++++++++++++\n");
@@ -36,16 +39,27 @@ int main(int argc, char **argv)
  
   
   /**** get number of firmware which are in versions.xml *****/
+  printf("\n\nget number of online versions\n++++++++++++++++++++++++++++\n");
   i = usbprog_online_numberof_firmwares(&usbprog);
   printf("%i versions are online\n",i);
  
  
+  /****  print firmware lables *****/
+  printf("\n\nprint firmware labels\n++++++++++++++++++++++++++++\n");
   char *versions[i];
   usbprog_online_print_netlist(&usbprog, versions,i);
-  for(i;i>0;i--)
-    printf("%i %s\n",i,versions[i-1]);
+  j=1;
+  for(i;i>0;i--){
+    printf("%i %s\n",j,versions[i-1]);
+    j++;
+  }
 
-  
+
+
+  /**** activate update modus ****/
+  usbprog_update_mode_number(&usbprog, 1);
+
+
   
   //if(usbprog.error_str!=NULL);
   //  printf("%s\n",usbprog.error_str);

@@ -184,7 +184,12 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
  */
 int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
 {
-  return http_fetch(url, &(usbprog->versions_xml));
+  int result =  http_fetch(url, &(usbprog->versions_xml));
+  if(result >=0) {
+    usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
+    return result;
+  }
+  return -1;
 }
 
 /**
@@ -196,8 +201,8 @@ int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
  */
 int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
 {
-  XMLNode xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
-  XMLNode xNode=xMainNode.getChildNode("pool");
+  //usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
+  XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
   int n = xNode.nChildNode("firmware");
   if(n)
       return n;
@@ -213,8 +218,8 @@ int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
  */
 int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, int numberof_firmwares)
 {
-  XMLNode xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
-  XMLNode xNode=xMainNode.getChildNode("pool");
+  //XMLNode xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
+  XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
   for (int i=0; i<numberof_firmwares; i++){
     char * complete = (char*) malloc(sizeof(char)*255);
     sprintf(complete,"%s",xNode.getChildNode("firmware",i).getAttribute("label"));
@@ -223,17 +228,7 @@ int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, in
 }
 
 
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_update_mode(struct usbprog_context *usbprog, short vendorid, short productid)
-{
 
-}
 
 
 /**
@@ -243,86 +238,15 @@ int usbprog_update_mode(struct usbprog_context *usbprog, short vendorid, short p
  *
  *         \retval Pointer to error string 
  */
-int usbprog_update_mode_number(struct usbprog_context *usbprog, int number)
-{
-
-}
-
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_update_mode_serial(struct usbprog_context *usbprog, short vendorid, short productid, char *serial)
-{
-
-}
-
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_get_netlist(struct usbprog_context *usbprog,char *url, char *buf)
-{
-
-}
-
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_print_netlist(struct usbprog_context *usbprog, char *buf)
-{
-
-
-}
-
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_get_numberof_netlist(struct usbprog_context *usbprog)
-{
-
-
-}
-
-
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_get_file(struct usbprog_context *usbprog, char *file)
+int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 {
 
 }
 
 
-/**
- *     Get string representation for last error code
- *
- *         \param usbprog pointer to ftdi_context
- *
- *         \retval Pointer to error string 
- */
-int usbprog_flash_file(struct usbprog_context *usbprog,char *file)
-{
 
-}
+
+
 
 
 /**
