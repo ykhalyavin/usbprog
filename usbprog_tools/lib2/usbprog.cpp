@@ -104,7 +104,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 */
 	i++;
 
-	usb_close(tmp_handle);
+//	usb_close(tmp_handle);
     }
   }
   return i;
