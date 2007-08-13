@@ -57,6 +57,7 @@ int main(int argc, char **argv)
 
 
   /**** activate update modus ****/
+  printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
   usbprog_update_mode_number(&usbprog, 1);
 
 

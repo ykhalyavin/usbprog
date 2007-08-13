@@ -235,12 +235,46 @@ int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, in
  *     Get string representation for last error code
  *
  *         \param usbprog pointer to ftdi_context
+ *         \param number index of device_list arrar (from usbprog_print_devicelist)
  *
  *         \retval Pointer to error string 
  */
 int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 {
+  struct usb_bus *busses;
+  struct usb_dev_handle* usb_handle;
+  struct usb_bus *bus;
+  struct usb_device *dev;
 
+  usb_find_busses();
+  usb_find_devices();
+  busses = usb_get_busses();
+  int i=0;
+  
+  for (bus = busses; bus; bus = bus->next) {
+    for (dev = bus->devices; dev; dev = dev->next){
+
+      #ifndef _WIN32
+      if(dev->descriptor.bDeviceClass==0x09) // hub devices
+	continue;
+      #endif
+
+      if(dev->descriptor.bDescriptorType !=1)
+	continue;
+
+      if(i==number){
+	usb_dev_handle * tmp_handle = usb_open(dev);
+	usb_set_configuration(tmp_handle,1);
+	usb_claim_interface(tmp_handle,0);
+
+	usb_control_msg(usbprog->usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000);
+
+	usb_close(tmp_handle);
+	break;
+      }
+      i++;
+    }
+  }
 }
 
 
