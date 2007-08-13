@@ -88,7 +88,9 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	if(dev->descriptor.bDeviceClass==0x09) // hub devices
 	  continue;
 	#endif
-
+	if(dev->descriptor.bDescriptorType !=1)
+	  continue;
+/*
 	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;
@@ -99,7 +101,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	  usb_close(tmp_handle);
 	  continue;
 	}
-
+*/
 	i++;
 
 	usb_close(tmp_handle);
@@ -141,6 +143,9 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  continue;
 	#endif
 
+	if(dev->descriptor.bDescriptorType !=1)
+	  continue;
+
 	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
@@ -151,14 +156,14 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
 	if(productlen<=0) sprintf(product,"unkown product");
 	if(seriallen<=0) sprintf(serial,"none");
-
+/*
 	if(vendorlen<=0 && productlen<=0){
 	  usb_close(tmp_handle);
 	  continue;
 	}
-
+*/
 	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+20)); 
-	sprintf(complete,"%s von %s (Serial: %s) %i %x",product,vendor, serial,dev->descriptor.idVendor,dev->descriptor.bDescriptorType);
+	sprintf(complete,"%s von %s (Serial: %s)",product,vendor);
 	buf[i++]=complete;
 
 	usb_close(tmp_handle);
