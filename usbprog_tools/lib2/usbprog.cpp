@@ -126,7 +126,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  break;
 	#endif
 
-	if(dev->descriptor.idVendor==0||dev->descriptor.idProduct==0)
+	if(dev->descriptor.idVendor<0 && dev->descriptor.idVendor>0xFFFF)
 	  break;
 
 	usb_dev_handle * tmp_handle = usb_open(dev);
