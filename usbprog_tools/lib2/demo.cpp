@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
   int j=1;
   for(i;i>0;i--){
-    printf("%i %s\n",j,buf[i-1]);
+    printf("%i %i %s\n",j,i,buf[i-1]);
     j++;
   }
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     // sag hier bescheid dann kann ich die datei mal kurz verschieben, obs klappt */
     printf("Download Error!"); 
   } else {
-    printf("%s",usbprog.versions_xml);
+    //printf("%s",usbprog.versions_xml);
   }
  
   
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
   /**** activate update modus ****/
   printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
-  usbprog_update_mode_number(&usbprog, 1);
+  usbprog_update_mode_number(&usbprog, 0);
 
 
   
