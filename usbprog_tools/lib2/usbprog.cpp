@@ -83,8 +83,8 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
       if(dev->descriptor.bDeviceClass==0x09) // hub devices
 	break;
       #endif
-      if(dev->descriptor.idVendor==0)
-	break;
+	if(dev->descriptor.idVendor==0||dev->descriptor.idProduct==0)
+	  break;
 
       i++;
     }
@@ -126,7 +126,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  break;
 	#endif
 
-	if( (dev->descriptor.idVendor < 0) && (dev->descriptor.idVendor > 0xFFFF))
+	if(dev->descriptor.idVendor==0||dev->descriptor.idProduct==0)
 	  break;
 
 	usb_dev_handle * tmp_handle = usb_open(dev);
