@@ -20,6 +20,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "usbprog.h"
 
@@ -119,17 +120,20 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  break;
 
 	usb_dev_handle * tmp_handle = usb_open(dev);
+	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
 	
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 	seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
 
-	// 5 = 2 spaces, 2 brakets, 1 zero byte
-	//char * complete = (char*)malloc(sizeof(char)*(vendorlen+productlen+seriallen+5)); 
-	char * complete = (char*)malloc(sizeof(char)*1000);
+	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
+	if(productlen<=0) sprintf(product,"unkown product");
+	if(seriallen<=0) sprintf(serial,"none");
 
-	sprintf(complete,"%s, %s (%s)",vendor,product,serial);
+	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+20)); 
+	sprintf(complete,"%s von %s (Serial: %s)",product,vendor, serial);
 	buf[i++]=complete;
+
 	usb_close(tmp_handle);
     }
   }
