@@ -161,7 +161,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	}
 
 	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+20)); 
-	sprintf(complete,"%s von %s (Serial: %s)",product,vendor);
+	sprintf(complete,"%s von %s (Serial: %s)",product,vendor,serial);
 	buf[i++]=complete;
 
 	usb_close(tmp_handle);
