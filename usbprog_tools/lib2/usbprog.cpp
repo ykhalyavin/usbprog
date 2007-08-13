@@ -120,8 +120,11 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  break;
 
 	usb_dev_handle * tmp_handle = usb_open(dev);
+	usb_set_configuration (tmp_handle,dev->config[0].bConfigurationValue);
+	usb_claim_interface(tmp_handle, 0);
+	usb_set_altinterface(tmp_handle,0);
+
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
-	
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 	seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
