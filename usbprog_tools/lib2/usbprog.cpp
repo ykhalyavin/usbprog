@@ -79,8 +79,10 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
   
   for(bus = busses; bus; bus = bus->next) {
     for(dev = bus->devices; dev; dev = dev->next){
-      //if(dev->descriptor.bDeviceClass==0x09) // hub devices
-//	break;
+      #ifndef _WIN32
+      if(dev->descriptor.bDeviceClass==0x09) // hub devices
+	break;
+      #endif
       i++;
     }
   }
@@ -116,10 +118,10 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
 
-	/*
+	#ifndef _WIN32
 	if(dev->descriptor.bDeviceClass==0x09) // hub devices
 	  break;
-	*/
+	#endif
 	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
