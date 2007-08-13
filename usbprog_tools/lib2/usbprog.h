@@ -53,13 +53,23 @@ int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf,int
 /* activate update mode */
 int usbprog_update_mode_number(struct usbprog_context* usbprog, int number);
 
-int usbprog_update_mode(struct usbprog_context* usbprog, short vendorid, short productid);
+
+/* flash online firmware */
+int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number);
+
+/* flash local firmware .bin */
+int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file);
+
+/* quit update mode */
+int usbprog_stop_updatemode(struct usbprog_context* usbprog, int number);
 
 
-int usbprog_update_mode_serial(struct usbprog_context* usbprog, short vendorid, short productid, char* serial);
 
-int usbprog_get_file(struct usbprog_context* usbprog, char* file);
-int usbprog_flash_file(struct usbprog_context* usbprog,char* file);
+
+
+//int usbprog_update_mode(struct usbprog_context* usbprog, short vendorid, short productid);
+//int usbprog_update_mode_serial(struct usbprog_context* usbprog, short vendorid, short productid, char* serial);
+//int usbprog_get_file(struct usbprog_context* usbprog, char* file);
 
 char* usbprog_get_error_string (struct usbprog_context* usbprog);
 
