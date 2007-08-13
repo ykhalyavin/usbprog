@@ -1,7 +1,7 @@
 all:	demo_xml demo demo_http
 
 demo: usbprog.o demo.cpp http_error_codes.o http_fetcher.o xmlParser.o
-	g++ -o demo demo.cpp usbprog.o http_error_codes.o http_fetcher.o xmlParser.o
+	g++ -o demo demo.cpp usbprog.o http_error_codes.o http_fetcher.o xmlParser.o -lusb
 
 demo_xml: xmlparser
 	g++ -o demo_xml demo_xml.cpp xmlParser.o

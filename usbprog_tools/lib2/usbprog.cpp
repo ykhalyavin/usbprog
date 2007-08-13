@@ -19,69 +19,221 @@
 
 */
 
+#include <stdio.h>
+
 #include "usbprog.h"
 
-int usbprog_init()
-{
+#define usbprog_error_return(code, str) do {  \
+	  usbprog->error_str = str;             \
+	  return code;                       \
+	} while(0);
 
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_init(struct usbprog_context *usbprog)
+{
+  if(usbprog!=NULL) {
+    usbprog->error_str	= NULL; 
+    usbprog->url	= NULL; 
+  } 
+  
+  usb_init();
 }
 
-struct usb_dev_handle* usbprog_open(short vendorid, short productid)
-{
-
-}
-struct usb_dev_handle* usbprog_open_number(int number)
-{
-
-}
-struct usb_dev_handle* usbprog_open_serial(short vendorid, short productid, char *serial)
-{
-
-}
-
-
-int usbprog_close(usb_dev_handle* dev)
-{
-
-}
-
-int usbprog_print_devices()
-{
-}
-
-int usbprog_vendor_mode(usb_dev_handle* dev)
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_close(struct usbprog_context *usbprog)
 {
 
 }
 
 /**
- * ask the usb device for the version id to check if the vendor request
- * is implemented and the device is so an usbprog compatible.
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
  */
-int usbprog_vendor_ask(usb_dev_handle* dev)
+int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
+{
+  struct usb_bus *busses;
+  struct usb_dev_handle* usb_handle;
+  struct usb_bus *bus;
+  struct usb_device *dev;
+  int i=0;
+
+  usb_find_busses();
+  usb_find_devices();
+  busses = usb_get_busses();
+  
+  for(bus = busses; bus; bus = bus->next) {
+    for(dev = bus->devices; dev; dev = dev->next){
+      if(dev->descriptor.bDeviceClass==0x09) // hub devices
+	break;
+      i++;
+    }
+  }
+  return i;
+}
+
+
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
+{
+  struct usb_bus *busses;
+  struct usb_dev_handle* usb_handle;
+  struct usb_bus *bus;
+  struct usb_device *dev;
+
+  usb_find_busses();
+  usb_find_devices();
+  busses = usb_get_busses();
+  int i=0;
+  
+  char vendor[255];
+  char product[255];
+  char serial[255];
+  int vendorlen, productlen, seriallen;
+
+  for (bus = busses; bus; bus = bus->next) {
+    for (dev = bus->devices; dev; dev = dev->next){
+	
+	if(dev->descriptor.bDeviceClass==0x09) // hub devices
+	  break;
+
+	usb_dev_handle * tmp_handle = usb_open(dev);
+	
+	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
+
+	// 5 = 2 spaces, 2 brakets, 1 zero byte
+	//char * complete = (char*)malloc(sizeof(char)*(vendorlen+productlen+seriallen+5)); 
+	char * complete = (char*)malloc(sizeof(char)*1000);
+
+	sprintf(complete,"%s, %s (%s)",vendor,product,serial);
+	buf[i++]=complete;
+	usb_close(tmp_handle);
+    }
+  }
+
+}
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_update_mode(struct usbprog_context *usbprog, short vendorid, short productid)
 {
 
 }
 
 
-void usbprog_flash_bin(struct usb_dev_handle* dev,char *file)
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_update_mode_number(struct usbprog_context *usbprog, int number)
 {
 
 }
 
-void usbprog_print_netlist(char * url)
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_update_mode_serial(struct usbprog_context *usbprog, short vendorid, short productid, char *serial)
 {
 
 }
-int usbprog_download(char * url, int filenumber)
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_set_url(struct usbprog_context *usbprog)
+{
+
+}
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_print_netlist(struct usbprog_context *usbprog, char *buf)
+{
+
+
+}
+
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_get_file(struct usbprog_context *usbprog, char *file)
 {
 
 }
 
 
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_flash_file(struct usbprog_context *usbprog,char *file)
+{
+
+}
 
 
-
-
-
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+char *usbprog_get_error_string (struct usbprog_context *usbprog)
+{     
+  return usbprog->error_str;
+}
 

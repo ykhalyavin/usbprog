@@ -19,36 +19,30 @@
 
 */
 
+#include <usb.h>
+
+struct usbprog_context{
+  char * error_str;
+  char * url;
+  usb_dev_handle *usb_handle;
+};
+
+int usbprog_init(struct usbprog_context* usbprog);
+int usbprog_close(struct usbprog_context* usbprog);
+
+int usbprog_get_numberof_devices(struct usbprog_context* usbprog);
+int usbprog_print_devices(struct usbprog_context *usbprog, char** buf);
+
+int usbprog_update_mode(struct usbprog_context* usbprog, short vendorid, short productid);
+int usbprog_update_mode_number(struct usbprog_context* usbprog, int number);
+int usbprog_update_mode_serial(struct usbprog_context* usbprog, short vendorid, short productid, char* serial);
 
 
-int usbprog_init();
+int usbprog_set_url(struct usbprog_context* usbprog);
+int usbprog_print_netlist(struct usbprog_context* usbprog, char* buf);
 
-struct usb_dev_handle* usbprog_open(short vendorid, short productid);
-struct usb_dev_handle* usbprog_open_number(int number);
-struct usb_dev_handle* usbprog_open_serial(short vendorid, short productid, char *serial);
+int usbprog_get_file(struct usbprog_context* usbprog, char* file);
+int usbprog_flash_file(struct usbprog_context* usbprog,char* file);
 
-
-int usbprog_close(usb_dev_handle* dev);
-
-int usbprog_print_devices();
-int usbprog_vendor_mode(usb_dev_handle* dev);
-
-/**
- * ask the usb device for the version id to check if the vendor request
- * is implemented and the device is so an usbprog compatible.
- */
-int usbprog_vendor_ask(usb_dev_handle* dev);
-
-
-void usbprog_flash_bin(struct usb_dev_handle* dev,char *file);
-
-void usbprog_print_netlist(char * url);
-int usbprog_download(char * url, int filenumber);
-
-
-
-
-
-
-
+char* usbprog_get_error_string (struct usbprog_context* usbprog);
 
