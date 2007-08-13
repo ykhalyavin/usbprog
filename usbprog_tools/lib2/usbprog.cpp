@@ -23,6 +23,9 @@
 #include <string.h>
 
 #include "usbprog.h"
+//#include "http_fetcher.h"
+extern "C" int http_fetch(const char *url, char **fileBuf);
+
 
 #define usbprog_error_return(code, str) do {  \
 	  usbprog->error_str = str;             \
@@ -170,6 +173,24 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 
 }
 
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
+{
+  return http_fetch(url, &(usbprog->versions_xml));
+}
+
+
+
+
+
+
 /**
  *     Get string representation for last error code
  *
@@ -214,7 +235,7 @@ int usbprog_update_mode_serial(struct usbprog_context *usbprog, short vendorid, 
  *
  *         \retval Pointer to error string 
  */
-int usbprog_set_url(struct usbprog_context *usbprog)
+int usbprog_get_netlist(struct usbprog_context *usbprog,char *url, char *buf)
 {
 
 }
@@ -227,6 +248,19 @@ int usbprog_set_url(struct usbprog_context *usbprog)
  *         \retval Pointer to error string 
  */
 int usbprog_print_netlist(struct usbprog_context *usbprog, char *buf)
+{
+
+
+}
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_get_numberof_netlist(struct usbprog_context *usbprog)
 {
 
 

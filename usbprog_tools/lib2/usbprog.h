@@ -24,22 +24,36 @@
 struct usbprog_context{
   char * error_str;
   char * url;
+  char * versions_xml;
   usb_dev_handle *usb_handle;
 };
 
 int usbprog_init(struct usbprog_context* usbprog);
 int usbprog_close(struct usbprog_context* usbprog);
 
+
+/* get number of available usb devices */
 int usbprog_get_numberof_devices(struct usbprog_context* usbprog);
+
+/* get array for device select field */
 int usbprog_print_devices(struct usbprog_context *usbprog, char** buf);
+
+
+/* get newest versions.xml */
+int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url);
+
+/* get number of firmwares */
+int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog, char** buf);
+
+/* get array for firmware select field */
+int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf);
+
+
+
 
 int usbprog_update_mode(struct usbprog_context* usbprog, short vendorid, short productid);
 int usbprog_update_mode_number(struct usbprog_context* usbprog, int number);
 int usbprog_update_mode_serial(struct usbprog_context* usbprog, short vendorid, short productid, char* serial);
-
-
-int usbprog_set_url(struct usbprog_context* usbprog);
-int usbprog_print_netlist(struct usbprog_context* usbprog, char* buf);
 
 int usbprog_get_file(struct usbprog_context* usbprog, char* file);
 int usbprog_flash_file(struct usbprog_context* usbprog,char* file);
