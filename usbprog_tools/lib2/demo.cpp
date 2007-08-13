@@ -1,5 +1,4 @@
 #include <stdio.h>    // to get "printf" function
-#include <stdlib.h>   // to get "free" function
 
 #include "usbprog.h"
 

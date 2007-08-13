@@ -47,7 +47,6 @@ int usbprog_close(usb_dev_handle* dev)
 
 int usbprog_print_devices()
 {
-
 }
 
 int usbprog_vendor_mode(usb_dev_handle* dev)
