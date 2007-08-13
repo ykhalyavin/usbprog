@@ -22,5 +22,13 @@
 	It is licensed under the General Public License (GPL).
       </description>
     </firmware>
+    <firmware name="at89prog" label="AT89 Programmer">
+      <binary file="at89prog.bin" url="http://www.ixbat.de/usbprog/" />
+      <info version="1" author="Benedikt Sauter" date="2007-08-13"/>
+      <description>
+	A Programmer for AT89 derivates.
+      </description>
+    </firmware>
+
   </pool>
 </usbprog>

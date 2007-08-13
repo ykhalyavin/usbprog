@@ -5,26 +5,18 @@
 int main(int argc, char **argv)
 {
   // this open and parse the XML file:
-  XMLNode xMainNode=XMLNode::openFileHelper("PMMLModel.xml","PMML");
+  XMLNode xMainNode=XMLNode::openFileHelper("versions.xml","usbprog");
 
-  // this prints "<Condor>":
-  XMLNode xNode=xMainNode.getChildNode("Header");
-  printf("Application Name is: '%s'\n", xNode.getChildNode("Application").getAttribute("name"));
+  printf("Application Name is: '%s'\n", xMainNode.getChildNode("application").getAttribute("name"));
+  printf("Application Version is: '%s'\n", xMainNode.getChildNode("application").getAttribute("version"));
   
-  // this prints "Hello world!":
-  printf("Text inside Header tag is :'%s'\n", xNode.getText());
+  XMLNode xNode=xMainNode.getChildNode("pool");
+  int n=xNode.nChildNode("firmware");
+  for (int i=0; i<n; i++){
+    printf("firmware: %s\n",xNode.getChildNode("firmware",i).getAttribute("name"));
+    printf("label: %s\n",xNode.getChildNode("firmware",i).getAttribute("label"));
+    printf("file: %s\n",xNode.getChildNode("firmware",i).getChildNode("binary").getAttribute("file"));
+  }
 
-  // this gets the number of "NumericPredictor" tags:
-  xNode=xMainNode.getChildNode("RegressionModel").getChildNode("RegressionTable");
-  int n=xNode.nChildNode("NumericPredictor");
-
-  // this prints the "coefficient" value for all the "NumericPredictor" tags:
-  for (int i=0; i<n; i++)
-    printf("coeff%i=%f\n",i+1,atof(xNode.getChildNode("NumericPredictor",i).getAttribute("coefficient")));
-
-  // this prints a formatted ouput based on the content of the first "Extension" tag of the XML file:
-  char *t=xMainNode.getChildNode("Extension").createXMLString(true);
-  printf("%s\n",t);
-  free(t);
   return 0;
 }
