@@ -71,27 +71,45 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
   struct usb_dev_handle* usb_handle;
   struct usb_bus *bus;
   struct usb_device *dev;
-  int i=0;
 
   usb_find_busses();
   usb_find_devices();
   busses = usb_get_busses();
+  int i=0;
   
-  for(bus = busses; bus; bus = bus->next) {
-    for(dev = bus->devices; dev; dev = dev->next){
-      #ifndef _WIN32
-      if(dev->descriptor.bDeviceClass==0x09) // hub devices
-	break;
-      #endif
-	if(dev->descriptor.bDescriptorType!=1)
-	  break;
+  char vendor[255];
+  char product[255];
+  int vendorlen=0, productlen=0;
 
-      i++;
+  for (bus = busses; bus; bus = bus->next) {
+    for (dev = bus->devices; dev; dev = dev->next){
+
+	#ifndef _WIN32
+	if(dev->descriptor.bDeviceClass==0x09) // hub devices
+	  break;
+	#endif
+
+	usb_dev_handle * tmp_handle = usb_open(dev);
+
+	vendor[0]=0x00; product[0]=0x00;
+	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+
+	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
+	if(productlen<=0) sprintf(product,"unkown product");
+
+	if(vendorlen==0 && productlen==0){
+	  usb_close(tmp_handle);
+	  break;
+	}
+
+	i++;
+
+	usb_close(tmp_handle);
     }
   }
   return i;
 }
-
 
 
 /**
@@ -126,9 +144,6 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  break;
 	#endif
 
-	if(dev->descriptor.bDescriptorType!=1)
-	  break;
-
 	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
@@ -139,6 +154,11 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
 	if(productlen<=0) sprintf(product,"unkown product");
 	if(seriallen<=0) sprintf(serial,"none");
+
+	if(vendorlen==0 && productlen==0){
+	  usb_close(tmp_handle);
+	  break;
+	}
 
 	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+20)); 
 	sprintf(complete,"%s von %s (Serial: %s) %i %x",product,vendor, serial,dev->descriptor.idVendor,dev->descriptor.bDescriptorType);
