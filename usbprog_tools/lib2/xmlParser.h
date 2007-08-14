@@ -76,7 +76,7 @@
 #endif
 
 #ifdef _XMLWINDOWS
-#include <tchar.h>
+//#include <tchar.h>
 #else
 #define XMLDLLENTRY
 #ifndef XML_NO_WIDE_CHAR
