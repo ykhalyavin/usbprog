@@ -164,8 +164,9 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	  continue;
 	}
 
-	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+20)); 
-	sprintf(complete,"%s from %s (Serial: %s)",product,vendor,serial);
+	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+30)); 
+	sprintf(complete,"(%i) %s from %s (Serial: %s)%i:%i",i,product,vendor,serial, \
+	  dev->descriptor.idVendor,dev->descriptor.idProduct);
 	buf[i++]=complete;
 
 	usb_close(tmp_handle);
@@ -201,7 +202,6 @@ int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
  */
 int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
 {
-  //usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
   XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
   int n = xNode.nChildNode("firmware");
   if(n)
@@ -218,7 +218,6 @@ int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
  */
 int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, int numberof_firmwares)
 {
-  //XMLNode xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
   XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
   for (int i=0; i<numberof_firmwares; i++){
     char * complete = (char*) malloc(sizeof(char)*255);
@@ -251,6 +250,10 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
   busses = usb_get_busses();
   int i=0;
   
+  char vendor[255];
+  char product[255];
+  int vendorlen=0, productlen=0;
+
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
 
@@ -262,8 +265,20 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       if(dev->descriptor.bDescriptorType !=1)
 	continue;
 
+      usb_dev_handle * tmp_handle = usb_open(dev);
+
+      vendor[0]=0x00; product[0]=0x00;
+      vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+      productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+
+      if(vendorlen<=0 && productlen<=0){
+	usb_close(tmp_handle);
+	continue;
+      }
+
+      //printf("open %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
+
       if(i==number){
-	printf("open %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
 	usb_dev_handle * tmp_handle = usb_open(dev);
 	usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
 	usb_claim_interface(tmp_handle,0);
@@ -273,10 +288,15 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	usb_close(tmp_handle);
 	return 0;
       }
+
+      usb_close(tmp_handle);
       i++;
     }
   }
+
 }
+
+	
 
 
 
