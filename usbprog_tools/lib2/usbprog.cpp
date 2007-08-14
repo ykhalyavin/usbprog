@@ -99,6 +99,13 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 
+        if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+          sprintf(vendor,"usbprog");
+	  sprintf(product,"update mode");
+	  vendorlen = strlen(vendor);
+	  productlen = strlen(product);
+	}
+
 	if(vendorlen<=0 && productlen<=0){
 	  usb_close(tmp_handle);
 	  continue;
@@ -159,6 +166,13 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	if(productlen<=0) sprintf(product,"unkown product");
 	if(seriallen<=0) sprintf(serial,"none");
 
+	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+	  sprintf(vendor,"usbprog");
+	  sprintf(product,"update mode");
+	  vendorlen = strlen(vendor);
+	  productlen = strlen(product);
+	}
+	
 	if(vendorlen<=0 && productlen<=0){
 	  usb_close(tmp_handle);
 	  continue;
@@ -270,6 +284,13 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       vendor[0]=0x00; product[0]=0x00;
       vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
       productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+      
+      if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+        sprintf(vendor,"usbprog");
+	sprintf(product,"update mode");
+	vendorlen = strlen(vendor);
+	productlen = strlen(product);
+      }
 
       if(vendorlen<=0 && productlen<=0){
 	usb_close(tmp_handle);
