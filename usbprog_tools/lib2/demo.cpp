@@ -9,21 +9,20 @@ int main(int argc, char **argv)
   struct usbprog_context usbprog;
   usbprog_init(&usbprog);
 
-
   /**** device select field !!!! *****/
   printf("\n\nGet number of devices\n++++++++++++++++++++++++++++\n");
   int i = usbprog_get_numberof_devices(&usbprog);
-  printf("%i devices\n",i);
+  printf("Found %i devices\n",i);
 
   char *buf[i];
   usbprog_print_devices(&usbprog,buf);
 
-  int j=1;
+  int j=0;
   for(i;i>0;i--){
-    printf("%i %i %s\n",j,i,buf[i-1]);
+    printf("%i %s\n",j,buf[i-1]);
     j++;
   }
-
+#if 0
   /**** get online versions.xml !!!! *****/
   printf("\n\nGet versions.xml\n++++++++++++++++++++++++++++\n");
 
@@ -48,17 +47,20 @@ int main(int argc, char **argv)
   printf("\n\nprint firmware labels\n++++++++++++++++++++++++++++\n");
   char *versions[i];
   usbprog_online_print_netlist(&usbprog, versions,i);
-  j=1;
+  j=0;
   for(i;i>0;i--){
     printf("%i %s\n",j,versions[i-1]);
     j++;
   }
 
-
+#endif
 
   /**** activate update modus ****/
-  printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
-  usbprog_update_mode_number(&usbprog, 0);
+  
+  if(argc > 1){
+    printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
+    usbprog_update_mode_number(&usbprog,atoi(argv[1]));
+  }
 
 
   
