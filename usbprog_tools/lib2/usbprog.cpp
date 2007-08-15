@@ -328,7 +328,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	  #ifdef _WIN32
 	  Sleep(7000);
 	  #else
-	  sleep(3000);
+	  sleep(3);
 	  #endif
 
 
@@ -342,6 +342,9 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      for (dev = bus->devices; dev; dev = dev->next){
 		if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 		  usbprog->usb_handle = usb_open(dev);
+		  usb_set_configuration(usbprog->usb_handle,1);
+		  usb_claim_interface(usbprog->usb_handle,0);
+		  usb_set_altinterface(usbprog->usb_handle,0);
 		  return 1;
 		}
 	      }
