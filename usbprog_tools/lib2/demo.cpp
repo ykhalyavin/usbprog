@@ -60,6 +60,7 @@ int main(int argc, char **argv)
   if(argc > 1){
     printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
     usbprog_update_mode_number(&usbprog,atoi(argv[1]));
+    usbprog_flash_firmware(&usbprog,"openocd.bin");
   }
 
 

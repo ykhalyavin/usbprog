@@ -21,6 +21,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "usbprog.h"
 #include "xmlParser.h"
@@ -305,8 +308,36 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	usb_claim_interface(tmp_handle,0);
 
 	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
-
 	usb_close(tmp_handle);
+	#if _WIN32
+	Sleep(7000);
+	#else
+	sleep(3);
+	#endif
+
+
+	// find update and open
+	int timeout = 30;
+	while(1){
+	  usb_find_busses();
+	  usb_find_devices();
+	  busses = usb_get_busses();
+	  for (bus = busses; bus; bus = bus->next) {
+	    for (dev = bus->devices; dev; dev = dev->next){
+	      if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+		usbprog->usb_handle = usb_open(dev);
+		return 1;
+	      }
+	    }
+	  }
+	  timeout++;
+		  if(timeout>30){
+	    printf("timeout\n");
+	    return -1;
+	  }
+	}
+
+
 	return 0;
       }
 
@@ -314,10 +345,83 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       i++;
     }
   }
-
+  return 0;
 }
 
 	
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *         \param number index of device_list arrar (from usbprog_print_devicelist)
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
+{
+  FILE *fd;
+  // open bin file
+  fd = fopen(file, "r+b");
+  if(!fd) {
+    printf("Unable to open file %s, ignoring.\n", file);
+  } else {
+
+    struct stat buf;
+    stat(file,&buf);
+    long filesize = buf.st_size;
+    printf("filesize %i\n",filesize);
+    
+    char * buffer = (char*)malloc((sizeof(char)*filesize)+sizeof(char));
+    int i=0;
+
+    while(!feof(fd)) {
+      buffer[i++] = (char)fgetc(fd);
+    }
+    usbprog_flash_buffer(usbprog,buffer,i);
+  }
+  fclose(fd);
+}
+
+int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
+{
+  int offset = 0;
+  int index=0;
+  int page=0;
+
+  char buf[64];
+  char cmd[64];
+  
+  for(index=0;index<len;index++)
+  {
+    buf[offset]=buffer[index];
+
+    offset++;
+    if(offset == 64)
+    {
+        printf("send package\n");
+        // command message
+        cmd[0]=WRITEPAGE;
+        cmd[1]=(char)page; // page number
+        usb_bulk_write(usbprog->usb_handle,2,cmd,64,100);
+
+        // data message
+        usb_bulk_write(usbprog->usb_handle,2,buf,64,100);
+        offset = 0;
+        page++;
+    }
+  }
+  if(offset > 0)
+  {
+    printf("rest\n");
+    // command message
+    cmd[0]=WRITEPAGE;
+    cmd[1]=(char)page; // page number
+    usb_bulk_write(usbprog->usb_handle,2,cmd,64,100);
+
+    // data message
+    usb_bulk_write(usbprog->usb_handle,2,buf,64,100);
+  }
+}
 
 
 

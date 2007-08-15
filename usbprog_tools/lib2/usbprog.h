@@ -22,6 +22,12 @@
 #include <usb.h>
 #include "xmlParser.h"
 
+#define STARTAPP       0x01
+#define WRITEPAGE      0x02
+#define GETVERSION     0x03
+#define SETVERSION     0x04
+#define STOPPROGMODE   0x05
+
 struct usbprog_context{
   char * error_str;
   char * url;
@@ -59,6 +65,10 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number);
 
 /* flash local firmware .bin */
 int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file);
+
+/* flash buffer */
+int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len);
+
 
 /* quit update mode */
 int usbprog_stop_updatemode(struct usbprog_context* usbprog, int number);
