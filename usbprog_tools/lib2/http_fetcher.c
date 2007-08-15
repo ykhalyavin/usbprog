@@ -91,7 +91,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		}
 
 	/* Copy the url passed in into a buffer we can work with, change, etc. */
-	url = malloc(strlen(url_tmp)+1);
+	url = (char*) malloc(strlen(url_tmp)+1);
 	if(url == NULL)
 		{
 		errorSource = ERRNO;
@@ -122,7 +122,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 			}
 
 		/* Compose a request string */
-		requestBuf = malloc(bufsize);
+		requestBuf = (char*) malloc(bufsize);
 		if(requestBuf == NULL)
 			{
 			free(url);
@@ -244,7 +244,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		strcat(requestBuf, "Connection: Close\r\n\r\n");
 
 		/* Now free any excess memory allocated to the buffer */
-		tmp = realloc(requestBuf, strlen(requestBuf) + 1);
+		tmp = (char*) realloc(requestBuf, strlen(requestBuf) + 1);
 		if(tmp == NULL)
 			{
 			free(url);
@@ -540,10 +540,10 @@ int http_setUserAgent(const char *newAgent)
 
 	/*
 	 * Changes the Referer.  Returns 0 on success, -1 on error
-	 */
+	 */ /*
 int http_setReferer(const char *newReferer)
 	{
-	static int freeOldReferer = 0; /* Indicated previous malloc's */
+	static int freeOldReferer = 0; // Indicated previous malloc's 
 	char *tmp;
 
 	if(newReferer == NULL)
@@ -564,7 +564,7 @@ int http_setReferer(const char *newReferer)
 		}
 	
 	return 0;
-	}
+} */
 
 
 
@@ -680,6 +680,7 @@ void http_perror(const char *string)
 	 *	so if you need to hold on to the message for a while you should make
 	 *	a copy of it
 	 */
+/*	
 const char *http_strerror()
 	{
 	extern int errno;
@@ -698,25 +699,25 @@ const char *http_strerror()
 			return http_errlist[http_errno];
 		else
 			{
-			/* The error string has a %d in it, we need to insert errorInt.
-			 *	convertedError[128] has been declared for that purpose */
+			// The error string has a %d in it, we need to insert errorInt.
+			 //	convertedError[128] has been declared for that purpose 
 			char *stringIndex, *originalError;
 		
 			originalError = (char *)http_errlist[http_errno];
-			convertedError[0] = 0;		/* Start off with NULL */
+			convertedError[0] = 0;		// Start off with NULL 
 			stringIndex = strstr(originalError, "%d");
-			strncat(convertedError, originalError,		/* Copy up to %d */
+			strncat(convertedError, originalError,		// Copy up to %d 
 				abs(stringIndex - originalError));
 			sprintf(&convertedError[strlen(convertedError)],"%d",errorInt);
-			stringIndex += 2;		/* Skip past the %d */
+			stringIndex += 2;		// Skip past the %d 
 			strcat(convertedError, stringIndex);
 
 			return convertedError;
 			}
 		}
 		
-	return http_errlist[HF_METAERROR];	/* Should NEVER happen */
-	}
+	return http_errlist[HF_METAERROR];	// Should NEVER happen 
+	} */
 
 	
 	/*
@@ -842,7 +843,7 @@ int _checkBufSize(char **buf, int *bufsize, int more)
 	int roomLeft = *bufsize - (strlen(*buf) + 1);
 	if(roomLeft > more)
 		return 0;
-	tmp = realloc(*buf, *bufsize + more + 1);
+	tmp = (char*) realloc(*buf, *bufsize + more + 1);
 	if(tmp == NULL)
 		return -1;
 	*buf = tmp;

@@ -398,7 +398,7 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
     offset++;
     if(offset == 64)
     {
-        printf("send package\n");
+        //printf("send package\n");
         // command message
         cmd[0]=WRITEPAGE;
         cmd[1]=(char)page; // page number
@@ -412,7 +412,7 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
   }
   if(offset > 0)
   {
-    printf("rest\n");
+    //printf("rest\n");
     // command message
     cmd[0]=WRITEPAGE;
     cmd[1]=(char)page; // page number
