@@ -348,6 +348,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    }
 	    timeout++;
 	    if(timeout>30){
+	      printf("timeout");
 	      return -1;
 	    }
 	  }
