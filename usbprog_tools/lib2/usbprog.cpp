@@ -357,6 +357,9 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	  }
 	} else {
 	  usbprog->usb_handle = usb_open(dev);
+	  usb_set_configuration(usbprog->usb_handle,1);
+	  usb_claim_interface(usbprog->usb_handle,0);
+	  usb_set_altinterface(usbprog->usb_handle,0);
 	  return 0;
 	}
       }
