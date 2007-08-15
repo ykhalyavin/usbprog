@@ -418,7 +418,7 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
       char * complete = (char*) malloc(sizeof(char)*255);
       sprintf(complete,"%s%s",xNode.getChildNode("firmware",i).getChildNode("binary").getAttribute("url"),
 	xNode.getChildNode("firmware",i).getChildNode("binary").getAttribute("file"));
-
+      
       char * ptr;
       int size = http_fetch(complete,&ptr);
       usbprog_flash_buffer(usbprog,ptr,size);
