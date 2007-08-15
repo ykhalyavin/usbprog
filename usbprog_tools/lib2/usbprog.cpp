@@ -328,7 +328,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	  #if _WIN32
 	  Sleep(7000);
 	  #else
-	  sleep(3);
+	  usleep(3000);
 	  #endif
 
 
