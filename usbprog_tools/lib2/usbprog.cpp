@@ -439,6 +439,21 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
 
 
 
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_stop_updatemode(struct usbprog_context* usbprog)
+{
+  char buf[64];
+  char *ptr = buf;
+
+  buf[0]=STARTAPP;
+  usb_bulk_write(usbprog->usb_handle,2,ptr,64,100);
+}
 
 
 

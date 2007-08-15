@@ -71,7 +71,7 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
 
 
 /* quit update mode */
-int usbprog_stop_updatemode(struct usbprog_context* usbprog, int number);
+int usbprog_stop_updatemode(struct usbprog_context* usbprog);
 
 
 
