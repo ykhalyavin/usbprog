@@ -99,18 +99,24 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;
-	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
-	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 
-        if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
-          sprintf(vendor,"usbprog");
+	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+	  sprintf(vendor,"usbprog");
 	  sprintf(product,"update mode");
 	  vendorlen = strlen(vendor);
 	  productlen = strlen(product);
+	} else {
+	  usb_dev_handle * tmp_handle = usb_open(dev);
+	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	  productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	  usb_close(tmp_handle);
+	
+	  if(vendorlen<=0) sprintf(vendor,"unkown vendor");
+	  if(productlen<=0) sprintf(product,"unkown product");
 	}
+      
 
 	if(vendorlen<=0 && productlen<=0){
-	  usb_close(tmp_handle);
 	  continue;
 	}
 
@@ -161,25 +167,30 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
-	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
-	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
-	seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
-
-	if(vendorlen<=0) sprintf(vendor,"unkown vendor");
-	if(productlen<=0) sprintf(product,"unkown product");
-	if(seriallen<=0) sprintf(serial,"none");
-
+      
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 	  sprintf(vendor,"usbprog");
 	  sprintf(product,"update mode");
 	  vendorlen = strlen(vendor);
 	  productlen = strlen(product);
-	}
-	
-	if(vendorlen<=0 && productlen<=0){
+	} else {
+	  usb_dev_handle * tmp_handle = usb_open(dev);
+	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	  productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	  seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
 	  usb_close(tmp_handle);
+	
+	  if(vendorlen<=0) sprintf(vendor,"unkown vendor");
+	  if(productlen<=0) sprintf(product,"unkown product");
+	  if(seriallen<=0) sprintf(serial,"none");
+
+	}
+      
+
+	if(vendorlen<=0 && productlen<=0){
 	  continue;
 	}
+
 
 	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+30)); 
 	//sprintf(complete,"(%i) %s from %s (Serial: %s)%i:%i",i,product,vendor,serial, \
@@ -282,27 +293,32 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       if(dev->descriptor.bDescriptorType !=1)
 	continue;
 
-      usb_dev_handle * tmp_handle = usb_open(dev);
 
       vendor[0]=0x00; product[0]=0x00;
-      vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
-      productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
-      
+           
       if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
         sprintf(vendor,"usbprog");
 	sprintf(product,"update mode");
 	vendorlen = strlen(vendor);
 	productlen = strlen(product);
+      } else {
+	usb_dev_handle * tmp_handle = usb_open(dev);
+	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	usb_close(tmp_handle);
       }
+      
 
       if(vendorlen<=0 && productlen<=0){
-	usb_close(tmp_handle);
 	continue;
       }
 
       //printf("open %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
 
       if(i==number){
+
+	if(!(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62))
+{
 	usb_dev_handle * tmp_handle = usb_open(dev);
 	usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
 	usb_claim_interface(tmp_handle,0);
@@ -336,12 +352,13 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    return -1;
 	  }
 	}
-
-
+} else{
+usbprog->usb_handle = usb_open(dev);
 	return 0;
+	}
       }
 
-      usb_close(tmp_handle);
+      //usb_close(tmp_handle);
       i++;
     }
   }
