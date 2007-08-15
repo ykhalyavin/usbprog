@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     printf("%i %s\n",j,buf[i-1]);
     j++;
   }
-#if 0
+  
   /**** get online versions.xml !!!! *****/
   printf("\n\nGet versions.xml\n++++++++++++++++++++++++++++\n");
 
@@ -53,14 +53,14 @@ int main(int argc, char **argv)
     j++;
   }
 
-#endif
 
   /**** activate update modus ****/
   
   if(argc > 1){
     printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
     usbprog_update_mode_number(&usbprog,atoi(argv[1]));
-    usbprog_flash_firmware(&usbprog,"openocd.bin");
+    //usbprog_flash_firmware(&usbprog,"openocd.bin");
+    usbprog_flash_netfirmware(&usbprog,0);
     usbprog_stop_updatemode(&usbprog);
   }
 

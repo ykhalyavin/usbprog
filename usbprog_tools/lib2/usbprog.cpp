@@ -400,6 +400,35 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
   fclose(fd);
 }
 
+
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *         \param number index of device_list arrar (from usbprog_print_devicelist)
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
+{
+  XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
+  int numberof_firmwares = usbprog_online_numberof_firmwares(usbprog);
+  for (int i=0; i<numberof_firmwares; i++){
+    if(i==number){
+      char * complete = (char*) malloc(sizeof(char)*255);
+      sprintf(complete,"%s%s",xNode.getChildNode("firmware",i).getChildNode("binary").getAttribute("url"),
+	xNode.getChildNode("firmware",i).getChildNode("binary").getAttribute("file"));
+
+      char * ptr;
+      int size = http_fetch(complete,&ptr);
+      usbprog_flash_buffer(usbprog,ptr,size);
+    }
+  }
+
+}
+
+
+
 int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
 {
   int offset = 0;
