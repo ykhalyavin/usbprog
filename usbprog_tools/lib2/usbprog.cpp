@@ -318,47 +318,44 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       if(i==number){
 
 	if(!(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62))
-{
-	usb_dev_handle * tmp_handle = usb_open(dev);
-	usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
-	usb_claim_interface(tmp_handle,0);
+	{
+	  usb_dev_handle * tmp_handle = usb_open(dev);
+	  usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
+	  usb_claim_interface(tmp_handle,0);
 
-	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
-	usb_close(tmp_handle);
-	#if _WIN32
-	Sleep(7000);
-	#else
-	sleep(3);
-	#endif
+	  usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
+	  usb_close(tmp_handle);
+	  #if _WIN32
+	  Sleep(7000);
+	  #else
+	  sleep(3);
+	  #endif
 
 
-	// find update and open
-	int timeout = 30;
-	while(1){
-	  usb_find_busses();
-	  usb_find_devices();
-	  busses = usb_get_busses();
-	  for (bus = busses; bus; bus = bus->next) {
-	    for (dev = bus->devices; dev; dev = dev->next){
-	      if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
-		usbprog->usb_handle = usb_open(dev);
-		return 1;
+	  // find update and open
+	  int timeout = 30;
+	  while(1){
+	    usb_find_busses();
+	    usb_find_devices();
+	    busses = usb_get_busses();
+	    for (bus = busses; bus; bus = bus->next) {
+	      for (dev = bus->devices; dev; dev = dev->next){
+		if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+		  usbprog->usb_handle = usb_open(dev);
+		  return 1;
+		}
 	      }
 	    }
+	    timeout++;
+	    if(timeout>30){
+	      return -1;
+	    }
 	  }
-	  timeout++;
-		  if(timeout>30){
-	    printf("timeout\n");
-	    return -1;
-	  }
-	}
-} else{
-usbprog->usb_handle = usb_open(dev);
-	return 0;
+	} else {
+	  usbprog->usb_handle = usb_open(dev);
+	  return 0;
 	}
       }
-
-      //usb_close(tmp_handle);
       i++;
     }
   }
