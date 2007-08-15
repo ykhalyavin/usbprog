@@ -325,10 +325,10 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 
 	  usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
 	  usb_close(tmp_handle);
-	  #if _WIN32
+	  #ifdef _WIN32
 	  Sleep(7000);
 	  #else
-	  usleep(3000);
+	  sleep(3000);
 	  #endif
 
 
