@@ -1,2 +1,0 @@
-To do:
-Nur wenn mehrere gleiche Geräte endeckt werden die Serial Nr anzeigen
