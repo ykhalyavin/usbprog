@@ -30,6 +30,7 @@
 
 struct usbprog_context{
   char * error_str;
+  char status_str[40];
   char * url;
   char * versions_xml;
   XMLNode xMainNode;

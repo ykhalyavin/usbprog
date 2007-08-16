@@ -31,6 +31,9 @@
 extern "C" int http_fetch(const char *url, char **fileBuf);
 
 
+#define usbprog_status(str)  \
+	  usbprog->status_str = str;             \
+
 #define usbprog_error_return(code, str) do {  \
 	  usbprog->error_str = str;             \
 	  return code;                       \
@@ -51,6 +54,7 @@ int usbprog_init(struct usbprog_context *usbprog)
   } 
   
   usb_init();
+  usbprog_status("usbprog ready for work");
 }
 
 /**
