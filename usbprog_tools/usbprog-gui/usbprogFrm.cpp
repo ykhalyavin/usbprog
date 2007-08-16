@@ -9,8 +9,8 @@
 
 #include "usbprogFrm.h"
 #include <wx/arrstr.h>
-#include "usbprog.h"
-#include "http_fetcher.h"
+#include "../lib2/usbprog.h"
+#include "../lib2/http_fetcher.h"
 
 //Do not add custom headers between
 //Header Include Start and Header Include End
