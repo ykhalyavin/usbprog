@@ -404,7 +404,7 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
     struct stat buf;
     stat(file,&buf);
     long filesize = buf.st_size;
-    printf("filesize %i\n",filesize);
+    //printf("filesize %i\n",filesize);
     
     char * buffer = (char*)malloc((sizeof(char)*filesize)+sizeof(char));
     int i=0;
