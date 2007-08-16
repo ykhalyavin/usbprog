@@ -33,7 +33,8 @@
 
 
 #define usbprog_status(str)  \
-	  sprintf(usbprog->status_str,"%s",str);             \
+	  if(strlen(str)<=40)
+	    sprintf(usbprog->status_str,"%s",str);             \
 
 #define usbprog_error_return(code, str) do {  \
 	  usbprog->error_str = str;             \
