@@ -160,6 +160,8 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
   char serial[255];
   int vendorlen=0, productlen=0, seriallen=0;
 
+  usbprog_status("get usb device descriptions");
+
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
 
@@ -220,11 +222,13 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
  */
 int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
 {
+  usbprog_status("download firmware list");
   int result =  http_fetch(url, &(usbprog->versions_xml));
   if(result >=0) {
     usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
     return result;
   }
+  usbprog_error(-1,"error during firmware list download");
   return -1;
 }
 
