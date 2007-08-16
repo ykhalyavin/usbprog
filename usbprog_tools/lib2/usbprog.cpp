@@ -28,11 +28,12 @@
 #include "usbprog.h"
 #include "xmlParser.h"
 
-extern "C" int http_fetch(const char *url, char **fileBuf);
+//extern "C" int http_fetch(const char *url, char **fileBuf);
+#include "http_fetcher.h"
 
 
 #define usbprog_status(str)  \
-	  usbprog->status_str = str;             \
+	  sprintf(usbprog->status_str,"%s",str);             \
 
 #define usbprog_error_return(code, str) do {  \
 	  usbprog->error_str = str;             \
@@ -91,6 +92,8 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
   char vendor[255];
   char product[255];
   int vendorlen=0, productlen=0;
+  
+  usbprog_status("count usb devices on the bus");
 
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){

@@ -1,7 +1,7 @@
 #include <stdio.h>    // to get "printf" function
 
-//#include "http_fetcher.h"
-extern "C" int http_fetch(const char *url, char **fileBuf);
+#include "http_fetcher.h"
+//extern "C" int http_fetch(const char *url, char **fileBuf);
 
 
 int main(int argc, char **argv)
