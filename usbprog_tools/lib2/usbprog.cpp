@@ -33,8 +33,7 @@
 
 
 #define usbprog_status(str)  \
-	  if(strlen(str)<=40)
-	    sprintf(usbprog->status_str,"%s",str);             \
+	  sprintf(usbprog->status_str,"%s",str);             \
 
 #define usbprog_error_return(code, str) do {  \
 	  usbprog->error_str = str;             \
@@ -54,10 +53,9 @@ int usbprog_init(struct usbprog_context *usbprog)
     usbprog->error_str	= NULL; 
     usbprog->url	= NULL; 
   } 
-  
   usb_init();
   usbprog_status("usbprog ready for work");
-  return 1;
+  return 0;
 }
 
 /**
@@ -69,8 +67,7 @@ int usbprog_init(struct usbprog_context *usbprog)
  */
 int usbprog_close(struct usbprog_context *usbprog)
 {
-
-  return 1;
+    return 0;
 }
 
 /**
@@ -205,14 +202,14 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 
 
 	char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+30)); 
-	//sprintf(complete,"(%i) %s from %s (Serial: %s)%i:%i",i,product,vendor,serial, \
-	  //dev->descriptor.idVendor,dev->descriptor.idProduct);
+	/*sprintf(complete,"(%i) %s from %s (Serial: %s)%i:%i",i,product,vendor,serial, \
+	dev->descriptor.idVendor,dev->descriptor.idProduct); */
 	sprintf(complete,"%s %s %i",vendor,product,i);
 	buf[i++]=complete;
 	usb_close(tmp_handle);
     }
   }
-  return 1;
+  return 0;
 }
 
 
@@ -231,7 +228,7 @@ int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
     usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
     return result;
   }
-  usbprog_error(-1,"can't download firmware list");
+  usbprog_error_return(-1,"error during firmware list download");
   return -1;
 }
 
@@ -266,7 +263,7 @@ int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, in
     sprintf(complete,"%s",xNode.getChildNode("firmware",i).getAttribute("label"));
     buf[i]=complete;
   }
-  return 1;
+  return 0;
 }
 
 
@@ -400,7 +397,8 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
   fd = fopen(file, "r+b");
   if(!fd) {
     usbprog_status("Unable to open file");
-    usbprog_error_return(-1,"Unable to open file ignoring.\n");
+    usbprog_error_return(-1,"Unable to open file, ignoring.\n");
+    return -1;
   } else {
 
     struct stat buf;
@@ -417,7 +415,8 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
     usbprog_flash_buffer(usbprog,buffer,i);
   }
   fclose(fd);
-  return 1;
+  usbprog_status("Job Done");
+  return 0;
 }
 
 
@@ -444,7 +443,8 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
       usbprog_flash_buffer(usbprog,ptr,size);
     }
   }
-  return 1;
+  usbprog_status("Job Done");
+  return 0;
 }
 
 
@@ -488,7 +488,7 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
     // data message
     usb_bulk_write(usbprog->usb_handle,2,buf,64,100);
   }
-  return 1;
+  return 0;
 }
 
 
@@ -507,7 +507,7 @@ int usbprog_stop_updatemode(struct usbprog_context* usbprog)
 
   buf[0]=STARTAPP;
   usb_bulk_write(usbprog->usb_handle,2,ptr,64,100);
-  return 1;
+  return 0;
 }
 
 
