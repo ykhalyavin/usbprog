@@ -21,7 +21,7 @@
 !insertmacro MUI_PAGE_WELCOME
 ; License page
 !define MUI_LICENSEPAGE_CHECKBOX
-!insertmacro MUI_PAGE_LICENSE "..\GPL.txt"
+!insertmacro MUI_PAGE_LICENSE "..\COPYING"
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Instfiles page
@@ -54,7 +54,7 @@ Section "Hauptgruppe" SEC01
   CreateShortCut "$DESKTOP\Usbprog GUI.lnk" "$INSTDIR\AppMainExe.exe"
 
   SetOutPath "$WINDIR\system32\"
-  File "..\GPL.txt"
+  File "..\COPYING"
 SectionEnd
 
 Section -AdditionalIcons
@@ -89,7 +89,7 @@ FunctionEnd
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
-  Delete "$WINDIR\system32\GPL.txt"
+  Delete "$WINDIR\system32\COPYING"
   Delete "$INSTDIR\Example.file"
   Delete "$INSTDIR\AppMainExe.exe"
 
