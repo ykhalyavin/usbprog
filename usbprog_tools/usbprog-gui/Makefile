@@ -3,10 +3,8 @@
 # Author: 	Benedikt Sauter	
 # Created: 2006	
 # Updated:	
-# Copyright:	(c) 2006 Benedikt Sauter 
+# Copyright:	(c) 2007 Benedikt Sauter 
 #
-# Makefile for penguin example (UNIX).
-
 CXX = $(shell wx-config --cxx)
 
 FILES = http_error_codes.o http_fetcher.o usbprogApp.o usbprog.o  usbprogFrm.o xmlParser.o
@@ -23,29 +21,28 @@ CFLAGS := $(SVNDEF) `wx-config --cxxflags`
 	$(CXX) -c `wx-config --cxxflags` -o $@ $<
 #
 usbprog-gui: $(FILES)
-	$(CXX) -o usbprog-gui \
+	$(CXX) -o usbprog-gui -lusb -I ../lib2 -L ../lib2 \
 	$(FILES) \
 	`wx-config --libs`
 
-
-http_error_codes.o: http_error_codes.c
-	$(CXX) $(CFLAGS) -c http_error_codes.c
-
-http_fetcher.o: http_fetcher.c
-	$(CXX) $(CFLAGS) -c  http_fetcher.c
-	
+usbprogFrm.o: usbprogFrm.cpp
+	$(CXX) $(CFLAGS) -c usbprogFrm.cpp
 
 usbprogApp.o: usbprogApp.cpp
 	$(CXX) $(CFLAGS) -c usbprogApp.cpp
 
-usbprog.o: usbprog.cpp
-	$(CXX) $(CFLAGS) -c usbprog.cpp
 
-usbprogFrm.o: usbprogFrm.cpp:
-	$(CXX) $(CFLAGS) -c usbprogFrm.cpp
+http_error_codes.o: ../lib2/http_error_codes.c
+	$(CXX) $(CFLAGS) -c ../lib2/http_error_codes.c
 
-xmlParser.o: xmlParser.cpp
-	$(CXX) $(CFLAGS) -c xmlParser.cpp
+http_fetcher.o: ../lib2/http_fetcher.c
+	$(CXX) $(CFLAGS) -c  ../lib2/http_fetcher.c
+	
+usbprog.o: ../lib2/usbprog.cpp
+	$(CXX) $(CFLAGS) -c ../lib2/usbprog.cpp
+
+xmlParser.o: ../lib2/xmlParser.cpp
+	$(CXX) $(CFLAGS) -c ../lib2/xmlParser.cpp
 
 clean: 
 	rm -f *.o usbprog-gui

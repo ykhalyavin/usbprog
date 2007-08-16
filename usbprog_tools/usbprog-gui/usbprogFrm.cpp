@@ -50,6 +50,35 @@ usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title, c
 {
 	CreateGUIControls();
     usbprog_init(&usbprog);
+    int devices = usbprog_get_numberof_devices(&usbprog);
+    char *buf[devices];
+    usbprog_print_devices(&usbprog,buf);
+
+    WxComboBox1->Clear();
+
+    for(int i = 0; i < devices; i++)
+    {
+        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
+    }
+    
+    	if(usbprog_online_get_netlist(&usbprog, "http://www.ixbat.de/usbprog/versions.xml")<=0)    //download firmware list
+	{
+       printWxEdit2(usbprog.error_str);
+    }
+    else
+    {
+        printWxEdit2(usbprog.status_str);
+        int firmwareNr = usbprog_online_numberof_firmwares(&usbprog);
+        char *versions[firmwareNr];
+        usbprog_online_print_netlist(&usbprog, versions, firmwareNr);
+
+        WxComboBox2->Clear();
+
+        for(int i = 0; i < firmwareNr; i++)
+        {
+            WxComboBox2->Append(wxString(versions[i], wxConvUTF8));
+        }
+    }
 }
 
 usbprogFrm::~usbprogFrm()
@@ -138,7 +167,7 @@ void usbprogFrm::CreateGUIControls()
 	SetIcon(wxNullIcon);
 	SetSize(8,8,466,332);
 	Center();
-	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+	
 	////GUI Items Creation End
 	// SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 }
@@ -211,7 +240,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     else        //local Firmware
     {
         wxString wxPath = WxEdit1->GetValue();
-        char* charPath = (char*) wxPath.mb_str(wxConvUTF8); //converts wxString to charArray
+        char* charPath = (char*)wxPath.c_str(); //converts wxString to charArray
         usbprog_flash_firmware(&usbprog, charPath);
     }
     
@@ -303,10 +332,11 @@ void usbprogFrm::WxButton5Click(wxCommandEvent& event)
         
         for(int i = 0; i < firmwareNr; i++)
         {
-            WxComboBox2->Append(versions[i]);
+            WxComboBox2->Append(wxString(versions[i], wxConvUTF8));
         }
     }
 }
+
 
 /*
  * WxButton4Click
@@ -323,7 +353,7 @@ void usbprogFrm::WxButton4Click(wxCommandEvent& event)
     
     for(int i = 0; i < devices; i++)
     {
-        WxComboBox1->Append(buf[i]);
+        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
     }  
 }
 
@@ -335,7 +365,6 @@ void usbprogFrm::printWxEdit2(char * text)
 	/* TODO (#1#): Implement usbprogFrm::printWxEdit2() */
 	
 	WxEdit2->Clear();
-	WxEdit2->WriteText(text);
+	WxEdit2->WriteText(wxString(text, wxConvUTF8));
 }
-
 
