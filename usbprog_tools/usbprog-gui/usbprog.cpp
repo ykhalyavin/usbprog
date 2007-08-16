@@ -27,10 +27,13 @@
 
 #include "usbprog.h"
 #include "xmlParser.h"
-#include "http_fetcher.h"
 
 //extern "C" int http_fetch(const char *url, char **fileBuf);
+#include "http_fetcher.h"
 
+
+#define usbprog_status(str)  \
+	  sprintf(usbprog->status_str,"%s",str);             \
 
 #define usbprog_error_return(code, str) do {  \
 	  usbprog->error_str = str;             \
@@ -52,6 +55,7 @@ int usbprog_init(struct usbprog_context *usbprog)
   } 
   
   usb_init();
+  usbprog_status("usbprog ready for work");
 }
 
 /**
@@ -88,6 +92,8 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
   char vendor[255];
   char product[255];
   int vendorlen=0, productlen=0;
+  
+  usbprog_status("count usb devices on the bus");
 
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
@@ -154,6 +160,8 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
   char serial[255];
   int vendorlen=0, productlen=0, seriallen=0;
 
+  usbprog_status("get usb device descriptions");
+
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
 
@@ -214,11 +222,13 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
  */
 int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
 {
+  usbprog_status("download firmware list");
   int result =  http_fetch(url, &(usbprog->versions_xml));
   if(result >=0) {
     usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
     return result;
   }
+  usbprog_error_return(-1,"error during firmware list download");
   return -1;
 }
 
@@ -385,7 +395,9 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
   // open bin file
   fd = fopen(file, "r+b");
   if(!fd) {
-    printf("Unable to open file %s, ignoring.\n", file);
+    usbprog_status("Unable to open file");
+    usbprog_error_return(-1,"Unable to open file, ignoring.\n");
+    return -1;
   } else {
 
     struct stat buf;
@@ -428,7 +440,7 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
       usbprog_flash_buffer(usbprog,ptr,size);
     }
   }
-
+  usbprog_status("Job Done");
 }
 
 

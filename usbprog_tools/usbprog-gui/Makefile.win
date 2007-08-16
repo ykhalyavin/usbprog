@@ -1,7 +1,7 @@
 # Project: Projekt2
 # Compiler: Default GCC compiler
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 15.08.07 19:28
+# Makefile created by wxDev-C++ 6.10.2 on 16.08.07 19:27
 
 CPP       = g++.exe
 CC        = gcc.exe
@@ -10,7 +10,7 @@ OBJ       = Objects/MingW/usbprogApp.o Objects/MingW/usbprogFrm.o Objects/MingW/
 LINKOBJ   = Objects/MingW/usbprogApp.o Objects/MingW/usbprogFrm.o Objects/MingW/usbprog.o Objects/MingW/xmlParser.o Objects/MingW/http_error_codes.o Objects/MingW/http_fetcher.o Objects/MingW/usbprog_private.res
 LIBS      = -L"C:/Programme/Dev-Cpp/Lib" -L"C:/Programme/LibUSB-Win32/lib/gcc" -lusb -mwindows -lwxmsw28 -lwxmsw28_gl -lwxtiff -lwxjpeg -lwxpng -lwxzlib -lwxregex -lwxexpat -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool -lwinmm -lshell32 -lcomctl32 -lole32 -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 -lodbc32 -lopengl32  
 INCS      = -I"include" -I"C:/Programme/LibUSB-Win32/include"
-CXXINCS   = -I"C:/Programme/Dev-Cpp/lib/gcc/mingw32/3.4.2/include" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/backward" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/mingw32" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2" -I"C:/Programme/Dev-Cpp/include" -I"C:/Programme/Dev-Cpp/" -I"C:/Programme/Dev-Cpp/include/common/wx/msw" -I"C:/Programme/Dev-Cpp/include/common/wx/generic" -I"C:/Programme/Dev-Cpp/include/common/wx/fl" -I"C:/Programme/Dev-Cpp/include/common/wx/gizmos" -I"C:/Programme/Dev-Cpp/include/common/wx/html" -I"C:/Programme/Dev-Cpp/include/common/wx/mmedia" -I"C:/Programme/Dev-Cpp/include/common/wx/net" -I"C:/Programme/Dev-Cpp/include/common/wx/ogl" -I"C:/Programme/Dev-Cpp/include/common/wx/plot" -I"C:/Programme/Dev-Cpp/include/common/wx/protocol" -I"C:/Programme/Dev-Cpp/include/common/wx/stc" -I"C:/Programme/Dev-Cpp/include/common/wx/svg" -I"C:/Programme/Dev-Cpp/include/common/wx/xml" -I"C:/Programme/Dev-Cpp/include/common/wx/xrc" -I"C:/Programme/Dev-Cpp/include/common/wx" -I"C:/Programme/Dev-Cpp/include/common"
+CXXINCS   = -I"C:/Programme/Dev-Cpp/lib/gcc/mingw32/3.4.2/include" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/backward" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/mingw32" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2" -I"C:/Programme/Dev-Cpp/include" -I"C:/Programme/Dev-Cpp/" -I"C:/Programme/Dev-Cpp/include/common/wx/msw" -I"C:/Programme/Dev-Cpp/include/common/wx/generic" -I"C:/Programme/Dev-Cpp/include/common/wx/fl" -I"C:/Programme/Dev-Cpp/include/common/wx/gizmos" -I"C:/Programme/Dev-Cpp/include/common/wx/html" -I"C:/Programme/Dev-Cpp/include/common/wx/mmedia" -I"C:/Programme/Dev-Cpp/include/common/wx/net" -I"C:/Programme/Dev-Cpp/include/common/wx/ogl" -I"C:/Programme/Dev-Cpp/include/common/wx/plot" -I"C:/Programme/Dev-Cpp/include/common/wx/protocol" -I"C:/Programme/Dev-Cpp/include/common/wx/stc" -I"C:/Programme/Dev-Cpp/include/common/wx/svg" -I"C:/Programme/Dev-Cpp/include/common/wx/xml" -I"C:/Programme/Dev-Cpp/include/common/wx/xrc" -I"C:/Programme/Dev-Cpp/include/common/wx" -I"C:/Programme/Dev-Cpp/include/common" -I"C:/Programme/LibUSB-Win32/include"
 RCINCS    = --include-dir "C:/PROGRA~1/Dev-Cpp/include/common"
 BIN       = Output/MingW/usbprog.exe
 DEFINES   =  -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__
@@ -32,10 +32,10 @@ $(BIN): $(OBJ)
 Objects/MingW/usbprogApp.o: $(GLOBALDEPS) usbprogApp.cpp usbprogApp.h usbprogFrm.h
 	$(CPP) -c usbprogApp.cpp -o Objects/MingW/usbprogApp.o $(CXXFLAGS)
 
-Objects/MingW/usbprogFrm.o: $(GLOBALDEPS) usbprogFrm.cpp usbprogFrm.h usbprog.h ../../../../Programme/LibUSB-Win32/include/usb.h xmlParser.h http_fetcher.h http_error_codes.h Images/usbprogFrm_WxStaticBitmap1_XPM.xpm
+Objects/MingW/usbprogFrm.o: $(GLOBALDEPS) usbprogFrm.cpp usbprogFrm.h usbprog.h xmlParser.h http_fetcher.h http_error_codes.h Images/usbprogFrm_WxStaticBitmap1_XPM.xpm
 	$(CPP) -c usbprogFrm.cpp -o Objects/MingW/usbprogFrm.o $(CXXFLAGS)
 
-Objects/MingW/usbprog.o: $(GLOBALDEPS) usbprog.cpp usbprog.h ../../../../Programme/LibUSB-Win32/include/usb.h xmlParser.h xmlParser.h http_fetcher.h http_error_codes.h
+Objects/MingW/usbprog.o: $(GLOBALDEPS) usbprog.cpp usbprog.h xmlParser.h xmlParser.h http_fetcher.h http_error_codes.h
 	$(CPP) -c usbprog.cpp -o Objects/MingW/usbprog.o $(CXXFLAGS)
 
 Objects/MingW/xmlParser.o: $(GLOBALDEPS) xmlParser.cpp xmlParser.h

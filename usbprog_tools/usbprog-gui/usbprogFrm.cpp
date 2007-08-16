@@ -40,8 +40,6 @@ BEGIN_EVENT_TABLE(usbprogFrm,wxFrame)
 	EVT_BUTTON(ID_WXBUTTON2,usbprogFrm::WxButton2Click)
 	EVT_BUTTON(ID_WXBUTTON3,usbprogFrm::WxButton3Click)
 	EVT_BUTTON(ID_WXBUTTON1,usbprogFrm::WxButton1Click)
-	
-	EVT_TEXT(ID_WXEDIT1,usbprogFrm::WxEdit1Updated)
 	EVT_RADIOBUTTON(ID_WXRADIOBUTTON2,usbprogFrm::WxRadioButton2Click)
 	EVT_RADIOBUTTON(ID_WXRADIOBUTTON1,usbprogFrm::WxRadioButton1Click)
 END_EVENT_TABLE()
@@ -95,6 +93,9 @@ void usbprogFrm::CreateGUIControls()
 	WxStatusBar1 = new wxStatusBar(this, ID_WXSTATUSBAR1);
 
 	WxEdit2 = new wxTextCtrl(this, ID_WXEDIT2, wxT(""), wxPoint(180,209), wxSize(254,19), 0, wxDefaultValidator, wxT("WxEdit2"));
+	WxEdit2->Enable(false);
+	WxEdit2->SetForegroundColour(wxColour(*wxWHITE));
+	WxEdit2->SetBackgroundColour(wxColour(*wxWHITE));
 	WxEdit2->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
 	WxStaticText2 = new wxStaticText(this, ID_WXSTATICTEXT2, wxT("Status"), wxPoint(128,211), wxDefaultSize, 0, wxT("WxStaticText2"));
@@ -178,22 +179,44 @@ void usbprogFrm::WxMemo1Updated1(wxCommandEvent& event)
 void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
 {
 	// insert your code here
+	
+	int device = WxComboBox1->GetCurrentSelection();
+	int firmware = 0;
+	
+	if(WxRadioButton1->GetValue() == true)     //online
+	{
+         firmware = WxComboBox2->GetCurrentSelection();  //Get Firmware from ComboBox
+         
+       	if(firmware == -1)   //No selceted Firmware
+    	{
+             printWxEdit2("No Firmware selected");
+             return;
+        }
+    }
+
+	if(device == -1)   //No Device selceted 
+	{
+        printWxEdit2("No Device Selected");
+        return;
+    }
+    
+   	printWxEdit2("Starting");
    
     usbprog_update_mode_number(&usbprog, WxComboBox1->GetCurrentSelection());
-	
+    
     if(WxRadioButton1->GetValue() == true)     //Online Pool
 	{
-       int firmware = WxComboBox2->GetCurrentSelection();
-       //usbprog_flash_netfirmware(&usbprog, firmware);
+        usbprog_flash_netfirmware(&usbprog, firmware);
     }
     else        //local Firmware
     {
-        wxString wxPath = WxOpenFileDialog1->GetPath();
+        wxString wxPath = WxEdit1->GetValue();
         char* charPath = (char*) wxPath.mb_str(wxConvUTF8); //converts wxString to charArray
         usbprog_flash_firmware(&usbprog, charPath);
     }
     
     usbprog_stop_updatemode(&usbprog); 
+    printWxEdit2(usbprog.error_str);
 }
 
 /*
@@ -267,10 +290,11 @@ void usbprogFrm::WxButton5Click(wxCommandEvent& event)
 
 	if(usbprog_online_get_netlist(&usbprog, "http://www.ixbat.de/usbprog/versions.xml")<=0)    //download firmware list
 	{
-        //Error
+       printWxEdit2(usbprog.error_str);
     }
     else
     {
+        printWxEdit2(usbprog.status_str);
         int firmwareNr = usbprog_online_numberof_firmwares(&usbprog);     
         char *versions[firmwareNr];
         usbprog_online_print_netlist(&usbprog, versions, firmwareNr);
@@ -302,3 +326,16 @@ void usbprogFrm::WxButton4Click(wxCommandEvent& event)
         WxComboBox1->Append(buf[i]);
     }  
 }
+
+
+
+// No description
+void usbprogFrm::printWxEdit2(char * text)
+{
+	/* TODO (#1#): Implement usbprogFrm::printWxEdit2() */
+	
+	WxEdit2->Clear();
+	WxEdit2->WriteText(text);
+}
+
+

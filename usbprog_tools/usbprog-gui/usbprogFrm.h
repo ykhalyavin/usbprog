@@ -62,6 +62,10 @@ class usbprogFrm : public wxFrame
 		void WxRadioButton2Click(wxCommandEvent& event);
 		void WxButton5Click(wxCommandEvent& event);
 		void WxButton4Click(wxCommandEvent& event);
+		void WxEdit2Updated(wxCommandEvent& event);
+		
+		// No description
+		void printWxEdit2(char * text);
 
 		
 	private:

@@ -19,7 +19,7 @@
 
 */
 
-#include "C:\Programme\LibUSB-Win32\include\usb.h"
+#include <usb.h>
 #include "xmlParser.h"
 
 #define STARTAPP       0x01
@@ -30,6 +30,7 @@
 
 struct usbprog_context{
   char * error_str;
+  char status_str[40];
   char * url;
   char * versions_xml;
   XMLNode xMainNode;

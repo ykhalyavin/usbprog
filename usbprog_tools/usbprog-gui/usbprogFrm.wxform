@@ -155,7 +155,6 @@ object frmNewForm: TfrmNewForm
     AutoSize = False
     TabOrder = 6
     Text = 'C:\'
-    EVT_TEXT = 'WxEdit1Updated'
     Wx_BGColor = clBlack
     Wx_Class = 'wxTextCtrl'
     Wx_ControlOrientation = wxControlVertical
@@ -193,17 +192,27 @@ object frmNewForm: TfrmNewForm
     BevelOuter = bvNone
     Modified = False
     AutoSize = False
+    Color = clWhite
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWhite
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 8
     Wx_BGColor = clBlack
     Wx_Class = 'wxTextCtrl'
     Wx_ControlOrientation = wxControlVertical
     Wx_EditStyle = []
+    Wx_Enabled = False
     Wx_FGColor = clBlack
     Wx_GeneralStyle = []
     Wx_Hidden = False
     Wx_IDName = 'ID_WXEDIT2'
     Wx_IDValue = 1037
     Wx_MaxLength = 0
+    InvisibleBGColorString = 'STD:wxWHITE'
+    InvisibleFGColorString = 'STD:wxWHITE'
   end
   object WxStaticText2: TWxStaticText
     Left = 128
