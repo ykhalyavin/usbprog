@@ -57,6 +57,7 @@ int usbprog_init(struct usbprog_context *usbprog)
   
   usb_init();
   usbprog_status("usbprog ready for work");
+  return 1;
 }
 
 /**
@@ -69,6 +70,7 @@ int usbprog_init(struct usbprog_context *usbprog)
 int usbprog_close(struct usbprog_context *usbprog)
 {
 
+  return 1;
 }
 
 /**
@@ -210,7 +212,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	usb_close(tmp_handle);
     }
   }
-
+  return 1;
 }
 
 
@@ -264,6 +266,7 @@ int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, in
     sprintf(complete,"%s",xNode.getChildNode("firmware",i).getAttribute("label"));
     buf[i]=complete;
   }
+  return 1;
 }
 
 
@@ -414,6 +417,7 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
     usbprog_flash_buffer(usbprog,buffer,i);
   }
   fclose(fd);
+  return 1;
 }
 
 
@@ -440,7 +444,7 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
       usbprog_flash_buffer(usbprog,ptr,size);
     }
   }
-
+  return 1;
 }
 
 
@@ -484,6 +488,7 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
     // data message
     usb_bulk_write(usbprog->usb_handle,2,buf,64,100);
   }
+  return 1;
 }
 
 
@@ -502,6 +507,7 @@ int usbprog_stop_updatemode(struct usbprog_context* usbprog)
 
   buf[0]=STARTAPP;
   usb_bulk_write(usbprog->usb_handle,2,ptr,64,100);
+  return 1;
 }
 
 
