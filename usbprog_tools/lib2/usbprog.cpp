@@ -229,7 +229,7 @@ int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
     usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
     return result;
   }
-  usbprog_error(-1,"error during firmware list download");
+  usbprog_error(-1,"can't download firmware list");
   return -1;
 }
 
@@ -396,8 +396,8 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
   // open bin file
   fd = fopen(file, "r+b");
   if(!fd) {
-    usbprog_error_return(-1,"Unable to open file %s, ignoring.\n");
-    return -1;
+    usbprog_status("Unable to open file");
+    usbprog_error_return(-1,"Unable to open file ignoring.\n");
   } else {
 
     struct stat buf;
