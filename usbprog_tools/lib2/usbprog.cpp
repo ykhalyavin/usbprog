@@ -384,7 +384,8 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
   // open bin file
   fd = fopen(file, "r+b");
   if(!fd) {
-    printf("Unable to open file %s, ignoring.\n", file);
+    usbprog_error_return(-1,"Unable to open file %s, ignoring.\n");
+    return -1;
   } else {
 
     struct stat buf;
