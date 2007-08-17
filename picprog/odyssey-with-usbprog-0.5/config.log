@@ -14,7 +14,7 @@ hostname = big
 uname -m = i686
 uname -r = 2.6.18.2
 uname -s = Linux
-uname -v = #7 PREEMPT Wed Jan 17 21:29:20 CET 2007
+uname -v = #12 PREEMPT Wed Jul 4 09:07:38 CEST 2007
 
 /usr/bin/uname -p = unknown
 /bin/uname -X     = unknown
@@ -27,6 +27,14 @@ uname -v = #7 PREEMPT Wed Jan 17 21:29:20 CET 2007
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
 
+PATH: /usr/local/bin
+PATH: /usr/bin
+PATH: /bin
+PATH: /usr/bin/X11
+PATH: /usr/games
+PATH: /home/bene/Xilinx/bin/lin
+PATH: /usr/local/AVR/bin
+PATH: /usr/local/arm/bin
 PATH: /usr/local/bin
 PATH: /usr/bin
 PATH: /bin
@@ -58,7 +66,7 @@ configure:2432: found /usr/bin/gcc
 configure:2443: result: gcc
 configure:2681: checking for C compiler version
 configure:2688: gcc --version >&5
-gcc (GCC) 4.1.2 20061028 (prerelease) (Debian 4.1.1-19)
+gcc (GCC) 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
 Copyright (C) 2006 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -69,7 +77,7 @@ Using built-in specs.
 Target: i486-linux-gnu
 Configured with: ../src/configure -v --enable-languages=c,c++,fortran,objc,obj-c++,treelang --prefix=/usr --enable-shared --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --enable-nls --program-suffix=-4.1 --enable-__cxa_atexit --enable-clocale=gnu --enable-libstdcxx-debug --enable-mpfr --with-tune=i686 --enable-checking=release i486-linux-gnu
 Thread model: posix
-gcc version 4.1.2 20061028 (prerelease) (Debian 4.1.1-19)
+gcc version 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
 configure:2701: $? = 0
 configure:2708: gcc -V >&5
 gcc: '-V' option must have argument
@@ -157,7 +165,7 @@ configure:3825: found /usr/bin/g++
 configure:3836: result: g++
 configure:3867: checking for C++ compiler version
 configure:3874: g++ --version >&5
-g++ (GCC) 4.1.2 20061028 (prerelease) (Debian 4.1.1-19)
+g++ (GCC) 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
 Copyright (C) 2006 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -168,7 +176,7 @@ Using built-in specs.
 Target: i486-linux-gnu
 Configured with: ../src/configure -v --enable-languages=c,c++,fortran,objc,obj-c++,treelang --prefix=/usr --enable-shared --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --enable-nls --program-suffix=-4.1 --enable-__cxa_atexit --enable-clocale=gnu --enable-libstdcxx-debug --enable-mpfr --with-tune=i686 --enable-checking=release i486-linux-gnu
 Thread model: posix
-gcc version 4.1.2 20061028 (prerelease) (Debian 4.1.1-19)
+gcc version 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
 configure:3887: $? = 0
 configure:3894: g++ -V >&5
 g++: '-V' option must have argument
@@ -478,6 +486,7 @@ config.status:659: creating Makefile
 config.status:659: creating src/Makefile
 config.status:659: creating data/Makefile
 config.status:659: creating src/config.h
+config.status:901: src/config.h is unchanged
 config.status:947: executing depfiles commands
 
 ## ---------------- ##
@@ -566,14 +575,14 @@ am_cv_CXX_dependencies_compiler_type=gcc3
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /tmp/odyssey-0.5/scripts/missing --run aclocal-1.9'
+ACLOCAL='${SHELL} /home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/missing --run aclocal-1.9'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
-AMTAR='${SHELL} /tmp/odyssey-0.5/scripts/missing --run tar'
-AUTOCONF='${SHELL} /tmp/odyssey-0.5/scripts/missing --run autoconf'
-AUTOHEADER='${SHELL} /tmp/odyssey-0.5/scripts/missing --run autoheader'
-AUTOMAKE='${SHELL} /tmp/odyssey-0.5/scripts/missing --run automake-1.9'
+AMTAR='${SHELL} /home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/missing --run tar'
+AUTOCONF='${SHELL} /home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/missing --run autoconf'
+AUTOHEADER='${SHELL} /home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/missing --run autoheader'
+AUTOMAKE='${SHELL} /home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/missing --run automake-1.9'
 AWK='gawk'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
@@ -606,7 +615,7 @@ LIBOBJS=''
 LIBS=''
 LN_S='ln -s'
 LTLIBOBJS=''
-MAKEINFO='${SHELL} /tmp/odyssey-0.5/scripts/missing --run makeinfo'
+MAKEINFO='${SHELL} /home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/missing --run makeinfo'
 OBJEXT='o'
 PACKAGE='odyssey'
 PACKAGE_BUGREPORT=''
@@ -650,7 +659,7 @@ host_vendor='pc'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='/tmp/odyssey-0.5/scripts/install-sh'
+install_sh='/home/bene/projects/usbprog/trunk/picprog/odyssey-with-usbprog-0.5/scripts/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'

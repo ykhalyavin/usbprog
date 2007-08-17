@@ -425,6 +425,7 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
       buffer[i++] = (char)fgetc(fd);
     }
     usbprog_flash_buffer(usbprog,buffer,i);
+    free(buffer);
   }
   fclose(fd);
   usbprog_status("Job Done");
@@ -457,6 +458,7 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
       char * ptr;
       int size = http_fetch(complete,&ptr);
       usbprog_flash_buffer(usbprog,ptr,size);
+      free(complete);
     }
   }
   usbprog_status("Job Done");

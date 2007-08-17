@@ -864,7 +864,7 @@ int main(void)
   _USBNAddStringDescriptor(lang); // language descriptor
 
   USBNDeviceManufacture("B.Sauter");
-  USBNDeviceProduct("AVRISP mkII Klon");
+  USBNDeviceProduct("AVRISP mk2 Clone");
   USBNDeviceSerialNumber("0000A00128255");
 
   conf = USBNAddConfiguration();
