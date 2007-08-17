@@ -401,7 +401,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      }
 	      
 	      timeout++;
-	      if(timeout>30)
+	      if(timeout>100)
 		break;	
 	      
 	      #ifdef _WIN32
@@ -409,10 +409,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      #else
 	      sleep(1);
 	      #endif
-
 	    }
-	      exit(1);
-
 
 #if 0
 	if(is_usbprog_in_update_mode(usbprog)!=1)
