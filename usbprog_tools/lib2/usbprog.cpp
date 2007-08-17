@@ -382,7 +382,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      busses = usb_get_busses();
 	      for (bus = busses; bus; bus = bus->next) {
 		for (dev = bus->devices; dev; dev = dev->next){
-		  //printf("%i %i",dev->descriptor.idVendor,dev->descriptor.idProduct);
+		  printf("%i %i",dev->descriptor.idVendor,dev->descriptor.idProduct);
 		  if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 		    printf("und nun wurde der update modus erkannt und das handel gesichert\n");
 		    
@@ -396,9 +396,11 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 		  //printf("\nHallo Robert!\n");
 		}
 	      }
+	      
 	      timeout++;
 	      if(timeout>30)
 		break;	
+	      
 	      #ifdef _WIN32
 	      Sleep(1000);
 	      #else
