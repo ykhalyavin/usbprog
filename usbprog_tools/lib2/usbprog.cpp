@@ -350,25 +350,51 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 	  
 	  usb_dev_handle * tmp_handle = usb_open(dev);
-	  usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
+	  usb_set_configuration(tmp_handle,1);
 	  usb_claim_interface(tmp_handle,0);
+	  usb_set_altinterface(usbprog->usb_handle,0);
 	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	  productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 	  if(vendorlen<=0 && productlen<=0){
 	    printf("update mode\n");
 	    // update modus
+	    usbprog->usb_handle = tmp_handle;
+	    return 1;
 	  } else {
 	    printf("erst umschalten!\n");
 	    // erst umschalten
 
 	    usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
 	    usb_close(tmp_handle);
+	    printf("jetzt sollte windows pling machen\n");
 	    #ifdef _WIN32
 	    Sleep(7000);
 	    #else
 	    sleep(3);
 	    #endif
-
+	    printf("jetzt ZUM ZWEITEN MAL windows pling machen\n");
+	 #if 0 
+	    int timeout = 30;
+	    while(1){
+	      usb_find_busses();
+	      usb_find_devices();
+	      busses = usb_get_busses();
+	      for (bus = busses; bus; bus = bus->next) {
+		for (dev = bus->devices; dev; dev = dev->next){
+		  if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+		    usbprog->usb_handle = usb_open(dev);
+		    usb_set_configuration(usbprog->usb_handle,1);
+		    usb_claim_interface(usbprog->usb_handle,0);
+		    usb_set_altinterface(usbprog->usb_handle,0);
+		    return 1;
+		  }
+		}
+	      }
+	      timeout++;
+	      if(timeout>30)
+		return -1;
+	    }
+	#endif
 	    exit(1);
 	  }
 	}
