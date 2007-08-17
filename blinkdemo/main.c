@@ -96,8 +96,8 @@ int main(void)
   _USBNAddStringDescriptor(lang); // language descriptor
 
   
-  //USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("blinkled");
+  USBNDeviceManufacture ("B.Sauter");
+  USBNDeviceProduct	("LED Blinkdemo   ");
 
 	//0000A0016461 (aktuelle)
 	//0000A0019647
