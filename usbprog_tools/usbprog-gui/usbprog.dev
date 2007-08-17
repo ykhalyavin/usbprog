@@ -1,7 +1,7 @@
 [Project]
 FileName=usbprog.dev
 Name=Projekt2
-UnitCount=13
+UnitCount=14
 PchHead=-1
 PchSource=-1
 Ver=3
@@ -208,6 +208,15 @@ CompileCpp=1
 Folder=Projekt2
 Compile=1
 Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit14]
+FileName=usbprogFrm.wxform
+Folder=Projekt2
+Compile=0
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=

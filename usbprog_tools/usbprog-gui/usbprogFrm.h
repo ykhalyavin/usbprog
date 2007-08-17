@@ -29,7 +29,6 @@
 #include <wx/statbmp.h>
 #include <wx/gauge.h>
 #include <wx/button.h>
-#include <wx/statusbr.h>
 #include <wx/textctrl.h>
 #include <wx/radiobut.h>
 #include <wx/stattext.h>
@@ -51,8 +50,6 @@ class usbprogFrm : public wxFrame
 		usbprogFrm(wxWindow *parent, wxWindowID id = 1, const wxString &title = wxT("Usbprog-Update"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = usbprogFrm_STYLE);
 		virtual ~usbprogFrm();
 		void usbprogFrmActivate(wxActivateEvent& event);
-		void WxMemo1Updated(wxCommandEvent& event);
-		void WxMemo1Updated1(wxCommandEvent& event);
 		void WxButton3Click(wxCommandEvent& event);
 		void WxButton1Click(wxCommandEvent& event);
 		void WxRadioBox1Click(wxCommandEvent& event);
@@ -73,6 +70,7 @@ class usbprogFrm : public wxFrame
 		//GUI Control Declaration Start and GUI Control Declaration End.
 		//wxDev-C++ will remove them. Add custom code after the block.
 		////GUI Control Declaration Start
+		wxStaticText *WxStaticText4;
 		wxFileDialog *WxOpenFileDialog1;
 		wxStaticBitmap *WxStaticBitmap1;
 		wxButton *WxButton5;
@@ -84,7 +82,6 @@ class usbprogFrm : public wxFrame
 		wxButton *WxButton1;
 		wxStaticText *WxStaticText2;
 		wxTextCtrl *WxEdit2;
-		wxStatusBar *WxStatusBar1;
 		wxTextCtrl *WxEdit1;
 		wxRadioButton *WxRadioButton2;
 		wxRadioButton *WxRadioButton1;
@@ -102,6 +99,7 @@ class usbprogFrm : public wxFrame
 		enum
 		{
 			////GUI Enum Control ID Start
+			ID_WXSTATICTEXT4 = 1053,
 			ID_WXSTATICBITMAP1 = 1052,
 			ID_WXBUTTON5 = 1051,
 			ID_WXBUTTON4 = 1050,
@@ -112,7 +110,6 @@ class usbprogFrm : public wxFrame
 			ID_WXBUTTON1 = 1039,
 			ID_WXSTATICTEXT2 = 1038,
 			ID_WXEDIT2 = 1037,
-			ID_WXSTATUSBAR1 = 1035,
 			ID_WXEDIT1 = 1032,
 			ID_WXRADIOBUTTON2 = 1031,
 			ID_WXRADIOBUTTON1 = 1030,
