@@ -352,7 +352,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	  usb_dev_handle * tmp_handle = usb_open(dev);
 	  usb_set_configuration(tmp_handle,1);
 	  usb_claim_interface(tmp_handle,0);
-	  usb_set_altinterface(usbprog->usb_handle,0);
+	  usb_set_altinterface(tmp_handle,0);
 	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	  productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 	  if(vendorlen<=0 && productlen<=0){
@@ -373,7 +373,6 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    sleep(3);
 	    #endif
 	    printf("jetzt ZUM ZWEITEN MAL windows pling machen\n");
-	    exit(1);
 	 #if 0 
 	    int timeout = 30;
 	    while(1){
