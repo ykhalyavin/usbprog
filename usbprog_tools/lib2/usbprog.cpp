@@ -372,8 +372,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    #else
 	    sleep(3);
 	    #endif
-
 	    printf("jetzt ZUM ZWEITEN MAL windows pling machen\n");
+	 #if 0 
 	    int timeout = 30;
 	    while(1){
 	      usb_find_busses();
@@ -383,10 +383,12 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 		for (dev = bus->devices; dev; dev = dev->next){
 		  if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 		    printf("und nun wurde der update modus erkannt und das handel gesichert\n");
-		    usbprog->usb_handle = usb_open(dev);
-		    usb_set_configuration(usbprog->usb_handle,1);
-		    usb_claim_interface(usbprog->usb_handle,0);
-		    usb_set_altinterface(usbprog->usb_handle,0);
+		    
+		    //usbprog->usb_handle = usb_open(dev);
+		    //usb_set_configuration(usbprog->usb_handle,1);
+		    //usb_claim_interface(usbprog->usb_handle,0);
+		    //usb_set_altinterface(usbprog->usb_handle,0);
+		    exit(1);
 		    return 1;
 		  }
 		}
@@ -395,7 +397,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      if(timeout>30)
 		return -1;
 	    }
-	    //exit(1);
+	#endif
+	    exit(1);
 	  }
 	}
 
