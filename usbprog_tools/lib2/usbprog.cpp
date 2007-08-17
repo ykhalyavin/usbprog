@@ -363,6 +363,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	  } else {
 	    printf("erst umschalten!\n");
 	    // erst umschalten
+	  }
 
 	    usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
 	    usb_close(tmp_handle);
@@ -409,7 +410,6 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 
 	    }
 	      exit(1);
-	  }
 	}
 
 
