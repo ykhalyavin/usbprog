@@ -387,13 +387,13 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 		for (dev = bus->devices; dev; dev = dev->next){
 		  printf("%i %i",dev->descriptor.idVendor,dev->descriptor.idProduct);
 		  if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
-		    printf("und nun wurde der update modus erkannt und das handel gesichert\n");
+		    //printf("und nun wurde der update modus erkannt und das handel gesichert\n");
 		    
-		    //usbprog->usb_handle = usb_open(dev);
-		    //usb_set_configuration(usbprog->usb_handle,1);
-		    //usb_claim_interface(usbprog->usb_handle,0);
-		    //usb_set_altinterface(usbprog->usb_handle,0);
-		    exit(1);
+		    usbprog->usb_handle = usb_open(dev);
+		    usb_set_configuration(usbprog->usb_handle,1);
+		    usb_claim_interface(usbprog->usb_handle,0);
+		    usb_set_altinterface(usbprog->usb_handle,0);
+		    //exit(1);
 		    return 1;
 		  }
 		  //printf("\nHallo Robert!\n");
