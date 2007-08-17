@@ -346,10 +346,10 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       if(i==number){
 	// potenzielles geraet gefunden
 	printf("found %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
+	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 	  
-	  usb_dev_handle * tmp_handle = usb_open(dev);
 	  usb_set_configuration(tmp_handle,1);
 	  usb_claim_interface(tmp_handle,0);
 	  usb_set_altinterface(tmp_handle,0);
@@ -365,7 +365,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    // erst umschalten
 	  }
 	    printf("nun muss man umschalten\n");
-	    exit(1);
+	    
+	    
 	    usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
 	    usb_close(tmp_handle);
 	    printf("jetzt sollte windows pling machen\n");
