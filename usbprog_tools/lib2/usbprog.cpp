@@ -372,8 +372,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    #else
 	    sleep(3);
 	    #endif
+
 	    printf("jetzt ZUM ZWEITEN MAL windows pling machen\n");
-	 #if 0 
 	    int timeout = 30;
 	    while(1){
 	      usb_find_busses();
@@ -395,8 +395,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      if(timeout>30)
 		return -1;
 	    }
-	#endif
-	    exit(1);
+	    //exit(1);
 	  }
 	}
 
