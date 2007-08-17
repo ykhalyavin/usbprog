@@ -350,8 +350,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 	  printf("entweder ist es im update mode oder das blink ding oder sowas\n");
+	  exit(1);
 	}
-	exit(1);
 
 
 #if 0
