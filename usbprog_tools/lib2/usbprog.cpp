@@ -322,8 +322,6 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
       //sonst umschalten handle anlegen speichern und return 1
 
 #if 0
-
-
       if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
         sprintf(vendor,"usbprog");
 	sprintf(product,"update mode");
@@ -344,6 +342,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	continue;
       }
 #endif
+
       if(i==number){
 	// potenzielles geraet gefunden
 	printf("found %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
@@ -351,8 +350,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 	  printf("entweder ist es im update mode oder das blink ding oder sowas\n");
-
 	}
+	exit(1);
 
 
 #if 0
