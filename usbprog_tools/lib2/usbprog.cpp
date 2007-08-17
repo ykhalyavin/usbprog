@@ -376,6 +376,7 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    int timeout = 30;
 	    
 	    while(1){
+
 	      usb_find_busses();
 	      usb_find_devices();
 	      busses = usb_get_busses();
@@ -398,6 +399,12 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	      timeout++;
 	      if(timeout>30)
 		break;	
+	      #ifdef _WIN32
+	      Sleep(1000);
+	      #else
+	      sleep(1);
+	      #endif
+
 	    }
 	      exit(1);
 	  }
