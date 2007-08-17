@@ -347,10 +347,19 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	// potenzielles geraet gefunden
 	printf("found %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
 
-
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
 	  printf("entweder ist es im update mode oder das blink ding oder sowas\n");
-	  exit(1);
+	  
+	  usb_dev_handle * tmp_handle = usb_open(dev);
+	  usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
+	  usb_claim_interface(tmp_handle,0);
+	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	  productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	  if(vendorlen<=0 && productlen<=0){
+	    // update modus
+	  } else {
+	    exit(1);
+	  }
 	}
 
 
