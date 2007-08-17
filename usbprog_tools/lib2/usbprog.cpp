@@ -565,21 +565,11 @@ int is_usbprog_in_update_mode(struct usbprog_context* usbprog)
 	  usb_set_altinterface(tmp_handle,0);
 	  if(usb_get_string_simple(tmp_handle, 1, vendor, 255) <= 0 && usb_get_string_simple(tmp_handle, 2, product, 255) <= 0)	  
 	  { 
-	    vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
-	    productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
-	    seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
-	  } else {
-	   
-	   vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
-	   productlen = usb_get_string_simple(tmp_handle, 1, product, 255);
-	   seriallen = usb_get_string_simple(tmp_handle, 1, serial, 255);
-	  }
-	  usb_close(tmp_handle);
-	
-	  if(vendorlen<=0 && productlen<=0 && seriallen<=0) {
+	    usb_close(tmp_handle);
 	    return 1;
-	  }
-	}
+	  } 
+	  usb_close(tmp_handle);
+      }
     }
   }
   return 0; 
