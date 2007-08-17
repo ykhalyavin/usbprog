@@ -364,7 +364,8 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    printf("erst umschalten!\n");
 	    // erst umschalten
 	  }
-
+	    printf("nun muss man umschalten\n");
+	    exit(1);
 	    usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
 	    usb_close(tmp_handle);
 	    printf("jetzt sollte windows pling machen\n");
