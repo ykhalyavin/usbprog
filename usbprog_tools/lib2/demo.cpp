@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     printf("\n\nactivate update mode\n++++++++++++++++++++++++++++\n");
     usbprog_update_mode_number(&usbprog,atoi(argv[1]));
     //usbprog_flash_firmware(&usbprog,"openocd.bin");
-    usbprog_flash_netfirmware(&usbprog,1);
+    usbprog_flash_netfirmware(&usbprog,0);
     usbprog_stop_updatemode(&usbprog);
   }
 

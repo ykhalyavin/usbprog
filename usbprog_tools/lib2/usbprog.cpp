@@ -27,8 +27,6 @@
 
 #include "usbprog.h"
 #include "xmlParser.h"
-
-//extern "C" int http_fetch(const char *url, char **fileBuf);
 #include "http_fetcher.h"
 
 
@@ -54,7 +52,7 @@ int usbprog_init(struct usbprog_context *usbprog)
     usbprog->url	= NULL; 
   } 
   usb_init();
-  usbprog_status("usbprog ready for work");
+  usbprog_status("Usbprog ready for work");
   return 0;
 }
 
@@ -93,7 +91,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
   char product[255];
   int vendorlen=0, productlen=0;
   
-  usbprog_status("count usb devices on the bus");
+  usbprog_status("Count usb devices on the bus");
 
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
@@ -103,7 +101,6 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	  continue;
 	#endif
 
-	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;
 
@@ -113,6 +110,7 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	  vendorlen = strlen(vendor);
 	  productlen = strlen(product);
 	} else {
+	  
 	  usb_dev_handle * tmp_handle = usb_open(dev);
 	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	  productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
@@ -122,14 +120,12 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 	  if(productlen<=0) sprintf(product,"unkown product");
 	}
       
-
 	if(vendorlen<=0 && productlen<=0){
 	  continue;
 	}
 
 	i++;
 
-	usb_close(tmp_handle);
     }
   }
   return i;
@@ -160,7 +156,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
   char serial[255];
   int vendorlen=0, productlen=0, seriallen=0;
 
-  usbprog_status("get usb device descriptions");
+  usbprog_status("Get usb device descriptions");
 
   for (bus = busses; bus; bus = bus->next) {
     for (dev = bus->devices; dev; dev = dev->next){
@@ -173,15 +169,22 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	if(dev->descriptor.bDescriptorType !=1)
 	  continue;
 
-	usb_dev_handle * tmp_handle = usb_open(dev);
 
 	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
       
 	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
-	  sprintf(vendor,"usbprog");
-	  sprintf(product,"update mode");
-	  vendorlen = strlen(vendor);
-	  productlen = strlen(product);
+	  usb_dev_handle * tmp_handle = usb_open(dev);
+	  if(usb_get_string_simple(tmp_handle, 1, vendor, 255) <= 0 && usb_get_string_simple(tmp_handle, 2, product, 255) <= 0){
+	    sprintf(vendor,"usbprog");
+	    sprintf(product,"update mode");
+	    vendorlen = strlen(vendor);
+	    productlen = strlen(product);
+	  } else {
+	    vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	    productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	    seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
+	  }
+	  usb_close(tmp_handle);
 	} else {
 	  usb_dev_handle * tmp_handle = usb_open(dev);
 	  vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
@@ -206,7 +209,7 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 	dev->descriptor.idVendor,dev->descriptor.idProduct); */
 	sprintf(complete,"%s %s %i",vendor,product,i);
 	buf[i++]=complete;
-	usb_close(tmp_handle);
+	//usb_close(tmp_handle);
     }
   }
   return 0;
@@ -222,13 +225,13 @@ int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
  */
 int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
 {
-  usbprog_status("download firmware list");
+  usbprog_status("Download firmware list");
   int result =  http_fetch(url, &(usbprog->versions_xml));
   if(result >=0) {
     usbprog->xMainNode=XMLNode::parseString(usbprog->versions_xml,"usbprog");
     return result;
   }
-  usbprog_error_return(-1,"error during firmware list download");
+  usbprog_error_return(-1,"Can't download firmware list");
   return -1;
 }
 
@@ -242,9 +245,15 @@ int usbprog_online_get_netlist(struct usbprog_context *usbprog,char *url)
 int usbprog_online_numberof_firmwares(struct usbprog_context* usbprog)
 {
   XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
+  if(usbprog->xMainNode.isEmpty())
+    usbprog_error_return(-1, "Wrong XML file on Server");
+  
   int n = xNode.nChildNode("firmware");
+  
   if(n)
       return n;
+  else
+    usbprog_error_return(-1, "Wrong XML file on Server");
   return -1;
 }
 
@@ -315,6 +324,10 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	productlen = strlen(product);
       } else {
 	usb_dev_handle * tmp_handle = usb_open(dev);
+	usb_set_configuration(tmp_handle,1);
+	usb_claim_interface(tmp_handle,0);
+	usb_set_altinterface(tmp_handle,0);
+
 	vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
 	productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
 	usb_close(tmp_handle);
@@ -325,12 +338,12 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	continue;
       }
 
-      //printf("open %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
+      printf("open %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
 
       if(i==number){
-
-	if(!(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62))
+	if(is_usbprog_in_update_mode(usbprog)!=1)
 	{
+	  printf("hossa");
 	  usb_dev_handle * tmp_handle = usb_open(dev);
 	  usb_set_configuration(tmp_handle,dev->config[0].bConfigurationValue);
 	  usb_claim_interface(tmp_handle,0);
@@ -368,11 +381,12 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    }
 	  }
 	} else {
+	  printf("ist bereits upgrade mode %i\n",dev->descriptor.idVendor);
 	  usbprog->usb_handle = usb_open(dev);
 	  usb_set_configuration(usbprog->usb_handle,1);
 	  usb_claim_interface(usbprog->usb_handle,0);
 	  usb_set_altinterface(usbprog->usb_handle,0);
-	  return 0;
+	  return 1;
 	}
       }
       i++;
@@ -397,7 +411,7 @@ int usbprog_flash_firmware(struct usbprog_context* usbprog, char *file)
   fd = fopen(file, "r+b");
   if(!fd) {
     usbprog_status("Unable to open file");
-    usbprog_error_return(-1,"Unable to open file, ignoring.\n");
+    usbprog_error_return(-1,"Unable to open file");
     return -1;
   } else {
 
@@ -432,6 +446,10 @@ int usbprog_flash_netfirmware(struct usbprog_context* usbprog, int number)
 {
   XMLNode xNode=usbprog->xMainNode.getChildNode("pool");
   int numberof_firmwares = usbprog_online_numberof_firmwares(usbprog);
+  
+  if(numberof_firmwares == -1)
+    usbprog_error_return(-1, "Can't download Firmware");
+  
   for (int i=0; i<numberof_firmwares; i++){
     if(i==number){
       char * complete = (char*) malloc(sizeof(char)*255);
@@ -511,7 +529,61 @@ int usbprog_stop_updatemode(struct usbprog_context* usbprog)
 }
 
 
+int is_usbprog_in_update_mode(struct usbprog_context* usbprog)
+{
+  struct usb_bus *busses;
+  struct usb_dev_handle* usb_handle;
+  struct usb_bus *bus;
+  struct usb_device *dev;
 
+  usb_find_busses();
+  usb_find_devices();
+  busses = usb_get_busses();
+  int i=0;
+  
+  char vendor[255];
+  char product[255];
+  char serial[255];
+  int vendorlen=0, productlen=0, seriallen=0;
+
+  for (bus = busses; bus; bus = bus->next) {
+    for (dev = bus->devices; dev; dev = dev->next){
+	#ifndef _WIN32
+	if(dev->descriptor.bDeviceClass==0x09) // hub devices
+	  continue;
+	#endif
+
+	if(dev->descriptor.bDescriptorType !=1)
+	  continue;
+
+	vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
+      
+	if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
+	  usb_dev_handle * tmp_handle = usb_open(dev);
+	  usb_set_configuration(tmp_handle,1);
+	  usb_claim_interface(tmp_handle,0);
+	  usb_set_altinterface(tmp_handle,0);
+	  if(usb_get_string_simple(tmp_handle, 1, vendor, 255) <= 0 && usb_get_string_simple(tmp_handle, 2, product, 255) <= 0)	  
+	  { 
+	    vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	    productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+	    seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
+	  } else {
+	   
+	   vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+	   productlen = usb_get_string_simple(tmp_handle, 1, product, 255);
+	   seriallen = usb_get_string_simple(tmp_handle, 1, serial, 255);
+	  }
+	  usb_close(tmp_handle);
+	
+	  if(vendorlen<=0 && productlen<=0 && seriallen<=0) {
+	    return 1;
+	  }
+	}
+    }
+  }
+  return 0; 
+}
 
 /**
  *     Get string representation for last error code
