@@ -316,7 +316,14 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 
 
       vendor[0]=0x00; product[0]=0x00;
-           
+ 
+      //mit der =0x1781  && =0x0c62 
+      //falls descriptoren leer befindet sich der adapter im richtigen zustand -> handle speichern und return 1
+      //sonst umschalten handle anlegen speichern und return 1
+
+#if 0
+
+
       if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62){
         sprintf(vendor,"usbprog");
 	sprintf(product,"update mode");
@@ -333,14 +340,14 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	usb_close(tmp_handle);
       }
       
-
       if(vendorlen<=0 && productlen<=0){
 	continue;
       }
-
-      printf("open %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
-
+#endif
       if(i==number){
+	// potenzielles geraet gefunden
+	printf("found %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
+#if 0
 	if(is_usbprog_in_update_mode(usbprog)!=1)
 	{
 	  printf("hossa");
@@ -381,13 +388,13 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    }
 	  }
 	} else {
-	  printf("ist bereits upgrade mode %i\n",dev->descriptor.idVendor);
 	  usbprog->usb_handle = usb_open(dev);
 	  usb_set_configuration(usbprog->usb_handle,1);
 	  usb_claim_interface(usbprog->usb_handle,0);
 	  usb_set_altinterface(usbprog->usb_handle,0);
 	  return 1;
 	}
+#endif
       }
       i++;
     }
