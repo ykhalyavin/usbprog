@@ -65,7 +65,9 @@ int usbprog_init(struct usbprog_context *usbprog)
  */
 int usbprog_close(struct usbprog_context *usbprog)
 {
-    return 0;
+  if(usbprog->usb_handle!=NULL)
+    usb_close(usb_handle);
+  return 0;
 }
 
 /**
