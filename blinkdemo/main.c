@@ -82,9 +82,9 @@ int main(void)
 
   USBNInit();   
   
-	DDRA = (1 << DDA4);
-  PORTA |= (1<<PA4);	//on
-	//PORTA &= ~(1<<PA4); //off
+  DDRA = (1 << DDA4);
+  //PORTA |= (1<<PA4);	//on
+  PORTA &= ~(1<<PA4); //off
 
   USBNDeviceVendorID(0x1781);	//atmel ids
   USBNDeviceProductID(0x0c62); // atmel ids
@@ -97,7 +97,7 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("LED Blinkdemo   ");
+  USBNDeviceProduct	("LEDBLINK");
 
 	//0000A0016461 (aktuelle)
 	//0000A0019647
@@ -116,12 +116,13 @@ int main(void)
   USBNInitMC();
   // start usb chip
   USBNStart();
-	sei();
+  sei();
+  wait_ms(1000);
   while(1){
 		PORTA &= ~(1<<PA4); //off
-		wait_ms(10);
+		wait_ms(100);
 		PORTA |= (1<<PA4);  //on
-		wait_ms(10);
+		wait_ms(100);
 	}
 }
 

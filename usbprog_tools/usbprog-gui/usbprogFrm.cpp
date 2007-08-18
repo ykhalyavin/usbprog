@@ -252,7 +252,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
             //Compare selected Device with official Device List from the XML File
             char buf[100];
             sprintf(buf, "%s", xNode.getChildNode("firmware",i).getAttribute("label"));
-            if(strcmp(WxComboBox1->GetValue().c_str(), buf) == 0 || strcmp(WxComboBox1->GetValue().c_str(), "Usbprog (Update Mode)") == 0)
+            if(strstr(WxComboBox1->GetValue().c_str(), buf) != NULL || strstr(WxComboBox1->GetValue().c_str(), "Usbprog (Update Mode)") != 0)
                 deviceStat = 1;
         }
         
@@ -286,6 +286,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     }
     
     usbprog_stop_updatemode(&usbprog);      //Stop Update Mode
+    usbprog_close(&usbprog);                //Close
     WxGauge1->SetValue(80);
     
     #ifdef _WIN32
