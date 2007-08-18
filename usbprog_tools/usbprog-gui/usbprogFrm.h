@@ -70,8 +70,9 @@ class usbprogFrm : public wxFrame
 		//GUI Control Declaration Start and GUI Control Declaration End.
 		//wxDev-C++ will remove them. Add custom code after the block.
 		////GUI Control Declaration Start
-		wxStaticText *WxStaticText4;
+		wxStaticText *WxStaticText5;
 		wxFileDialog *WxOpenFileDialog1;
+		wxStaticText *WxStaticText4;
 		wxStaticBitmap *WxStaticBitmap1;
 		wxButton *WxButton5;
 		wxButton *WxButton4;
@@ -99,6 +100,7 @@ class usbprogFrm : public wxFrame
 		enum
 		{
 			////GUI Enum Control ID Start
+			ID_WXSTATICTEXT5 = 1054,
 			ID_WXSTATICTEXT4 = 1053,
 			ID_WXSTATICBITMAP1 = 1052,
 			ID_WXBUTTON5 = 1051,

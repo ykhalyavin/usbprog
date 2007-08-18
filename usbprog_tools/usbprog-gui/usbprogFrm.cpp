@@ -121,10 +121,13 @@ void usbprogFrm::CreateGUIControls()
 	Center();
 	
 
-	WxStaticText4 = new wxStaticText(this, ID_WXSTATICTEXT4, wxT("Read more: http://www.embedded-projects.net/usbprog"), wxPoint(128,267), wxDefaultSize, 0, wxT("WxStaticText4"));
-	WxStaticText4->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
+	WxStaticText5 = new wxStaticText(this, ID_WXSTATICTEXT5, wxT("Process"), wxPoint(128,179), wxDefaultSize, 0, wxT("WxStaticText5"));
+	WxStaticText5->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
 	WxOpenFileDialog1 =  new wxFileDialog(this, wxT("Choose a file"), wxT("C:\\"), wxT(""), wxT("*.bin"), wxOPEN);
+
+	WxStaticText4 = new wxStaticText(this, ID_WXSTATICTEXT4, wxT("Read more: http://www.embedded-projects.net/usbprog"), wxPoint(128,267), wxDefaultSize, 0, wxT("WxStaticText4"));
+	WxStaticText4->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
 	wxBitmap WxStaticBitmap1_BITMAP(usbprogFrm_WxStaticBitmap1_XPM);
 	WxStaticBitmap1 = new wxStaticBitmap(this, ID_WXSTATICBITMAP1, WxStaticBitmap1_BITMAP, wxPoint(16,46), wxSize(82,194));

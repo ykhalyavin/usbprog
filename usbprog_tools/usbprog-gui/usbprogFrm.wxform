@@ -2414,6 +2414,23 @@ object frmNewForm: TfrmNewForm
     Wx_IDValue = 1053
     Wx_LabelStyle = []
   end
+  object WxStaticText5: TWxStaticText
+    Left = 128
+    Top = 179
+    Width = 41
+    Height = 17
+    Caption = 'Process'
+    TabOrder = 19
+    Wx_BGColor = clBlack
+    Wx_Class = 'wxStaticText'
+    Wx_ControlOrientation = wxControlVertical
+    Wx_FGColor = clBlack
+    Wx_GeneralStyle = []
+    Wx_Hidden = False
+    Wx_IDName = 'ID_WXSTATICTEXT5'
+    Wx_IDValue = 1054
+    Wx_LabelStyle = []
+  end
   object WxOpenFileDialog1: TWxOpenFileDialog
     Left = 392
     Top = 235
