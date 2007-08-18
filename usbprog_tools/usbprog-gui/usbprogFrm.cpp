@@ -34,6 +34,7 @@
 
 // Global Variables:
 struct usbprog_context usbprog;
+bool internetConnection = true;
 
 //----------------------------------------------------------------------------
 // usbprogFrm
@@ -72,17 +73,22 @@ usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title, c
     for(int i = 0; i < devices; i++)
     {
         //Fill Combo Box
-        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));  
+        if(strcmp(buf[i], "update mode") == 0)
+            WxComboBox1->Append(wxString("Usbprog (Update Mode)", wxConvUTF8));
+        else
+            WxComboBox1->Append(wxString(buf[i], wxConvUTF8));  
     }
     
     if(usbprog_online_get_netlist(&usbprog, "http://www.ixbat.de/usbprog/versions.xml")<=0)    //download firmware list
 	{
         //Error: No Connection to Internet
          printWxEdit2(usbprog.error_str);
+         internetConnection = false;        //Status: No connection to internet
     }
     else
     {
         //Fill Combo Box
+        internetConnection = true;          //Status: Connection to internet
         printWxEdit2(usbprog.status_str);
         int firmwareNr = usbprog_online_numberof_firmwares(&usbprog);
         char *versions[firmwareNr];
@@ -234,24 +240,28 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
              return;
         }
     }
-    
-    XMLNode xNode=usbprog.xMainNode.getChildNode("pool");     //Device Check
-    int deviceStat = 0;                                       //Device Staus Var
-    
-    for(int i = 0; i < xNode.nChildNode("firmware"); i++)   
-    {
-        //Compare selected Device with official Device List from the XML File
-        char buf[100];
-        sprintf(buf, "%s", xNode.getChildNode("firmware",i).getAttribute("label"));
-        if(strcmp(WxComboBox1->GetValue().c_str(), buf) == 0)
-            deviceStat = 1;
-    }
-    
-    if(!deviceStat)     //You've selected a wrong device
-    {
-        printWxEdit2("Wrong Device");
-        WxGauge1->SetValue(0);
-        return;
+  
+    if(internetConnection == true)
+    {  
+        XMLNode xNode=usbprog.xMainNode.getChildNode("pool");     //Device Check
+        int deviceStat = 0;                                       //Device Staus Var
+      
+        
+        for(int i = 0; i < xNode.nChildNode("firmware"); i++)   
+        {
+            //Compare selected Device with official Device List from the XML File
+            char buf[100];
+            sprintf(buf, "%s", xNode.getChildNode("firmware",i).getAttribute("label"));
+            if(strcmp(WxComboBox1->GetValue().c_str(), buf) == 0 || strcmp(WxComboBox1->GetValue().c_str(), "Usbprog (Update Mode)") == 0)
+                deviceStat = 1;
+        }
+        
+        if(!deviceStat)     //You've selected a wrong device
+        {
+            printWxEdit2("Wrong Device");
+            WxGauge1->SetValue(0);
+            return;
+        }
     }
          
   	printWxEdit2("Starting");
@@ -292,7 +302,10 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     for(int i = 0; i < devices; i++)
     {
         //Fill Combo Box
-        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
+        if(strcmp(buf[i], "update mode") == 0)
+            WxComboBox1->Append(wxString("Usbprog (Update Mode)", wxConvUTF8));
+        else
+            WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
     }
     
     if(!error)
@@ -411,7 +424,10 @@ void usbprogFrm::WxButton4Click(wxCommandEvent& event)
     for(int i = 0; i < devices; i++)
     {
         //Print devices in Combo Box
-        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
+        if(strcmp(buf[i], "update mode") == 0)
+            WxComboBox1->Append(wxString("Usbprog (Update Mode)", wxConvUTF8));
+        else
+            WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
     }
     
     char status[40];
