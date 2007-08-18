@@ -61,8 +61,9 @@ usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title, c
 : wxFrame(parent, id, title, position, size, style)
 {
 	CreateGUIControls();
-    usbprog_init(&usbprog);
-    int devices = usbprog_get_numberof_devices(&usbprog);
+    usbprog_init(&usbprog);     //Init Usbprog
+    
+    int devices = usbprog_get_numberof_devices(&usbprog);       //Load Device List
     char *buf[devices];
     usbprog_print_devices(&usbprog,buf);
 
@@ -70,15 +71,18 @@ usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title, c
 
     for(int i = 0; i < devices; i++)
     {
-        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
+        //Fill Combo Box
+        WxComboBox1->Append(wxString(buf[i], wxConvUTF8));  
     }
     
-    	if(usbprog_online_get_netlist(&usbprog, "http://www.ixbat.de/usbprog/versions.xml")<=0)    //download firmware list
+    if(usbprog_online_get_netlist(&usbprog, "http://www.ixbat.de/usbprog/versions.xml")<=0)    //download firmware list
 	{
-       printWxEdit2(usbprog.error_str);
+        //Error: No Connection to Internet
+         printWxEdit2(usbprog.error_str);
     }
     else
     {
+        //Fill Combo Box
         printWxEdit2(usbprog.status_str);
         int firmwareNr = usbprog_online_numberof_firmwares(&usbprog);
         char *versions[firmwareNr];
@@ -187,6 +191,7 @@ void usbprogFrm::CreateGUIControls()
 
 void usbprogFrm::OnClose(wxCloseEvent& event)
 {
+    //Close
 	Destroy();
 }
 
@@ -206,7 +211,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
 {
 	// insert your code here
 	
-	int device = WxComboBox1->GetCurrentSelection();
+	int device = WxComboBox1->GetCurrentSelection();   //Get selected Device
 	int firmware = 0, error = 0;
 	
 	WxGauge1->SetValue(0);
@@ -230,29 +235,34 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
         }
     }
     
-   /* XMLNode xNode=usbprog.xMainNode.getChildNode("pool");     //Device Check
-    for(int i = 0; i < xNode.nChildNode("firmware"); i++)
+    XMLNode xNode=usbprog.xMainNode.getChildNode("pool");     //Device Check
+    int deviceStat = 0;                                       //Device Staus Var
+    
+    for(int i = 0; i < xNode.nChildNode("firmware"); i++)   
     {
-        if(strcmp(WxComboBox1->GetValue().c_str(), xNode.getChildNode("firmware",i).getAttribute("label")) == 0)
-            break;
-        else
-        {
-            printWxEdit2("Wrong Device");
-            WxGauge1->SetValue(0);
-            return;
-        }
-        
-    }*/
+        //Compare selected Device with official Device List from the XML File
+        char buf[100];
+        sprintf(buf, "%s", xNode.getChildNode("firmware",i).getAttribute("label"));
+        if(strcmp(WxComboBox1->GetValue().c_str(), buf) == 0)
+            deviceStat = 1;
+    }
+    
+    if(!deviceStat)     //You've selected a wrong device
+    {
+        printWxEdit2("Wrong Device");
+        WxGauge1->SetValue(0);
+        return;
+    }
          
   	printWxEdit2("Starting");
-    usbprog_update_mode_number(&usbprog, WxComboBox1->GetCurrentSelection());
+    usbprog_update_mode_number(&usbprog, WxComboBox1->GetCurrentSelection());   //Set the usbprog in update mode
     WxGauge1->SetValue(40);
     
     if(WxRadioButton1->GetValue() == true)     //Online Pool
 	{
         
-       if((error = usbprog_flash_netfirmware(&usbprog, firmware)) == -1)
-         printWxEdit2(usbprog.error_str);
+       if((error = usbprog_flash_netfirmware(&usbprog, firmware)) == -1)        //Flash firmware
+         printWxEdit2(usbprog.error_str);                                       //If an error occurs print Error String
         WxGauge1->SetValue(60);
     }
     else        //local Firmware
@@ -260,14 +270,19 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
         wxString wxPath = WxEdit1->GetValue();
         char* charPath = (char*)wxPath.c_str(); //converts wxString to charArray
         
-        if((error = usbprog_flash_firmware(&usbprog, charPath)) == -1)
-                printWxEdit2(usbprog.error_str);
+        if((error = usbprog_flash_firmware(&usbprog, charPath)) == -1)          //Flash firmware
+            printWxEdit2(usbprog.error_str);                                    //If an error occurs print Error String
         WxGauge1->SetValue(60);
     }
     
-    usbprog_stop_updatemode(&usbprog); 
+    usbprog_stop_updatemode(&usbprog);      //Stop Update Mode
     WxGauge1->SetValue(80);
     
+    #ifdef _WIN32
+    Sleep(1000);
+    #endif
+    
+    /* Refresh device list */
     int devices = usbprog_get_numberof_devices(&usbprog);
     char *buf[devices];
     usbprog_print_devices(&usbprog,buf);
@@ -276,41 +291,35 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
 
     for(int i = 0; i < devices; i++)
     {
+        //Fill Combo Box
         WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
     }
     
     if(!error)
-        printWxEdit2(usbprog.status_str);
+        printWxEdit2("Job Done");   //Print Status Message
+        
     WxGauge1->SetValue(100);
 }
 
 /*
- * WxButton1Click
+ * WxButton1Click Close Button
  */
 void usbprogFrm::WxButton1Click(wxCommandEvent& event)
 {
 	// insert your code here
-	Destroy();
+	Destroy();     //Close
 }
 
 
 /*
- * WxEdit1Updated
- */
-void usbprogFrm::WxEdit1Updated(wxCommandEvent& event)
-{
-	// insert your code here
-}
-
-/*
- * WxButton2Click
+ * WxButton2Click Browse Button
  */
 void usbprogFrm::WxButton2Click(wxCommandEvent& event)
 {
 	// insert your code here
-	if(WxOpenFileDialog1->ShowModal() == wxID_OK)
+	if(WxOpenFileDialog1->ShowModal() == wxID_OK)      //Get Path from Browse Dialog
     {
-        WxEdit1->SetValue(WxOpenFileDialog1->GetPath());
+        WxEdit1->SetValue(WxOpenFileDialog1->GetPath());    //Refresh Path in Edit field
     }
 }
 
@@ -323,6 +332,7 @@ void usbprogFrm::WxRadioButton1Click(wxCommandEvent& event)
 	
    if(WxRadioButton1->GetValue() == true)
 	{
+        //Activate Online, deactivate local
         WxComboBox2->Enable(true);
         WxEdit1->Enable(false); 
         WxButton2->Enable(false);
@@ -338,6 +348,7 @@ void usbprogFrm::WxRadioButton2Click(wxCommandEvent& event)
 	// insert your code here
 	if(WxRadioButton2->GetValue() == true)
 	{
+        //Deactivate Online, activate local
         WxComboBox2->Enable(false);
         WxEdit1->Enable(true);  
         WxButton2->Enable(true);
@@ -347,7 +358,7 @@ void usbprogFrm::WxRadioButton2Click(wxCommandEvent& event)
 
 
 /*
- * WxButton5Click
+ * WxButton5Click Refresh Online firmware List
  */
 void usbprogFrm::WxButton5Click(wxCommandEvent& event)
 {
@@ -355,26 +366,29 @@ void usbprogFrm::WxButton5Click(wxCommandEvent& event)
 
 	if(usbprog_online_get_netlist(&usbprog, "http://www.ixbat.de/usbprog/versions.xml")<=0)    //download firmware list
 	{
-       printWxEdit2(usbprog.error_str);
+        //No Connection to Internet
+        printWxEdit2(usbprog.error_str);
     }
     else
     {
         printWxEdit2(usbprog.status_str);
-        int firmwareNr = usbprog_online_numberof_firmwares(&usbprog); 
+        int firmwareNr = usbprog_online_numberof_firmwares(&usbprog);   //Get number of firmwares online
         
         if(firmwareNr == -1)
         {
+            //Error during download the XML File
             printWxEdit2(usbprog.error_str);
             return;
         }
             
         char *versions[firmwareNr];
-        usbprog_online_print_netlist(&usbprog, versions, firmwareNr);
+        usbprog_online_print_netlist(&usbprog, versions, firmwareNr);   //Get Names of fimwares and save in buffer
         
         WxComboBox2->Clear();
         
         for(int i = 0; i < firmwareNr; i++)
         {
+            //Print Firmwares in Combo Box
             WxComboBox2->Append(wxString(versions[i], wxConvUTF8));
         }
     }
@@ -382,31 +396,34 @@ void usbprogFrm::WxButton5Click(wxCommandEvent& event)
 
 
 /*
- * WxButton4Click
+ * WxButton4Click Refresh device List
  */
 void usbprogFrm::WxButton4Click(wxCommandEvent& event)
 {
 	// insert your code here
 	
-    int devices = usbprog_get_numberof_devices(&usbprog);
+    int devices = usbprog_get_numberof_devices(&usbprog);  //Get number of usb devices
     char *buf[devices];
-    usbprog_print_devices(&usbprog,buf);
+    usbprog_print_devices(&usbprog,buf);    //Get Names of devices and save in Buffer
     
     WxComboBox1->Clear();
     
     for(int i = 0; i < devices; i++)
     {
+        //Print devices in Combo Box
         WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
     }
     
     char status[40];
-    sprintf(status, "Found %d devices on USB Bus", devices);
+    sprintf(status, "Found %d devices on USB Bus", devices);    //Print Status
     printWxEdit2(status);  
 }
 
 
+/*
+ * printWxEdit prints text on WxEdit2 Text field
+ */
 
-// No description
 void usbprogFrm::printWxEdit2(char * text)
 {
 	/* TODO (#1#): Implement usbprogFrm::printWxEdit2() */
