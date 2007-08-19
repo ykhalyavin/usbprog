@@ -21,15 +21,15 @@ CFLAGS := $(SVNDEF) `wx-config --cxxflags`
 	$(CXX) -c `wx-config --cxxflags` -o $@ $<
 #
 usbprog-gui: $(FILES)
-	$(CXX) -o usbprog-gui -lusb -I ../lib2 -L ../lib2 \
+	$(CXX) -g -o usbprog-gui -lusb -I ../lib2 -L ../lib2 \
 	$(FILES) \
 	`wx-config --libs`
 
 usbprogFrm.o: usbprogFrm.cpp
-	$(CXX) $(CFLAGS) -c usbprogFrm.cpp
+	$(CXX) $(CFLAGS) -g -c usbprogFrm.cpp
 
 usbprogApp.o: usbprogApp.cpp
-	$(CXX) $(CFLAGS) -c usbprogApp.cpp
+	$(CXX) $(CFLAGS) -g -c usbprogApp.cpp
 
 
 http_error_codes.o: ../lib2/http_error_codes.c

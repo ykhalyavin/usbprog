@@ -341,11 +341,11 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	    usbprog->usb_handle = tmp_handle;
 	    return 1;
 	  } else {
-	    printf("erst umschalten!\n");
+	    //printf("erst umschalten!\n");
 	    // erst umschalten
 	  }
 	}
-	    //printf("nun muss man umschalten\n");
+	//printf("nun muss man umschalten\n");
 
 	    
 	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);

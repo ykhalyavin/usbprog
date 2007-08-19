@@ -28,7 +28,11 @@
 //Header Include Start and Header Include End
 //wxDev-C++ designer will remove them
 ////Header Include Start
+#if _WIN32
 #include "Images/usbprogFrm_WxStaticBitmap1_XPM.xpm"
+#else
+#include "usbprog.xpm"
+#endif
 ////Header Include End
 
 
@@ -120,18 +124,29 @@ void usbprogFrm::CreateGUIControls()
 	SetSize(8,8,464,328);
 	Center();
 	
+//#if _WIN32
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT("usbprog flash tool v0.2 (GNU/GPL2)"), wxPoint(4,10), wxSize(447,284));
+	WxStaticBox1->SetFont(wxFont(9, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
+//#endif
 
 	WxStaticText5 = new wxStaticText(this, ID_WXSTATICTEXT5, wxT("Process"), wxPoint(128,179), wxDefaultSize, 0, wxT("WxStaticText5"));
 	WxStaticText5->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
+#if _WIN32      
 	WxOpenFileDialog1 =  new wxFileDialog(this, wxT("Choose a file"), wxT("C:\\"), wxT(""), wxT("*.bin"), wxOPEN);
+#else
+	WxOpenFileDialog1 =  new wxFileDialog(this, wxT("Choose a file"), wxT(""), wxT(""), wxT("*.bin"), wxOPEN);
+#endif
 
 	WxStaticText4 = new wxStaticText(this, ID_WXSTATICTEXT4, wxT("Read more: http://www.embedded-projects.net/usbprog"), wxPoint(128,267), wxDefaultSize, 0, wxT("WxStaticText4"));
 	WxStaticText4->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
-
+#if _WIN32
 	wxBitmap WxStaticBitmap1_BITMAP(usbprogFrm_WxStaticBitmap1_XPM);
+#else
+	wxBitmap WxStaticBitmap1_BITMAP(usbprog_xpm);
+#endif
 	WxStaticBitmap1 = new wxStaticBitmap(this, ID_WXSTATICBITMAP1, WxStaticBitmap1_BITMAP, wxPoint(16,46), wxSize(82,194));
-	WxStaticBitmap1->Enable(false);
+	WxStaticBitmap1->Enable(true);
 	WxStaticBitmap1->SetBackgroundColour(wxColour(0,0,153));
 	WxStaticBitmap1->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
@@ -167,8 +182,11 @@ void usbprogFrm::CreateGUIControls()
 	WxEdit2->SetForegroundColour(wxColour(*wxWHITE));
 	WxEdit2->SetBackgroundColour(wxColour(*wxWHITE));
 	WxEdit2->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
-
+#if _WIN32
 	WxEdit1 = new wxTextCtrl(this, ID_WXEDIT1, wxT("C:\\"), wxPoint(180,105), wxSize(197,19), 0, wxDefaultValidator, wxT("WxEdit1"));
+#else
+	WxEdit1 = new wxTextCtrl(this, ID_WXEDIT1, wxT(""), wxPoint(180,105), wxSize(197,19), 0, wxDefaultValidator, wxT("WxEdit1"));
+#endif
 	WxEdit1->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
 	WxRadioButton2 = new wxRadioButton(this, ID_WXRADIOBUTTON2, wxT("Local Disk"), wxPoint(102,106), wxSize(69,19), 0, wxDefaultValidator, wxT("WxRadioButton2"));
@@ -181,6 +199,7 @@ void usbprogFrm::CreateGUIControls()
 	WxStaticText1 = new wxStaticText(this, ID_WXSTATICTEXT1, wxT("Device"), wxPoint(120,52), wxDefaultSize, 0, wxT("WxStaticText1"));
 	WxStaticText1->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
+/* das geht hier */
 	wxArrayString arrayStringFor_WxComboBox2;
 	WxComboBox2 = new wxComboBox(this, ID_WXCOMBOBOX2, wxT(""), wxPoint(180,75), wxSize(197,21), arrayStringFor_WxComboBox2, wxCB_READONLY, wxDefaultValidator, wxT("WxComboBox2"));
 	WxComboBox2->Enable(false);
@@ -191,8 +210,6 @@ void usbprogFrm::CreateGUIControls()
 	WxComboBox1->SetHelpText(wxT("Device"));
 	WxComboBox1->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
-	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT("usbprog flash tool v0.2 (GNU/GPL2)"), wxPoint(4,10), wxSize(447,284));
-	WxStaticBox1->SetFont(wxFont(9, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 	////GUI Items Creation End
 	// SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
@@ -243,14 +260,16 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
              return;
         }
     }
+
+    #ifdef _WIN32 
   
     if(internetConnection == true)
     {  
-        XMLNode xNode=usbprog.xMainNode.getChildNode("pool");     //Device Check
-        int deviceStat = 0;                                       //Device Staus Var
+	
+	XMLNode xNode = usbprog.xMainNode.getChildNode("pool");     //Device Check
+	int deviceStat = 0;                                       //Device Staus Var
       
-        
-        for(int i = 0; i < xNode.nChildNode("firmware"); i++)   
+       for(int i = 0; i < xNode.nChildNode("firmware"); i++)   
         {
             //Compare selected Device with official Device List from the XML File
             char buf[100];
@@ -266,6 +285,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
             return;
         }
     }
+    #endif
          
   	printWxEdit2("Starting");
     usbprog_update_mode_number(&usbprog, WxComboBox1->GetCurrentSelection());   //Set the usbprog in update mode
