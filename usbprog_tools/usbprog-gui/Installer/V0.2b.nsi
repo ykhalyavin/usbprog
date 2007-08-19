@@ -78,7 +78,7 @@ FunctionEnd
 Section "!Usbprog Gui" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File "..\Output\MingW\${PRODUCT_EXE_FILE}"
+  File "${PRODUCT_EXE_FILE}"
   SetOutPath "$WINDIR\inf\"
   SetOverwrite off
   File "usbprog.inf"
