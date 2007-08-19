@@ -119,18 +119,17 @@ void usbprogFrm::CreateGUIControls()
 	//Add the custom code before or after the blocks
 	////GUI Items Creation Start
 
-	SetTitle(wxT("USBprog Flash Tool"));
+	SetTitle(wxT("USBprog Flashtool"));
 	SetIcon(wxNullIcon);
 #if _WIN32
 	SetSize(8,8,464,328);
 	Center();
-
-	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" USBprog Flash Tool GNU/GPL2 "), wxPoint(4,10), wxSize(447,284));
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" USBprog Flashtool v0.2 "), wxPoint(4,10), wxSize(447,284));
 #else
 	SetSize(8,8,464,310);
 	Center();
 
-	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" USBprog Flash Tool GNU/GPL2 "), wxPoint(4,10), wxSize(453,295));
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" USBprog Flashtool v0.2 "), wxPoint(4,10), wxSize(453,295));
 #endif
 	WxStaticBox1->SetFont(wxFont(9, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
@@ -162,7 +161,7 @@ void usbprogFrm::CreateGUIControls()
 	WxButton4 = new wxButton(this, ID_WXBUTTON4, wxT("Refresh"), wxPoint(383,45), wxSize(51,21), 0, wxDefaultValidator, wxT("WxButton4"));
 	WxButton4->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
-	WxStaticText3 = new wxStaticText(this, ID_WXSTATICTEXT3, wxT("(C) 2007 by Benedikt Sauter and Robert Schilling"), wxPoint(128,246), wxDefaultSize, 0, wxT("WxStaticText3"));
+	WxStaticText3 = new wxStaticText(this, ID_WXSTATICTEXT3, wxT("(C) 2007 Benedikt Sauter and Robert Schilling (GNU/GPL2)"), wxPoint(128,246), wxDefaultSize, 0, wxT("WxStaticText3"));
 	WxStaticText3->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
 	WxButton2 = new wxButton(this, ID_WXBUTTON2, wxT("Browse"), wxPoint(383,105), wxSize(51,21), 0, wxDefaultValidator, wxT("WxButton2"));
