@@ -121,13 +121,18 @@ void usbprogFrm::CreateGUIControls()
 
 	SetTitle(wxT("usbprog flash tool"));
 	SetIcon(wxNullIcon);
+#if _WIN32
 	SetSize(8,8,464,328);
 	Center();
-	
-//#if _WIN32
-	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT("usbprog flash tool v0.2 (GNU/GPL2)"), wxPoint(4,10), wxSize(447,284));
+
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" usbprog flash tool v0.2 (GNU/GPL2) "), wxPoint(4,10), wxSize(447,284));
+#else
+	SetSize(8,8,464,310);
+	Center();
+
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT("usbprog flash tool v0.2 (GNU/GPL2)"), wxPoint(4,10), wxSize(453,295));
+#endif
 	WxStaticBox1->SetFont(wxFont(9, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
-//#endif
 
 	WxStaticText5 = new wxStaticText(this, ID_WXSTATICTEXT5, wxT("Process"), wxPoint(128,179), wxDefaultSize, 0, wxT("WxStaticText5"));
 	WxStaticText5->SetFont(wxFont(8, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
