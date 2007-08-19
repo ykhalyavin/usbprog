@@ -119,18 +119,18 @@ void usbprogFrm::CreateGUIControls()
 	//Add the custom code before or after the blocks
 	////GUI Items Creation Start
 
-	SetTitle(wxT("usbprog flash tool"));
+	SetTitle(wxT("USBprog Flash Tool"));
 	SetIcon(wxNullIcon);
 #if _WIN32
 	SetSize(8,8,464,328);
 	Center();
 
-	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" usbprog flash tool v0.2 (GNU/GPL2) "), wxPoint(4,10), wxSize(447,284));
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" USBprog Flash Tool GNU/GPL2 "), wxPoint(4,10), wxSize(447,284));
 #else
 	SetSize(8,8,464,310);
 	Center();
 
-	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT("usbprog flash tool v0.2 (GNU/GPL2)"), wxPoint(4,10), wxSize(453,295));
+	WxStaticBox1 = new wxStaticBox(this, ID_WXSTATICBOX1, wxT(" USBprog Flash Tool GNU/GPL2 "), wxPoint(4,10), wxSize(453,295));
 #endif
 	WxStaticBox1->SetFont(wxFont(9, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 
