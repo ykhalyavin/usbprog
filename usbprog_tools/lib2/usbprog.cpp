@@ -347,6 +347,9 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 	  }
 	}
 	//printf("nun muss man umschalten\n");
+	usb_set_configuration(tmp_handle,1);
+	usb_claim_interface(tmp_handle,0);
+	usb_set_altinterface(tmp_handle,0);
 
 	    
 	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
@@ -374,6 +377,10 @@ int usbprog_update_mode_number(struct usbprog_context* usbprog, int number)
 		usb_claim_interface(usbprog->usb_handle,0);
 		usb_set_altinterface(usbprog->usb_handle,0);
 		//exit(1);
+		#ifdef _WIN32
+		Sleep(3000);
+		#endif
+
 		return 1;
 	      }
 	      //printf("\nHallo Robert!\n");
