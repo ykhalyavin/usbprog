@@ -497,10 +497,10 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
         // command message
         cmd[0]=WRITEPAGE;
         cmd[1]=(char)page; // page number
-        usb_bulk_write(usbprog->usb_handle,0x82,cmd,64,100);
+        usb_bulk_write(usbprog->usb_handle,2,cmd,64,100);
 
         // data message
-        usb_bulk_write(usbprog->usb_handle,0x82,buf,64,100);
+        usb_bulk_write(usbprog->usb_handle,2,buf,64,100);
         offset = 0;
         page++;
     }
@@ -511,10 +511,10 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
     // command message
     cmd[0]=WRITEPAGE;
     cmd[1]=(char)page; // page number
-    usb_bulk_write(usbprog->usb_handle,0x82,cmd,64,100);
+    usb_bulk_write(usbprog->usb_handle,2,cmd,64,100);
 
     // data message
-    usb_bulk_write(usbprog->usb_handle,0x82,buf,64,100);
+    usb_bulk_write(usbprog->usb_handle,2,buf,64,100);
   }
   return 0;
 }
@@ -534,7 +534,7 @@ int usbprog_stop_updatemode(struct usbprog_context* usbprog)
   char *ptr = buf;
 
   buf[0]=STARTAPP;
-  usb_bulk_write(usbprog->usb_handle,0x82,ptr,64,100);
+  usb_bulk_write(usbprog->usb_handle,2,ptr,64,100);
   return 0;
 }
 
