@@ -204,8 +204,6 @@ void USBReceive(char *buf)
 				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
 			break;
 
-	
-
 			default:
 				answer[0]=RSP_FAILED;
 				cmdlength=0;
@@ -248,7 +246,7 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("JTAGICE mkII Klon");
+  USBNDeviceProduct	("JTAGICE mk2 Clone");
   USBNDeviceSerialNumber("A000000D3F");
 
   conf = USBNAddConfiguration();
