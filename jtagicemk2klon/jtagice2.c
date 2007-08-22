@@ -152,6 +152,8 @@ int cmd_get_parameter(char *msg, char * answer)
 	answer[5] = 0;
 	answer[6] = 0;
 	
+	char signature[3];
+
 	switch(msg[9])
 	{
 	case OCD_VTARGET:
@@ -171,7 +173,7 @@ int cmd_get_parameter(char *msg, char * answer)
 		idcode(jtagbuf);
 		
 		answer[3] = 0x05;		// length of body
-		answer[8]	= RSP_PARAMETER;		// (0x80 = ok)
+		answer[8] = RSP_PARAMETER;		// (0x80 = ok)
 	
 		answer[9] = jtagbuf[0];	//JTAG ID
 		answer[10] = jtagbuf[1];
@@ -181,7 +183,14 @@ int cmd_get_parameter(char *msg, char * answer)
 		return 15;
 	break;
 	case TARGET_SIGNATURE:
-
+		//rd_signature_avr(signature);
+		answer[3] = 0x04;
+		answer[8] = RSP_PARAMETER;
+		answer[9] = 0x11;
+		answer[10] = 0x22;
+		answer[11] = 0x33;
+		crc16_append(answer,(unsigned long)12);
+		return 14;
 	break;
 	default:
 	break;
