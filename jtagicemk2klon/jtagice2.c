@@ -426,7 +426,8 @@ int cmd_read_memory(char * msg, char * answer)
 
 //	char jtagbuf[6];
 	//SendHex(msg[15]);
-	switch(msg[15]) {
+	//SendHex(msg[15]);
+	switch(msg[9]) {
 		case LOCK_BITS:
 			//SendHex(0xff);
 			msglen=2;

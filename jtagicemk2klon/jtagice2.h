@@ -30,6 +30,7 @@
 #define CMND_GET_PARAMETER		0x03
 #define CMND_WRITE_MEMORY		0x04
 #define CMND_READ_MEMORY		0x05
+#define CMND_WRITE_PC			0x06
 #define CMND_READ_PC			0x07
 #define CMND_GO				0x08
 #define CMND_SINGLE_STEP		0x09
