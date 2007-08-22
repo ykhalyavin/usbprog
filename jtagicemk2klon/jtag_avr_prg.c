@@ -74,23 +74,28 @@ int rd_fuse_avr (char *buf, int withextend)
 {
 	char jtagbuf[2];
 
-	avr_sequence(0x04,0x23,jtagbuf);
-	avr_sequence(0x00,0x32,jtagbuf);
-	avr_sequence(0x00,0x33,jtagbuf);
-
 	return 1;
 }
 
 
 int rd_signature_avr (char *signature)
 {
+	char tmp[1];
+	avr_sequence(0x23,0x08,tmp);
+	avr_sequence(0x03,0x00,tmp);
+	avr_sequence(0x32,0x00,tmp);
+	avr_sequence(0x33,0x00,signature[0]);
+	
+	avr_sequence(0x23,0x08,tmp);
+	avr_sequence(0x03,0x01,tmp);
+	avr_sequence(0x32,0x00,tmp);
+	avr_sequence(0x33,0x00,signature[1]);
+								        
+	avr_sequence(0x23,0x08,tmp);
+	avr_sequence(0x03,0x02,tmp);
+	avr_sequence(0x32,0x00,tmp);
+	avr_sequence(0x33,0x00,signature[2]);
 
-/*
-	avr_sequence(0x23,0x08,&jtagbuf);	//enter
-	avr_sequence(0x03,0x01,&jtagbuf);	//load address
-	avr_sequence(0x32,0x00,&jtagbuf);	//read
-	avr_sequence(0x33,0x00,&jtagbuf);	//restult
-*/
 	return 1;
 }
 

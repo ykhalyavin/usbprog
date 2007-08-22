@@ -180,6 +180,9 @@ int cmd_get_parameter(char *msg, char * answer)
 		crc16_append(answer,(unsigned long)13);
 		return 15;
 	break;
+	case TARGET_SIGNATURE:
+
+	break;
 	default:
 	break;
 	}
