@@ -136,7 +136,21 @@ int cmd_set_parameter(char *msg, char * answer)
 			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
 			crc16_append(answer,(unsigned long)9);
 			return 11;
-			
+		
+		case OCD_JTAG_CLOCK:
+			answer[0] = MESSAGE_START;
+			answer[1] = jtagice.seq1;
+			answer[2] = jtagice.seq2;
+			answer[3] = 0x01;					// length of body
+			answer[4] = 0;
+			answer[5] = 0;
+			answer[6] = 0;
+			answer[7] = TOKEN;
+
+			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
+			crc16_append(answer,(unsigned long)9);
+			return 11;
+		
 		default:
 			;
 	}
@@ -412,7 +426,7 @@ int cmd_read_memory(char * msg, char * answer)
 
 //	char jtagbuf[6];
 	//SendHex(msg[15]);
-	switch(msg[9]) {
+	switch(msg[15]) {
 		case LOCK_BITS:
 			//SendHex(0xff);
 			msglen=2;

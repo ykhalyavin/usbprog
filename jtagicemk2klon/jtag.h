@@ -25,7 +25,7 @@
 #define uint8_t	unsigned char
 
 #define JTAG_IR_LENGTH		3
-/*
+
 #define JTAG_PORT_INIT		DDRB
 #define JTAG_PORT_WRITE		PORTB
 #define JTAG_PORT_READ		PINB
@@ -33,15 +33,6 @@
 #define TMS			7
 #define TDI			5	
 #define TDO			6	
-*/
-
-#define JTAG_PORT_INIT          DDRB
-#define JTAG_PORT_WRITE         PORTB
-#define JTAG_PORT_READ          PINB
-#define TCK                                     5
-#define TMS                                     0
-#define TDI                                     6
-#define TDO                                     7
 
 
 // check if tdo == 1
