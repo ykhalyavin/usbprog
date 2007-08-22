@@ -104,53 +104,34 @@ int cmd_sign_off(char * msg, char * answer)
 
 int cmd_set_parameter(char *msg, char * answer)
 {
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+
 	switch(msg[9]) {
 
 		case EMULATOR_MODE:
 			jtagice.emulatormode = answer[10];
-			answer[0] = MESSAGE_START;
-			answer[1] = jtagice.seq1;
-			answer[2] = jtagice.seq2;
-			answer[3] = 0x01;					// length of body
-			answer[4] = 0;
-			answer[5] = 0;
-			answer[6] = 0;
-			answer[7] = TOKEN;
-
-			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
-			crc16_append(answer,(unsigned long)9);
 			return 11;
-
 		break;
 		
 		case DAISY_CHAIN_INFO:
-			answer[0] = MESSAGE_START;
-			answer[1] = jtagice.seq1;
-			answer[2] = jtagice.seq2;
-			answer[3] = 0x01;					// length of body
-			answer[4] = 0;
-			answer[5] = 0;
-			answer[6] = 0;
-			answer[7] = TOKEN;
-
-			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
-			crc16_append(answer,(unsigned long)9);
 			return 11;
-		
+		break;
 		case OCD_JTAG_CLOCK:
-			answer[0] = MESSAGE_START;
-			answer[1] = jtagice.seq1;
-			answer[2] = jtagice.seq2;
-			answer[3] = 0x01;					// length of body
-			answer[4] = 0;
-			answer[5] = 0;
-			answer[6] = 0;
-			answer[7] = TOKEN;
-
-			answer[8]	= 0x80;		// page 57 datasheet 0xab = no target power (0x80 = ok)
-			crc16_append(answer,(unsigned long)9);
 			return 11;
-		
+		break;
+		case TIMERS_RUNNING:	
+			return 11;
+		break;
 		default:
 			;
 	}
@@ -426,7 +407,6 @@ int cmd_read_memory(char * msg, char * answer)
 
 //	char jtagbuf[6];
 	//SendHex(msg[15]);
-	//SendHex(msg[15]);
 	switch(msg[9]) {
 		case LOCK_BITS:
 			//SendHex(0xff);
@@ -440,23 +420,23 @@ int cmd_read_memory(char * msg, char * answer)
 			msglen = 2;
 			answer[3] = 2;
 		
-				/*switch(msg[10])
+			switch(msg[10])
 				{
 				case 1:
-					if(fusebyte == 0)
+					if(msg[11] == 0)
 					{
 						answer[9] = rd_lfuse_avr();
-						fusebyte++;
+						//msg[11]++;
 					}
-					else if(fusebyte == 1)
+					else if(msg[11] == 1)
 					{
 						answer[9] = rd_hfuse_avr();
-						fusebyte++;
+						//msg[11]++;
 					}
 					else
 					{
 						answer[9] = rd_efuse_avr();
-						fusebyte = 0;
+						//msg[11] = 0;
 					}
 					msglen = 2;
 					answer[3] = 2;			// length of body with ok
@@ -476,7 +456,7 @@ int cmd_read_memory(char * msg, char * answer)
 					msglen = 4;
 					answer[3] = 4;			// length of body with ok
 				break;
-			} */
+			} 
 			
 			break;
 

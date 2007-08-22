@@ -30,7 +30,7 @@ char rd_lock_avr ()
 	
 	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
 	avr_sequence(0x36,0x00,jtagbuf);	// select lfuse
-	avr_sequence(0x3,0x00,jtagbuf); // read lfuse
+	avr_sequence(0x37,0x00,jtagbuf);	// read lock
 
 	return jtagbuf[0];
 }
