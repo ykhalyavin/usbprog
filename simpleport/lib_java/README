@@ -1,8 +1,0 @@
-Some simple demo programs that show how usbprog easily can be
-accessed in java.
-
-To enable the functionality of the _simpleport.so shared-library
-in java, SWIG was used to wrap it.
-
-Author, Michael Kaiser 2007
-
