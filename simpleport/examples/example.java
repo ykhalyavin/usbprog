@@ -8,12 +8,13 @@
  * author: Michael Kaiser
  */
 
-class demo
+class example
 {
   public static void main(String[] args){
     try {
       // tell the system to load the shared library into memory
-      System.load("/lib/_simpleport.so");
+      System.load("/home/bene/projects/usbprog/trunk/simpleport/lib/simpleport.so");
+      //System.loadLibrary("../lib/simpleport");
 
       // the functions of '_simpleport.so' are accessed over the java-class
       // 'simpleport', that was created by SWIG.
