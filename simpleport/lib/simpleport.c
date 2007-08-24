@@ -104,11 +104,11 @@ unsigned char simpleport_get_port(struct simpleport *simpleport)
 }
 
 
-void simpleport_set_bit(struct simpleport *simpleport,int bit, int value)
+void simpleport_set_pin(struct simpleport *simpleport,int pin, int value)
 {
   char tmp[3];
-  tmp[0] = PORT_SETBIT;
-  tmp[1] = (char)bit;
+  tmp[0] = PORT_SETPIN;
+  tmp[1] = (char)pin;
   if(value==1)  
     tmp[2] = 0x01;
   else
@@ -116,11 +116,23 @@ void simpleport_set_bit(struct simpleport *simpleport,int bit, int value)
   simpleport_message(simpleport,tmp,3);
 }
 
-int simpleport_get_bit(struct simpleport *simpleport, int bit)
+void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int value)
+{
+  char tmp[3];
+  tmp[0] = PORT_SETPINDIR;
+  tmp[1] = (char)pin;
+  if(value==1)  
+    tmp[2] = 0x01;
+  else
+    tmp[2] = 0x00;
+  simpleport_message(simpleport,tmp,3);
+}
+
+int simpleport_get_pin(struct simpleport *simpleport, int pin)
 {
   char tmp[2];
-  tmp[0] = PORT_GETBIT;
-  tmp[1] = (char)bit;
+  tmp[0] = PORT_GETPIN;
+  tmp[1] = (char)pin;
 
   if(simpleport_message(simpleport,tmp,2)>0)
     return 1;

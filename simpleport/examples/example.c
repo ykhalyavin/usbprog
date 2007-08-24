@@ -16,24 +16,22 @@ int main()
 
   simpleport_set_direction(sp_handle,0xFF);
 
-  while(1){
-    //simpleport_set_port(sp_handle,0x80);
-    //simpleport_set_port(sp_handle,0x00);
-    //simpleport_set_bit(sp_handle,6,1);
-    //simpleport_set_bit(sp_handle,6,0);
-    simpleport_set_port(sp_handle,0xFF,0xFF);
+  int i;
+  for(i=0;i<4;i++){
+    simpleport_set_port(sp_handle,0x80,0xFF);
     sleep(1);
     simpleport_set_port(sp_handle,0x00,0xFF);
     sleep(1);
   }
 
-/*
-  int i,j;
-  for(j=0;j<7;j++) {
-    i = simpleport_get_bit(sp_handle,j);
-    printf("Pin %i: %i\n",j,i);
+  simpleport_set_pin_dir(sp_handle,11,1);
+  for(i=0;i<4;i++){
+    simpleport_set_pin(sp_handle,11,1);
+    sleep(1);
+    simpleport_set_pin(sp_handle,11,0);
+    sleep(1);
   }
-*/
+
   simpleport_close(sp_handle);
 
   return 0;

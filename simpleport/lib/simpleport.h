@@ -24,8 +24,9 @@
 #define PORT_DIRECTION  0x01
 #define PORT_SET        0x02
 #define PORT_GET        0x03
-#define PORT_SETBIT     0x04
-#define PORT_GETBIT     0x05
+#define PORT_SETPIN     0x04
+#define PORT_GETPIN     0x05
+#define PORT_SETPINDIR  0x06
 
 struct simpleport 
 {
@@ -37,10 +38,9 @@ void simpleport_close(struct simpleport *simpleport);
 unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen);
 
 
-
 void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
 void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsigned char mask);
 unsigned char simpleport_get_port(struct simpleport *simpleport);
-void simpleport_set_bit(struct simpleport *simpleport,int bit, int value);
-int simpleport_get_bit(struct simpleport *simpleport, int bit);
+void simpleport_set_pin(struct simpleport *simpleport,int pin, int value);
+int simpleport_get_pin(struct simpleport *simpleport, int pin);
 
