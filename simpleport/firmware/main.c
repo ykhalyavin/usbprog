@@ -28,8 +28,9 @@
 #define PORT_DIRECTION	0x01
 #define PORT_SET	0x02
 #define PORT_GET	0x03
-#define PORT_SETBIT	0x04
-#define PORT_GETBIT	0x05
+#define PORT_SETPIN	0x04
+#define PORT_GETPIN	0x05
+#define PORT_SETPINDIR	0x06
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -109,14 +110,20 @@ void Commands(char *buf)
       answer[0] = PORT_GET; 
       answer[1] = get_port();
     break;
-    case PORT_SETBIT:
-      set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
-      answer[0] = PORT_SETBIT; 
+    case PORT_SETPIN:
+      set_pin((uint8_t)buf[1],(uint8_t)buf[2]);
+      answer[0] = PORT_SETPIN; 
       answer[1] = 0x00;
     break;
-    case PORT_GETBIT:
-      answer[0] = PORT_GETBIT; 
-      answer[1] = (char)get_bit((uint8_t)buf[1]);
+    case PORT_SETPINDIR:
+      set_pin_dir((uint8_t)buf[1],(uint8_t)buf[2]);
+      answer[0] = PORT_SETPINDIR; 
+      answer[1] = 0x00;
+    break;
+
+    case PORT_GETPIN:
+      answer[0] = PORT_GETPIN; 
+      answer[1] = (char)get_pin((uint8_t)buf[1]);
     break;
     
     default:
