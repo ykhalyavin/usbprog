@@ -15,9 +15,9 @@ python:
 
 java:
 	swig -java simpleport.i
-	gcc -c simpleport.c simpleport_wrap.c -I/usr/lib/jvm/java-1.5.0-sun-1.5.0.10/include \
+	gcc -fpic -c simpleport.c simpleport_wrap.c -I/usr/lib/jvm/java-1.5.0-sun-1.5.0.10/include \
 	-I/usr/lib/jvm/java-1.5.0-sun-1.5.0.10/include/linux/
-	gcc -shared simpleport.o  simpleport_wrap.o  -o simpleport.dll
+	gcc -shared simpleport.o  simpleport_wrap.o  -lusb -o libsimpleport.so
 
 install:
 	cp libsimpleport.a /lib/libsimpleport.a
