@@ -3,13 +3,21 @@ all:
 	ar rcs libsimpleport.a simpleport.o
 
 clean:
-	rm *.o
+	rm *.o *.pyc
 
 
 python:
 	swig -python simpleport.i
 	gcc -c simpleport.c simpleport_wrap.c -I/usr/include/python2.4
 	ld -shared simpleport.o simpleport_wrap.o -lusb -o _simpleport.so 
+
+
+
+java:
+	swig -java simpleport.i
+	gcc -c simpleport.c simpleport_wrap.c -I/usr/lib/jvm/java-1.5.0-sun-1.5.0.10/include \
+	-I/usr/lib/jvm/java-1.5.0-sun-1.5.0.10/include/linux/
+	gcc -shared simpleport.o  simpleport_wrap.o  -o simpleport.dll
 
 install:
 	cp libsimpleport.a /lib/libsimpleport.a
