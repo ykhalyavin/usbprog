@@ -48,7 +48,8 @@ simpleport_message = _simpleport.simpleport_message
 simpleport_set_direction = _simpleport.simpleport_set_direction
 simpleport_set_port = _simpleport.simpleport_set_port
 simpleport_get_port = _simpleport.simpleport_get_port
-simpleport_set_bit = _simpleport.simpleport_set_bit
-simpleport_get_bit = _simpleport.simpleport_get_bit
+simpleport_set_pin = _simpleport.simpleport_set_pin
+simpleport_set_pin_dir = _simpleport.simpleport_set_pin_dir
+simpleport_get_pin = _simpleport.simpleport_get_pin
 
 
