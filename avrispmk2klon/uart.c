@@ -45,7 +45,7 @@ void UARTPutChar(unsigned char sign)
 
 unsigned char UARTGetChar(void)
 {
-	#if 0
+	#if 1
     while (!(UCSRA & (1<<RXC)));  // warten bis Zeichen verfuegbar
   		return UDR;                   // Zeichen aus UDR an Aufrufer zurueckgeben
 	#endif
@@ -53,7 +53,7 @@ unsigned char UARTGetChar(void)
 
 void UARTWrite(char* msg)
 {
-	#if 0
+	#if 1
   	while(*msg != '\0')
   	{
      	UARTPutChar (*msg++);

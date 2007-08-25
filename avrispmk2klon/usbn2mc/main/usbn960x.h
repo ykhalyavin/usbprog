@@ -134,6 +134,7 @@ void _USBNSetAddress(DeviceRequest *req);
 void _USBNGetDescriptor(DeviceRequest *req);
 void _USBNSetConfiguration(DeviceRequest *req);
 void _USBNGetConfiguration(DeviceRequest *req);
+void _USBNGetStatus(DeviceRequest *req);
 void _USBNClearFeature(void);
 
 void _USBNToggle(EPInfo* ep);

@@ -90,10 +90,11 @@ void _USBNNackEvent(void)
 void _USBNReceiveEvent(void)
 {
   unsigned char event;
-  void (*ptr)(char*);
+  void (*ptr)();
   char buf[64];
   char *bufp=&buf[0];
   event = USBNRead(RXEV);
+  char tmp;
   int i=0;
   
   USBNDebug("rx event\r\n");
@@ -110,7 +111,7 @@ void _USBNReceiveEvent(void)
     
     if(rxfifos.rx1==1){
       ptr = rxfifos.func1;
-      (*ptr)((char*)&buf);
+      (*ptr)(&buf);
     }
     USBNWrite(RXC1,FLUSH);   
     USBNWrite(RXC1,RX_EN);    
@@ -128,7 +129,7 @@ void _USBNReceiveEvent(void)
     
     if(rxfifos.rx2==1){
       ptr = rxfifos.func2;
-      (*ptr)((char*)&buf);
+      (*ptr)(&buf);
     }
     USBNWrite(RXC2,FLUSH);   
     USBNWrite(RXC2,RX_EN);    
@@ -144,7 +145,7 @@ void _USBNReceiveEvent(void)
 
     if(rxfifos.rx3==1){
       ptr = rxfifos.func1;
-      (*ptr)((char*)&buf);
+      (*ptr)(&buf);
     }
   }
   else {}
@@ -154,7 +155,7 @@ void _USBNReceiveEvent(void)
 void _USBNTransmitEvent(void)
 {
   unsigned char event;
-  void (*ptr)(void);
+  void (*ptr)();
   event = USBNRead(TXEV);
   //USBNDebug("tx event\r\n");
   if(event & TX_FIFO0) _USBNTransmitFIFO0();
@@ -197,27 +198,30 @@ void _USBNAlternateEvent(void)
     USBNWrite(NFSR,OPR_ST);                   // NFS = NodeOperational
   	USBNDebug("reset\r\n");
   }
-  else if(event & ALT_SD3)
+  if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
+  /*
     USBNWrite(NFSR,SUS_ST);                   // enter suspend state
   	USBNDebug("sd3\r\n");
+  */
   }
-  else if(event & ALT_RESUME)
+  if(event & ALT_RESUME)
   {
-    USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
+    USBNWrite(ALTMSK,ALT_SD3+ALT_RESET+ALT_RESUME);
+  /*
+    USBNWrite(EPC0,0x00);
+    USBNWrite(RXC0,RX_EN);                    // allow reception
+    USBNWrite(TXC0,FLUSH);
     USBNWrite(NFSR,OPR_ST);
   	USBNDebug("resume\r\n");
+	*/
   }
-  else if(event & ALT_EOP)
+  if(event & ALT_EOP)
   {
   	USBNDebug("eop\r\n");
   }
 
-  else
-  {
-  	USBNDebug("else\r\n");
-  }
 }
 
 
@@ -257,6 +261,9 @@ void _USBNReceiveFIFO0(void)
     switch (req->bmRequestType & 0x60)  // decode request type     
     {
       case DO_STANDARD:			      // standard request 
+	USBNDebug("HALLO STANDARD ");	
+	SendHex(req->bRequest);
+	USBNDebug("\n\r");
         switch (req->bRequest)	      // decode request code     
         {
           case CLR_FEATURE:
@@ -284,8 +291,13 @@ void _USBNReceiveFIFO0(void)
           break;
           case GET_STATUS:
 	  #if DEBUG
-            USBNDebug("GET STATUS\n\r");	
 	  #endif
+            USBNDebug("GET STATUS\n\r");	
+	    //_USBNGetStatus(req);
+	    USBNWrite(TXC0,FLUSH);
+	    USBNWrite(TXD0,1);
+	    USBNWrite(TXD0,0);
+	    USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           case SET_ADDRESS:
 	  #if DEBUG
@@ -303,12 +315,13 @@ void _USBNReceiveFIFO0(void)
 	  #if DEBUG
             USBNDebug("SET FEATURE\n\r");	
 	  #endif
+	  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           case SET_INTERFACE:
 	  #if DEBUG
             USBNDebug("SET INTERFACE\n\r");	
 	  #endif
-	    			USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+	  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           default:				// unsupported standard req
 	  #if DEBUG
@@ -350,7 +363,7 @@ void _USBNReceiveFIFO0(void)
   }
   else                              // if not a setuppacket
   {
-    //USBNDebug("error transmit\r\n");
+    USBNDebug("error transmit\r\n");
     if (EP0tx.Size > EP0tx.usbnfifo)   // multi-pkt status stage? 
     {
       if ((rxstatus& 0x5F)!=0x10)   // length error??          
@@ -544,16 +557,20 @@ void _USBNGetDescriptor(DeviceRequest *req)
   switch (type)
   {
     case DEVICE:
-      #if DEBUG 
+      //#if DEBUG 
       USBNDebug("DEVICE DESCRIPTOR\n\r");  
-      #endif
+      //#endif
       EP0tx.Size = DeviceDescriptor.bLength;
-      EP0tx.Buf = (unsigned char*)&(DeviceDescriptor);
+      EP0tx.Buf = (char*)&(DeviceDescriptor);
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
+      SendHex(req->wLength);
+      
       if(req->wLength==0x08)
 	req->wLength=0x40;
+
+
       if(req->wLength==0x40)
         EP0tx.Size = 8;
     break;
@@ -564,7 +581,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 
       // send complete tree
       EP0tx.Size =req->wLength;
-      EP0tx.Buf = (unsigned char*)&FinalConfigurationArray[index][0];
+      EP0tx.Buf = &FinalConfigurationArray[index][0];
 
     break;
     case STRING:
@@ -576,7 +593,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 
       if(index >0)
       {
-	EP0tx.Buf = (unsigned char*)&FinalStringArray[index][0];
+	EP0tx.Buf = &FinalStringArray[index][0];
 	EP0tx.Size = EP0tx.Buf[0];
       }
       else { 
@@ -587,7 +604,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 	//EP0tx.Buf = &FinalStringArray[0][0];
 	//EP0tx.Size = EP0tx.Buf[0];
 	EP0tx.Size=4;
-	EP0tx.Buf=(unsigned char*)lang;
+	EP0tx.Buf=lang;
 
       }
     break;
@@ -598,7 +615,15 @@ void _USBNGetDescriptor(DeviceRequest *req)
   _USBNTransmit(&EP0tx);
 }
 
-
+void _USBNGetStatus(DeviceRequest *req)
+{
+/*
+  char tmp[]={0x01,0x00};
+  EP0tx.Size=4;
+  EP0tx.Buf=tmp;
+  _USBNTransmit(&EP0tx);
+  */
+}
 
 void _USBNSetConfiguration(DeviceRequest *req)
 {
