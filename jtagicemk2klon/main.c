@@ -26,7 +26,7 @@
 
 #define F_CPU 16000000
 #include <util/delay.h>
-
+ 
 #include "wait.h"
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
@@ -202,6 +202,10 @@ void USBReceive(char *buf)
 			
 			case CMND_WRITE_MEMORY:
 				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
+			break;
+			
+			case CMND_CHIP_ERASE:
+				cmdlength = cmd_chip_erase((char*)buf, (char*)answer);
 			break;
 
 			default:

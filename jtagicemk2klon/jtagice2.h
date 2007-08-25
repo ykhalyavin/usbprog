@@ -40,7 +40,7 @@
 #define CMND_SET_BREAK			0x11
 #define CMND_CLR_BREAK			0x1A
 #define CMND_SELFTEST			0x10
-
+#define CMND_CHIP_ERASE			0x13
 #define CMND_ENTER_PROGMODE		0x14
 #define CMND_LEAVE_PROGMODE		0x15
 
@@ -128,6 +128,7 @@ int cmd_set_break(char * msg, char * answer);
 int cmd_clr_break(char * msg, char * answer);
 int cmd_selftest(char *msg, char *buf);
 int cmd_write_memory(char *msg, char *answer);
+int cmd_chip_erase(char *msg, char *answer);
 
 
 

@@ -648,3 +648,19 @@ int cmd_set_device_descriptor(char *msg, char *answer)
 	return 11;
 }
 
+int cmd_chip_erase(char *msg, char *answer)
+{
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+	answer[8]	= RSP_OK;		// (0x80 = ok)
+	
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
