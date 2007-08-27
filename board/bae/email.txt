@@ -1,0 +1,35 @@
+Hallo zusammen
+
+ich wollte mir auch einen schönen uspprog-adapter bauen.
+Da ich mir jedoch eigentlich meine Platinen immer selber ätze und gerade
+beim Löten der Vias von Hand das Original-Layout etwas ungünstig ist, hab
+ich heute abend den 3.1er-Schaltplan in das von mir verwendete
+Layoutsystem (BAE, www.bartels.de/bae) übertragen.
+Jedoch frage ich mich, für was eigentlich der Jumper JP4 gut ist?
+Er dient ja wohl dazu, den (übrigens am Bustap nicht beschrifteten) Pin A7
+auf Masse ziehen zu können. Einerseits frage ich mich natürlich, für was
+das gut sein soll, für zukünftige Erweiterungen?
+Andererseits frage ich mich, warum da ein 10kOhm-Pullup verbaut ist, wo
+der Mega32 doch interne Pullups hat, und man sich dadurch den Widerstand
+und das Routing von VCC in die Ecke sparen kann.
+
+Wer sich für das Layout interessiert:
+Schaltplan: http://tza.m-faq.de/images/platinen/usbprog/schem.pdf
+Ich hab ein paar kleine Änderungen vorgenommen, der Widerstand R7 ist
+schon raus, der Quarz ist SMD weil Reichelt leider keinen 24 MHz Grundton
+in einem anderen Gehäuse hat, der Umschalt-Jumper für
+buspowered/selfpowered ist ein wenig anders aufgebaut.
+Layout: http://tza.m-faq.de/images/platinen/usbprog/layout.pdf (die Datei
+hat Lagen, afaik nur mit dem Adobe Reader benutzbar)
+Größe ist 50x34mm², also deutlich mehr als das original-Layout, aber noch
+nicht sperrig ;)
+Das ganze passt hoffentlich in ein 53x37x20mm³ (Außenmaße)
+Kunststoffegehäuse, was ich mal bei Reichelt gekauft hatte.
+In meinen Augen sind die Vorteile weniger Vias (19 Stück) und wesentlich
+weniger Vias unter den ICs (nur 8 Stück).
+
+Ich hoffe es kann jemand etwas zu dem Pullup-Widerstand und dem Sinn des
+Jumpers sagen.
+
+Thomas
+"Thomas Faust" <Thomas.Faust@physik.uni-muenchen.de>
