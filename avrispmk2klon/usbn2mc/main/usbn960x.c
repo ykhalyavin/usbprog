@@ -200,19 +200,14 @@ void _USBNAlternateEvent(void)
   else if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
-    /*
     USBNWrite(NFSR,SUS_ST);                   // enter suspend state
   	USBNDebug("sd3\r\n");
-      */
   }
   else if(event & ALT_RESUME)
   {
     USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
-    //USBNWrite(ALTMSK,ALT_SD3+ALT_RESET+ALT_RESUME);
-    /*
     USBNWrite(NFSR,OPR_ST);
   	USBNDebug("resume\r\n");
-    */
   }
   else if(event & ALT_EOP)
   {
@@ -291,12 +286,6 @@ void _USBNReceiveFIFO0(void)
 	  #if DEBUG
             USBNDebug("GET STATUS\n\r");	
 	  #endif
-
-	    USBNWrite(TXC0,FLUSH);
-	    USBNWrite(TXD0,1);
-	    USBNWrite(TXD0,0);
-	    USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
-
           break;
           case SET_ADDRESS:
 	  #if DEBUG
@@ -563,6 +552,9 @@ void _USBNGetDescriptor(DeviceRequest *req)
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
+      if(req->wLength==0x08)
+	req->wLength=0x40;
+      
       if(req->wLength==0x40)
         EP0tx.Size = 8;
     break;
@@ -622,7 +614,7 @@ USBNWrite(EPC1,EP_EN+0x02);      // enable EP1 at adr 1
 
 
 USBNWrite(RXC1,FLUSH);
-USBNWrite(EPC2,EP_EN+0x03); 
+USBNWrite(EPC2,EP_EN+0x02); 
 USBNWrite(RXC1,RX_EN);
 
 
