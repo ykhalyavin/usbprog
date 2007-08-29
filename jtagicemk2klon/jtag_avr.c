@@ -9,7 +9,7 @@ int idcode(char *buf)
 	jtag_goto_state(SHIFT_IR);
 	char jtagbuf[1];
 	jtagbuf[0]=AVR_IDCODE;
-  jtag_write(4,jtagbuf);
+	jtag_write(4,jtagbuf);
 
 	jtag_goto_state(SHIFT_DR);
 	jtag_read(32,buf);
