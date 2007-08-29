@@ -9,15 +9,15 @@ int idcode(char *buf)
 	jtag_goto_state(SHIFT_IR);
 	char jtagbuf[1];
 	jtagbuf[0]=AVR_IDCODE;
-	jtag_write(4,jtagbuf);
+  jtag_write(4,jtagbuf);
 
 	jtag_goto_state(SHIFT_DR);
 	jtag_read(32,buf);
 }
 
-int bypass()
+int bypass(void)
 {
-
+	return 0;
 }
 
 int avr_reset(int true)
@@ -35,7 +35,7 @@ int avr_reset(int true)
 	jtag_write(1,jtagbuf);
 }
 
-int avr_prog_enable()
+void avr_prog_enable(void)
 {
   // ENABLE PROG
 	char jtagbuf[2];
@@ -46,18 +46,15 @@ int avr_prog_enable()
 	jtagbuf[0]=0x70;
 	jtagbuf[1]=0xA3;
 	jtag_write(16,jtagbuf);
-
-	return 1;
 }
 
-int avr_prog_cmd()
+void avr_prog_cmd(void)
 {
 	char jtagbuf[1];
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_PRG_CMDS;
 	jtag_write(4,jtagbuf);
-
-	return 1;
+	jtag_goto_state(SHIFT_DR);
 }
 
 
@@ -68,9 +65,9 @@ int avr_jtag_instr(unsigned char instr, int delay)
 	jtagbuf[0]=instr;
 	jtag_write(4,jtagbuf);
 	jtag_goto_state(SHIFT_DR);
-
 	return 1;
 }
+
 
 
 

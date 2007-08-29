@@ -51,12 +51,10 @@ unsigned char UARTGetChar(void)
 
 void UARTWrite(char* msg)
 {
-	#if 1
   	while(*msg != '\0')
   	{
      	UARTPutChar (*msg++);
   	}
-	#endif
 }
 
 unsigned char AsciiToHex(unsigned char high,unsigned char low)

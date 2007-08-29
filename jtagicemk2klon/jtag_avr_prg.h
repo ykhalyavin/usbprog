@@ -33,6 +33,7 @@ void wr_hfuse_avr(char hfuse);
 void wr_efuse_avr(char efuse);
 void wr_lock_avr(char lock);
 void chip_erase(void);
+void wr_flash_page(unsigned int byteCount, unsigned long adress, char *data);
 
 void avr_sequence(char tdi2, char tdi1, char * tdo);
 

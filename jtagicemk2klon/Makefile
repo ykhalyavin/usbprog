@@ -1,6 +1,6 @@
 # Hey Emacs, this is a -*- makefile -*-
 #
-# WinAVR makefile written by Eric B. Weddington, Jörg Wunsch, et al.
+# WinAVR makefile written by Eric B. Weddington, JÃ¶rg Wunsch, et al.
 # Released to the Public Domain
 # Please read the make user manual!
 #
@@ -45,14 +45,14 @@ MCU = atmega32
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex
+FORMAT = binary
 
 # Target file name (without extension).
 TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../usbn2mc/main/usbn960x.c usbn2mc.c ../usbn2mc/main/usbnapi.c uart.c ../usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c wait.c jtag.c jtagice2.c crc.c jtag_avr_prg.c jtag_avr_ocd.c jtag_avr.c
+SRC = $(TARGET).c ../usbn2mc/main/usbn960x.c usbn2mc.c ../usbn2mc/main/usbnapi.c uart.c ../usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c wait.c jtag.c jtagice2.c crc.c jtag_avr_prg.c jtag_avr_ocd.c jtag_avr.c 
 
 
 # List Assembler source files here.
@@ -276,15 +276,14 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter finished end
 
-build: elf hex eep lss sym hex2bin
+build: elf hex eep lss sym 
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
 eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
-hex2bin:
-	hex2bin main.hex
+
 
 
 # Eye candy.
@@ -352,6 +351,7 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
+	mv main.hex main.bin
 
 %.eep: %.elf
 	@echo
@@ -443,6 +443,3 @@ download:
 reset:
 	avrdude -p m32 -c bsd -E noreset
 
-upgrade:
-	hex2bin main.hex
-	usbprog main.bin

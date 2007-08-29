@@ -126,23 +126,31 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 	JTAG_CLEAR_TMS();				// last one with tms
 
 	//numberofbits--;
-  while(numberofbits--) {
-		if(numberofbits==0){
+	while(numberofbits--) 
+	{
+		if(numberofbits==0)
+		{
 	 		JTAG_SET_TMS();				// last one with tms
-			if(tapstate==SHIFT_IR){
+			if(tapstate==SHIFT_IR)
+			{
 				tapstate = EXIT1_IR;
-			} else {
+			}
+			else 
+			{
 				tapstate = EXIT1_DR;
 			}
 		}
 
-		if(buf[sendbits/8] >> (sendbits & 7) & 1) {
+		if(buf[sendbits/8] >> (sendbits & 7) & 1) 
+		{
 			JTAG_SET_TDI();
-		} else {
+		} 
+		else 
+		{
 			JTAG_CLEAR_TDI();
 		}
 
-	  sendbits++;
+		sendbits++;
 		JTAG_CLK();
 	}
 	return sendbits;

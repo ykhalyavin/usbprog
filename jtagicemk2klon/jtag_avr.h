@@ -25,10 +25,10 @@
 
 
 int idcode(char *buf);
-int bypass();
+int bypass(void);
 int avr_reset(int true);
-int avr_prog_enable();
-int avr_prog_cmd();
+void avr_prog_enable(void);
+void avr_prog_cmd(void);
 int avr_jtag_instr(unsigned char instr, int delay);
 
 

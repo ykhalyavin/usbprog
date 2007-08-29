@@ -29,7 +29,6 @@
 #include "jtag_avr_defines.h"
 #include "../usbn2mc/fifo.h"
 
-
 // represent acutal state of state machine
 //static JTAGICE_STATE jtagicestate;
 
@@ -209,7 +208,7 @@ int cmd_read_pc(char *msg, char * answer)
 	jtagbuf[0]=0x00;
 	jtagbuf[1]=0x00;
 	jtagbuf[2]=0xff;
-	jtagbuf[2]=0xff;
+	jtagbuf[3]=0xff;
 	jtag_write_and_read(32,jtagbuf,recvbuf);
 
 
@@ -550,11 +549,14 @@ int cmd_write_memory(char *msg, char *answer)
 		case LOCK_BITS:
 		break;
 		case FUSE_BITS:
-			wr_hfuse_avr(msg[18]);
+			//wr_hfuse_avr(msg[18]);
 		break;
 		case SRAM:
 		break;
 		case SPM:
+		break;
+		case FLASH_PAGE:
+			wr_flash_page((int) msg[10], (long) msg[14], &msg[18]);
 		break;
 		default:
 		break;
@@ -659,7 +661,8 @@ int cmd_chip_erase(char *msg, char *answer)
 	answer[6] = 0;
 	answer[7] = TOKEN;
 	answer[8]	= RSP_OK;		// (0x80 = ok)
-	
+
+	chip_erase();
 	crc16_append(answer,(unsigned long)9);
 	return 11;
 }
