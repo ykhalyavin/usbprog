@@ -200,18 +200,18 @@ void _USBNAlternateEvent(void)
   else if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
-    USBNWrite(NFSR,SUS_ST);                   // enter suspend state
-  	USBNDebug("sd3\r\n");
+    //USBNWrite(NFSR,SUS_ST);                   // enter suspend state //ubuntu
+    //USBNDebug("sd3\r\n"); //ubuntu
   }
   else if(event & ALT_RESUME)
   {
     USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
-    USBNWrite(NFSR,OPR_ST);
+    //USBNWrite(NFSR,OPR_ST); //ubuntu
   	USBNDebug("resume\r\n");
   }
   else if(event & ALT_EOP)
   {
-  	USBNDebug("eop\r\n");
+    //USBNDebug("eop\r\n");
   }
 
   else
@@ -286,6 +286,10 @@ void _USBNReceiveFIFO0(void)
 	  #if DEBUG
             USBNDebug("GET STATUS\n\r");	
 	  #endif
+	    USBNWrite(TXC0,FLUSH);  //ubuntu
+	    USBNWrite(TXD0,1);	    //ubuntu
+	    USBNWrite(TXD0,0);	    //ubuntu
+	    USBNWrite(TXC0,TX_TOGL+TX_EN);  //ubuntu
           break;
           case SET_ADDRESS:
 	  #if DEBUG

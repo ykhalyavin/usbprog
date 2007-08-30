@@ -567,7 +567,7 @@ void USBNStart(void)
   USBNWrite(RXMSK, RX_FIFO0+RX_FIFO1+RX_FIFO2+RX_FIFO3);            // data incoming EP0
   USBNWrite(TXMSK, TX_FIFO0+TX_FIFO1+TX_FIFO2+TX_FIFO3);            // data incoming EP0
  
-  USBNWrite(ALTMSK, ALT_RESET+ALT_SD3+ALT_EOP);
+  USBNWrite(ALTMSK, ALT_RESET+ALT_SD3+ALT_EOP); 
   USBNWrite(MAMSK, (INTR_E+RX_EV+ALT+TX_EV+NAK) );
  
   
