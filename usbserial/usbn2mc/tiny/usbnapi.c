@@ -44,7 +44,9 @@ void USBNStart(void)
   USBNWrite(MCNTRL,SRST);           // clear all registers
   while(USBNRead(MCNTRL)&SRST);
 
-  USBNWrite(CCONF, 0x80);           // clock output off, divisor to 4 MHz
+  //USBNWrite(CCONF, 0x80);           // clock output off, divisor to 4 MHz
+  USBNWrite(CCONF, 0x02);           // clock to 16 MHz
+
   //USBNWrite(NAKMSK,0xFF);
   USBNWrite(NAKMSK,NAK_OUT0);
   USBNWrite(FAR,AD_EN+0x00);            // set default address

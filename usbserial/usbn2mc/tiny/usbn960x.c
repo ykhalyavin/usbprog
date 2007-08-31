@@ -135,12 +135,12 @@ void _USBNAlternateEvent(void)
   else if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
-    USBNWrite(NFSR,SUS_ST);                   // enter suspend state
+    //USBNWrite(NFSR,SUS_ST);                   // enter suspend state
   }
   else if(event & ALT_RESUME)
   {
     USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
-    USBNWrite(NFSR,OPR_ST);
+    //USBNWrite(NFSR,OPR_ST);
   }
   else
   {
@@ -278,7 +278,7 @@ void _USBNReceiveFIFO0(void)
 				#if DEBUG
 				USBNDebug("Vendor request\n\r");
 				#endif
-				USBNDecodeVendorRequest(req,&EP0tx);
+				USBNDecodeVendorRequest(req);
 				_USBNTransmit(&EP0tx);
 				//USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 			break;              

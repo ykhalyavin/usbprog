@@ -9,6 +9,8 @@
 #include "uart.h"
 #include "usbn2mc.h"
 #include "usbn2mc/fifo.h"
+#include "../usbprog_base/firmwarelib/avrupdate.h"
+
 
 
 void interrupt_ep_send();
@@ -25,7 +27,6 @@ fifo_t* toUSBFIFO;
 
 int togl3=0;
 int togl1=0;
-
 
 
 struct {
@@ -72,21 +73,21 @@ const unsigned char usbrs232[] =
 
 const unsigned char usbrs232Conf[] =
 { 
-	0x09,             // 9 length of this descriptor
+	0x09,       // 9 length of this descriptor
     	0x02,       // descriptor type = configuration descriptor
     	0x48,0x00,  // total length with first interface ...
-    	0x01,             // number of interfaces
-    	0x01,             // number if this config. ( arg for setconfig)
+    	0x02,       // number of interfaces //bene 01
+    	0x01,       // number if this config. ( arg for setconfig)
     	0x00,       // string index for config
     	0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
-    	0x1A,        // power for this configuration in mA (e.g. 50mA)
-    	//InterfaceDescriptor
-    	0x09,             // 9 length of this descriptor
+    	0x1A,       // power for this configuration in mA (e.g. 50mA)
+		    //InterfaceDescriptor
+    	0x09,       // 9 length of this descriptor
     	0x04,       // descriptor type = interface descriptor
-    	0x00,             // interface number
-    	0x00,             // alternate setting for this interface
-    	0x01,             // number endpoints without 0
-    	0x02,       	// class code
+    	0x00,       // interface number
+    	0x00,       // alternate setting for this interface
+    	0x01,       // number endpoints without 0
+    	0x02,       // class code
     	0x02,       // sub-class code
     	0x01,       // protocoll code
     	0x00,       // string index for interface
@@ -100,7 +101,7 @@ const unsigned char usbrs232Conf[] =
     4,           /* sizeof(usbDescrCDC_AcmFn): length of descriptor in bytes */
     0x24,        /* descriptor type */
     2,           /* abstract control management functional descriptor */
-    0x02,        /* SET_LINE_CODING,    GET_LINE_CODING, SET_CONTROL_LINE_STATE    */
+    0x02,        /* SET_LINE_CODING, GET_LINE_CODING, SET_CONTROL_LINE_STATE    */
 
     5,           /* sizeof(usbDescrCDC_UnionFn): length of descriptor in bytes */
     0x24,        /* descriptor type */
@@ -183,26 +184,46 @@ void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep)
 {
 }
 
-
-
-// vendor requests
-void USBNDecodeVendorRequest(DeviceRequest *req,EPInfo* ep)
+/* id need for live update of firmware */
+void USBNDecodeVendorRequest(DeviceRequest *req)
 {
+	switch(req->bRequest)
+	{
+	case STARTAVRUPDATE:
+		avrupdate_start();
+	break;
+	}
 }
-
 
 // class requests
 void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 {
-	//UARTWrite("class");
-  static unsigned char serialNotification[10] = {0xa1,0x20,0,0,0,0,2,0,3,0};
+	UARTWrite("class");
+	static unsigned char serialNotification[10] = {0xa1,0x20,0,0,0,0,2,0,3,0};
 	int loop;
 	switch(req->bRequest)
 	{
+		case 0x20:	//SET_LINE_CODING:
+			UARTWrite("set line\r\n");
+			USBNWrite(RXC0,RX_EN);
+			
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			
+			//USBNWrite(RXC0,RX_EN);
+			//USBNWrite(RXC0,FLUSH);
+		
+			USBNWrite(TXC0,FLUSH);
+			USBNWrite(TXC0,TX_TOGL+TX_EN);
+		break;
 		case 0x21:	// GET_LINE_CODING:
 			//UARTWrite("get line coding");
 			USBNWrite(TXC0,FLUSH);
-
 
 			// baud rate
 			USBNWrite(TXD0,0x80);
@@ -217,26 +238,7 @@ void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 			interrupt_ep_send();
 
 			USBNWrite(TXC0,TX_TOGL+TX_EN);
-
 			
-		break;
-		case 0x20:	//SET_LINE_CODING:
-			USBNWrite(TXC0,FLUSH);
-		 	USBNRead(TXD0);
-		 	USBNRead(TXD0);
-		 	USBNRead(TXD0);
-
-		 	USBNRead(TXD0);
-		 	USBNRead(TXD0);
-		 	USBNRead(TXD0);
-		 	USBNRead(TXD0);
-			USBNWrite(TXC0,FLUSH);
-
-			//UARTWrite("set lin");
-			//USBNWrite(TXC0,FLUSH);
-			//USBNWrite(TXD0,0);
-			//USBNWrite(TXC0,TX_EN);
-			//USBNWrite(TXC0,TX_TOGL+TX_EN);
 		break;
 		case 0x22:	//SET_CONTROL_LINE_STATE:
 			//UARTWrite("set ctrl line state");
@@ -273,11 +275,11 @@ void USBtoRS232(char * buf)
 // togl pid for in endpoint
 void interrupt_ep_send()
 {
-	if(togl3==0) {
-		togl3=1;
+	if(togl3==1) {
+		togl3=0;
 		USBNWrite(TXC1,TX_LAST+TX_EN);
 	} else {
-		togl3=0;
+		togl3=1;
 		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
 	}
 }
@@ -285,11 +287,11 @@ void interrupt_ep_send()
 // togl pid for in endpoint
 void rs232_send()
 {
-	if(togl1==0) {
-		togl1=1;
+	if(togl1==1) {
+		togl1=0;
 		USBNWrite(TXC2,TX_LAST+TX_EN);
 	} else {
-		togl1=0;
+		togl1=1;
 		USBNWrite(TXC2,TX_LAST+TX_EN+TX_TOGL);
 	}
 }
@@ -306,19 +308,18 @@ int main(void)
 	USBNCallbackFIFORX1(&USBtoRS232);
 	//USBNCallbackFIFOTX2Ready(&USBtoRS232);
 
-  sei();			// activate global interrupts
-  UARTInit();		// only for debugging
+	sei();			// activate global interrupts
+	UARTInit();		// only for debugging
 
-  // setup usbstack with your descriptors
-  USBNInit(usbrs232,usbrs232Conf);
+	// setup usbstack with your descriptors
+	USBNInit(usbrs232,usbrs232Conf);
 
 
-  USBNInitMC();		// start usb controller
-  USBNStart();		// start device stack
+	USBNInitMC();		// start usb controller
+	USBNStart();		// start device stack
 
-  while(1){
-		
-#if 0
+	while(1){
+	  #if 0
 		// wenn cpu zeit vorhanden fifos weiterverteilen
 		// usb -> rs232
 	
@@ -326,8 +327,8 @@ int main(void)
 		USBNWrite(TXC1,FLUSH);
 		USBNWrite(TXD1,0x44);
 		send_toggle();	
-
-#endif
+		wait_ms(100);
+	  #endif
 
 	}
 }
