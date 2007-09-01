@@ -3,28 +3,28 @@
 #include "jtag.h"
 
 
-int idcode(char *buf)
+void idcode(unsigned char *buf)
 {
 	// READ IDCODE
 	jtag_goto_state(SHIFT_IR);
-	char jtagbuf[1];
+	unsigned char jtagbuf[1];
 	jtagbuf[0]=AVR_IDCODE;
-  jtag_write(4,jtagbuf);
+	jtag_write(4,jtagbuf);
 
 	jtag_goto_state(SHIFT_DR);
 	jtag_read(32,buf);
 }
 
-int bypass(void)
+void bypass(void)
 {
-	return 0;
+
 }
 
-int avr_reset(int true)
+void avr_reset(int true)
 {
 	// RESET
 	jtag_goto_state(SHIFT_IR);
-	char jtagbuf[1];
+	unsigned char jtagbuf[1];
 	jtagbuf[0]=AVR_RESET;
 	jtag_write(4,jtagbuf);
 	jtag_goto_state(SHIFT_DR);
@@ -38,7 +38,7 @@ int avr_reset(int true)
 void avr_prog_enable(void)
 {
   // ENABLE PROG
-	char jtagbuf[2];
+	unsigned char jtagbuf[2];
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_PRG_ENABLE;
 	jtag_write(4,jtagbuf);
@@ -50,7 +50,7 @@ void avr_prog_enable(void)
 
 void avr_prog_cmd(void)
 {
-	char jtagbuf[1];
+	unsigned char jtagbuf[1];
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=AVR_PRG_CMDS;
 	jtag_write(4,jtagbuf);
@@ -60,7 +60,7 @@ void avr_prog_cmd(void)
 
 int avr_jtag_instr(unsigned char instr, int delay)
 {
-	char jtagbuf[1];
+	unsigned char jtagbuf[1];
 	jtag_goto_state(SHIFT_IR);
 	jtagbuf[0]=instr;
 	jtag_write(4,jtagbuf);
@@ -74,9 +74,9 @@ int avr_jtag_instr(unsigned char instr, int delay)
 //tdi2 = 7 bit
 ////tdi1 = 8 bit (write it like it is in the datasheet page ...278...)
 
-void avr_sequence(char tdi2, char tdi1, char * tdo)
+void avr_sequence(char tdi2, char tdi1, unsigned char * tdo)
 {
-  char jtagbuf[2];
+	unsigned char jtagbuf[2];
 	jtag_goto_state(SHIFT_DR);
 	jtagbuf[0]=tdi1;  //  select fuse
 	jtagbuf[1]=tdi2;

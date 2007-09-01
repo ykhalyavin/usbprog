@@ -24,62 +24,54 @@
 #include "jtag.h"
 #include "wait.h"
 #include "uart.h"
+#include "jtag_avr_ocd.h"
+#include "jtagice2.h"
 
-
-char rd_lock_avr ()
+unsigned char rd_lock_avr(void)
 {
-	char jtagbuf[2];
-	
+	unsigned char jtagbuf[2];
 	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
 	avr_sequence(0x36,0x00,jtagbuf);	// select lfuse
 	avr_sequence(0x37,0x00,jtagbuf);	// read lock
-
 	return jtagbuf[0];
 }
 
-char rd_efuse_avr ()
+unsigned char rd_efuse_avr(void)
 {
-	char jtagbuf[2];
-	
+	unsigned char jtagbuf[2];
 	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
 	avr_sequence(0x32,0x00,jtagbuf);	// select lfuse
 	avr_sequence(0x33,0x00,jtagbuf); // read lfuse
-
 	return jtagbuf[0];
 }
 
-char rd_lfuse_avr ()
+unsigned char rd_lfuse_avr(void)
 {
-	char jtagbuf[2];
-	
+	unsigned char jtagbuf[2];
 	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
 	avr_sequence(0x32,0x00,jtagbuf);	// select lfuse
 	avr_sequence(0x33,0x00,jtagbuf); // read lfuse
-
 	return jtagbuf[0];
 }
 
 
-char rd_hfuse_avr ()
+unsigned char rd_hfuse_avr(void)
 {
-	char jtagbuf[2];
-	
+	unsigned char jtagbuf[2];
 	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
 	avr_sequence(0x3E,0x00,jtagbuf);	// select hfuse
 	avr_sequence(0x3F,0x00,jtagbuf); // read hfuse
-
 	return jtagbuf[0];
 }
 
-int rd_fuse_avr (char *buf, int withextend)
+void rd_fuse_avr (unsigned char *buf, int withextend)
 {
-	return 1;
 }
 
 
-int rd_signature_avr (char *signature)
+void rd_signature_avr (unsigned char *signature)
 {
-	char tmp[2];
+	unsigned char tmp[2];
 	avr_sequence(0x23,0x08,tmp);
 	avr_sequence(0x03,0x00,tmp);
 	avr_sequence(0x32,0x00,tmp);
@@ -94,13 +86,11 @@ int rd_signature_avr (char *signature)
 	avr_sequence(0x03,0x02,tmp);
 	avr_sequence(0x32,0x00,tmp);
 	avr_sequence(0x33,0x00,&signature[2]);
-
-	return 1;
 }
 
-void wr_hfuse_avr(char hfuse)
+void wr_hfuse_avr(unsigned char hfuse)
 {
-	char tmp[2];
+	unsigned char tmp[2];
 	avr_sequence(0x23,0x40,tmp);
 	avr_sequence(0x13,hfuse,tmp);
 	avr_sequence(0x37,0x00,tmp);
@@ -110,9 +100,9 @@ void wr_hfuse_avr(char hfuse)
 	avr_sequence(0x37,0x00,tmp);
 }
 
-void wr_lfuse_avr(char lfuse)
+void wr_lfuse_avr(unsigned char lfuse)
 {
-	char tmp[2];
+	unsigned char tmp[2];
 	avr_sequence(0x23,0x40,tmp);
 	avr_sequence(0x13,lfuse,tmp);
 	avr_sequence(0x33,0x00,tmp);
@@ -122,9 +112,9 @@ void wr_lfuse_avr(char lfuse)
 	avr_sequence(0x33,0x00,tmp);
 }
 
-void wr_efuse_avr(char efuse)
+void wr_efuse_avr(unsigned char efuse)
 {
-	char tmp[2];
+	unsigned char tmp[2];
 	avr_sequence(0x23,0x40,tmp);
 	avr_sequence(0x13,efuse,tmp);
 	avr_sequence(0x3B,0x00,tmp);
@@ -134,24 +124,39 @@ void wr_efuse_avr(char efuse)
 	avr_sequence(0x37,0x00,tmp);
 }
 
-void wr_lock_avr(char lock)
+void wr_lock_avr(unsigned char lock)
 {
-	char tmp[2];
-	avr_sequence(0x20,0x40,tmp);
+	unsigned char tmp[2];
+	avr_sequence(0x23,0x20,tmp);
 	avr_sequence(0x13,lock | 0xC0 ,tmp);
 	avr_sequence(0x33,0x00,tmp);
 	avr_sequence(0x31,0x00,tmp);
 	avr_sequence(0x33,0x00,tmp);
 	avr_sequence(0x33,0x00,tmp);
-	avr_sequence(0x33,0x00,tmp);
+	
+	do
+	{
+		avr_sequence(0x33,0x00,tmp);
+	} 
+	while(!(tmp[1] & 0x02));
 }
 
-// (2) data[tdi] = [0x80, 0x23], [0x80, 0x31], [0x80, 0x33], [0x80, 0x33], [0x80, 0x33] (chip erase sequence)
+
+unsigned char rd_cal_byte(unsigned char adress)
+{
+	unsigned char tmp[2];
+	avr_sequence(0x23,0x08,tmp);
+	avr_sequence(0x03,adress,tmp);
+	avr_sequence(0x36,0x00,tmp);
+	avr_sequence(0x37,0x00,tmp);
+	return tmp[0];
+}
+	
+
 
 void chip_erase(void)
 {
-	char tmp[2];
-	
+	unsigned char tmp[2];
 	avr_sequence(0x23,0x80,tmp);
 	avr_sequence(0x31,0x80,tmp);
 	avr_sequence(0x33,0x80,tmp);
@@ -166,9 +171,10 @@ void chip_erase(void)
 
 
 
-void wr_flash_page(unsigned int byteCount, unsigned long adress, char *data)
+
+void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data)
 {
-	char tmp[2];
+	/*char tmp[2];
 	
 	int adr = adress >> 1;
 	
@@ -183,6 +189,7 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, char *data)
 	avr_sequence(0x23, 0x10, tmp);
 	avr_sequence(0x07, (adr >> 8) & 0xFF, tmp);
 	avr_sequence(0x03, adr & 0xFF , tmp);
+	clear_ZPointer();
 	avr_jtag_instr(AVR_PRG_PAGE_LOAD, 0);	//inst = PAGE_LOAD 0x06
 	
 		
@@ -205,50 +212,119 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, char *data)
 	{
 		avr_sequence(0x37, 0x00, tmp);
 	}
-	while(!(tmp[1] & 0x02)); 
+	while(!(tmp[1] & 0x02)); */
 	
-	/*char tmp[2];
-	static unsigned int addr = 0;
+	unsigned char tmp[2];
+	adress >>= 1;	//divide by two: convert byte adress to word adress
 	
+#ifdef DEBUG_ON
 	UARTWrite("Write Flash page\n");
+	UARTWrite("Adress");
+	SendHex((char) adress);
+	UARTWrite("\n");
+#endif
 	
 	avr_prog_cmd();					//Prog Enable
 	avr_sequence(0x23, 0x10, tmp);
-	
-	for(int i = 0; i < byteCount; i += 2, addr++)
+
+	for(int i = 0; i < byteCount; i += 2, adress++)
 	{
+#ifdef DEBUG_ON
 		UARTWrite("Adress: ");
-		SendHex((addr >> 8) & 0xFF);
-		SendHex(addr & 0xFF);
-		
-		avr_sequence(0x07, (addr >> 8) & 0xFF, tmp);
-		avr_sequence(0x03, addr & 0xFF, tmp);
-		
+		SendHex((adress >> 8) & 0xFF);
+		SendHex(adress & 0xFF);
+#endif
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+			
 		avr_sequence(0x13, data[i], tmp);
 		avr_sequence(0x17, data[i + 1], tmp);
-		
+#ifdef DEBUG_ON			
 		UARTWrite(" Data: ");
 		SendHex(data[i]);
 		SendHex(data[i + 1]);	
 		UARTWrite("\n");
-
+#endif
 		avr_sequence(0x37, 0x00, tmp);
 		avr_sequence(0x77, 0x00, tmp);
 		avr_sequence(0x37, 0x00, tmp);
 	}
-		
+	
+#ifdef DEBUG_ON
+	UARTWrite("Flash succesfully\n");
+#endif
 	avr_sequence(0x37, 0x00, tmp);
 	avr_sequence(0x35, 0x00, tmp);
 	avr_sequence(0x37, 0x00, tmp);
 	avr_sequence(0x37, 0x00, tmp);
-	
+		
 	do
 	{
 		avr_sequence(0x37, 0x00, tmp);
 	}
-	while(!(tmp[1] & 0x02)); */	
+	while(!(tmp[1] & 0x02));
+}
+
+void wr_eeprom_page(unsigned int byteCount, unsigned long adress, unsigned char *data)
+{
+	unsigned char tmp[2];
+	
+	avr_sequence(0x23, 0x11, tmp);
+	
+	for(int i = 0; i < byteCount; i++, adress++)
+	{
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+		avr_sequence(0x13, data[i], tmp);
+		
+		avr_sequence(0x37, 0x00, tmp);
+		avr_sequence(0x77, 0x00, tmp);
+		avr_sequence(0x37, 0x00, tmp);
+	}
+	
+	avr_sequence(0x33, 0x00, tmp);
+	avr_sequence(0x31, 0x00, tmp);
+	avr_sequence(0x33, 0x00, tmp);
+	avr_sequence(0x33, 0x00, tmp);
+	
+	do
+	{
+		avr_sequence(0x33, 0x00, tmp);
+	}
+	while(!(tmp[1] & 0x02));
 }
 	
+void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data)
+{ 
+	unsigned char tmp[2];
+	adress >>= 1;
+	avr_sequence(0x23, 0x02, tmp);
 	
+	for(int i = 0; i < byteCount; i += 2, adress++)
+	{
+	/*	avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+		
+		avr_sequence(0x32, 0x00, tmp);
+		avr_sequence(0x36, 0x00, &data[i]);
+		avr_sequence(0x37, 0x00, &data[i + 1]); */
+	}
+	
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");	
+	
+	//	asm("nop");
+
+	
+	
+}
 
 

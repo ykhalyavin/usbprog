@@ -4,7 +4,7 @@
 #include "uart.h"
 
 
-
+#ifdef DEBUG_ON
 void UARTInit(void)
 {
   	//UCSRB |= (1<<TXEN);			// UART TX einschalten
@@ -105,4 +105,5 @@ void SendHex(unsigned char hex)
     	UARTPutChar(low+87);
 
 }
+#endif
 

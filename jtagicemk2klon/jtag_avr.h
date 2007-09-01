@@ -24,15 +24,15 @@
 #include <avr/pgmspace.h>
 
 
-int idcode(char *buf);
-int bypass(void);
-int avr_reset(int true);
+void idcode(unsigned char *buf);
+void bypass(void);
+void avr_reset(int true);
 void avr_prog_enable(void);
 void avr_prog_cmd(void);
 int avr_jtag_instr(unsigned char instr, int delay);
 
 
-void avr_sequence(char tdi2, char tdi1, char * tdo);
+void avr_sequence(char tdi2, char tdi1, unsigned char * tdo);
 
 /*
  * The debugger is communicating with the CPU core through the use of

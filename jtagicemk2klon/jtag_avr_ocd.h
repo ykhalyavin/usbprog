@@ -54,5 +54,13 @@ void init_all_regs_avr (void);
 void get_all_regs_avr (unsigned char delay);
 void set_all_regs_avr (unsigned char *buf, unsigned char delay);
 
+unsigned char activate_ocd (unsigned char delay);
+
+unsigned char
+exec_instr_avr (unsigned char *out, unsigned char *in, unsigned char flg,
+                unsigned char delay);
+				
+#define write_flash		0x01
+
 
 #endif

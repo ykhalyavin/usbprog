@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <avr/interrupt.h>
 #include <inttypes.h>
+#include <string.h>
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -37,6 +38,8 @@
 #include "jtag_avr.h"
 #include "jtag_avr_ocd.h"
 #include "crc.h"
+#include "jtag_avr_prg.h"
+#include "jtag_avr_defines.h"
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
@@ -68,25 +71,30 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 	}
 }
 
-volatile char answer[300];
+volatile unsigned char answer[300];
 
 void CommandAnswer(int length)
 {
 	int i;
-	USBNWrite(TXC1,FLUSH);
-	for(i=0;i<length;i++){
-		USBNWrite(TXD1,answer[i]);
-	}
+	
+	for(char j = 0; j < ((length - 1) >> 6) + 1; j++)
+	{
+		USBNWrite(TXC1,FLUSH);
+		
+		for(i=0;i<length;i++){
+			USBNWrite(TXD1,answer[(j << 6) + i]);
+		}
 
-	//SendHex(0x11);
-	/* control togl bit */
+		//SendHex(0x11);
+		/* control togl bit */
 
-	if(jtagice.datatogl==1) {
-		USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-		jtagice.datatogl=0;
-	} else {
-		USBNWrite(TXC1,TX_LAST+TX_EN);
-		jtagice.datatogl=1;
+		if(jtagice.datatogl==1) {
+			USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
+			jtagice.datatogl=0;
+		} else {
+			USBNWrite(TXC1,TX_LAST+TX_EN);
+			jtagice.datatogl=1;
+		}
 	}
 }
 
@@ -96,19 +104,29 @@ void USBSend(void)
 
 }
 
+unsigned char rxBuf[300];	//Recievebuffer for long packages
+
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
-#if 0	
-	if(jtagice.longpackage) {
 
-		// recalculate message size
-		jtagice.size = jtagice.size -64;
-		if(jtagice.size==0)
-			jtagice.longpackage = 0;
-
-	} else {
-#endif	
+	static unsigned char longFlag = 0;
+	
+	if(longFlag) 
+	{
+		memcpy(&rxBuf[longFlag << 6], buf, 64);
+		longFlag++;
+		
+		if(((rxBuf[4] << 8) | rxBuf[3]) < (longFlag << 6))
+		{
+			longFlag = 0;
+			CommandAnswer(cmd_write_memory(rxBuf, (char*)answer));
+			return;
+		}
+	}
+	
+	else {
+	
 
 		// check if package is a cmdpackage
 		if(buf[0]==MESSAGE_START)
@@ -201,7 +219,14 @@ void USBReceive(char *buf)
 			break;
 			
 			case CMND_WRITE_MEMORY:
-				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
+				if(((buf[4] << 8) | buf[3]) > 64)
+				{
+					memcpy(rxBuf, buf, 64);
+					longFlag++;
+				}
+				else
+					cmdlength = cmd_write_memory((char*)buf, (char*)answer);
+				
 			break;
 			
 			case CMND_CHIP_ERASE:
@@ -216,7 +241,7 @@ void USBReceive(char *buf)
 			CommandAnswer(cmdlength);
 		// recalculate size
 		jtagice.size = jtagice.size -54;
-	//}
+	}
 }
 
 
@@ -225,14 +250,13 @@ int main(void)
 {
   int conf, interf;
 	// only for testing
-  UARTInit();
+#ifdef DEBUG_ON
+	UARTInit();
+	UARTWrite("Hallo\r\n");
+#endif
   
-  USBNInit();   
-
-  UARTWrite("Hallo\r\n");
-  
-  jtagice.longpackage=0;
-  jtagice.datatogl=1;
+	USBNInit();   
+	jtagice.datatogl=1;
 
 	jtag_init();
 
@@ -269,7 +293,7 @@ int main(void)
   // start usb chip
   USBNStart();
 
-	#include "jtag_avr_defines.h"
+
 	unsigned char recvbuf[10];
 	unsigned char jtagbuf[10];
 
@@ -324,10 +348,12 @@ int main(void)
 	jtagbuf[2]=0x00;
 	jtagbuf[3]=0x00;
 	jtag_write_and_read(32,jtagbuf,recvbuf);
+#ifdef DEBUG_ON
 	SendHex(recvbuf[0]);
 	SendHex(recvbuf[1]);
 	SendHex(recvbuf[2]);
 	SendHex(recvbuf[3]);
+#endif
 
 
 	// ask for new events

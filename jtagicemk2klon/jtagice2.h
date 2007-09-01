@@ -56,6 +56,8 @@
 #define FLASH_PAGE			0xB0
 #define FUSE_BITS			0xb2
 #define LOCK_BITS			0xb3
+#define SIGN_JTAG			0xb4
+#define OSCCAL_BYTE			0xb5
 
 
 #define RSP_OK				0x80
@@ -135,7 +137,6 @@ int cmd_chip_erase(char *msg, char *answer);
 
 volatile struct jtagice_t {
   char lastcmd;
-	int longpackage;
 	int cmdpackage;
  	unsigned long size;
 	int datatogl;

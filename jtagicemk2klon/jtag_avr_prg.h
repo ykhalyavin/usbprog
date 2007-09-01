@@ -22,20 +22,22 @@
 #ifndef JTAG_AVR_PRG_H
 #define JTAG_AVR_PRG_H
 
-char rd_efuse_avr (void);
-char rd_hfuse_avr (void);
-char rd_lfuse_avr (void);
-char rd_lock_avr (void);
-int rd_fuse_avr (char *buf, int withextend);
-int rd_signature_avr (char *signature);
-void wr_lfuse_avr(char lfuse);
-void wr_hfuse_avr(char hfuse);
-void wr_efuse_avr(char efuse);
-void wr_lock_avr(char lock);
+unsigned char rd_efuse_avr (void);
+unsigned char rd_hfuse_avr (void);
+unsigned char rd_lfuse_avr (void);
+unsigned char rd_lock_avr (void);
+void rd_fuse_avr (unsigned char *buf, int withextend);
+void rd_signature_avr (unsigned char *signature);
+void wr_lfuse_avr(unsigned char lfuse);
+void wr_hfuse_avr(unsigned char hfuse);
+void wr_efuse_avr(unsigned char efuse);
+void wr_lock_avr(unsigned char lock);
 void chip_erase(void);
-void wr_flash_page(unsigned int byteCount, unsigned long adress, char *data);
+void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data);
+void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data);
+unsigned char rd_cal_byte(unsigned char adress);
 
-void avr_sequence(char tdi2, char tdi1, char * tdo);
+void avr_sequence(char tdi2, char tdi1, unsigned char * tdo);
 
 
 #endif

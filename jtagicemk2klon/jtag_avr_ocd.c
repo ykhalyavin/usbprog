@@ -306,7 +306,9 @@ activate_ocd (unsigned char delay)
         wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
         rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
     } while (((buf_in [0] & (BIT2 | BIT3)) != (BIT2 | BIT3)));
+#ifdef DEBUG
 		SendHex(buf_in [0]);
+#endif
     return 1;
 }
 

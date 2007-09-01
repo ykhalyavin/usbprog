@@ -110,5 +110,7 @@ enum {
 	LONG        /* 32 bits instruction when data or I/O is queried  */
 };
 
+//#define DEBUG_ON	//Debugmode
+
 
 #endif

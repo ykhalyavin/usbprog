@@ -507,11 +507,37 @@ int cmd_read_memory(char * msg, char * answer)
 			answer[9]=buf[0];
 			answer[10]=buf[1];
 			//answer[9] - ...
-
 		break;
+		
+		case OSCCAL_BYTE:
+			answer[9] = rd_cal_byte(msg[14]);
+			msglen=2;
+			answer[3] = 2;					// length of body with ok
+		break;
+		
+		case SIGN_JTAG:
+			rd_signature_avr(&answer[9]);
+			msglen = 4;
+			answer[3] = 4;					// length of body with ok
+		break;
+		
+		case FLASH_PAGE:
+		{
+			int len = (msg[11] << 8) | msg[10];
+			rd_flash_page(len, ((long) msg[16] << 16L) | (msg[15] << 8) | msg[14], &answer[9]);
+			
+			msglen = len + 1;
+			answer[3] = msglen & 0xFF;			// length of body with ok
+			answer[4] = (msglen >> 8) & 0xFF;
+		}
+		break;
+		
 
 		default:
+#ifdef DEBUG_ON
 			SendHex(0x88);
+#endif
+			break;
 	}
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
@@ -547,6 +573,7 @@ int cmd_write_memory(char *msg, char *answer)
 	switch(msg[9])
 	{
 		case LOCK_BITS:
+			wr_lock_avr(msg[18]);
 		break;
 		case FUSE_BITS:
 			//wr_hfuse_avr(msg[18]);
@@ -556,8 +583,9 @@ int cmd_write_memory(char *msg, char *answer)
 		case SPM:
 		break;
 		case FLASH_PAGE:
-			wr_flash_page((int) msg[10], (long) msg[14], &msg[18]);
+				wr_flash_page((int) msg[10], (long) msg[14], &msg[18]);
 		break;
+
 		default:
 		break;
 	}
