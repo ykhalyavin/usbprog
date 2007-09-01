@@ -21,7 +21,7 @@
 #include "../usbn2mc/fifo.h"
 
 
-#define MESSAGE_START			0x1b
+#define MESSAGE_START		0x1b
 #define TOKEN				0x0e
 
 #define CMND_GET_SIGN_OFF		0x00
@@ -32,10 +32,10 @@
 #define CMND_READ_MEMORY		0x05
 #define CMND_WRITE_PC			0x06
 #define CMND_READ_PC			0x07
-#define CMND_GO				0x08
+#define CMND_GO					0x08
 #define CMND_SINGLE_STEP		0x09
 #define CMND_FORCED_STOP		0x0A
-#define CMND_RESET			0x0B
+#define CMND_RESET				0x0B
 #define CMND_SET_DEVICE_DESCRIPTOR	0x0C
 #define CMND_SET_BREAK			0x11
 #define CMND_CLR_BREAK			0x1A
@@ -51,18 +51,23 @@
 #define EVT_BREAK			0xE0
 
 // memory types
+#define IO_SHADOW			0x30	
 #define SRAM				0x20
+#define EEPROM				0x22
+#define EVENT				0x60
 #define SPM					0xA0
 #define FLASH_PAGE			0xB0
-#define FUSE_BITS			0xb2
-#define LOCK_BITS			0xb3
-#define SIGN_JTAG			0xb4
-#define OSCCAL_BYTE			0xb5
+#define EEPROM_PAGE			0xB1
+#define FUSE_BITS			0xB2
+#define LOCK_BITS			0xB3
+#define SIGN_JTAG			0xB4
+#define OSCCAL_BYTE			0xB5
+#define CAN					0xB6
 
 
-#define RSP_OK				0x80
-#define RSP_FAILED			0xA0
-#define RSP_SIGN_ON			0x86
+#define RSP_OK					0x80
+#define RSP_FAILED				0xA0
+#define RSP_SIGN_ON				0x86
 #define RSP_SELFTEST			0x85
 #define RSP_PARAMETER			0x81
 
@@ -104,7 +109,7 @@
 #define CRC_ERROR				0x44
 #define POWER_SOURCE			0x45
 #define CAN_FLAG				0x22
-#define PAR_ENABLE_IDR_IN_RUN_MODE	0x23
+#define PAR_ENABLE_IDR_IN_RUN_MODE				0x23
 #define PAR_ALLOW_PAGEPROGRAMMING_IN_SCANCHAIN	0x24
 
 

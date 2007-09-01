@@ -525,11 +525,16 @@ int cmd_read_memory(char * msg, char * answer)
 		{
 			int len = (msg[11] << 8) | msg[10];
 			rd_flash_page(len, ((long) msg[16] << 16L) | (msg[15] << 8) | msg[14], &answer[9]);
-			
 			msglen = len + 1;
 			answer[3] = msglen & 0xFF;			// length of body with ok
 			answer[4] = (msglen >> 8) & 0xFF;
 		}
+		break;
+		
+		case EEPROM_PAGE:
+			rd_eeprom_page(msg[10], (msg[15] << 8) | msg[14],  &answer[9]);
+			answer[3] = msg[10] + 1;
+			msglen = answer[3];
 		break;
 		
 
@@ -583,7 +588,11 @@ int cmd_write_memory(char *msg, char *answer)
 		case SPM:
 		break;
 		case FLASH_PAGE:
-				wr_flash_page((int) msg[10], (long) msg[14], &msg[18]);
+				wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 24) | ((unsigned long) msg[15] << 16) | msg[14], &msg[18]);
+		break;
+		
+		case EEPROM_PAGE:
+			wr_eeprom_page(msg[10], (msg[15] << 8) | msg[14], (unsigned char *) &msg[18]);
 		break;
 
 		default:

@@ -265,13 +265,12 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 	while(!(tmp[1] & 0x02));
 }
 
-void wr_eeprom_page(unsigned int byteCount, unsigned long adress, unsigned char *data)
+void wr_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char *data)
 {
 	unsigned char tmp[2];
-	
 	avr_sequence(0x23, 0x11, tmp);
 	
-	for(int i = 0; i < byteCount; i++, adress++)
+	for(unsigned char i = 0; i < byteCount; i++, adress++)
 	{
 		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
 		avr_sequence(0x03, adress & 0xFF, tmp);
@@ -293,6 +292,22 @@ void wr_eeprom_page(unsigned int byteCount, unsigned long adress, unsigned char 
 	}
 	while(!(tmp[1] & 0x02));
 }
+
+void rd_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char *data)
+{
+	unsigned char tmp[2];
+	avr_sequence(0x23, 0x03, tmp);
+	
+	for(unsigned char i = 0; i < byteCount; i++)
+	{
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+		
+		avr_sequence(0x33, adress & 0xFF, tmp);
+		avr_sequence(0x32, 0x00, tmp);
+		avr_sequence(0x33, 0x00, &data[i]);
+	}
+}
 	
 void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data)
 { 
@@ -302,29 +317,12 @@ void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 	
 	for(int i = 0; i < byteCount; i += 2, adress++)
 	{
-	/*	avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
 		avr_sequence(0x03, adress & 0xFF, tmp);
-		
 		avr_sequence(0x32, 0x00, tmp);
 		avr_sequence(0x36, 0x00, &data[i]);
-		avr_sequence(0x37, 0x00, &data[i + 1]); */
+		avr_sequence(0x37, 0x00, &data[i + 1]); 
 	}
-	
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");	
-	
-	//	asm("nop");
-
-	
-	
 }
 
 
