@@ -169,7 +169,9 @@ void USBReceive(char *buf)
 			case CMND_GET_PARAMETER:
 				cmdlength = cmd_get_parameter((char*)buf,(char*)answer);
 			break;
-
+			case CMND_GET_SYNC:
+				cmdlength = cmd_get_sync((char*)buf,(char*)answer);
+			break;
 			case CMND_FORCED_STOP:
 				cmdlength = cmd_forced_stop((char*)buf,(char*)answer);
 			break;
@@ -273,7 +275,7 @@ int main(void)
   _USBNAddStringDescriptor(lang); // language descriptor
 
   
-  USBNDeviceManufacture ("B.Sauter");
+  USBNDeviceManufacture ("USBprog EmbeddedProjects");
   USBNDeviceProduct	("JTAGICE mk2 Clone");
   USBNDeviceSerialNumber("A000000D3F");
 

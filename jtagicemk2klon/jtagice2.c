@@ -47,14 +47,14 @@ int cmd_get_sign_on(char *msg, char * answer)
 	answer[6] = 0;
 	answer[7] = TOKEN;
 
-	answer[8]	= RSP_SIGN_ON;		// page 57 datasheet
-	answer[9]	= 0x01;	// communication protocoll version
+	answer[8]  = RSP_SIGN_ON;		// page 57 datasheet
+	answer[9]  = 0x01;	// communication protocoll version
 	answer[10] = 0xff;	
-	answer[11] = 0x07;
+	answer[11] = 0x21;  //07
 	answer[12] = 0x04;
 	answer[13] = 0x00;
 	answer[14] = 0xff;
-	answer[15] = 0x14;
+	answer[15] = 0x21; //21
 	answer[16] = 0x04;
 	answer[17] = 0x00;
 	answer[18] = 0x00;
@@ -99,6 +99,24 @@ int cmd_sign_off(char * msg, char * answer)
 	crc16_append(answer,(unsigned long)9);
 	return 11;
 }
+
+int cmd_get_sync(char * msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
 
 
 int cmd_set_parameter(char *msg, char * answer)

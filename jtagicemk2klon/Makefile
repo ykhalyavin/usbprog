@@ -302,8 +302,8 @@ end:
 
 
 # Display size of file.
-HEXSIZE = $(SIZE) --target=$(FORMAT) --mcu=atmega32 -C $(TARGET).hex
-ELFSIZE = $(SIZE) --mcu=atmega32 -C $(TARGET).elf
+HEXSIZE = $(SIZE) --target=$(FORMAT) $(TARGET).hex
+ELFSIZE = $(SIZE) $(TARGET).elf
 sizebefore:
 	@if [ -f $(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); echo; fi
 

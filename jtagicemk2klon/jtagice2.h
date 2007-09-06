@@ -32,11 +32,12 @@
 #define CMND_READ_MEMORY		0x05
 #define CMND_WRITE_PC			0x06
 #define CMND_READ_PC			0x07
-#define CMND_GO					0x08
+#define CMND_GO				0x08
 #define CMND_SINGLE_STEP		0x09
 #define CMND_FORCED_STOP		0x0A
-#define CMND_RESET				0x0B
+#define CMND_RESET			0x0B
 #define CMND_SET_DEVICE_DESCRIPTOR	0x0C
+#define CMND_GET_SYNC			0x0F
 #define CMND_SET_BREAK			0x11
 #define CMND_CLR_BREAK			0x1A
 #define CMND_SELFTEST			0x10
@@ -122,6 +123,7 @@ int cmd_get_sign_on(char *msg, char * answer);
 int cmd_sign_off(char *msg, char * answer);
 int cmd_set_parameter(char *msg, char * answer);
 int cmd_get_parameter(char *msg, char * answer);
+int cmd_get_sync(char *msg, char *answer);
 int cmd_read_memory(char *msg, char * answer);
 int cmd_read_pc(char *msg, char * answer);
 int cmd_single_step(char *msg, char * answer);
