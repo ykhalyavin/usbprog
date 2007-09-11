@@ -177,8 +177,8 @@ int cmd_get_parameter(char *msg, char * answer)
 		answer[3] = 0x03;	//length of Body
 		
 		answer[8] = RSP_PARAMETER;
-		answer[9] = 0xFF;
-		answer[10] = 0x20;
+		answer[9] = 0x04;
+		answer[10] = 0x14;
 		
 		crc16_append(answer,(unsigned long)11);
 		return 13;
@@ -309,7 +309,7 @@ int cmd_single_step(char *msg, char * answer)
 int cmd_forced_stop(char * msg, char * answer)
 {
  	jtag_reset();
-  avr_jtag_instr(AVR_FORCE_BRK, 0);
+	avr_jtag_instr(AVR_FORCE_BRK, 0);
 
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
@@ -636,48 +636,49 @@ int cmd_set_device_descriptor(char *msg, char *answer)
 {
 	unsigned char i, j;
 	
-	for(i = 0, j = 9; i < 8; i++, j++)
-		deviceDescriptor.ucReadIO[i] = msg[j];
-		
-	for(i = 0, j = 17; i < 8; i++, j++)
-		deviceDescriptor.ucReadIOShadow[i] = msg[j];
-		
-	for(i = 0, j = 25; i < 8; i++, j++)
-		deviceDescriptor.ucWriteIO[i] = msg[j];
-		
-	for(i = 0, j = 33; i < 8; i++, j++)
-		deviceDescriptor.ucReadIOShadow[i] = msg[j];
+	for(i = 9, j = 7; i < 17; i++, j--)
+		deviceDescriptor.ucReadIO[j] = msg[i];
 	
-	for(i = 0, j = 41; i < 93; i++, j++)
-		deviceDescriptor.ucReadExtIO[i] = msg[j];
+	for(i = 17, j = 7; i < 25; i++, j--)
+		deviceDescriptor.ucReadIOShadow[j] = msg[i];
 		
-	for(i = 0, j = 93; i < 145; i++, j++)
-		deviceDescriptor.ucReadIOExtShadow[i] = msg[j];
+	for(i = 25, j = 7; i < 33; i++, j--)
+		deviceDescriptor.ucWriteIO[j] = msg[i];
 		
-	for(i = 0, j = 145; i < 197; i++, j++)
-		deviceDescriptor.ucWriteExtIO[i] = msg[j];
+	for(i = 33, j = 7; i < 41; i++, j--)
+		deviceDescriptor.ucReadIOShadow[j] = msg[i];
 		
-	for(i = 0, j = 197; i < 249; i++, j++)
-		deviceDescriptor.ucWriteIOExtShadow[i] = msg[j];
+	for(i = 41, j = 51; i < 93; i++, j--)
+		deviceDescriptor.ucReadExtIO[j] = msg[i];
+		
+	for(i = 93, j = 51; i < 145; i++, j--)
+		deviceDescriptor.ucReadIOExtShadow[j] = msg[i];
+		
+	for(i = 145, j = 51; i < 197; i++, j--)
+		deviceDescriptor.ucWriteExtIO[j] = msg[i];
+		
+	for(i = 197, j = 51; i < 249; i++, j--)
+		deviceDescriptor.ucWriteIOExtShadow[j] = msg[i];
 		
 	deviceDescriptor.ucIDRAddress = msg[249];
 	deviceDescriptor.ucSPMCRAddress = msg[250];
-	deviceDescriptor.ulBootAddress = *(unsigned long *)&msg[251];
+	deviceDescriptor.ulBootAddress = ((long) msg[254] << 24) | ((long) msg[253] << 16) | (msg[252] << 8) | msg[25];
 	deviceDescriptor.ucRAMPZAddress = msg[255];
-	deviceDescriptor.uiFlashPageSize = (msg[257] << 8) | msg[256];
+	deviceDescriptor.uiFlashPageSize = (msg[256] << 8) | msg[257];
 	deviceDescriptor.ucEepromPageSize = msg[258];
-	deviceDescriptor.uiUpperExtIOLoc = (msg[260] << 8) | msg[259]; 
-	deviceDescriptor.ulFlashSize = *(unsigned long *)&msg[261];
+	deviceDescriptor.uiUpperExtIOLoc = (msg[259] << 8) | msg[260]; 
+	deviceDescriptor.ulFlashSize = ((long) msg[264] << 24) | ((long) msg[263] << 16) | (msg[262] << 8) | msg[261];
 	
-	for(uint16_t k = 265, i = 0; i < 285; i++, k++)
+	for(uint16_t k = 265, i = 0; i < 285; i++, k++)		//da passt ev. noch was nicht !!
 		deviceDescriptor.ucEepromInst[i] = msg[k];
 	
 	deviceDescriptor.ucFlashInst[0] = msg[285];
 	deviceDescriptor.ucFlashInst[1]	= msg[286];
 	deviceDescriptor.ucFlashInst[2] = msg[287];
+	
 	deviceDescriptor.ucSPHaddr = msg[288];
 	deviceDescriptor.ucSPLaddr = msg[289];
-	deviceDescriptor.uiFlashpages = (msg[290] << 8) | msg[291];
+	deviceDescriptor.uiFlashpages = (msg[291] << 8) | msg[290];
 	deviceDescriptor.ucDWDRAddress = msg[292];
 	deviceDescriptor.ucDWBasePC = msg[293];
 	deviceDescriptor.ucAllowFullPageBitstream = msg[294];
@@ -689,7 +690,7 @@ int cmd_set_device_descriptor(char *msg, char *answer)
 	deviceDescriptor.ucPCMaskExtended = msg[302];
 	deviceDescriptor.ucPCMaskHigh = msg[303];
 	deviceDescriptor.ucEindAddress = msg[304];
-	deviceDescriptor.EECRAddress = (msg[306] << 8) | msg[307];
+	deviceDescriptor.EECRAddress = (msg[306] << 8) | msg[305];
 
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;

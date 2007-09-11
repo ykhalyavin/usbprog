@@ -41,6 +41,8 @@
 #include "jtag_avr_prg.h"
 #include "jtag_avr_defines.h"
 
+unsigned char forcedStop = 0;
+
 /*** prototypes and global vars ***/
 /* send a command back to pc */
 void CommandAnswer(int length);
@@ -104,13 +106,13 @@ void USBSend(void)
 
 }
 
-unsigned char rxBuf[300];	//Recievebuffer for long packages
+unsigned char rxBuf[320];	//Recievebuffer for long packages
 
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
 
-	static unsigned char longFlag = 0;
+	static unsigned char longFlag = 0, longDevDesc = 0;
 	
 	if(longFlag) 
 	{
@@ -125,8 +127,19 @@ void USBReceive(char *buf)
 		}
 	}
 	
-	else {
-	
+	if(longDevDesc)
+	{
+		memcpy(&rxBuf[longDevDesc << 6], buf, 64);
+		longDevDesc++;
+		
+		if(320 <= (longDevDesc << 6))
+		{
+			longDevDesc = 0;
+			CommandAnswer(cmd_set_device_descriptor(rxBuf,(char*)answer));
+			return;
+		}
+	}
+			
 
 		// check if package is a cmdpackage
 		if(buf[0]==MESSAGE_START)
@@ -174,10 +187,12 @@ void USBReceive(char *buf)
 			break;
 			case CMND_FORCED_STOP:
 				cmdlength = cmd_forced_stop((char*)buf,(char*)answer);
+				forcedStop = 1;
 			break;
 
 			case CMND_SET_DEVICE_DESCRIPTOR:
-				cmdlength = cmd_set_device_descriptor((char*)buf,(char*)answer);
+				memcpy(rxBuf, buf, 64);
+				longFlag++;
 			break;
 	
 			case CMND_GO:
@@ -243,7 +258,28 @@ void USBReceive(char *buf)
 			CommandAnswer(cmdlength);
 		// recalculate size
 		jtagice.size = jtagice.size -54;
-	}
+		if(forcedStop)
+		{
+			forcedStop = 0;
+			wait_ms(5);
+			answer[0] = MESSAGE_START;
+			answer[1] = 0xff;
+			answer[2] = 0xff;
+			answer[3] = 0x06;
+			answer[4] = 0;
+			answer[5] = 0;
+			answer[6] = 0;
+			answer[7] = TOKEN;
+			answer[8] = 0xe0;
+			answer[9] = 0x59;
+			answer[10] = 0;
+			answer[11] = 0;
+			answer[12] = 0;
+			answer[13] = 0;
+			crc16_append(answer,(unsigned long)14);
+			CommandAnswer(16);
+		}
+	
 }
 
 
