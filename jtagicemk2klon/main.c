@@ -129,11 +129,20 @@ void USBReceive(char *buf)
 	
 	if(longDevDesc)
 	{
+#ifdef DEBUG_ON
+		UARTWrite("\n");
+		UARTWrite("Buffer vergroessert\n");
+#endif
+		
 		memcpy(&rxBuf[longDevDesc << 6], buf, 64);
 		longDevDesc++;
 		
 		if(320 <= (longDevDesc << 6))
 		{
+#ifdef DEBUG_ON
+
+		UARTWrite("Device Descriptor wird jetzt uebergeben\r\n");
+#endif
 			longDevDesc = 0;
 			CommandAnswer(cmd_set_device_descriptor(rxBuf,(char*)answer));
 			return;
@@ -191,8 +200,9 @@ void USBReceive(char *buf)
 			break;
 
 			case CMND_SET_DEVICE_DESCRIPTOR:
+				UARTWrite("PARSER !!\r\n");
 				memcpy(rxBuf, buf, 64);
-				longFlag++;
+				longDevDesc++;
 			break;
 	
 			case CMND_GO:
