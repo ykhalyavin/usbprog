@@ -79,6 +79,8 @@ void CommandAnswer(int length)
 {
 	int i;
 	
+	UARTWrite("1\n");	
+	
 	for(char j = 0; j < ((length - 1) >> 6) + 1; j++)
 	{
 		USBNWrite(TXC1,FLUSH);
@@ -106,49 +108,36 @@ void USBSend(void)
 
 }
 
-unsigned char rxBuf[320];	//Recievebuffer for long packages
+unsigned char rxbuf[320];	//Recievebuffer for long packages
 
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
-
-	static unsigned char longFlag = 0, longDevDesc = 0;
+	static char recieveCounter = 0;
 	
-	if(longFlag) 
+	if(!recieveCounter)		//First Packet
 	{
-		memcpy(&rxBuf[longFlag << 6], buf, 64);
-		longFlag++;
+		memcpy(rxbuf, buf, 64);
+		recieveCounter++;
 		
-		if(((rxBuf[4] << 8) | rxBuf[3]) < (longFlag << 6))
-		{
-			longFlag = 0;
-			CommandAnswer(cmd_write_memory(rxBuf, (char*)answer));
-			return;
-		}
+		if(((rxbuf[4] << 8) | rxbuf[3]) <= 64)
+			goto PARSER;
+		return;
 	}
 	
-	if(longDevDesc)
+	
+	if(((rxbuf[4] << 8) | rxbuf[3]) > (recieveCounter << 6))
 	{
-#ifdef DEBUG_ON
-		UARTWrite("\n");
-		UARTWrite("Buffer vergroessert\n");
-#endif
+		memcpy(&rxbuf[recieveCounter << 6], buf, 64);
+		recieveCounter++;		
 		
-		memcpy(&rxBuf[longDevDesc << 6], buf, 64);
-		longDevDesc++;
-		
-		if(320 <= (longDevDesc << 6))
-		{
-#ifdef DEBUG_ON
-
-		UARTWrite("Device Descriptor wird jetzt uebergeben\r\n");
-#endif
-			longDevDesc = 0;
-			CommandAnswer(cmd_set_device_descriptor(rxBuf,(char*)answer));
-			return;
-		}
 	}
+	else
+	{
+PARSER:
+		recieveCounter = 0;
 			
+		
 
 		// check if package is a cmdpackage
 		if(buf[0]==MESSAGE_START)
@@ -173,91 +162,83 @@ void USBReceive(char *buf)
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				cmdlength = cmd_get_sign_on((char*)buf,(char *)answer);
+				cmdlength = cmd_get_sign_on((char*)rxbuf,(char *)answer);
 			break;
 
 			case CMND_GET_SIGN_OFF:
-				cmdlength = cmd_sign_off((char*)buf,(char*)answer);
+				cmdlength = cmd_sign_off((char*)rxbuf,(char*)answer);
 			break;
 
 			case CMND_SET_PARAMETER:
-				cmdlength = cmd_set_parameter((char*)buf,(char*)answer);
+				cmdlength = cmd_set_parameter((char*)rxbuf,(char*)answer);
 			break;
 		
 			case CMND_READ_MEMORY:
-				cmdlength = cmd_read_memory((char*)buf,(char*)answer);
+				cmdlength = cmd_read_memory((char*)rxbuf,(char*)answer);
 			break;
 			
 			case CMND_GET_PARAMETER:
-				cmdlength = cmd_get_parameter((char*)buf,(char*)answer);
+				cmdlength = cmd_get_parameter((char*)rxbuf,(char*)answer);
 			break;
 			case CMND_GET_SYNC:
-				cmdlength = cmd_get_sync((char*)buf,(char*)answer);
+				cmdlength = cmd_get_sync((char*)rxbuf,(char*)answer);
 			break;
 			case CMND_FORCED_STOP:
-				cmdlength = cmd_forced_stop((char*)buf,(char*)answer);
+				cmdlength = cmd_forced_stop((char*)rxbuf,(char*)answer);
 				forcedStop = 1;
 			break;
 
 			case CMND_SET_DEVICE_DESCRIPTOR:
-				UARTWrite("PARSER !!\r\n");
-				memcpy(rxBuf, buf, 64);
-				longDevDesc++;
+				cmdlength = cmd_set_device_descriptor((char*)rxbuf, (char*)answer);
 			break;
 	
 			case CMND_GO:
-				cmdlength = cmd_go((char*)buf,(char*)answer);
+				cmdlength = cmd_go((char*)rxbuf,(char*)answer);
 			break;
 			
 			case CMND_RESTORE_TARGET:
-				cmdlength = cmd_restore_target((char*)buf,(char*)answer);
+				cmdlength = cmd_restore_target((char*)rxbuf,(char*)answer);
 			break;
 
 			case CMND_LEAVE_PROGMODE:
-				cmdlength = cmd_leave_progmode((char*)buf,(char*)answer);
+				cmdlength = cmd_leave_progmode((char*)rxbuf,(char*)answer);
 			break;
 
 			case CMND_ENTER_PROGMODE:
-				cmdlength = cmd_enter_progmode((char*)buf,(char*)answer);
+				cmdlength = cmd_enter_progmode((char*)rxbuf,(char*)answer);
 			break;
 
 			case CMND_RESET:
-				cmdlength = cmd_reset((char*)buf,(char*)answer);
+				cmdlength = cmd_reset((char*)rxbuf,(char*)answer);
 			break;
 			
 			case CMND_READ_PC:
-				cmdlength = cmd_read_pc((char*)buf,(char*)answer);
+				cmdlength = cmd_read_pc((char*)rxbuf,(char*)answer);
 			break;
 	
 			case CMND_SET_BREAK:
-				cmdlength = cmd_set_break((char*)buf,(char*)answer);
+				cmdlength = cmd_set_break((char*)rxbuf,(char*)answer);
 			break;
 
 			case CMND_CLR_BREAK:
-				cmdlength = cmd_clr_break((char*)buf,(char*)answer);
+				cmdlength = cmd_clr_break((char*)rxbuf,(char*)answer);
 			break;
 
 			case CMND_SINGLE_STEP:
-				cmdlength = cmd_single_step((char*)buf,(char*)answer);
+				cmdlength = cmd_single_step((char*)rxbuf,(char*)answer);
 			break;
 			
 			case CMND_SELFTEST:
-				cmdlength = cmd_selftest((char*)buf, (char*)answer);
+				cmdlength = cmd_selftest((char*)rxbuf, (char*)answer);
 			break;
 			
 			case CMND_WRITE_MEMORY:
-				if(((buf[4] << 8) | buf[3]) > 64)
-				{
-					memcpy(rxBuf, buf, 64);
-					longFlag++;
-				}
-				else
-					cmdlength = cmd_write_memory((char*)buf, (char*)answer);
+					cmdlength = cmd_write_memory((char*)rxbuf, (char*)answer);
 				
 			break;
 			
 			case CMND_CHIP_ERASE:
-				cmdlength = cmd_chip_erase((char*)buf, (char*)answer);
+				cmdlength = cmd_chip_erase((char*)rxbuf, (char*)answer);
 			break;
 
 			default:
@@ -268,6 +249,7 @@ void USBReceive(char *buf)
 			CommandAnswer(cmdlength);
 		// recalculate size
 		jtagice.size = jtagice.size -54;
+		
 		if(forcedStop)
 		{
 			forcedStop = 0;
@@ -289,7 +271,7 @@ void USBReceive(char *buf)
 			crc16_append(answer,(unsigned long)14);
 			CommandAnswer(16);
 		}
-	
+	}
 }
 
 
