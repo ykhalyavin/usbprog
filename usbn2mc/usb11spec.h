@@ -117,16 +117,16 @@ struct usb_string_descriptor {
  * standard requests for ep0 
  * ------------------------------------------*/
 
-#define GET_STATUS	  			0x00 
-#define CLR_FEATURE	  			0x01
-#define SET_FEATURE	  			0x03
-#define SET_ADDRESS	  			0x05
+#define GET_STATUS	  	0x00 
+#define CLR_FEATURE	  	0x01
+#define SET_FEATURE	  	0x03
+#define SET_ADDRESS	  	0x05
 #define GET_DESCRIPTOR	  	0x06
 #define SET_DESCRIPTOR	  	0x07
 #define GET_CONFIGURATION 	0x08
 #define SET_CONFIGURATION 	0x09
-#define GET_INTERFACE	  		0x0A
-#define SET_INTERFACE	  		0x0B
+#define GET_INTERFACE	  	0x0A
+#define SET_INTERFACE	  	0x0B
 
 
 /*-------------------------------------------

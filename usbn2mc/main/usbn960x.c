@@ -198,27 +198,30 @@ void _USBNAlternateEvent(void)
     USBNWrite(NFSR,OPR_ST);                   // NFS = NodeOperational
   	USBNDebug("reset\r\n");
   }
-  else if(event & ALT_SD3)
+  if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
+  /*
     USBNWrite(NFSR,SUS_ST);                   // enter suspend state
   	USBNDebug("sd3\r\n");
+  */
   }
-  else if(event & ALT_RESUME)
+  if(event & ALT_RESUME)
   {
-    USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
+    USBNWrite(ALTMSK,ALT_SD3+ALT_RESET+ALT_RESUME);
+  /*
+    USBNWrite(EPC0,0x00);
+    USBNWrite(RXC0,RX_EN);                    // allow reception
+    USBNWrite(TXC0,FLUSH);
     USBNWrite(NFSR,OPR_ST);
   	USBNDebug("resume\r\n");
+	*/
   }
-  else if(event & ALT_EOP)
+  if(event & ALT_EOP)
   {
   	USBNDebug("eop\r\n");
   }
 
-  else
-  {
-  	USBNDebug("else\r\n");
-  }
 }
 
 
@@ -258,6 +261,9 @@ void _USBNReceiveFIFO0(void)
     switch (req->bmRequestType & 0x60)  // decode request type     
     {
       case DO_STANDARD:			      // standard request 
+	USBNDebug("HALLO STANDARD ");	
+	SendHex(req->bRequest);
+	USBNDebug("\n\r");
         switch (req->bRequest)	      // decode request code     
         {
           case CLR_FEATURE:
@@ -285,8 +291,13 @@ void _USBNReceiveFIFO0(void)
           break;
           case GET_STATUS:
 	  #if DEBUG
-            USBNDebug("GET STATUS\n\r");	
 	  #endif
+            USBNDebug("GET STATUS\n\r");	
+	    //_USBNGetStatus(req);
+	    USBNWrite(TXC0,FLUSH);
+	    USBNWrite(TXD0,1);
+	    USBNWrite(TXD0,0);
+	    USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           case SET_ADDRESS:
 	  #if DEBUG
@@ -304,12 +315,13 @@ void _USBNReceiveFIFO0(void)
 	  #if DEBUG
             USBNDebug("SET FEATURE\n\r");	
 	  #endif
+	  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           case SET_INTERFACE:
 	  #if DEBUG
             USBNDebug("SET INTERFACE\n\r");	
 	  #endif
-	    			USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+	  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
           break;
           default:				// unsupported standard req
 	  #if DEBUG
@@ -603,7 +615,15 @@ void _USBNGetDescriptor(DeviceRequest *req)
   _USBNTransmit(&EP0tx);
 }
 
-
+void _USBNGetStatus(DeviceRequest *req)
+{
+/*
+  char tmp[]={0x01,0x00};
+  EP0tx.Size=4;
+  EP0tx.Buf=tmp;
+  _USBNTransmit(&EP0tx);
+  */
+}
 
 void _USBNSetConfiguration(DeviceRequest *req)
 {

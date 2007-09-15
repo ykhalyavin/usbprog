@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 		default:
 			printf("Error: Can't find vaild usbprog adapter on usb bus.\n \
-			Be sure that you are root or have enough permissions to access usb.\n");
+Be sure that you are root or have enough permissions to access usb.\n");
 			return -1;
 	}
 

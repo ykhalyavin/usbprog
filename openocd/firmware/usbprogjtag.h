@@ -30,6 +30,9 @@
 #define BIT4	    PD0
 #define BIT5	    PD1
 
+#define BIT4_1	    PB3
+#define BIT5_1	    PB4
+
 #define BIT6	    PA4
 
 
@@ -39,7 +42,9 @@
 #define BIT3_DDR    DDRB
 
 #define BIT4_DDR    DDRD
+#define BIT4_1_DDR    DDRB
 #define BIT5_DDR    DDRD
+#define BIT5_1_DDR    DDRB
 #define BIT6_DDR    DDRA
 
 
@@ -50,6 +55,8 @@
 
 #define BIT4_READ   PIND
 #define BIT5_READ   PIND
+#define BIT4_1_READ   PINB
+#define BIT5_1_READ   PINB
 #define BIT6_READ   PINA
 
 
@@ -60,6 +67,8 @@
 
 #define BIT4_WRITE   PORTD
 #define BIT5_WRITE   PORTD
+#define BIT4_1_WRITE   PORTB
+#define BIT5_1_WRITE   PORTB
 #define BIT6_WRITE   PORTA
 
 // check if tdo == 1
@@ -70,6 +79,8 @@
 
 #define IS_BIT4_SET()			    (BIT4_READ & BIT(BIT4))
 #define IS_BIT5_SET()			    (BIT5_READ & BIT(BIT5))
+#define IS_BIT4_1_SET()			    (BIT4_1_READ & BIT(BIT4_1))
+#define IS_BIT5_1_SET()			    (BIT5_1_READ & BIT(BIT5_1))
 #define IS_BIT6_SET()			    (BIT6_READ & BIT(BIT6))
 
 
@@ -80,6 +91,8 @@
 
 #define SET_BIT4()			     SETBIT( BIT4_WRITE, BIT4 )
 #define SET_BIT5()			     SETBIT( BIT5_WRITE, BIT5 )
+#define SET_BIT4_1()			     SETBIT( BIT4_1_WRITE, BIT4_1 )
+#define SET_BIT5_1()			     SETBIT( BIT5_1_WRITE, BIT5_1 )
 #define SET_BIT6()			     SETBIT( BIT6_WRITE, BIT6 )
 
 #define CLEAR_BIT0()			     CLEARBIT( BIT0_WRITE, BIT0 )
@@ -89,6 +102,8 @@
 
 #define CLEAR_BIT4()			     CLEARBIT( BIT4_WRITE, BIT4 )
 #define CLEAR_BIT5()			     CLEARBIT( BIT5_WRITE, BIT5 )
+#define CLEAR_BIT4_1()			     CLEARBIT( BIT4_1_WRITE, BIT4_1 )
+#define CLEAR_BIT5_1()			     CLEARBIT( BIT5_1_WRITE, BIT5_1 )
 #define CLEAR_BIT6()			     CLEARBIT( BIT6_WRITE, BIT6 )
 
 

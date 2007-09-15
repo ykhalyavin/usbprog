@@ -122,13 +122,15 @@ int avrupdate_find_usbdevice()
 
             break;
             case 6017:
-              if(dev->descriptor.idProduct==0x0c62){
+              if(dev->descriptor.idProduct==0x0c62 || dev->descriptor.idProduct==0x0c64 || dev->descriptor.idProduct==0x0c63 || dev->descriptor.idProduct==0x0c65){
                 if(dev->descriptor.bcdDevice==AVRUPDATE)
                   return AVRUPDATE;
                 if(dev->descriptor.bcdDevice==0x0200)
                   return USBPROG;
                 if(dev->descriptor.bcdDevice==BLINKDEMO)
                   return BLINKDEMO;
+		else 
+		  return BLINKDEMO;
               }
             break;
           }

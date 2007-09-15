@@ -165,7 +165,9 @@ void set_direction(uint8_t direction)
   if(direction & 0x04) SETBIT(BIT2_DDR,BIT2); else CLEARBIT(BIT2_DDR,BIT2);
   if(direction & 0x08) SETBIT(BIT3_DDR,BIT3); else CLEARBIT(BIT3_DDR,BIT3);
   if(direction & 0x10) SETBIT(BIT4_DDR,BIT4); else CLEARBIT(BIT4_DDR,BIT4);
+  if(direction & 0x10) SETBIT(BIT4_1_DDR,BIT4_1); else CLEARBIT(BIT4_1_DDR,BIT4_1);
   if(direction & 0x20) SETBIT(BIT5_DDR,BIT5); else CLEARBIT(BIT5_DDR,BIT5);
+  if(direction & 0x20) SETBIT(BIT5_1_DDR,BIT5_1); else CLEARBIT(BIT5_1_DDR,BIT5_1);
   if(direction & 0x40) SETBIT(BIT6_DDR,BIT6); else CLEARBIT(BIT6_DDR,BIT6);
 }
 
@@ -208,7 +210,9 @@ uint8_t get_port()
   if(IS_BIT2_SET()) result |= (1<<BIT2);
   if(IS_BIT3_SET()) result |= (1<<BIT3);
   if(IS_BIT4_SET()) result |= (1<<BIT4);
+  if(IS_BIT4_1_SET()) result |= (1<<BIT4);
   if(IS_BIT5_SET()) result |= (1<<BIT5);
+  if(IS_BIT5_1_SET()) result |= (1<<BIT5);
   if(IS_BIT6_SET()) result |= (1<<BIT6);
   return result;
 }
@@ -221,8 +225,10 @@ void set_bit(uint8_t bit, uint8_t value)
     case 1: if(value==1) SETBIT(BIT1_WRITE,BIT1); else CLEARBIT(BIT1_WRITE,BIT1); break;
     case 2: if(value==1) SETBIT(BIT2_WRITE,BIT2); else CLEARBIT(BIT2_WRITE,BIT2); break;
     case 3: if(value==1) SETBIT(BIT3_WRITE,BIT3); else CLEARBIT(BIT3_WRITE,BIT3); break;
-    case 4: if(value==1) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4); break;
-    case 5: if(value==1) SETBIT(BIT5_WRITE,BIT5); else CLEARBIT(BIT5_WRITE,BIT5); break;
+    case 4: if(value==1) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4);
+	    if(value==1) SETBIT(BIT4_1_WRITE,BIT4_1); else CLEARBIT(BIT4_1_WRITE,BIT4_1); break;
+    case 5: if(value==1) SETBIT(BIT5_WRITE,BIT5); else CLEARBIT(BIT5_WRITE,BIT5);
+	    if(value==1) SETBIT(BIT5_1_WRITE,BIT5_1); else CLEARBIT(BIT5_1_WRITE,BIT5_1); break;
     case 6: if(value==1) SETBIT(BIT5_WRITE,BIT6); else CLEARBIT(BIT6_WRITE,BIT6); break;
   }
 }
