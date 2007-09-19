@@ -63,7 +63,7 @@ int main(void)
   
   // setup your usbn device
 
-  USBNDeviceVendorID(0x1782);
+  USBNDeviceVendorID(0x1781);
   USBNDeviceProductID(0x0c64);
   USBNDeviceBCDDevice(0x0201);
 
