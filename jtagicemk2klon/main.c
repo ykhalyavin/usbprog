@@ -65,41 +65,39 @@ SIGNAL(SIG_INTERRUPT0)
 /* id need for live update of firmware */
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
-	switch(req->bRequest)
-	{
-		case STARTAVRUPDATE:
-			avrupdate_start();
-		break;
-	}
+  switch(req->bRequest)
+  {
+    case STARTAVRUPDATE:
+      avrupdate_start();
+    break;
+  }
 }
 
 volatile unsigned char answer[300];
 
 void CommandAnswer(int length)
 {
-	int i;
+  int i;
 	
-	UARTWrite("1\n");	
+  UARTWrite("1\n");	
 	
-	for(char j = 0; j < ((length - 1) >> 6) + 1; j++)
-	{
-		USBNWrite(TXC1,FLUSH);
-		
-		for(i=0;i<length;i++){
-			USBNWrite(TXD1,answer[(j << 6) + i]);
-		}
+  for(char j = 0; j < ((length - 1) >> 6) + 1; j++)
+  {
+    USBNWrite(TXC1,FLUSH);
 
-		//SendHex(0x11);
-		/* control togl bit */
+    for(i=0;i<length;i++)
+      USBNWrite(TXD1,answer[(j << 6) + i]);
 
-		if(jtagice.datatogl==1) {
-			USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-			jtagice.datatogl=0;
-		} else {
-			USBNWrite(TXC1,TX_LAST+TX_EN);
-			jtagice.datatogl=1;
-		}
-	}
+    //SendHex(0x11);
+    /* control togl bit */
+    if(jtagice.datatogl==1) {
+      USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
+      jtagice.datatogl=0;
+    } else {
+      USBNWrite(TXC1,TX_LAST+TX_EN);
+      jtagice.datatogl=1;
+    }
+  }
 }
 
 /* called after data where send to pc */
@@ -109,12 +107,12 @@ void USBSend(void)
 }
 
 unsigned char rxbuf[320];	//Recievebuffer for long packages
+static char recieveCounter = 0;
 
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
-	static char recieveCounter = 0;
-	
+
 	if(!recieveCounter)		//First Packet
 	{
 		memcpy(rxbuf, buf, 64);
@@ -272,6 +270,8 @@ PARSER:
 			CommandAnswer(16);
 		}
 	}
+
+	//jtagice.datatogl=0; //bene
 }
 
 
@@ -285,13 +285,13 @@ int main(void)
 	UARTWrite("Hallo\r\n");
 #endif
   
-	USBNInit();   
-	jtagice.datatogl=1;
+  USBNInit();   
+  jtagice.datatogl=0;
 
-	jtag_init();
+  jtag_init();
 
-	DDRA = (1 << DDA4);
-	PORTA &= ~(1<<PA4); //off
+  DDRA = (1 << DDA4);
+  PORTA &= ~(1<<PA4); //off
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
   USBNDeviceProductID(0x2103); // atmel ids
@@ -336,7 +336,7 @@ int main(void)
 
 	avr_reset(1);
 	avr_reset(0);
-
+#if 0
 	// JTAG Befehl  AVR_OCD waehlen
 	jtag_reset();
 	avr_jtag_instr(AVR_OCD,0);
@@ -378,6 +378,7 @@ int main(void)
 	jtagbuf[2]=0x00;
 	jtagbuf[3]=0x00;
 	jtag_write_and_read(32,jtagbuf,recvbuf);
+#endif
 #ifdef DEBUG_ON
 	SendHex(recvbuf[0]);
 	SendHex(recvbuf[1]);

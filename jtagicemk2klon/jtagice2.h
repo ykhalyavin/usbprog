@@ -146,7 +146,7 @@ volatile struct jtagice_t {
   char lastcmd;
 	int cmdpackage;
  	unsigned long size;
-	int datatogl;
+	volatile int datatogl;
 	char seq1;				// sequence number
 	char seq2;				// sequence number
 	int emulatormode;
