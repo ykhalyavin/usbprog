@@ -1,0 +1,7 @@
+nisedit starten und über "Datei öffnen" die nsi Datei (usbprog.nsi) im nsis
+Verzeichnis auswählen. Danach kannst Du über "NSIS/Kompiliere Script
+Ctrl+F9"
+ein InstallProg erzeugen.
+
+Oder Du kannst von den türkisen Zahnrädern oben in der Toolleiste das linke
+nehmen.
