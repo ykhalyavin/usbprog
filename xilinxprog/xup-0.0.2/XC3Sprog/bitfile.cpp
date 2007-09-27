@@ -71,7 +71,7 @@ void BitFile::processData(FILE *fp)
   length=(t[0]<<24)+(t[1]<<16)+(t[2]<<8)+t[3];
   if(buffer) delete [] buffer;
   buffer=new byte[length];
-  for(int i=length-1; i>=0&&!feof(fp); i--){ // Reverse byte order
+  for(int i=0; i<length&&!feof(fp); i++){
     byte b;
     fread(&b,1,1,fp);
     buffer[i]=bitRevTable[b]; // Reverse the bit order.
@@ -95,7 +95,7 @@ unsigned long BitFile::saveAsBin(const char *fname)
     error(err);
     return 0;
   }
-  for(int i=length-1; i>=0; i--){  // Reverse byte order
+  for(int i=0; i<length; i++){
     byte b=bitRevTable[buffer[i]]; // Reverse bit order
     fwrite(&b,1,1,fptr);
   }

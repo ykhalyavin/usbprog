@@ -33,7 +33,7 @@ int IOBase::shiftTDITDO(const unsigned char *tdi, unsigned char *tdo, int length
 {
   if(length==0)return 0;
   int i=0;
-  int j=(length-1)/8;
+  int j=0;
   unsigned char tdo_byte=0;
   unsigned char tdi_byte=tdi[j];
   while(i<length-1){
@@ -43,7 +43,7 @@ int IOBase::shiftTDITDO(const unsigned char *tdi, unsigned char *tdo, int length
     if((i%8)==0){ // Next byte
       tdo[j]=tdo_byte; // Save the TDO byte
       tdo_byte=0;
-      j--;
+      j++;
       tdi_byte=tdi[j]; // Get the next TDI byte
     }
   };
@@ -56,14 +56,14 @@ int IOBase::shiftTDI(const unsigned char *tdi, int length, bool last)
 {
   if(length==0)return 0;
   int i=0;
-  int j=(length-1)/8;
+  int j=0;
   unsigned char tdi_byte=tdi[j];
   while(i<length-1){
     tx(false, (tdi_byte&1)==1);
     tdi_byte=tdi_byte>>1;
     i++;
     if((i%8)==0){ // Next byte
-      j--;
+      j++;
       tdi_byte=tdi[j]; //Get the next TDI byte
     }
   };
@@ -76,7 +76,7 @@ int IOBase::shiftTDO(unsigned char *tdo, int length, bool last)
 {
   if(length==0)return 0;
   int i=0;
-  int j=(length-1)/8;
+  int j=0;
   unsigned char tdo_byte=0;
   while(i<length-1){
     tdo_byte=tdo_byte+(txrx(false, false)<<(i%8));
@@ -84,7 +84,7 @@ int IOBase::shiftTDO(unsigned char *tdo, int length, bool last)
     if((i%8)==0){ // Next byte
       tdo[j]=tdo_byte; // Save the TDO byte
       tdo_byte=0;
-      j--;
+      j++;
     }
   };
   tdo_byte=tdo_byte+(txrx(last, false)<<(i%8)); // TMS set if last=true

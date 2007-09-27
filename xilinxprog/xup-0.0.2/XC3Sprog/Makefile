@@ -19,33 +19,33 @@
 
 GCC=g++
 LIBS=-lstdc++
-
+USB_LIBS=-lusb
 
 
 all:	debug bitparse detectchain xc3sprog
 
-debug: debug.o iobase.o ioparport.o iodebug.o
-	${GCC} ${LIBS} $^ -o $@
+debug: debug.o iobase.o ioparport.o ioxusb.o iodebug.o
+	${GCC} ${LIBS} ${USB_LIBS} $^ -o $@
 
 bitparse: bitparse.o bitfile.o
 	${GCC} ${LIBS} $^ -o $@
 
-detectchain: detectchain.o jtag.o iobase.o ioparport.o iodebug.o devicedb.o
-	${GCC} ${LIBS} $^ -o $@
+detectchain: detectchain.o jtag.o iobase.o ioparport.o ioxusb.o iodebug.o devicedb.o
+	${GCC} ${LIBS} ${USB_LIBS} $^ -o $@
 
-xc3sprog: xc3sprog.o jtag.o iobase.o ioparport.o iodebug.o bitfile.o devicedb.o
-	${GCC} ${LIBS} $^ -o $@
+xc3sprog: xc3sprog.o jtag.o iobase.o ioparport.o ioxusb.o iodebug.o bitfile.o devicedb.o progalgxcf.o progalgxc3s.o
+	${GCC} ${LIBS} ${USB_LIBS} $^ -o $@
 
-debug.o: debug.cpp iobase.h ioparport.h iodebug.h
+debug.o: debug.cpp iobase.h ioparport.h ioxusb.h iodebug.h
 	${GCC} -c $< -o $@
 
 bitparse.o: bitparse.cpp bitfile.h
 	${GCC} -c $< -o $@
 
-detectchain.o: detectchain.cpp iobase.h ioparport.h jtag.h iodebug.h devicedb.h
+detectchain.o: detectchain.cpp iobase.h ioparport.h ioxusb.h jtag.h iodebug.h devicedb.h
 	${GCC} -c $< -o $@
 
-xc3sprog.o: xc3sprog.cpp iobase.h ioparport.h jtag.h iodebug.h bitfile.h devicedb.h
+xc3sprog.o: xc3sprog.cpp iobase.h ioparport.h ioxusb.h jtag.h iodebug.h bitfile.h devicedb.h progalgxcf.h progalgxc3s.h
 	${GCC} -c $< -o $@
 
 iobase.o: iobase.cpp iobase.h
@@ -55,6 +55,9 @@ iodebug.o: iodebug.cpp iodebug.h iobase.h
 	${GCC} -c $< -o $@
 
 ioparport.o: ioparport.cpp ioparport.h iobase.h
+	${GCC} -c $< -o $@ 
+	
+ioxusb.o: ioxusb.cpp ioxusb.h iobase.h
 	${GCC} -c $< -o $@ 
 
 bitfile.o: bitfile.cpp bitfile.h
@@ -66,6 +69,13 @@ jtag.o: jtag.cpp jtag.h
 devicedb.o: devicedb.cpp devicedb.h
 	${GCC} -c $< -o $@
 
+progalgxcf.o: progalgxcf.cpp progalgxcf.h iobase.h jtag.h bitfile.h
+	${GCC} -c $< -o $@
+
+progalgxc3s.o: progalgxc3s.cpp progalgxc3s.h iobase.h jtag.h bitfile.h
+	${GCC} -c $< -o $@
+
 clean:
-	rm -f debug.o iobase.o ioparport.o iodebug.o bitfile.o jtag.o xc3sprog.o devicedb.o bitparse.o detectchain.o
+	rm -f debug.o iobase.o ioparport.o ioxusb.o iodebug.o bitfile.o jtag.o xc3sprog.o 
+	rm -f devicedb.o bitparse.o detectchain.o progalgxcf.o progalgxc3s.o
 	rm -f debug bitparse detectchain xc3sprog

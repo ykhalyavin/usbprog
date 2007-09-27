@@ -20,18 +20,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 
 #include "ioparport.h"
+#include "ioxusb.h"
 #include "bitfile.h"
 #include "jtag.h"
 #include "devicedb.h"
+#include "progalgxcf.h"
+#include "progalgxc3s.h"
 
 #define PPDEV "/dev/parport0"
 #define DEVICEDB "devlist.txt"
 
 void process(IOBase &io, BitFile &file, int chainpos);
+void programXC3S(Jtag &jtag, IOBase &io, BitFile &file);
+void programXCF(Jtag &jtag, IOBase &io, BitFile &file);
 
 int main(int argc, char **args)
 {
-  char release[]={"$Name: Release-0-3 $"};
+  // Produce release info from CVS tags
+  char release[]={"$Name: Release-0-5-xup-0-0-2 $"};
   char *loc0=strchr(release,'-');
   if(loc0>0){
     loc0++;
@@ -42,17 +48,21 @@ int main(int argc, char **args)
     }while(loc);
     release[strlen(release)-1]='\0'; // Strip off $
   }
-
   printf("Release %s\n",loc0);
 
   
   
-  IOParport io(PPDEV);
+  //IOParport io(PPDEV);
+  IOXUSB io("");
   int chainpos=0;
   if(io.checkError()){
+#if 0
     fprintf(stderr,"Could not access parallel device '%s'.\n",PPDEV);
     fprintf(stderr,"You may need to set permissions of '%s' ",PPDEV);
     fprintf(stderr,"by issuing the following command as root:\n\n# chmod 666 %s\n\n",PPDEV);
+#else
+    fprintf(stderr,"Could not access JTAG cable\n");
+#endif
   }
   if(argc<=1){
     fprintf(stderr,"\nUsage: %s infile.bit [POS]\n\n",args[0]);
@@ -68,62 +78,49 @@ int main(int argc, char **args)
 
 void process(IOBase &io, BitFile &file, int chainpos)
 {
-  const byte IDCODE=0x09;
-  const byte XCF_IDCODE=0xfe;
-
   Jtag jtag(&io);
   int num=jtag.getChain();
+
+  // Synchronise database with chain of devices.
   DeviceDB db(DEVICEDB);
   for(int i=0; i<num; i++){
     int length=db.loadDevice(jtag.getDeviceID(i));
     if(length>0)jtag.setDeviceIRLength(i,length);
     else{
-      byte *id=jtag.getDeviceID(i);
-      fprintf(stderr,"Cannot find device having IDCODE=%02x%02x%02x%02x\n",id[0],id[1],id[2],id[3]);
+      unsigned id=jtag.getDeviceID(i);
+      fprintf(stderr,"Cannot find device having IDCODE=%08x\n",id);
       return;
     }
   }
   
 
-  byte tdo[4];
-
   if(jtag.selectDevice(chainpos)<0){
-    fprintf(stderr,"Invalid chain position %d, position must be less than <%d.\n",chainpos,num);
+    fprintf(stderr,"Invalid chain position %d, position must be less than %d (but not less than 0).\n",chainpos,num);
     return;
   }
 
-  jtag.shiftIR(&IDCODE);
-  jtag.shiftDR(0,tdo,32);
-  printf("IDCODE: 0x%02x%02x%02x%02x\tDesc: %s\n",tdo[0],tdo[1],tdo[2],tdo[3],db.getDeviceDescription(chainpos)); 
+  // Find the programming algorithm required for device
+  const char *dd=db.getDeviceDescription(chainpos);
+  if(strncmp("XC3S",dd,4)==0) programXC3S(jtag,io,file);
+  else if(strncmp("XCF",dd,3)==0) programXCF(jtag,io,file);
+  else{
+    fprintf(stderr,"Sorry, cannot program '%s', a later release may be able to.\n",dd);
+    return;
+  }
+}
 
-  const byte JPROGRAM=0x0b;
-  const byte CFG_IN=0x05;
-  const byte JSHUTDOWN=0x0d;
-  const byte JSTART=0x0c;
-  const byte BYPASS=0x3f;
+void programXC3S(Jtag &jtag, IOBase &io, BitFile &file)
+{
 
-  jtag.shiftIR(&JPROGRAM);
-  jtag.shiftIR(&CFG_IN);
-  byte init[]={0x00, 0x00, 0x00, 0x00, // Flush
-	       0x00, 0x00, 0x00, 0x00, // Flush
-	       0xe0, 0x00, 0x00, 0x00, // Clear CRC
-	       0x80, 0x01, 0x00, 0x0c, // CMD
-	       0x66, 0xAA, 0x99, 0x55, // Sync
-	       0xff, 0xff, 0xff, 0xff  // Sync
-  };
-  jtag.shiftDR(init,0,192,32); // Align to 32 bits.
-  jtag.shiftIR(&JSHUTDOWN);
-  io.cycleTCK(12);
-  jtag.shiftIR(&CFG_IN);
-  byte hdr[]={0x00, 0x00, 0x00, 0x00, // Flush
-	      0x10, 0x00, 0x00, 0x00, // Assert GHIGH
-	      0x80, 0x01, 0x00, 0x0c  // CMD
-  };
-  jtag.shiftDR(hdr,0,96,32,false); // Align to 32 bits and do not goto EXIT1-DR
-  jtag.shiftDR(file.getData(),0,file.getLength()); 
-  io.tapTestLogicReset();
-  io.setTapState(IOBase::RUN_TEST_IDLE);
-  jtag.shiftIR(&JSTART);
-  io.cycleTCK(12);
-  jtag.shiftIR(&BYPASS); // Don't know why, but without this the FPGA will not reconfigure from Flash when PROG is asserted.
+  ProgAlgXC3S alg(jtag,io);
+  alg.program(file);
+  return;
+}
+
+void programXCF(Jtag &jtag, IOBase &io, BitFile &file)
+{
+  ProgAlgXCF alg(jtag,io);
+  alg.erase();
+  alg.program(file);
+  return;
 }

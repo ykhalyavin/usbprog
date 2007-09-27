@@ -29,7 +29,7 @@ DeviceDB::DeviceDB(const char *fname)
   else fclose(fp);
 }
 
-int DeviceDB::loadDevice(byte *id)
+int DeviceDB::loadDevice(const unsigned long id)
 {
   FILE *fp=fopen(filename.c_str(),"rt");
   if(fp==0){
@@ -39,15 +39,15 @@ int DeviceDB::loadDevice(byte *id)
   
   int irlen;
   while(!feof(fp)){
-    byte idr[4];
+    unsigned long idr;
     char text[256];
     char buffer[256];
     fgets(buffer,256,fp);  // Get next line from file
-    sscanf(buffer,"%02x%02x%02x%02x %d %s",&idr[0],&idr[1],&idr[2],&idr[3],&irlen,text);
-    if(memcmp(idr,id,4)==0){
+    sscanf(buffer,"%08x %d %s",&idr,&irlen,text);
+    if(id==idr){
       device_t dev;
       dev.text=text;
-      for(int i=0; i<4; i++)dev.idcode[i]=idr[i];
+      dev.idcode=idr;
       dev.irlen=irlen;
       devices.push_back(dev);
       fclose(fp);

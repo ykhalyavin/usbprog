@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 #include "iobase.h"
 #include "ioparport.h"
+#include "ioxusb.h"
 #include "iodebug.h"
 
 
@@ -54,7 +55,8 @@ void testDebug()
 void testPP()
 {
   IOBase *io;
-  io=new IOParport("/dev/parport0");
+//  io=new IOParport("/dev/parport0");
+  io=new IOXUSB("");
   unsigned char tdi[]={0,0,0,0,0,0,0,0};
   unsigned char tdo[100];
   io->setTapState(IOBase::SHIFT_DR);
@@ -75,7 +77,7 @@ void printBit1(bool val)
 void getID(IOBase *io)
 {
   unsigned char tdo[100];
-  unsigned char tdi[]={0x09,0xff};
+  unsigned char tdi[]={0xfe,0x09};
   io->setTapState(IOBase::SHIFT_IR);
   io->shiftTDI(tdi,14);
   io->setTapState(IOBase::RUN_TEST_IDLE);
@@ -88,19 +90,19 @@ void getID(IOBase *io)
 void getSwitches(IOBase *io)
 {
   unsigned char tdo[100];
-  unsigned char tdi[]={0x01,0xff};
+  unsigned char tdi[]={0xff,0x01};
   io->setTapState(IOBase::SHIFT_IR);
   io->shiftTDI(tdi,14);
   io->setTapState(IOBase::SHIFT_DR);
   io->shiftTDO(tdo,600);
-  int swi[]={25,45,56,59,73,86,93,90};
-  for(int i=7; i>=0; i--){
+  int swi[]={506,509,518,521,539,536,557,569};
+  for(int i=0; i<8; i++){
     int bit=swi[i];
     bool val=(tdo[bit/8]>>(bit%8))&1;
     printBit1(val);
   }
   printf("\n");
-  for(int i=7; i>=0; i--){
+  for(int i=0; i<8; i++){
     int bit=swi[i];
     bool val=(tdo[bit/8]>>(bit%8))&1;
     printBit1(!val);

@@ -1,4 +1,4 @@
-/* JTAG chain device database
+/* Spartan3 JTAG programming algorithms
 
 Copyright (C) 2004 Andrew Rogers
 
@@ -18,30 +18,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 
 
-#ifndef DEVICEDB_H
-#define DEVICEDB_H
+#ifndef PROGALGXC3S_H
+#define PROGALGXC3S_H
 
-#include <vector>
-#include <string>
+#include "bitfile.h"
+#include "jtag.h"
+#include "iobase.h"
 
-typedef unsigned char byte;
-
-class DeviceDB
+class ProgAlgXC3S
 {
  private:
-  struct device_t
-  {
-    byte idcode[4]; // Store IDCODE
-    int irlen; // instruction register length.
-    std::string text;
-  };
-  std::vector<device_t> devices;
-  std::string filename;
+  static const byte JPROGRAM;
+  static const byte CFG_IN;
+  static const byte JSHUTDOWN;
+  static const byte JSTART;
+  static const byte BYPASS;
+  Jtag *jtag;
+  IOBase *io;
  public:
-  DeviceDB(const char *fname);
-  int loadDevice(byte *id);
-  int getIRLength(int i);
-  const char *getDeviceDescription(int i);
+  ProgAlgXC3S(Jtag &j, IOBase &i);
+  int program(BitFile &file);
 };
+
 
 #endif

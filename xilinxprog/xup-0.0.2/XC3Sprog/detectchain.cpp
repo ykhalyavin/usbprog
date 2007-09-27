@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 
 #include "ioparport.h"
+#include "ioxusb.h"
 #include "iodebug.h"
 #include "jtag.h"
 #include "devicedb.h"
@@ -28,7 +29,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 int main(int argc, char **args)
 {
-  IOParport io(PPDEV);
+//  IOParport io(PPDEV);
+  IOXUSB io("");
   
   if(io.checkError()){
     fprintf(stderr,"Could not access parallel device '%s'.\n",PPDEV);
@@ -42,16 +44,16 @@ int main(int argc, char **args)
   DeviceDB db(DEVICEDB);
   int dblast=0;
   for(int i=0; i<num; i++){
-    byte *id=jtag.getDeviceID(i);
+    unsigned long id=jtag.getDeviceID(i);
     int length=db.loadDevice(id);
+    printf("IDCODE: 0x%08x\t",id);
     if(length>0){
       jtag.setDeviceIRLength(i,length);
-      fprintf(stderr,"IDCODE: 0x%02x%02x%02x%02x\tDesc: %s\tIR length: %d\n",
-	      id[0],id[1],id[2],id[3],db.getDeviceDescription(dblast),length);
+      printf("Desc: %s\tIR length: %d\n",db.getDeviceDescription(dblast),length);
       dblast++;
     } 
     else{
-      fprintf(stderr,"Cannot find device having IDCODE=%02x%02x%02x%02x in '%s'.\n",id[0],id[1],id[2],id[3],DEVICEDB);
+      printf("not found in '%s'.\n",DEVICEDB);
     }
   }
   return 0;

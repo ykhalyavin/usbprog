@@ -1,4 +1,4 @@
-Spartan3 JTAG programmer and other utilities
+/* JTAG chain device database
 
 Copyright (C) 2004 Andrew Rogers
 
@@ -14,27 +14,34 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
 
 
 
-Please also read the file "COPYING" which is a copy of the GNU General Public License
+#ifndef DEVICEDB_H
+#define DEVICEDB_H
 
+#include <vector>
+#include <string>
 
+typedef unsigned char byte;
 
+class DeviceDB
+{
+ private:
+  struct device_t
+  {
+    unsigned long idcode; // Store IDCODE
+    int irlen; // instruction register length.
+    std::string text;
+  };
+  std::vector<device_t> devices;
+  std::string filename;
+ public:
+  DeviceDB(const char *fname);
+  int loadDevice(const unsigned long id);
+  int getIRLength(int i);
+  const char *getDeviceDescription(int i);
+};
 
-This program should run without installation as root.
-
-To compile:
-
-$ make
-
-
-A simple example is included that copies the switches to the LEDs on the Xilinx Spartan3 Starter Kit.
-
-$ ./xc3sprog echo_out.bit
-
-
-There is also a utility program included that parses and prints the header of a Xilinx .bit file.
-
-$ ./bitparse echo_out.bit
+#endif

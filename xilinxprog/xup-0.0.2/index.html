@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>inisyn :: xilinx usb jtag programming</title>
+</head>
+<body>
+<h2>Xilinx USB JTAG Programming</h2>
+<h3>Introduction</h3>
+<p>
+This page describes xup, a 
+<a href="http://www.gnu.org/">GNU GPL</a> utility for
+programming Xilinx FPGA/CPLD/PROM devices via 
+Xilinx's USB JTAG programmer.
+
+There are
+<a href="http://whats.all.this.brouhaha.com/?p=149">several</a> 
+<a href="http://groups.google.com/group/comp.arch.fpga/browse_thread/thread/c945923560a4f980/3b962579bdaa3d5d">reasons</a> to use xup instead of Xilinx's proprietary software,
+especially when running Linux. 
+</p>
+<h3>News</h3>
+<p>
+2006-08-19: xup-0.0.2 - <b>CPLD updated to fix possible electrical contention with iMPACT</b>.
+Upgrade highly recommended.
+<br/>
+2006-05-28: xup-0.0.1 - initial release.
+</p>
+<h3>Hardware</h3>
+<p>
+The
+<a href="http://www.xilinx.com/xlnx/xebiz/designResources/ip_product_details.jsp?key=HW-SPAR3E-SK-US">Spartan3E Starter Kit</a> is xup's only supported hardware platform. Its integrated programming hardware consists of a
+<a href="http://www.cypress.com/portal/server.pt?space=CommunityPage&amp;control=SetCommunity&amp;CommunityID=209&amp;PageID=259&amp;fid=14&amp;rpn=CY7C68013A">cy7c68013a-100axc</a> EZ-USB and a XC2C256-VQ100-6C CPLD.
+</p>
+<p>
+Mysteriously, the starter kit's
+<a href="http://www.xilinx.com/products/boards/files/s3e_starter_schematic.pdf">schematics</a>
+exclude this USB programming hardware. The programmer's electrical connectivity was
+reverse engineered to implement xup.
+</p>
+<p>
+The standalone
+<a href="http://www.xilinx.com/xlnx/xebiz/designResources/ip_product_details.jsp?sGlobalNavPick=PRODUCTS&amp;sSecondaryNavPick=Design+Tools&amp;key=HW-USB">Xilinx Platform Cable USB</a> is unsupported and untested. Since its hardware is presumably very similar, it may be usable as-is or with some minor hacking.
+</p>
+<h3>CY7C68013A EZ-USB</h3>
+<p>
+The EZ-USB contains an 8051 microcontroller. The firmware used with iMPACT is proprietary,
+and is therefore not used with xup.
+A replacement firmware has been written in C, allowing the USB host to bit-bang the
+XC2C256's JTAG port, as well as the system JTAG port connnected to the Starter Kit's
+XC3S500E FPGA, XCF04S PROM, and XC2C64 CPLD.
+</p>
+<p>
+xup does not modify the I2C EEPROM containing the programmer's USB ID
+(and possibly iMPACT firmware). The xup utilities reload the EZ-USB firmware
+over USB at startup.
+</p>
+<h3>XC2C256</h3>
+<p>
+The CPLD image used with iMPACT is proprietary, and is therefore not used with xup.
+A simple replacement CPLD image has been created to connect several EZ-USB
+I/Os to the system's JTAG signals. Prior to accessing the system's JTAG,
+this CPLD image must first be downloaded using XSVF JTAG playback.
+</p>
+<h3>XSVF Playback</h3>
+<p>
+The <a href="ftp://ftp.xilinx.com/pub/swhelp/cpld/eisp_pc.zip">XSVF Playback software</a>
+from <a href="http://www.xilinx.com/bvdocs/appnotes/xapp058.pdf">XAPP058</a> has been modified 
+to work with xup's EZ-USB firmware. This XSVF player is used to download xup's
+XC2C256 CPLD image, and can also be used to program devices on the system JTAG chain.
+</p>
+<h3>XC3SProg</h3>
+<p>
+Andrew Roger's <a href="http://www.rogerstech.force9.co.uk/xc3sprog/">xc3sprog</a>
+has been modified to work with xup's firmware + CPLD. This modified version can program
+the Starter Kit's XC3S500E FPGA directly from a .bit file.
+</p>
+<h3>Security</h3>
+<p>
+<a href="http://libusb.sourceforge.net/">libusb</a> is used for all USB device access. As a result,
+no kernel modules are required on the development workstation. Furthermore, root access is not required.
+Under Linux, the user must merely have access to the appropriate /proc/bus/usb/BUS/DEV file
+(typically granted by chown'ing it). The BUS and DEV numbers in the filename can be
+extracted from lsusb's output.
+</p>
+<h3>FAQ</h3>
+<p>
+Q: Will xup lock out the Xilinx tools forever, or can iMPACT successfully reconfigure the
+JTAG hardware to replace xup?
+<br/>
+A: iMPACT will simply redownload its EZ-USB + CPLD images over xup's, as if it were upgrading
+older iMPACT firmware.  To switch back to xup, redownload the xup CPLD image via XSVF.
+The use of different CPLD images is unavoidable unless Xilinx documents the iMPACT CPLD
+(or it is reversed).
+</p>
+<p>
+Q: Will xup's xc3sprog detect that the proper CPLD was programmed?
+<br/>
+A: Not yet. CPLD detection may be added in a future release. Do NOT run xup's xc3sprog unless
+the xup CPLD download succeeded. Also, do NOT  mix CPLD and firmware versions from different
+versions of xup.
+</p>
+<p>
+Q: Is USB1 supported?
+<br/>
+A: Currently no. USB1 may be tested in the future but will be extremely slow. Install a USB2 card.
+</p>
+<p>
+Q: AMD64/PPC32/PPC64? BSD?
+<br/>
+A: Currently untested but should work w/ minor hacking.
+</p>
+<h3>Future Work</h3>
+<p>
+Downloading the XC3S500E via xup takes about 8 seconds, making xup about 4X slower than iMPACT
+(once started).  The load time is a small price to pay for dodging a
+<a href="http://www.jungo.com/windriver.html">proprietary nightmare</a>. And there are
+many ways to improve xup's speed. For now, though, they are left as an exercise for the
+ambitious reader.
+</p>
+<p>
+The programmer's EZ-USB and XC2C256 are barely utilized with xup, and could implement
+a lot of added functionality. One option is to connect the Starter Kit FPGA to USB2
+by wiring a few FPGA user I/Os to the EZ-USB and/or CPLD.
+</p>
+<h3>Download</h3>
+<p>
+<a href="xup-0.0.2.tar.gz">xup-0.0.2.tar.gz</a>
+</p>
+<h3>HOWTO</h3>
+<p>
+With Debian Sid:
+</p>
+<pre>
+apt-get install libusb-dev
+apt-get install sdcc
+tar zxvf xup-0.0.2.tar.gz
+cd xup-0.0.2
+make
+# download xup's pre-built programmer CPLD image
+# this will take 5-30 minutes
+# you only need to do this when installing/upgrading xup,
+# or switching between iMPACT and xup
+./p -v 4 prog.xsvf
+# now build xup's XC3SProg
+cd XC3SProg
+make
+./xc3prog /some/file.bit
+</pre>
+<h3>Links</h3>
+<p>
+<a href="http://www.rogerstech.force9.co.uk/xc3sprog/">xc3sprog</a>
+<br />
+<a href="http://volodya-project.sourceforge.net/fx2_programmer.php">fx2_programmer</a>
+<br />
+<a href="http://sdcc.sourceforge.net/">Small Device C Compiler</a>
+</p>
+<h3>Contact</h3>
+<p>
+<a href="mailto:bryanr inisyn org">bryanr at inisyn dot org</a>
+</p>
+<h3>Legal</h3>
+<pre>
+copyright (c) 2006 <a href="http://inisyn.org/">inisyn research</a>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+Keep a fire extinguisher near by.
+</pre>
+</body>
+</html>
+
