@@ -133,6 +133,8 @@ int avrupdate_find_usbdevice()
 		  return BLINKDEMO;
               }
             break;
+	      default:
+		return BLINKDEMO;
           }
         }
       }  

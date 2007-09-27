@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 		case BLINKDEMO:
 			printf("usbprog found with: blinkdemo\n");
 			printf("start update mode\n");
-			avrupdate_start_with_vendor_request(0x1781,0x0c62);
+			avrupdate_start_with_vendor_request(0x1781,0x0c64);
 			printf("please wait some seconds...\n");
 			#if _WIN32
 			Sleep(7000);
