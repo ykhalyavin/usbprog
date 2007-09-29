@@ -64,7 +64,7 @@ void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag)
 }
 
 
-unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen)
+unsigned char _usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen)
 {
   int res = usb_bulk_write(usbprog_jtag->usb_handle,3,msg,msglen,100);
     if(msg[0]==2)
@@ -257,3 +257,27 @@ int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit)
     return 0;
 }
 
+
+
+
+void usbprog_jtag_tap_goto_reset(struct usbprog_jtag *usbprog_jtag)
+{
+
+}
+
+void usbprog_jtag_tap_goto_capture_dr(struct usbprog_jtag *usbprog_jtag)
+{
+
+
+}
+
+void usbprog_jtag_tap_goto_capture_ir(struct usbprog_jtag *usbprog_jtag)
+{
+
+}
+
+void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * buffer, int size)
+{
+
+
+}

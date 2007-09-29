@@ -38,19 +38,34 @@ struct usbprog_jtag
 
 struct usbprog_jtag* usbprog_jtag_open();
 void usbprog_jtag_close(struct usbprog_jtag *usbprog_jtag);
+
+
+/* activate all jtag signals */
 void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag);
-unsigned char usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen);
 
 
+/* low level functions */
 void usbprog_jtag_read_tdo(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_tdi(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffer, int size);
 void usbprog_jtag_write_tms(struct usbprog_jtag *usbprog_jtag, char tms_scan);
 
-
+/* single io function! An emulated JTAG connection is very slow!!! */
 void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char direction);
 void usbprog_jtag_write_slice(struct usbprog_jtag *usbprog_jtag,unsigned char value);
 unsigned char usbprog_jtag_get_port(struct usbprog_jtag *usbprog_jtag);
 void usbprog_jtag_set_bit(struct usbprog_jtag *usbprog_jtag,int bit, int value);
 int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit);
 
+
+/* basic jtag tap functions */
+void usbprog_jtag_tap_goto_reset(struct usbprog_jtag *usbprog_jtag);
+void usbprog_jtag_tap_goto_capture_dr(struct usbprog_jtag *usbprog_jtag);
+void usbprog_jtag_tap_goto_capture_ir(struct usbprog_jtag *usbprog_jtag);
+
+void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * buffer, int size);
+
+
+/* internal function for lib */
+
+unsigned char _usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen);
