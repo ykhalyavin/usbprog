@@ -35,7 +35,7 @@ struct simpleport
 
 struct simpleport* simpleport_open();
 void simpleport_close(struct simpleport *simpleport);
-unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen);
+unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen, int answerlen);
 
 
 void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);

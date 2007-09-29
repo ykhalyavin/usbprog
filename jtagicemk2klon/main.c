@@ -113,40 +113,37 @@ static char recieveCounter = 0;
 void USBReceive(char *buf)
 {
 
-	if(!recieveCounter)		//First Packet
-	{
-		memcpy(rxbuf, buf, 64);
-		recieveCounter++;
+  if(!recieveCounter)		//First Packet
+  {
+    memcpy(rxbuf, buf, 64);
+    recieveCounter++;
 		
-		if(((rxbuf[4] << 8) | rxbuf[3]) <= 64)
-			goto PARSER;
-		return;
-	}
+    if(((rxbuf[4] << 8) | rxbuf[3]) <= 64)
+      goto PARSER;
+  }
 	
 	
-	if(((rxbuf[4] << 8) | rxbuf[3]) > (recieveCounter << 6))
-	{
-		memcpy(&rxbuf[recieveCounter << 6], buf, 64);
-		recieveCounter++;		
-		
-	}
-	else
-	{
+  if(((rxbuf[4] << 8) | rxbuf[3]) > (recieveCounter << 6))
+  {
+     memcpy(&rxbuf[recieveCounter << 6], buf, 64);
+     recieveCounter++;		
+  }
+  else
+  {
 PARSER:
-		recieveCounter = 0;
+      recieveCounter = 0;
 			
+      // check if package is a cmdpackage
+      if(buf[0]==MESSAGE_START)
+	jtagice.cmdpackage=1;
+      else
+	jtagice.cmdpackage=0;
 		
-
-		// check if package is a cmdpackage
-		if(buf[0]==MESSAGE_START)
-			jtagice.cmdpackage=1;
-		else
-			jtagice.cmdpackage=0;
-		
-		if(jtagice.cmdpackage==1) {
-			jtagice.seq1=buf[1];		// save sequence number
- 			jtagice.seq2=buf[2];		// save sequence number
-		}
+      if(jtagice.cmdpackage==1) {
+	jtagice.seq1=buf[1];		// save sequence number
+	jtagice.seq2=buf[2];		// save sequence number
+      }
+    
 /*
 		// check if package is a longpackage
 		jtagice.size = buf[3]+(255*buf[4])+(512*buf[5])+(1024*buf[6]);
@@ -243,8 +240,10 @@ PARSER:
 				answer[0]=RSP_FAILED;
 				cmdlength=0;
 		}
-		if(cmdlength!=0)
+		if(cmdlength!=0){
+			//jtagice.datatogl=1; //bene
 			CommandAnswer(cmdlength);
+		}
 		// recalculate size
 		jtagice.size = jtagice.size -54;
 		
@@ -271,7 +270,6 @@ PARSER:
 		}
 	}
 
-	//jtagice.datatogl=0; //bene
 }
 
 

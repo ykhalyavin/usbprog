@@ -213,7 +213,7 @@ usb_dev_handle *locate_at89prog(void)
   {
     for (dev = bus->devices; dev; dev = dev->next)	
     {
-      if (dev->descriptor.idVendor == 0x1782 && dev->descriptor.idProduct==0x0c64) 
+      if (dev->descriptor.idVendor == 0x1781 && dev->descriptor.idProduct==0x0c64) 
       {	
 	located++;
 	device_handle = usb_open(dev);

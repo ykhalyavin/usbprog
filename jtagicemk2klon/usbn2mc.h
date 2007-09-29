@@ -18,7 +18,6 @@
 #ifndef _MCIFACE_H_
 #define _MCIFACE_H_
 
-
 #include "../usbn2mc/main/usbnapi.h"
 
 unsigned char USBNRead(unsigned char Adr);

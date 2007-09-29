@@ -535,8 +535,28 @@ int cmd_read_memory(char * msg, char * answer)
 		
 		case SIGN_JTAG:
 			rd_signature_avr(&answer[9]);
-			msglen = 4;
-			answer[3] = 4;					// length of body with ok
+			//msglen = 4;
+			//answer[3] = 4;					// length of body with ok
+
+			switch(msg[14]){
+			  case 0:
+			    msglen = 2;
+			    answer[3] = 2;
+			  break;
+			  case 1:
+			    msglen = 2;
+			    answer[3] = 2;
+			    answer[9] = answer[10];
+			  break;
+			  case 2:
+			    msglen = 2;
+			    answer[3] = 2;
+			    answer[9] = answer[11];
+			  break;
+			  default:
+			    ;
+			} 
+
 		break;
 		
 		case FLASH_PAGE:

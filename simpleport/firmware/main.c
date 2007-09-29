@@ -50,9 +50,9 @@ SIGNAL(SIG_UART_RECV)
 
 
 char answer[64];
-struct usbprog_t 
+volatile struct usbprog_t 
 {
-  int datatogl;
+  volatile int datatogl;
 }usbprog;
 
 
@@ -81,6 +81,10 @@ void CommandAnswer(int length)
   for(i = 0; i < length; i++)
     USBNWrite(TXD1, answer[i]);
 
+
+  USBNWrite(TXC1, TX_LAST+TX_EN);
+
+  return;
   /* control togl bit */
   if(usbprog.datatogl == 1) {
     USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
@@ -95,6 +99,7 @@ void CommandAnswer(int length)
 /* central command parser */
 void Commands(char *buf)
 {
+  usbprog.datatogl =0 ;
   switch(buf[0]) {
     case PORT_DIRECTION:
       set_direction((uint8_t)buf[1]);
@@ -109,6 +114,7 @@ void Commands(char *buf)
     case PORT_GET:
       answer[0] = PORT_GET; 
       answer[1] = get_port();
+      CommandAnswer(3);
     break;
     case PORT_SETPIN:
       set_pin((uint8_t)buf[1],(uint8_t)buf[2]);
@@ -124,6 +130,7 @@ void Commands(char *buf)
     case PORT_GETPIN:
       answer[0] = PORT_GETPIN; 
       answer[1] = (char)get_pin((uint8_t)buf[1]);
+      CommandAnswer(2);
     break;
     
     default:
@@ -132,7 +139,6 @@ void Commands(char *buf)
       answer[1] = 0x00; 
   }
 
-  CommandAnswer(2);
 
 }
 

@@ -64,11 +64,11 @@ void simpleport_close(struct simpleport *simpleport)
 }
 
 
-unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen)
+unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen, int answerlen)
 {
   int res = usb_bulk_write(simpleport->usb_handle,3,msg,msglen,100);
-  if(res == msglen) {
-    res =  usb_bulk_read(simpleport->usb_handle,2, msg, 2, 100);
+  if(answerlen>0 && res > 0) {
+    res =  usb_bulk_read(simpleport->usb_handle,2, msg, answerlen, 100);
     if (res > 0)
       return (unsigned char)msg[1];
     else 
@@ -83,7 +83,7 @@ void simpleport_set_direction(struct simpleport *simpleport, unsigned char direc
   char tmp[2];
   tmp[0] = PORT_DIRECTION;
   tmp[1] = (char)direction;
-  simpleport_message(simpleport,tmp,2);
+  simpleport_message(simpleport,tmp,2,0);
 }
 
 void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsigned char mask)
@@ -92,7 +92,7 @@ void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsi
   tmp[0] = PORT_SET;
   tmp[1] = (char)value;
   tmp[2] = (char)mask;
-  simpleport_message(simpleport,tmp,3);
+  simpleport_message(simpleport,tmp,3,0);
 }
 
 unsigned char simpleport_get_port(struct simpleport *simpleport)
@@ -100,7 +100,7 @@ unsigned char simpleport_get_port(struct simpleport *simpleport)
   char tmp[2];
   tmp[0] = PORT_GET;
   tmp[1] = 0x00;
-  return simpleport_message(simpleport,tmp,2);
+  return simpleport_message(simpleport,tmp,2,2);
 }
 
 
@@ -113,7 +113,7 @@ void simpleport_set_pin(struct simpleport *simpleport,int pin, int value)
     tmp[2] = 0x01;
   else
     tmp[2] = 0x00;
-  simpleport_message(simpleport,tmp,3);
+  simpleport_message(simpleport,tmp,3,0);
 }
 
 void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int value)
@@ -125,7 +125,7 @@ void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int value)
     tmp[2] = 0x01;
   else
     tmp[2] = 0x00;
-  simpleport_message(simpleport,tmp,3);
+  simpleport_message(simpleport,tmp,3,0);
 }
 
 int simpleport_get_pin(struct simpleport *simpleport, int pin)
@@ -134,7 +134,7 @@ int simpleport_get_pin(struct simpleport *simpleport, int pin)
   tmp[0] = PORT_GETPIN;
   tmp[1] = (char)pin;
 
-  if(simpleport_message(simpleport,tmp,2)>0)
+  if(simpleport_message(simpleport,tmp,2,2)>0)
     return 1;
   else
     return 0;

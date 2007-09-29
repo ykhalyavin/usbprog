@@ -32,6 +32,25 @@ int main()
     sleep(1);
   }
 
+  int j;
+  for(j=0;j<3;j++) {
+    for(i=0;i<200;i++){
+      simpleport_set_pin(sp_handle,11,1);
+      simpleport_set_pin(sp_handle,11,0);
+      simpleport_set_pin(sp_handle,11,0);
+      simpleport_set_pin(sp_handle,11,0);
+      simpleport_set_pin(sp_handle,11,0);
+    }
+  
+    for(i=0;i<200;i++){
+      simpleport_set_pin(sp_handle,11,1);
+      simpleport_set_pin(sp_handle,11,1);
+      simpleport_set_pin(sp_handle,11,1);
+      simpleport_set_pin(sp_handle,11,1);
+      simpleport_set_pin(sp_handle,11,0);
+    }
+  }
+
   simpleport_close(sp_handle);
 
   return 0;

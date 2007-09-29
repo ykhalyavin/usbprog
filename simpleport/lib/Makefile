@@ -9,7 +9,8 @@ clean:
 python:
 	swig -python simpleport.i
 	gcc -c simpleport.c simpleport_wrap.c -I/usr/include/python2.4
-	ld -shared simpleport.o simpleport_wrap.o -lusb -o _simpleport.so 
+	#ld -shared simpleport.o simpleport_wrap.o /usr/lib/libusb.so -o _simpleport.so 
+	gcc -fPIC -shared simpleport_wrap.o simpleport.o /usr/lib/libusb.so -o _simpleport.so
 
 
 

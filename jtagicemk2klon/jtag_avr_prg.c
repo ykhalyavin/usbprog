@@ -88,6 +88,7 @@ void rd_signature_avr (unsigned char *signature)
 	avr_sequence(0x33,0x00,&signature[2]);
 }
 
+
 void wr_hfuse_avr(unsigned char hfuse)
 {
 	unsigned char tmp[2];
