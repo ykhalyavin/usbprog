@@ -18,81 +18,59 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-#define BIT(x)            (1 << (x))
-#define SETBIT(addr,x)    (addr |= BIT(x))
-#define CLEARBIT(addr,x)  (addr &= ~BIT(x))
+#define PIN(x)            (1 << (x))
+#define SETPIN(addr,x)    (addr |= PIN(x))
+#define CLEARPIN(addr,x)  (addr &= ~PIN(x))
 
-#define BIT0	    PB5
-#define BIT1  	    PB0
-#define BIT2	    PB7
-#define BIT3	    PB6
-
-#define BIT4	    PD0
-#define BIT5	    PD1
-
-#define BIT6	    PA4
-
-
-#define BIT0_DDR    DDRB
-#define BIT1_DDR    DDRB
-#define BIT2_DDR    DDRB
-#define BIT3_DDR    DDRB
-
-#define BIT4_DDR    DDRD
-#define BIT5_DDR    DDRD
-#define BIT6_DDR    DDRA
+#define PIN1  	    PB5
+#define PIN2	    PB4
+#define PIN3	    PB3
+#define PIN4	    PB0
+#define PIN5	    PB2
+#define PIN6	    PB7
+#define PIN7	    PB1
+#define PIN8	    PB6
 
 
-#define BIT0_READ   PINB
-#define BIT1_READ   PINB
-#define BIT2_READ   PINB
-#define BIT3_READ   PINB
+#define TDI   PIN1
+#define SRST  PIN2
+#define TRST  PIN3
+#define TMS   PIN4
+#define TCK   PIN6
+#define TDO   PIN8
 
-#define BIT4_READ   PIND
-#define BIT5_READ   PIND
-#define BIT6_READ   PINA
-
-
-#define BIT0_WRITE   PORTB
-#define BIT1_WRITE   PORTB
-#define BIT2_WRITE   PORTB
-#define BIT3_WRITE   PORTB
-
-#define BIT4_WRITE   PORTD
-#define BIT5_WRITE   PORTD
-#define BIT6_WRITE   PORTA
+#define PIN_DDR    DDRB
+#define PIN_READ   PINB
+#define PIN_WRITE   PORTB
 
 // check if tdo == 1
-#define IS_BIT0_SET()			    (BIT0_READ & BIT(BIT0))
-#define IS_BIT1_SET()			    (BIT1_READ & BIT(BIT1)) 
-#define IS_BIT2_SET()			    (BIT2_READ & BIT(BIT2))
-#define IS_BIT3_SET()			    (BIT3_READ & BIT(BIT3))
-
-#define IS_BIT4_SET()			    (BIT4_READ & BIT(BIT4))
-#define IS_BIT5_SET()			    (BIT5_READ & BIT(BIT5))
-#define IS_BIT6_SET()			    (BIT6_READ & BIT(BIT6))
-
-
-#define SET_BIT0()			     SETBIT( BIT0_WRITE, BIT0 )
-#define SET_BIT1()			     SETBIT( BIT1_WRITE, BIT1 )
-#define SET_BIT2()			     SETBIT( BIT2_WRITE, BIT2 )
-#define SET_BIT3()			     SETBIT( BIT3_WRITE, BIT3 )
-
-#define SET_BIT4()			     SETBIT( BIT4_WRITE, BIT4 )
-#define SET_BIT5()			     SETBIT( BIT5_WRITE, BIT5 )
-#define SET_BIT6()			     SETBIT( BIT6_WRITE, BIT6 )
-
-#define CLEAR_BIT0()			     CLEARBIT( BIT0_WRITE, BIT0 )
-#define CLEAR_BIT1()			     CLEARBIT( BIT1_WRITE, BIT1 )
-#define CLEAR_BIT2()			     CLEARBIT( BIT2_WRITE, BIT2 )
-#define CLEAR_BIT3()			     CLEARBIT( BIT3_WRITE, BIT3 )
-
-#define CLEAR_BIT4()			     CLEARBIT( BIT4_WRITE, BIT4 )
-#define CLEAR_BIT5()			     CLEARBIT( BIT5_WRITE, BIT5 )
-#define CLEAR_BIT6()			     CLEARBIT( BIT6_WRITE, BIT6 )
+#define IS_PIN1_SET()			    (PIN_READ & PIN(PIN1)) 
+#define IS_PIN2_SET()			    (PIN_READ & PIN(PIN2))
+#define IS_PIN3_SET()			    (PIN_READ & PIN(PIN3))
+#define IS_PIN4_SET()			    (PIN_READ & PIN(PIN4))
+#define IS_PIN5_SET()			    (PIN_READ & PIN(PIN5))
+#define IS_PIN6_SET()			    (PIN_READ & PIN(PIN6))
+#define IS_PIN7_SET()			    (PIN_READ & PIN(PIN7))
+#define IS_PIN8_SET()			    (PIN_READ & PIN(PIN8))
 
 
+#define SET_PIN1()			     SETPIN( PIN_WRITE, PIN1 )
+#define SET_PIN2()			     SETPIN( PIN_WRITE, PIN2 )
+#define SET_PIN3()			     SETPIN( PIN_WRITE, PIN3 )
+#define SET_PIN4()			     SETPIN( PIN_WRITE, PIN4 )
+#define SET_PIN5()			     SETPIN( PIN_WRITE, PIN5 )
+#define SET_PIN6()			     SETPIN( PIN_WRITE, PIN6 )
+#define SET_PIN7()			     SETPIN( PIN_WRITE, PIN7 )
+#define SET_PIN8()			     SETPIN( PIN_WRITE, PIN8 )
 
+#define CLEAR_PIN1()			     CLEARPIN( PIN_WRITE, PIN1 )
+#define CLEAR_PIN2()			     CLEARPIN( PIN_WRITE, PIN2 )
+#define CLEAR_PIN3()			     CLEARPIN( PIN_WRITE, PIN3 )
+#define CLEAR_PIN4()			     CLEARPIN( PIN_WRITE, PIN4 )
+#define CLEAR_PIN5()			     CLEARPIN( PIN_WRITE, PIN5 )
+#define CLEAR_PIN6()			     CLEARPIN( PIN_WRITE, PIN6 )
+#define CLEAR_PIN7()			     CLEARPIN( PIN_WRITE, PIN7 )
+#define CLEAR_PIN8()			     CLEARPIN( PIN_WRITE, PIN8 )
 
 
 void write_tdi(char * buf, uint16_t size);

@@ -1,5 +1,5 @@
 /*
- * usbprog - A Downloader/Uploader for AVR device programmers
+ * usbprog - JTAG library
  * Copyright (C) 2006 Benedikt Sauter 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,19 +28,28 @@
 #define PORT_DIRECTION	0x01
 #define PORT_SET	0x02
 #define PORT_GET	0x03
-#define PORT_SETBIT	0x04
+#define PORT_SETPIN	0x04
 #define PORT_GETBIT	0x05
+
 #define WRITE_TDI	0x06
 #define READ_TDO	0x07
 #define WRITE_AND_READ	0x08
 #define WRITE_TMS	0x09
+
+
+#define INIT_JTAG	0x0A
+#define TAP_RESET	0x0B
+#define TAP_SHIFT	0x0C
+#define TAP_CAPTURE_DR	0x0D
+#define TAP_CAPTURE_IR	0x0E
+
 
 #define F_CPU 16000000
 #include <util/delay.h>
 
 #include "wait.h"
 
-#include "../../../usbprog_base/firmwarelib/avrupdate.h"
+#include "../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
 #include "usbprogjtag.h"
@@ -117,9 +126,9 @@ void Commands(char *buf)
       answer[1] = get_port();
       CommandAnswer(2);
     break;
-    case PORT_SETBIT:
+    case PORT_SETPIN:
       set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
-      //answer[0] = PORT_SETBIT; 
+      //answer[0] = PORT_SETPIN; 
       //answer[1] = 0x00;
       //CommandAnswer(2);
     break;
@@ -133,12 +142,12 @@ void Commands(char *buf)
       write_tdi(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
       #if 1
       // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      CLEARPIN(PIN_WRITE,TCK);  // clk
+      CLEARPIN(PIN_WRITE,TDI);  // tdi
+      CLEARPIN(PIN_WRITE,TMS);  // tms
       
       // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
+      SETPIN(PIN_WRITE,TCK);  // clk
       #endif
       //answer[0] = WRITE_TDI; 
       //answer[1] = 0x00;
@@ -156,12 +165,12 @@ void Commands(char *buf)
       read_tdo(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
       #if 1
       // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      CLEARPIN(PIN_WRITE,TCK);  // clk
+      CLEARPIN(PIN_WRITE,TDI);  // tdi
+      CLEARPIN(PIN_WRITE,TMS);  // tms
       
       // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
+      SETPIN(PIN_WRITE,TCK);  // clk
       #endif
       for(i=0;i<64;i++)
 	answer[i]=buf[i];
@@ -173,12 +182,12 @@ void Commands(char *buf)
       
       #if 1
       // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      CLEARPIN(PIN_WRITE,TCK);  // clk
+      CLEARPIN(PIN_WRITE,TDI);  // tdi
+      CLEARPIN(PIN_WRITE,TMS);  // tms
       
       // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
+      SETPIN(PIN_WRITE,TCK);  // clk
       #endif
       for(i=0;i<64;i++)
 	answer[i]=buf[i];
