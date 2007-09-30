@@ -63,7 +63,7 @@ void usbprog_jtag_tap_goto_reset(struct usbprog_jtag *usbprog_jtag);
 void usbprog_jtag_tap_goto_capture_dr(struct usbprog_jtag *usbprog_jtag);
 void usbprog_jtag_tap_goto_capture_ir(struct usbprog_jtag *usbprog_jtag);
 
-void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * buffer, int size);
+void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * in, char * out, int size);
 
 
 /* internal function for lib */

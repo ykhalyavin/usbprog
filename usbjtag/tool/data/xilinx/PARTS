@@ -1,0 +1,30 @@
+#
+# $Id: PARTS,v 1.6 2004/08/17 22:43:44 telka Exp $
+#
+# Copyright (C) 2002 ETC s.r.o.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+#
+# Written by Marcel Telka <marcel@telka.sk>, 2002.
+#
+
+# bits 27-12 of the Device Identification Register
+0100100000001110	xcr3032xl-vq44		XCR3032XL-VQ44
+0100100010001001	xcr3128xl-vq100		XCR3128XL-VQ100
+0100100010001011	.			XCR3128XL-TQ144
+0100100010001100	xcr3128xl-cs144		XCR3128XL-CS144
+0100100101001110	xcr3256xl-ft256		XCR3256XL-FT256
+0110110101001100	xc2c256-tq144		XC2C256-TQ144

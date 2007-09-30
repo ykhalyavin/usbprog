@@ -1,0 +1,10 @@
+/.cvsignore/1.1/Mon Jul 22 20:39:19 2002//
+/Makefile.am/1.17/Fri Aug 20 03:54:52 2004//
+/cable.c/1.15/Fri Aug 20 03:54:52 2004//
+/chain.c/1.8/Tue Aug 19 08:42:20 2003//
+/parport.c/1.5/Tue Aug 19 08:42:20 2003//
+/register.c/1.6/Sun Jan  5 21:48:56 2003//
+/state.c/1.6/Thu Mar 13 19:37:26 2003//
+/tap.c/1.11/Tue Aug 19 08:42:20 2003//
+D/cable////
+D/parport////

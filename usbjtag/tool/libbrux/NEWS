@@ -1,0 +1,14 @@
+$Id: NEWS,v 1.10 2004/11/18 18:49:41 telka Exp $
+
+2004-11-18: Fixed segfault in jedec_detect() (patch 970946, Ian Campbell).
+2004-11-15: Added support for Intel 28F256J3A (patch 1012140, Jerome Debard).
+2003-11-03: Fixed compile error in jedec_detect (bug 828313, Márton Németh).
+2003-11-02: Added support for detecting flashes (detectflash) in full address range.
+2003-11-02: Added support for Intel flash located at any address.
+2003-09-23: Added initial JEDEC detection for flash chips (Bradley D. LaRonde).
+2003-09-23: Added support for AMD Am29LV800B flash (Bradley D. LaRonde).
+2003-09-23: Added support for 1 x 16 AMD flash (Bradley D. LaRonde).
+2003-09-15: Fixed spelling (patch 805108, Andreas Mohr).
+2003-08-13: Added support for Intel SCS command set (patch 787978, Jani Monoses).
+2003-08-11: Added support for 1 x 8 bit AMD Flash (patch 772499, Matan Ziv-Av).
+2003-06-18: Added support for 1 x 8 bit Intel Flash (patch 753295, Matan Ziv-Av).

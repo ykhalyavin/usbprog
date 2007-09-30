@@ -1,0 +1,13 @@
+/.cvsignore/1.4/Mon Mar 17 16:02:13 2003//
+/Makefile.am/1.31/Tue Jun  3 13:41:10 2003//
+/bsdl2jtag.c/1.4/Tue Aug 12 13:26:00 2003//
+/detect.c/1.22/Sun Aug 15 22:46:07 2004//
+/discovery.c/1.12/Wed Nov 24 21:27:02 2004//
+/flash.c/1.30/Sun Nov  2 23:13:01 2003//
+/jtag.c/1.58/Sun Nov 21 12:43:53 2004//
+/readmem.c/1.26/Sun Nov  2 23:13:02 2003//
+D/bus////
+D/cmd////
+D/lib////
+D/part////
+D/tap////

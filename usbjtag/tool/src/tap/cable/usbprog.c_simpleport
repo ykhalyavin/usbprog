@@ -1,0 +1,327 @@
+/*
+ * $Id: usbprog.c,v 1.9 2004/10/17 15:15:59 telka Exp $
+ *
+ * Macraigor Wiggler JTAG Cable Driver
+ * Copyright (C) 2002, 2003 ETC s.r.o.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ * 02111-1307, USA.
+ *
+ * Written by Marcel Telka <marcel@telka.sk>, 2002, 2003.
+ *
+ * Documentation:
+ * [1] http://www.ocdemon.net/
+ * [2] http://jtag-arm9.sourceforge.net/hardware.html
+ *
+ */
+
+#include "sysdep.h"
+
+#include "cable.h"
+#include "parport.h"
+#include "chain.h"
+
+#include "generic.h"
+
+#define VID 0x1781
+#define PID 0x0c62
+
+#define UNKOWN_COMMAND  0x00
+#define PORT_DIRECTION  0x01
+#define PORT_SET        0x02
+#define PORT_GET        0x03
+#define PORT_SETPIN     0x04
+#define PORT_GETPIN     0x05
+#define PORT_SETPINDIR  0x06
+
+struct simpleport 
+{
+  struct usb_dev_handle* usb_handle;
+};
+
+struct simpleport* simpleport_open();
+void simpleport_close(struct simpleport *simpleport);
+unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen, int answerlen);
+
+
+void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
+void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int value);
+void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsigned char mask);
+unsigned char simpleport_get_port(struct simpleport *simpleport);
+void simpleport_set_pin(struct simpleport *simpleport,int pin, int value);
+int simpleport_get_pin(struct simpleport *simpleport, int pin);
+
+/*
+ * data D[7:0] (pins 9:2)
+ */
+
+
+
+/* SimplePort IO Numbers */
+
+#define TDI 7
+#define TDO 6
+#define TMS 5
+#define TCK 4
+#define nTRST 1
+
+
+#define	nSRESET 0	/* sRESET is inverted in the cable */
+
+/*
+ * 7 - BUSY (pin 11)
+ * 6 - ACK (pin 10)
+ * 5 - PE (pin 12)
+ * 4 - SEL (pin 13)
+ * 3 - ERROR (pin 15)
+ */
+
+struct simpleport * sp_handle;
+
+static int
+usbprog_init( cable_t *cable )
+{
+	//int data;
+	
+	sp_handle = simpleport_open();
+	if(sp_handle == 0)
+		return -1;
+
+	// set up all pins
+	simpleport_set_pin_dir(sp_handle,1,1); //tdi
+	simpleport_set_pin_dir(sp_handle,2,0); //tdo
+	simpleport_set_pin(sp_handle,2,1); //tdo
+	simpleport_set_pin_dir(sp_handle,3,1); //tms
+	simpleport_set_pin_dir(sp_handle,4,1); //tck
+	simpleport_set_pin_dir(sp_handle,5,1); //trst
+
+	// setup nTRST
+	simpleport_set_pin(sp_handle,nTRST,0);
+
+	return 0;
+}
+
+static void
+usbprog_clock( cable_t *cable, int tms, int tdi )
+{
+	tms = tms ? 1 : 0;
+	tdi = tdi ? 1 : 0;
+
+	//parport_set_data( cable->port, (PARAM_TRST(cable) << nTRST) | (0 << TCK) | (tms << TMS) | (tdi << TDI) );
+	simpleport_set_port(sp_handle,(PARAM_TRST(cable) << nTRST) | (0 << TCK) | (tms << TMS) | (tdi << TDI) ,0xFF);
+	//cable_wait();
+	simpleport_set_port(sp_handle,(PARAM_TRST(cable) << nTRST) | (1 << TCK) | (tms << TMS) | (tdi << TDI) ,0xFF);
+	//parport_set_data( cable->port, (PARAM_TRST(cable) << nTRST) | (1 << TCK) | (tms << TMS) | (tdi << TDI) );
+	//cable_wait();
+
+}
+
+static int
+usbprog_get_tdo( cable_t *cable )
+{
+	//parport_set_data( cable->port, (PARAM_TRST(cable) << nTRST) | (0 << TCK) );
+	simpleport_set_port(sp_handle, (PARAM_TRST(cable) << nTRST) | (0 << TCK),(1<<nTRST)|(1<<TCK));
+	//cable_wait();
+	//return (parport_get_status( cable->port ) >> TDO) & 1;
+	return (simpleport_get_port(sp_handle) >> TDO) & 1;
+	return 0;
+}
+
+static int
+usbprog_set_trst( cable_t *cable, int trst )
+{
+	PARAM_TRST(cable) = trst ? 1 : 0;
+
+	simpleport_set_port(sp_handle, (PARAM_TRST(cable) << nTRST),0xff);
+	//parport_set_data( cable->port, PARAM_TRST(cable) << nTRST );
+	return PARAM_TRST(cable);
+}
+
+cable_driver_t usbprog_cable_driver = {
+	"USBPROG",
+	N_("JTAG Adaptor (http://www.embedded-projects.net/usbprorg)"),
+	generic_connect,
+	generic_disconnect,
+	generic_cable_free,
+	usbprog_init,
+	generic_done,
+	usbprog_clock,
+	usbprog_get_tdo,
+	usbprog_set_trst,
+	generic_get_trst
+};
+
+/*
+ * Copyright (C) 2007 Benedikt Sauter 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+//#include "simpleport.h"
+
+#include <usb.h>
+
+struct simpleport* simpleport_open()
+{
+  struct usb_bus *busses;
+  //struct usb_dev_handle* usb_handle;
+  struct usb_bus *bus;
+  struct usb_device *dev;
+
+  struct simpleport * tmp;
+
+  tmp = (struct simpleport*)malloc(sizeof(struct simpleport));
+
+
+  usb_init();
+  usb_find_busses();
+  usb_find_devices();
+
+  busses = usb_get_busses();
+
+  /* find simpleport device in usb bus */
+
+  for (bus = busses; bus; bus = bus->next){
+    for (dev = bus->devices; dev; dev = dev->next){
+      /* condition for sucessfully hit (too bad, I only check the vendor id)*/
+      if (dev->descriptor.idVendor == VID && dev->descriptor.idProduct == PID) {
+	tmp->usb_handle = usb_open(dev);
+
+	usb_set_configuration (tmp->usb_handle,dev->config[0].bConfigurationValue);
+	usb_claim_interface(tmp->usb_handle, 0);
+	usb_set_altinterface(tmp->usb_handle,0);
+
+	return tmp;
+      }
+    } 
+  }
+  return 0;
+}
+
+
+void simpleport_close(struct simpleport *simpleport)
+{
+  usb_close(simpleport->usb_handle);
+  free(simpleport);
+}
+
+
+unsigned char simpleport_message(struct simpleport *simpleport, char *msg, int msglen, int answerlen)
+{
+  int res = usb_bulk_write(simpleport->usb_handle,3,msg,msglen,100);
+  if(answerlen>0 && res > 0) {
+    res =  usb_bulk_read(simpleport->usb_handle,2, msg, answerlen, 100);
+    if (res > 0)
+      return (unsigned char)msg[1];
+    else 
+      return -1;
+  }
+  else
+    return -1;
+}
+
+void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction)
+{
+  char tmp[2];
+  tmp[0] = PORT_DIRECTION;
+  tmp[1] = (char)direction;
+  simpleport_message(simpleport,tmp,2,0);
+}
+
+void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsigned char mask)
+{
+  char tmp[3];
+  tmp[0] = PORT_SET;
+  tmp[1] = (char)value;
+  tmp[2] = (char)mask;
+  simpleport_message(simpleport,tmp,3,0);
+}
+
+unsigned char simpleport_get_port(struct simpleport *simpleport)
+{
+  char tmp[2];
+  tmp[0] = PORT_GET;
+  tmp[1] = 0x00;
+  return simpleport_message(simpleport,tmp,2,2);
+}
+
+
+void simpleport_set_pin(struct simpleport *simpleport,int pin, int value)
+{
+  char tmp[3];
+  tmp[0] = PORT_SETPIN;
+  tmp[1] = (char)pin;
+  if(value==1)  
+    tmp[2] = 0x01;
+  else
+    tmp[2] = 0x00;
+  simpleport_message(simpleport,tmp,3,0);
+}
+
+void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int value)
+{
+  char tmp[3];
+  tmp[0] = PORT_SETPINDIR;
+  tmp[1] = (char)pin;
+  if(value==1)  
+    tmp[2] = 0x01;
+  else
+    tmp[2] = 0x00;
+  simpleport_message(simpleport,tmp,3,0);
+}
+
+int simpleport_get_pin(struct simpleport *simpleport, int pin)
+{
+  char tmp[2];
+  tmp[0] = PORT_GETPIN;
+  tmp[1] = (char)pin;
+
+  if(simpleport_message(simpleport,tmp,2,2)>0)
+    return 1;
+  else
+    return 0;
+}
+
+/*
+ * Copyright (C) 2007 Benedikt Sauter 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+
+

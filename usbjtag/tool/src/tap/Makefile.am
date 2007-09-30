@@ -1,0 +1,49 @@
+#
+# $Id: Makefile.am,v 1.17 2004/08/20 03:54:52 telka Exp $
+#
+# Copyright (C) 2002 ETC s.r.o.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+#
+# Written by Marcel Telka <marcel@telka.sk>, 2002.
+#
+
+include $(top_srcdir)/Makefile.rules
+
+noinst_LIBRARIES = libtap.a
+
+libtap_a_SOURCES = \
+	tap_usbprog.c \
+	register.c \
+	state.c \
+	chain.c \
+	parport.c \
+	parport/direct.c \
+	parport/ppdev.c \
+	cable.c \
+	cable/generic.h \
+	cable/generic.c \
+	cable/arcom.c \
+	cable/byteblaster.c \
+	cable/dlc5.c \
+	cable/ea253.c \
+	cable/ei012.c \
+	cable/keithkoep.c \
+	cable/lattice.c \
+	cable/mpcbdm.c \
+	cable/triton.c \
+	cable/wiggler.c \
+	cable/usbprog.c

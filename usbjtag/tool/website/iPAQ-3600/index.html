@@ -1,0 +1,152 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+</head>
+<body link=blue vlink=purple>
+<center>
+<h1>Fitting a JTAG interface to an iPAQ 3600</h1>
+<p><span>
+So you couldn't resist messing with your brand new iPAQ, tried to re-flash it and managed to turn it into a brick ?<br>
+Now you turn it on and it just sits there, silent, screen blank, just mocking you ?<br>
+Do you (think you) have the skills to take delicate, sensitive electronic appliances apart ?<br>
+...and solder connections to small contact pads you can barely see with the naked eye ?<br>
+...and put them back together ?<br>
+<br>
+If the answer to all of the above it yes, never fear, help is here [cue cheesy music]<br>
+</span></p>
+<p><span></span></p>
+<p><span>First of all, disassemble the iPAQ and remove the main board. If you wish, desolder the speaker cables. </span></p>
+<p><span><img src="images/1.jpg"></span></p>
+<p><span>Next turn the board with the CPU facing up. The CPU is the square object located next to the E28F640J3A120 FLASH chips as seen below. It is covered with a metallic shield.</span></p>
+<p><span><img src="images/2.jpg"></span></p>
+<p><span>Take a closer look at the bottom edge of the CPU and locate the test points, ordered left to right as TP3 (TDO), TP2 (TDI) and TP5 (TRST)</span></p>
+<p><span><img src="images/3.jpg"></span></p>
+<p><span>Carefully solder some suitable wires to the test points.</span></p>
+<p><span><img src="images/4.jpg"></span></p>
+<p><span>Find a good ground connection and solder a wire to it too.</span></p>
+<p><span><img src="images/5.jpg"></span></p>
+<p><span>Turn the board over and locate the 3.686Mhz crystal.</span></p>
+<p><span><img src="images/6.jpg"></span></p>
+<p><span>Just above it, you’ll find test points TP1 (TCK) and TP4 (TMS)</span></p>
+<p><span><img src="images/7.jpg"></span></p>
+<p><span>Solder some suitable wire to these test points too.</span></p>
+<p><span><img src="images/8.jpg"></span></p>
+<p><span>Further up on the same side of the board is a metal can crystal, located just below the Atmel AT90LS8535 microcontroller.<br>This is the VCC connection, so solder a wire to the pad shown below.</span></p>
+<p><span><img src="images/9.jpg"></span></p>
+<p><span>Eventually you end up with a bunch of wires hanging loose of the iPAQ board.</span></p>
+<p><span><img src="images/A.jpg"></span></p>
+<p><span>You could, if desired, solder a berg strip or other suitable connector for easy attachment to the JTAG board.</span></p>
+<p><span><img src="images/B.jpg"></span></p>
+<p><span>If you don’t have a JTAG adapter, Xilinx publishes the <a href="http://axl.freeyellow.com/iPAQ/images/xilinx-DLC5-pp2jtag.pdf">schematic</a> of a PC parallel port to JTAG adapter that you can easily build yourself.</span></p>
+<p><span>I personally ended up using the simplest interface of all, about five resistors (any value 100 - 330 ohm should do) arranged as follows:<br>
+<img src="images/interface.png"></span></p>
+<p><span>
+Finally you need some spiffy software to do the programming. I used <a href="http://sourceforge.net/project/showfiles.php?group_id=52603&release_id=133435">jtag-0.2.1</a> which I set up under <a href="http://www.cygwin.com">cygwin</a> on my Windows XP system.<br>
+I won't go into the software setup here, however jtag-0.2.1 needs a couple of small mods before it can program the iPAQ.<br>
+Download <a href="flash.c">flash.c</a> and <a href="sa1110.c">sa1110.c</a> and replace the corresponding files in jtag-0.2.1 source tree before compiling.
+</span></p>
+<h1>Happy Flashing</h1>
+
+<p><span>Additional pictures of the final JTAG connector permanently fitted to my development iPAQ.<br>
+These were taken after desoldering the metal shield covers off the CPU and DRAM.</span></p>
+<p><span>Pink: TDO, Brown: TDI, Red: TRST, Blue: GND</span></p>
+<p><span><img src="images/10.jpg"></span></p>
+<p><span>Orange: TCK, Yellow: TMS</span></p>
+<p><span><img src="images/11.jpg"></span></p>
+<p><span>Green: VCC</span></p>
+<p><span><img src="images/12.jpg"></span></p>
+<p><span>All cables soldered.</span></p>
+<p><span><img src="images/13.jpg"></span></p>
+<p><span>Final assembly. I chose to pull the cables out of the stylus hole as anywhere at the bottom interferes with the docking station seating.<br>
+There's no other suitable hole and I wasn't about to drill one :)<br>
+This means the stylus will not plug in (small sacrifice) but on the plus side, the casing around the stylus hole, clamps the wires in place so you can't accidentally tug on them too hard.</span></p>
+<p><span><img src="images/14.jpg"></span></p>
+<p><span>Below is an actual session programming a bootloader into a fully erased iPAQ.</span></p>
+</center>
+<table>
+<tr>
+<td width=800 bgcolor=black color=white>
+<pre>
+<font color=white>
+$ jtag
+jtag 0.2.1
+Copyright (C) 2002, 2003 ETC s.r.o.
+jtag is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+There is absolutely no warranty for jtag.
+
+Warning: jtag may damage your hardware! Type "quit" for exit!
+
+Type "help" for help.
+
+jtag> cable parallel 0x378 DLC5
+Initializing Xilinx DLC5 JTAG Parallel Cable III on parallel port at 0x378
+jtag> detect
+Device Id: 10001001001001100001000000010011
+  Manufacturer: Intel
+  Part:         SA1110
+  Stepping:     B4
+  Filename:     /usr/local/share/jtag/intel/sa1110/sa1110
+jtag> detectflash
+Note: Supported configuration is 2 x 16 bit only
+ROM_SEL: 32 bits
+
+2 x 16 bit CFI devices detected (QRY ok)!
+
+CFI Query Identification String:
+        Primary Vendor Command Set and Control Interface ID Code: 0x0001 (Intel/Sharp Extended Command Set)
+        Address of Primary Algorithm extended Query table: P = 0x????
+        Alternate Vendor Command Set and Control Interface ID Code: 0x0000 (null)
+        Address of Alternate Algorithm extended Query table: A = 0x????
+CFI Query System Interface Information:
+        Vcc Logic Supply Minimum Write/Erase voltage: 2700 mV
+        Vcc Logic Supply Maximum Write/Erase voltage: 3600 mV
+        Vpp [Programming] Logic Supply Minimum Write/Erase voltage: 0 mV
+        Vpp [Programming] Logic Supply Maximum Write/Erase voltage: 0 mV
+        Typical timeout per single byte/word write: 128 us
+        Typical timeout for minimum-size buffer write: 128 us
+        Typical timeout per individual block erase: 1024 ms
+        Typical timeout for full chip erase: 0 ms
+        Maximum timeout for byte/word write: 2048 us
+        Maximum timeout for buffer write: 2048 us
+        Maximum timeout per individual block erase: 16384 ms
+        Maximum timeout for chip erase: 0 ms
+Device Geometry Definition:
+        Device Size: 8388608 B
+        Flash Device Interface description: 0x0002 (x8/x16)
+        Maximum number of bytes in multi-byte write: 32
+        Number of Erase Block Regions within device: 1
+        Erase Block Region Information:
+                Region 0:
+                        Erase Block Size: 131072
+                        Number of Erase Blocks: 64
+Manufacturer: Intel
+Chip: 28F640J3A
+jtag> print
+ No. Manufacturer         Part                 Stepping Instruction          Register
+----------------------------------------------------------------------------------------
+   0 Intel                SA1110               B4       EXTEST               BSR
+jtag> flashmem 0 /home/bootldr-2.18.54.bin
+0x00000000
+Note: Supported configuration is 2 x 16 bit only
+ROM_SEL: 32 bits
+
+2 x 16 bit CFI devices detected (QRY ok)!
+
+program:
+block 0 unlocked
+erasing block 0: 0
+addr: 0x00033500
+verify:
+addr: 0x00033500
+Done.
+jtag> quit
+$
+</font>
+</pre>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

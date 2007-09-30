@@ -1,0 +1,172 @@
+$Id: NEWS,v 1.116 2004/11/24 21:26:59 telka Exp $
+
+See libbrux/NEWS for more news.
+
+	* Added new JTAG declarations for
+		- Hitachi HD64465
+		- Hitachi SH7729 (Beregnyei Balazs)
+		- Motorola MPC8245
+		- Broadcom BCM4712 (partial, Alan Wallace)
+		- Xilinx XCR3128XL-VQ100 (patch 1010714, Michael Lauer)
+		- Xilinx XCR3032XL-VQ44 (patch 972621, Andrew Dyer)
+		- Toshiba TX4925/TX4926 (patch 972621, Andrew Dyer)
+		- Sharp LH7A400 (patch 886068, Marko Rößler)
+		- IBM 440GX (patch 1012120, Jerome Debard)
+		- Lattice LC4032V (patch 1012120, Jerome Debard)
+		- Lattice M4A3-64/32 (patch 1012120, Jerome Debard)
+		- Lattice M4A3-256/192 (patch 1012120, Jerome Debard)
+	* Added new bus drivers:
+		- Motorola MPC824x
+		- AMD Alchemy Solutions Au1500 (patch 853883, Zhang Wei)
+		- Toshiba TX4925 (patch 972625, Andrew Dyer)
+		- IBM PowerPC 440GX (patch 1012154, Jerome Debard)
+		- Sharp LH7A400 (patch 886068, Marko Rößler)
+	* Added support for Lattice Parallel Port JTAG Cable (patch 1012138, Jerome Debard).
+	* Fixed pin assignment for Macraigor Wiggler JTAG Cable (patch 1040199, Andrew Dyer).
+	* Added new commands:
+		- 'salias' to define alias for a signal
+		- 'reset' to reset JTAG chain
+	* Explicit 'detectflash' command call is required before 'flashmem' command.
+	* Fixed minor bugs (including bug 857039).
+	* Fixed compiler error on Debian Woody (patch 986414, Martin Buck).
+	* Added support for different Intel IXP425 frequency variants (patch 1030647, Trevor Man).
+	* Rewritten and improved startup sequence to distinguish between interactive invocation
+		and stdin input (fixed bug 858535, thanks to Andrew Dyer for an idea).
+	* Removed support for parameter '-' (stdin).
+	* New translations:
+		- French (Michel Robitaille)
+
+jtag-0.5.1 (2003-10-11):
+
+	* Added new JTAG declarations for
+		- Altera EP1C20F400 (Rojhalat Ibrahim)
+		- Altera EPM7128AETC100 (Rojhalat Ibrahim)
+	* Added additional checks for valid ByteBlaster cable connection and enabled all variants
+		of the cable (patch 793313, Rojhalat Ibrahim).
+	* Used real data bus width for data reading in PXA2x0, SA1110, and SH7727 bus drivers
+		(based on patch 792591, thanks to Guennadi Liakhovetski).
+	* Added 'initbus' command to allow dynamic bus driver loading.
+	* Added support for flashes with multiple block erase regions for 'flashmem' (Bradley D. LaRonde).
+	* Added BOOT_DEF register emulation for PXA2x0 bus driver.
+	* Fixed inverted TRST signal for Macraigor Wiggler JTAG Cable see patch 799377 for more info,
+		thanks to Mike Tesch for reporting).
+	* Added Ka-Ro TRITON (PXA255/250) JTAG Cable driver (patch 805103, Andreas Mohr).
+	* Spelling and documentation fixes (patch 805108, Andreas Mohr).
+	* Fixed minor bugs.
+	* Updated translations:
+		- Slovak
+
+jtag-0.5 (2003-08-19):
+
+	* Fixed bug with SELECT, AUTOFD, and STROBE signals handling (bug 745824).
+	* Added new commands 'peek' and 'poke' (patch 747447, Matan Ziv-Av).
+	* Fixed bugs in SH7727 bus driver (thanks to Rainer Dörken).
+	* Added bus drivers for Hitachi SH7750R and Broadcom BCM1250 (patch 753300, Matan Ziv-Av).
+	* Added bus driver for Hitachi SH7751R (patch 773533, Matan Ziv-Av).
+	* Added bus width detection using MD3 and MD4 signals in SH7727 bus driver
+		(thanks to Rainer Dörken).
+	* Changes in 'discovery' command:
+		- removed explicit JTAG chain length detection (patch 753298, Matan Ziv-Av)
+		- simplified output messages
+		- removed support for report results to file
+	* Added new command 'part', syntax changes for 'set', 'get', 'dr', 'instruction', and
+		'print' commands.
+	* Added support for multiple buses, added new 'bus' command to change active bus.
+	* Added initial JTAG declarations for Broadcom BCM3310 (see support request 770145 for
+		more info, thanks to Ramses VI).
+	* Added JTAG declarations for Samsung S3C4510B (Jiun-Shian Ho).
+	* Added bus driver for Samsung S3C4510X (Jiun-Shian Ho).
+	* Fixed invalid memory allocation size (core dump) in jtag_parse_line() function.
+	* Added new 'include' command.
+	* Added new commands 'signal', 'register', 'bit', and enhanced 'instruction' command
+		to allow create JTAG declarations from command line (or script).
+	* Added new 'eraseflash' command (patch 772267, Thomas Fröhlich).
+	* JTAG declarations are now executed as scripts.
+	* Added support for parts without IDCODE instruction.
+	* Added support for "downto" in bit vectors and "observe_only" into bsdl2jtag
+		(patch 787346, Brad Parker).
+	* Minor bugs fixed.
+	* New translations:
+		- Slovak
+
+jtag-0.4 (2003-05-29):
+
+	* Added support for executing scripts directly from stdin (parameter '-').
+	* Disabled external bus cycles for PXA250 for addresses above 0x04000000.
+	* Fixed bug in BUSY signal handling in Linux ppdev driver.
+	* Optimized bus drivers to increase bus access speed (readmem, flashmem, ...).
+	* Added new command 'endian' to configure access mode to external files.
+	* Added JTAG declarations for
+		- Broadcom BCM5421S (patch 743129, Matan Ziv-Av)
+		- DEC SA1100 (thanks to Jachym Holecek)
+	* Added bus driver for Hitachi SH7727 (based on patch 743140, Matan Ziv-Av).
+	* Added support for printing current JTAG frequency.
+	* Added support for 'signal' keyword (as alias for 'pin') into JTAG declarations.
+	* Minor bugs fixed.
+
+jtag-0.3.2 (2003-04-04):
+
+	* Added driver for Keith & Koep JTAG Cable.
+	* Ported to NetBSD/i386 (Jachym Holecek).
+	* Added JTAG declarations for Xilinx XCR3256XL-FT256 (Jachym Holecek).
+
+jtag-0.3.1 (2003-03-19):
+
+	* Added support for Intel PXA255 A0 (thanks to Mike Sprauve).
+	* Added support for running scripts specified as jtag command line parameters.
+	* Added support for comments in scripts. Lines started with `#' are treated as
+		comments.
+	* Added support for Linux ppdev parallel port driver. Non-root users can
+		use JTAG Tools now.
+	* Added new `bsdl2jtag' conversion tool (Matan Ziv-Av).
+
+jtag-0.3 (2003-02-25):
+
+	* Changes in interactive commands:
+		- enhanced 'dr' command functionality
+		- new 'set signal' command
+		- new 'get signal' command
+		- new 'script' command (Alessandro Zummo)
+	* Added support for JTAG cables:
+		- Mpcbdm JTAG Cable (Christian Pellegrin)
+		- Arcom JTAG Cable (patch 682310, Ian Campbell)
+	* Added JTAG declarations for
+		- Intel IXP425 (Christian Pellegrin)
+		- Xilinx XC2C256-TQ144 (Alessandro Zummo)
+		- Broadcom BCM1250 (Matan Ziv-Av)
+		- Hitachi SH7727 (Matan Ziv-Av)
+	* Added bus driver for Intel IXP425 (Christian Pellegrin).
+	* Added support for all 6 static memory banks for Intel SA1110 (bug 682660).
+	* Added support for bidirectional 'B' boundary scan bits (Christian Pellegrin).
+	* Added support for 1 x 16 bit memory configuration (Christian Pellegrin).
+	* Added buffered file reads/writes (Christian Pellegrin).
+	* Added support for flash drivers (August Hörandl).
+	* Added flash driver for AMD chips (August Hörandl).
+	* Added support for rc and history files (Alessandro Zummo).
+	* Added support for localization.
+	* Some bugs fixed.
+
+jtag-0.2.2 (2003-02-04):
+
+	* Added new manufacturer: Cypress. (patch 669157, Chris Ellec)
+	* Added new 'frequency' command to limit maximum TCK frequency
+	* Added support for parallel ports with I/O addresses above 0x3FF
+
+jtag-0.2.1 (2003-01-13):
+
+	* Fixed compile error (bug 665923, thanks to Chris Ellec).
+	* Added support for Macraigor Wiggler JTAG Cable (Stas Khirman).
+	* Added support for Altera ByteBlaster/ByteBlaster II/ByteBlasterMV
+		Parallel Port Download Cable.
+	* Fixed some other bugs.
+
+jtag-0.2 (2003-01-08):
+
+	* Completed JTAG declarations for Xilinx XCR3128XL-CS144.
+	* Fixed crash if flash memory is not detected.
+	* Added new 'discovery' command for discovery unknown JTAG chains.
+	* Added JTAG cable driver support and new 'cable' command.
+
+jtag-0.1 (2002-11-25):
+	
+	* Initial public release.

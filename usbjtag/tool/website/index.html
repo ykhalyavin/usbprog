@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>JTAG Tools</title>
+</head>
+<body>
+<h1>JTAG Tools</h1>
+
+<p>
+JTAG Tools is a software package which enables working with JTAG-aware
+(IEEE 1149.1) hardware devices (parts) and boards through JTAG adapter.
+</p>
+
+<p>
+This package has open and modular architecture with ability to write
+miscellaneous extensions (like board testers, flash memory programmers,
+and so on).
+</p>
+
+<p>
+JTAG Tools package is free software, covered by the GNU General Public
+License, and you are welcome to change it and/or distribute copies of it
+under certain conditions. There is absolutely no warranty for JTAG Tools.
+Please read COPYING file for more info.
+</p>
+
+<p>
+<b>Warning:</b> This software may damage your hardware!
+</p>
+
+<p>
+Feedback and contributions are welcome.
+</p>
+
+<h2>Download</h2>
+
+<p>
+Latest released version is jtag-0.5.1 available in source form from the
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=190231">SourceForge
+download site</a>.
+</p>
+
+<h2>News</h2>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=190231">jtag-0.5.1</a> (2003-10-11):
+</p>
+
+<ul>
+	<li>Added new JTAG declarations for
+	<ul>
+		<li>Altera EP1C20F400 (Rojhalat Ibrahim)</li>
+		<li>Altera EPM7128AETC100 (Rojhalat Ibrahim)</li>
+	</ul></li>
+	<li>Added additional checks for valid ByteBlaster cable connection and enabled all variants
+		of the cable (<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=793313&amp;group_id=52603&amp;atid=469852">patch 793313</a>, Rojhalat Ibrahim).</li>
+	<li>Used real data bus width for data reading in PXA2x0, SA1110, and SH7727 bus drivers
+		(based on <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=792591&amp;group_id=52603&amp;atid=469852">patch 792591</a>, thanks to Guennadi Liakhovetski).</li>
+	<li>Added 'initbus' command to allow dynamic bus driver loading.</li>
+	<li>Added support for flashes with multiple block erase regions for 'flashmem' (Bradley D. LaRonde).</li>
+	<li>Added BOOT_DEF register emulation for PXA2x0 bus driver.</li>
+	<li>Fixed inverted TRST signal for Macraigor Wiggler JTAG Cable see <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=799377&amp;group_id=52603&amp;atid=469852">patch 799377</a> for more info,
+		thanks to Mike Tesch for reporting).</li>
+	<li>Added Ka-Ro TRITON (PXA255/250) JTAG Cable driver (<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=805103&amp;group_id=52603&amp;atid=469852">patch 805103</a>, Andreas Mohr).</li>
+	<li>Added initial JEDEC detection for flash chips (Bradley D. LaRonde).</li>
+	<li>Added support for AMD Am29LV800B flash (Bradley D. LaRonde).</li>
+	<li>Added support for 1 x 16 AMD flash (Bradley D. LaRonde).</li>
+	<li>Spelling and documentation fixes (<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=805108&amp;group_id=52603&amp;atid=469852">patch 805108</a>, Andreas Mohr).</li>
+	<li>Fixed minor bugs.</li>
+	<li>Updated translations:
+	<ul>
+		<li>Slovak</li>
+	</ul></li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=178977">jtag-0.5</a> (2003-08-19):
+</p>
+
+<ul>
+	<li>Fixed bug with SELECT, AUTOFD, and STROBE signals handling
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=745824&amp;group_id=52603&amp;atid=469850">bug 745824</a>).</li>
+	<li>Added new commands 'peek' and 'poke'
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=747447&amp;group_id=52603&amp;atid=469852">patch 747447</a>,
+		Matan Ziv-Av).</li>
+	<li>Fixed bugs in SH7727 bus driver (thanks to Rainer Dörken).</li>
+	<li>Added bus drivers for Hitachi SH7750R and Broadcom BCM1250
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=753300&amp;group_id=52603&amp;atid=469852">patch 753300</a>,
+		Matan Ziv-Av).</li>
+	<li>Added bus driver for Hitachi SH7751R
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=773533&amp;group_id=52603&amp;atid=469852">patch 773533</a>,
+		Matan Ziv-Av).</li>
+	<li>Added bus width detection using MD3 and MD4 signals in SH7727 bus driver (thanks to Rainer Dörken).</li>
+	<li>Changes in 'discovery' command:
+	<ul>
+		<li>removed explicit JTAG chain length detection
+			(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=753298&amp;group_id=52603&amp;atid=469852">patch 753298</a>,
+			Matan Ziv-Av)</li>
+		<li>simplified output messages</li>
+		<li>removed support for report results to file</li>
+	</ul></li>
+	<li>Added new command 'part', syntax changes for 'set', 'get', 'dr', 'instruction', and 'print' commands.</li>
+	<li>Added support for multiple buses, added new 'bus' command to change active bus.</li>
+	<li>Added initial JTAG declarations for Broadcom BCM3310 (see
+		<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=770145&amp;group_id=52603&amp;atid=469853">support request 770145</a>
+		for more info, thanks to Ramses VI).</li>
+	<li>Added JTAG declarations for Samsung S3C4510B (Jiun-Shian Ho).</li>
+	<li>Added bus driver for Samsung S3C4510X (Jiun-Shian Ho).</li>
+	<li>Fixed invalid memory allocation size (core dump) in jtag_parse_line() function.</li>
+	<li>Added new 'include' command.</li>
+	<li>Added new commands 'signal', 'register', 'bit', and enhanced 'instruction' command to allow create JTAG declarations from command line (or script).</li>
+	<li>Added new 'eraseflash' command
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=772267&amp;group_id=52603&amp;atid=469852">patch 772267</a>,
+		Thomas Fröhlich).</li>
+	<li>JTAG declarations are now executed as scripts.</li>
+	<li>Added support for parts without IDCODE instruction.</li>
+	<li>Added support for "downto" in bit vectors and "observe_only" into bsdl2jtag
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=787346&amp;group_id=52603&amp;atid=469852">patch 787346</a>,
+		Brad Parker).</li>
+	<li>Added support for Intel SCS command set
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=787978&amp;group_id=52603&amp;atid=469852">patch 787978</a>,
+		Jani Monoses).</li>
+	<li>Added support for 1 x 8 bit AMD Flash
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=772499&amp;group_id=52603&amp;atid=469852">patch 772499</a>,
+		Matan Ziv-Av).</li>
+	<li>Added support for 1 x 8 bit Intel Flash
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=753295&amp;group_id=52603&amp;atid=469852">patch 753295</a>,
+		Matan Ziv-Av).</li>
+	<li>Minor bugs fixed.</li>
+	<li>New translations:
+	<ul>
+		<li>Slovak</li>
+	</ul></li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=162277">jtag-0.4</a> (2003-05-29):
+</p>
+
+<ul>
+	<li>Added support for executing scripts directly from stdin (parameter '-').</li>
+	<li>Disabled external bus cycles for PXA250 for addresses above 0x04000000.</li>
+	<li>Fixed bug in BUSY signal handling in Linux ppdev driver.</li>
+	<li>Optimized bus drivers to increase bus access speed (readmem, flashmem, ...).</li>
+	<li>Added new command 'endian' to configure access mode to external files.</li>
+	<li>Added JTAG declarations for
+	<ul>
+		<li>Broadcom BCM5421S
+			(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=743129&amp;group_id=52603&amp;atid=469852">patch 743129</a>,
+			Matan Ziv-Av)</li>
+		<li>DEC SA1100 (thanks to Jachym Holecek)</li>
+	</ul></li>
+	<li>Added bus driver for Hitachi SH7727 (based on
+		<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=743140&amp;group_id=52603&amp;atid=469852">patch 743140</a>,
+		Matan Ziv-Av).</li>
+	<li>Added support for printing current JTAG frequency.</li>
+	<li>Added support for 'signal' keyword (as alias for 'pin') into JTAG declarations.</li>
+	<li>Minor bugs fixed.</li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=150825">jtag-0.3.2</a> (2003-04-04):
+</p>
+
+<ul>
+	<li>Added driver for Keith &amp; Koep JTAG Cable.</li>
+	<li>Ported to NetBSD/i386 (Jachym Holecek).</li>
+	<li>Added JTAG declarations for Xilinx XCR3256XL-FT256 (Jachym Holecek).</li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=147432">jtag-0.3.1</a> (2003-03-19):
+</p>
+
+<ul>
+	<li>Added support for Intel PXA255 A0 (thanks to Mike Sprauve).</li>
+	<li>Added support for running scripts specified as jtag command line parameters.</li>
+	<li>Added support for comments in scripts. Lines started with `#' are treated as comments.</li>
+	<li>Added support for Linux ppdev parallel port driver. Non-root users can use JTAG Tools now.</li>
+	<li>Added new `bsdl2jtag' conversion tool (Matan Ziv-Av).</li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=142507">jtag-0.3</a> (2003-02-25):
+</p>
+
+<ul>
+	<li>Changes in interactive commands:
+	<ul>
+		<li>enhanced 'dr' command functionality</li>
+		<li>new 'set signal' command</li>
+		<li>new 'get signal' command</li>
+		<li>new 'script' command (Alessandro Zummo)</li>
+	</ul></li>
+	<li>Added support for JTAG cables:
+	<ul>
+		<li>Mpcbdm JTAG Cable (Christian Pellegrin)</li>
+		<li>Arcom JTAG Cable
+			(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=682310&amp;group_id=52603&amp;atid=469852">patch 682310</a>,
+			Ian Campbell)</li>
+	</ul></li>
+	<li>Added JTAG declarations for
+	<ul>
+		<li>Intel IXP425 (Christian Pellegrin)</li>
+		<li>Xilinx XC2C256-TQ144 (Alessandro Zummo)</li>
+		<li>Broadcom BCM1250 (Matan Ziv-Av)</li>
+		<li>Hitachi SH7727 (Matan Ziv-Av)</li>
+	</ul></li>
+	<li>Added bus driver for Intel IXP425 (Christian Pellegrin).</li>
+	<li>Added support for all 6 static memory banks for Intel SA1110
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=682660&amp;group_id=52603&amp;atid=469850">bug 682660</a>).</li>
+	<li>Added support for bidirectional 'B' boundary scan bits (Christian Pellegrin).</li>
+	<li>Added support for 1 x 16 bit memory configuration (Christian Pellegrin).</li>
+	<li>Added buffered file reads/writes (Christian Pellegrin).</li>
+	<li>Added support for flash drivers (August Hörandl).</li>
+	<li>Added flash driver for AMD chips (August Hörandl).</li>
+	<li>Added support for rc and history files (Alessandro Zummo).</li>
+	<li>Added support for localization.</li>
+	<li>Some bugs fixed.</li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=138003">jtag-0.2.2</a> (2003-02-04):
+</p>
+<ul>
+	<li>Added new manufacturer: Cypress.
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=669157&amp;group_id=52603&amp;atid=469852">patch 669157</a>,
+		Chris Ellec)</li>
+	<li>Added new 'frequency' command to limit maximum TCK frequency</li>
+	<li>Added support for parallel ports with I/O addresses above 0x3FF</li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=133435">jtag-0.2.1</a> (2003-01-13):
+</p>
+<ul>
+	<li>Fixed compile error
+		(<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=665923&amp;group_id=52603&amp;atid=469850">bug 665923</a>,
+		thanks to Chris Ellec).</li>
+	<li>Added support for Macraigor Wiggler JTAG Cable (Stas Khirman).</li>
+	<li>Added support for Altera ByteBlaster/ByteBlaster II/ByteBlasterMV Parallel Port Download Cable.</li>
+	<li>Fixed some other bugs.</li>	
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=132452">jtag-0.2</a> (2003-01-08):
+</p>
+<ul>
+	<li>Completed JTAG declarations for Xilinx XCR3128XL-CS144.</li>
+	<li>Fixed crash if flash memory is not detected.</li>
+	<li>Added new 'discovery' command for discovery unknown JTAG chains.</li>
+	<li>Added JTAG cable driver support and new 'cable' command.</li>
+</ul>
+
+<p>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=52603&amp;release_id=123623">jtag-0.1</a> (2002-11-25):
+</p>
+<ul>
+	<li>Initial public release.</li>
+</ul>
+
+<h2>Thanks</h2>
+
+<p>
+Ian Campbell,
+Alex (d18c7db),
+Rainer Dörken,
+Chris Ellec,
+Thomas Fröhlich,
+Jiun-Shian Ho,
+Jachym Holecek,
+August Hörandl,
+Rojhalat Ibrahim,
+Stas Khirman,
+Bradley D. LaRonde,
+Guennadi Liakhovetski,
+Andreas Mohr,
+Jani Monoses,
+Brad Parker,
+Christian Pellegrin,
+Ramses VI,
+Mike Tesch,
+Holger Schurig,
+Matan Ziv-Av,
+Alessandro Zummo
+</p>
+
+<h2>Supported host operating systems</h2>
+
+<p>
+JTAG Tools should run on all Unix like operating systems including
+MS Windows with <a href="http://cygwin.com/">Cygwin</a> installed.
+</p>
+
+<h2>Supported hardware</h2>
+
+<p>
+JTAG adapters/cables (see <code>help cable</code> command for more info):
+</p>
+<ul>
+	<li>Arcom JTAG Cable</li>
+	<li>Altera ByteBlaster/ByteBlaster II/ByteBlasterMV Parallel Port Download Cable</li>
+	<li><a href="http://toolbox.xilinx.com/docsan/3_1i/pdf/docs/jtg/jtg.pdf">Xilinx DLC5 JTAG Parallel Cable III</a></li>
+	<li>ETC EA253 JTAG Cable</li>
+	<li>ETC EI012 JTAG Cable</li>
+	<li><a href="ftp://www.keith-koep.com/pub/arm-tools/jtag/jtag05_sch.pdf">Keith &amp; Koep JTAG Cable</a></li>
+	<li><a href="http://www.vas-gmbh.de/software/mpcbdm/VDB2.gif">Mpcbdm JTAG Cable</a></li>
+	<li>Ka-Ro TRITON (PXA255/250) JTAG Cable</li>
+	<li><a href="http://jtag-arm9.sourceforge.net/hardware.html">Macraigor Wiggler JTAG Cable</a></li>
+</ul>
+
+<p>
+JTAG-aware parts (chips):
+</p>
+<ul>
+	<li>Altera EP1C20F400</li>
+	<li>Altera EPM7128AETC100</li>
+	<li>Atmel ATmega128 (partial support)</li>
+	<li>Broadcom BCM1250</li>
+	<li>Broadcom BCM5421S</li>
+	<li>Broadcom BCM3310 (partial support)</li>
+	<li>DEC SA1100</li>
+	<li>Hitachi SH7727</li>
+	<li>Intel IXP425</li>
+	<li>Intel SA1110</li>
+	<li>Intel PXA250/PXA255/PXA260/PXA261/PXA262/PXA263</li>
+	<li>Samsung S3C4510B</li>
+	<li>Xilinx XC2C256-TQ144</li>
+	<li>Xilinx XCR3128XL-CS144</li>
+	<li>Xilinx XCR3256XL-FT256</li>
+</ul>
+
+<p>
+Flash chips (2 x 16 bit configuration only):
+</p>
+<ul>
+	<li>Intel 28FxxxJ3A (28F320J3A, 28F640J3A, 28F128J3A)</li>
+	<li>Intel 28FxxxK3 (28F640K3, 28F128K3, 28F256K3)</li>
+	<li>Intel 28FxxxK18 (28F640K18, 28F128K18, 28F256K18)</li>
+	<li>AMD Am29LV64xD (Am29LV640D, Am29LV641D, Am29LV642D)</li>
+</ul>
+
+
+<p>
+<a href="http://openwince.sourceforge.net/jtag/iPAQ-3600/">Fitting a JTAG interface to an iPAQ 3600</a>
+</p>
+
+
+<h2>Required software</h2>
+
+<p>
+Required only for MS Windows:
+</p>
+<ul>
+	<li>Current Cygwin net installation from <a href="http://cygwin.com/">http://cygwin.com/</a></li>
+</ul>
+
+<p>
+Required for all systems:
+</p>
+<ul>
+	<li>include package from <a href="http://openwince.sourceforge.net/include/">http://openwince.sourceforge.net/include/</a></li>
+	<li>readline (it is probably a standard part of your distribution)</li>
+</ul>
+
+
+<h2>Build &amp; installation instructions</h2>
+
+<ol>
+	<li>Download and install required software (see previous section).</li>
+	<li>Download and unpack jtag sources.</li>
+	<li>Run <code>./configure</code> script. Use optional <code>--with-include</code> parameter if required.
+		See <code>`./configure --help`</code> for more info.</li>
+	<li>Run <code>`make`</code>.</li>
+	<li>Run <code>`make install`</code>.</li>
+</ol>
+
+
+<h2>Running JTAG Tools</h2>
+
+<p>
+Connect your JTAG adapter between your PC and target device and turn
+on your device.
+</p>
+
+<p>
+To run JTAG Tools type <code>jtag</code> and press &lt;Enter&gt;. jtag should start and
+display some initial informations. Output should end with line like this:
+</p>
+
+<pre>
+jtag&gt;
+</pre>
+
+<p>
+This is "jtag command prompt". Type <code>help</code> and press &lt;Enter&gt; for initial help
+about available commands. To exit JTAG Tools type "quit" and press &lt;Enter&gt;.
+</p>
+
+<h3>First task: Select JTAG cable and parallel port address.</h3>
+
+<p>
+Type <code>help cable</code> for list of supported JTAG cables.
+Type <code>cable</code> command with arguments. Example:
+</p>
+
+<pre>
+jtag&gt; cable parallel 0x378 EA253
+Initializing ETC EA253 JTAG Cable on parallel port at 0x378
+</pre>
+
+<h3>Second task: Detect parts on the JTAG chain.</h3>
+
+<p>
+Type <code>detect</code> at the jtag command prompt:
+</p>
+
+<pre>
+jtag&gt; detect
+</pre>
+
+<p>
+Your output should look like this:
+</p>
+
+<pre>
+IR length: 5
+Chain length: 1
+Device Id: 01011001001001100100000000010011
+  Manufacturer: Intel
+  Part:         PXA250
+  Stepping:     C0
+  Filename:     /usr/local/share/jtag/intel/pxa250/pxa250c0
+</pre>
+
+<p>
+If you get empty output or an error message your JTAG adapter is not connected
+properly, or your target board doesn't work, or it is turned off.
+</p>
+
+<p>
+<code>detect</code> command is required before all other commands.
+</p>
+
+<h3>Third task: Print current JTAG chain status.</h3>
+
+<p>
+Type <code>print</code> at the jtag command prompt. Here is an output example:
+</p>
+
+<pre>
+jtag&gt; print chain
+ No. Manufacturer              Part                 Stepping Instruction          Register
+---------------------------------------------------------------------------------------------
+   0 Intel                     PXA250               C0       BYPASS               BR
+jtag&gt;
+</pre>
+
+<h3>Fourth task: Sample device pin status.</h3>
+
+<pre>
+jtag&gt; instruction SAMPLE/PRELOAD
+jtag&gt; shift ir
+jtag&gt; shift dr
+jtag&gt; dr
+10001100100000100001100101111111111111111110011011100000111011111111111111111111
+11111111111111111111111111111111111111111111101111111101100000100010101000000000
+00011111000000111010111111100000100001100100000000000000000111000011100000000000
+00000000000000000000000000000001000000000000000000000000000000000000000000000000
+11110000000000000000000000000000000000000000001000000000000000000000000000000000
+0000000000
+jtag&gt; print chain
+ No. Manufacturer              Part                 Stepping Instruction          Register
+---------------------------------------------------------------------------------------------
+   0 Intel                     PXA250               C0       SAMPLE/PRELOAD       BSR
+jtag&gt; get signal BOOT_SEL[0]
+BOOT_SEL[0] = 0
+jtag&gt;
+</pre>
+
+<p>
+Note: BSR is "Boundary Scan Register"
+</p>
+
+<h3>Fifth task: Burn flash connected to the part.</h3>
+
+<pre>
+jtag&gt; flashmem 0 brux.b
+0x00000000
+Note: Supported configuration is 2 x 16 bit only
+BOOT_SEL: Asynchronous 32-bit ROM
+
+2 x 16 bit CFI devices detected (QRY ok)!
+
+program:
+block 0 unlocked
+erasing block 0: 0
+addr: 0x00002854
+verify:
+addr: 0x00002854
+Done.
+jtag&gt;
+</pre>
+
+<p>
+or:
+</p>
+
+<pre>
+jtag&gt; flashmem msbin xboot.bin
+Note: Supported configuration is 2 x 16 bit only
+BOOT_SEL: Asynchronous 32-bit ROM
+
+2 x 16 bit CFI devices detected (QRY ok)!
+
+block 0 unlocked
+erasing block 0: 0
+program:
+record: start = 0x00000000, len = 0x00000004, checksum = 0x000001EB
+record: start = 0x00000040, len = 0x00000008, checksum = 0x000001B0
+record: start = 0x00001000, len = 0x00002B30, checksum = 0x00122CAB
+record: start = 0x00004000, len = 0x00000160, checksum = 0x0000684B
+record: start = 0x00005000, len = 0x00000054, checksum = 0x000008EE
+record: start = 0x00005054, len = 0x00000030, checksum = 0x00000DA9
+record: start = 0x00000000, len = 0x00001000, checksum = 0x00000000
+
+verify:
+record: start = 0x00000000, len = 0x00000004, checksum = 0x000001EB
+record: start = 0x00000040, len = 0x00000008, checksum = 0x000001B0
+record: start = 0x00001000, len = 0x00002B30, checksum = 0x00122CAB
+record: start = 0x00004000, len = 0x00000160, checksum = 0x0000684B
+record: start = 0x00005000, len = 0x00000054, checksum = 0x000008EE
+record: start = 0x00005054, len = 0x00000030, checksum = 0x00000DA9
+record: start = 0x00000000, len = 0x00001000, checksum = 0x00000000
+
+Done.
+jtag&gt;
+</pre>
+
+
+<h3>Contacts</h3>
+
+<p>
+Homepage: <a href="http://openwince.sourceforge.net/jtag/">http://openwince.sourceforge.net/jtag/</a>
+</p>
+
+<p>
+CVS repository: <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/openwince/jtag/">http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/openwince/jtag/</a>
+</p>
+
+<p>
+Please report and track bugs at (please use Category 'jtag'):
+<a href="http://sourceforge.net/tracker/?group_id=52603&amp;atid=469850">http://sourceforge.net/tracker/?group_id=52603&amp;atid=469850</a>
+</p>
+
+<p>
+Mailing list (discussion, questions): <a href="mailto:openwince-list@lists.sourceforge.net">openwince-list@lists.sourceforge.net</a><br />
+Subscribe: <a href="http://lists.sourceforge.net/mailman/listinfo/openwince-list">http://lists.sourceforge.net/mailman/listinfo/openwince-list</a>
+</p>
+
+<p>
+Mailing list (announce): <a href="mailto:openwince-announce@lists.sourceforge.net">openwince-announce@lists.sourceforge.net</a><br />
+Subscribe: <a href="http://lists.sourceforge.net/mailman/listinfo/openwince-announce">http://lists.sourceforge.net/mailman/listinfo/openwince-announce</a>
+</p>
+
+<p>
+Patches and improvements are welcome at (please use Category 'jtag'):
+<a href="http://sourceforge.net/tracker/?group_id=52603&amp;atid=469852">http://sourceforge.net/tracker/?group_id=52603&amp;atid=469852</a>
+</p>
+
+<p>
+Feature requests are welcome at (please use Category 'jtag'):
+<a href="http://sourceforge.net/tracker/?group_id=52603&amp;atid=469853">http://sourceforge.net/tracker/?group_id=52603&amp;atid=469853</a>
+</p>
+
+<p>
+Support requests are welcome at (please use Category 'jtag'):
+<a href="http://sourceforge.net/tracker/?group_id=52603&amp;atid=469851">http://sourceforge.net/tracker/?group_id=52603&amp;atid=469851</a>
+</p>
+
+<hr />
+
+<p>
+<i>$Id: index.html,v 1.30 2004/12/05 09:30:53 telka Exp $</i>
+</p>
+
+<p>
+	<a href="http://sourceforge.net"><img style="border-style:none"
+		src="http://sourceforge.net/sflogo.php?group_id=52603&amp;type=1"
+		width="88" height="31" alt="SourceForge.net Logo" /></a>
+
+	<a href="http://validator.w3.org/check/referer"><img style="border-style:none"
+		src="http://www.w3.org/Icons/valid-xhtml11"
+		alt="Valid XHTML 1.1!" height="31" width="88" /></a>
+</p>
+
+</body>
+</html>
