@@ -1,0 +1,7 @@
+//MPD-File
+#ifndef(pack_C1) #declare global_pack_C1=yes; object {CAP_SMD_CHIP_0805(DarkWood)translate<0,0,0> rotate<0,0.000000,0>rotate<0,0.000000,0> rotate<0,0,0> translate<-53.721000,0.000000,11.557000>translate<0,0.035000,0> }#end		//SMD Kondensator 0805 C1 100nF C0805
+#ifndef(pack_C2) #declare global_pack_C2=yes; object {CAP_SMD_CHIP_0805(DarkWood)translate<0,0,0> rotate<0,0.000000,0>rotate<0,-90.000000,0> rotate<0,0,0> translate<-50.419000,0.000000,0.508000>translate<0,0.035000,0> }#end		//SMD Kondensator 0805 C2 100nF C0805
+#ifndef(pack_C3) #declare global_pack_C3=yes; object {CAP_SMD_ELKO_0405("10µF",)translate<0,0,0> rotate<0,180.000000,0>rotate<0,-180.000000,0> rotate<0,0,0> translate<-53.975000,0.000000,7.747000>translate<0,0.035000,0> }#end		//SMD Elko Case-Code BCComponents (rcl.lib) C3 10µF 153CLV-0405
+#ifndef(pack_SV1) #declare global_pack_SV1=yes; object {CON_DIS_WS10W()translate<0,-0,-6.35> rotate<0,180.000000,0>rotate<0,-270.000000,0> rotate<0,0,180> translate<-62.484000,-1.500000,5.080000>}#end		//Wannenstecker liegend 10Pin SV1  ML10L
+#ifndef(pack_SV2) #declare global_pack_SV2=yes; object {CON_DIS_WS10W()translate<0,0,-6.35> rotate<0,180.000000,0>rotate<0,-270.000000,0> rotate<0,0,0> translate<-44.704000,0.000000,5.080000>}#end		//Wannenstecker liegend 10Pin SV2  ML10L
+#ifndef(pack_U_1) #declare global_pack_U_1=yes; object {IC_SMD_SOT223("M2920","ST",)translate<0,0,0> rotate<0,0.000000,0>rotate<0,-90.000000,0> rotate<0,0,0> translate<-56.007000,0.000000,1.270000>translate<0,0.035000,0> }#end		//SOT223 U$1 M2920 SOT223
