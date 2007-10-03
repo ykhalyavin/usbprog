@@ -34,6 +34,7 @@
 void
 tap_reset( chain_t *chain )
 {
+	printf("tap_reset\n");
 	tap_state_reset( chain );
 
 	chain_clock( chain, 1, 0 );
@@ -49,28 +50,96 @@ void
 tap_shift_register( chain_t *chain, const tap_register *in, tap_register *out, int exit )
 {
 	int i;
-
+/*
+	if(out)
+		printf("tap_shift_register len%i %i\n", in->len, out->len);
+	else
+		printf("tap_shift_register len%i\n", in->len);
+*/
 	if (!(tap_state( chain ) & TAPSTAT_SHIFT))
 		printf( _("%s: Invalid state: %2X\n"), "tap_shift_register", tap_state( chain ) );
 
 	/* Capture-DR, Capture-IR, Shift-DR, Shift-IR, Exit2-DR or Exit2-IR state */
 	if (tap_state( chain ) & TAPSTAT_CAPTURE)
 		chain_clock( chain, 0, 0 );	/* save last TDO bit :-) */
+
+	char buf[(in->len/8)+1];	
+#if 0
+	/* build send buffer */
+	//char buf[255];
+	for (i = 0; i < in->len; i++) {
+		if(in->data[i]==1)
+			buf[(i)/8] |= 1 << ((i) % 8);
+		else
+			buf[(i)/8] &= ~(1 << ((i) % 8));
+	}
+
+	usbprog_jtag_write_and_read(chain->cable->usbprogjtag_handle, buf, in->len);
+	
+	for (i = 0; i < in->len; i++) {
+		if ((buf[(i)/8] >> ((i) % 8)) & 0x1) //tdi 1
+			out->data[i] = 1;
+		else
+			out->data[i] = 0;
+	}
+#endif
+
+#if 1
+	if(exit){
+		printf("final\n");
+		usbprog_jtag_tap_shift_register_final(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+	}
+	else{
+		//printf("n\n");
+		usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+	}
+	
+	if (out){
+		//out->data = in->data;
+		for(i=0; i < out->len ;i++){
+			if((int)in->data[i] !=0)
+				out->data[i]=1;
+			else 
+				out->data[i]=0;
+		}
+	}
+	if(out){
+	printf("\n");
+	for (i = 0; i < in->len; i++) {
+	  printf("%i|%i ",in->data[i],out->data[i]);
+	}
+	}
+
+#endif
+
+#if 0
 	for (i = 0; i < in->len; i++) {
 		if (out && (i < out->len))
 			out->data[i] = cable_get_tdo( chain->cable );
 		chain_clock( chain, (exit && ((i + 1) == in->len)) ? 1 : 0, in->data[i] );	/* Shift (& Exit1) */
 	}
+
+	if(out){
+	printf("\n");
+	for (i = 0; i < in->len; i++) {
+	  printf("%i|%i ",in->data[i],out->data[i]);
+	}
+	}
+#endif
+
 	/* Shift-DR, Shift-IR, Exit1-DR or Exit1-IR state */
 	if (exit) {
+		printf("exit\n");
 		chain_clock( chain, 1, 0 );	/* Update-DR or Update-IR */
 		chain_clock( chain, 0, 0 );	/* Run-Test/Idle */
 	}
+
 }
 
 void
 tap_capture_dr( chain_t *chain )
 {
+	printf("tap_capture_dr\n");
 	if ((tap_state( chain ) & (TAPSTAT_RESET | TAPSTAT_IDLE)) != TAPSTAT_IDLE)
 		printf( _("%s: Invalid state: %2X\n"), "tap_capture_dr", tap_state( chain ) );
 
@@ -82,6 +151,7 @@ tap_capture_dr( chain_t *chain )
 void
 tap_capture_ir( chain_t *chain )
 {
+	printf("tap_capture_ir\n");
 	if ((tap_state( chain ) & (TAPSTAT_RESET | TAPSTAT_IDLE)) != TAPSTAT_IDLE)
 		printf( _("%s: Invalid state: %2X\n"), "tap_capture_ir", tap_state( chain ) );
 

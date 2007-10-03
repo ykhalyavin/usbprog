@@ -1,37 +1,22 @@
 #include <stdio.h>
 
-#include "simpleport.h"
+#include <usbprogjtag.h>
 
 int main()
 {
-  struct simpleport * sp_handle;
+  struct usbprogjtag * usbprogjtag_handle;
+  usbprogjtag_handle = usbprog_jtag_open();
 
-  printf("libsimpleport Demo\n");
-	
-  /* open connection to simpleport */
-  sp_handle = simpleport_open();
-	
-  if(sp_handle==0)
-    fprintf(stderr,"unable to open device\n");
+  usbprog_jtag_init(usbprogjtag_handle);
 
-
-  simpleport_set_direction(sp_handle,0xFE);
-
+  char seq[] = {0,1,0,1,0};
   while(1){
-    //simpleport_set_port(sp_handle,0x80);
-    //simpleport_set_port(sp_handle,0x00);
-    simpleport_set_bit(sp_handle,4,1);
-    simpleport_set_bit(sp_handle,4,0);
+  usbprog_jtag_tap_shift_register(usbprogjtag_handle,seq,NULL,5);
+  sleep(1);
   }
 
-/*
-  int i,j;
-  for(j=0;j<7;j++) {
-    i = simpleport_get_bit(sp_handle,j);
-    printf("Pin %i: %i\n",j,i);
-  }
-*/
-  simpleport_close(sp_handle);
+
+  usbprog_jtag_close(usbprogjtag_handle);
 
   return 0;
 }

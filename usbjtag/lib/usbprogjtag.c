@@ -83,7 +83,7 @@ unsigned char _usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg
 
 void usbprog_jtag_init(struct usbprog_jtag *usbprog_jtag)
 {
-  usbprog_jtag_set_direction(usbprog_jtag, 0xFE);
+  usbprog_jtag_set_direction(usbprog_jtag, PORT_TDI|PORT_TMS|PORT_TCK|PORT_SRST|PORT_TRST);  // all out only TDO is in
 }
 
 
@@ -120,7 +120,7 @@ void usbprog_jtag_write_and_read(struct usbprog_jtag *usbprog_jtag, char * buffe
     
     usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000);
     
-    while(usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 64, 1000) < 1);
+    while(usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 64, 100) < 1);
 
     for(i=0;i<loops ;i++) {
       swap =  tmp[3+i];
@@ -213,7 +213,7 @@ void usbprog_jtag_set_direction(struct usbprog_jtag *usbprog_jtag, unsigned char
   char tmp[2];
   tmp[0] = PORT_DIRECTION;
   tmp[1] = (char)direction;
-  usbprog_jtag_message(usbprog_jtag,tmp,2);
+  _usbprog_jtag_message(usbprog_jtag,tmp,2);
 }
 
 void usbprog_jtag_write_slice(struct usbprog_jtag *usbprog_jtag,unsigned char value)
@@ -221,7 +221,7 @@ void usbprog_jtag_write_slice(struct usbprog_jtag *usbprog_jtag,unsigned char va
   char tmp[2];
   tmp[0] = PORT_SET;
   tmp[1] = (char)value;
-  usbprog_jtag_message(usbprog_jtag,tmp,2);
+  _usbprog_jtag_message(usbprog_jtag,tmp,2);
 }
 
 unsigned char usbprog_jtag_get_port(struct usbprog_jtag *usbprog_jtag)
@@ -229,7 +229,7 @@ unsigned char usbprog_jtag_get_port(struct usbprog_jtag *usbprog_jtag)
   char tmp[2];
   tmp[0] = PORT_GET;
   tmp[1] = 0x00;
-  return usbprog_jtag_message(usbprog_jtag,tmp,2);
+  return _usbprog_jtag_message(usbprog_jtag,tmp,2);
 }
 
 
@@ -242,7 +242,7 @@ void usbprog_jtag_set_bit(struct usbprog_jtag *usbprog_jtag,int bit, int value)
     tmp[2] = 0x01;
   else
     tmp[2] = 0x00;
-  usbprog_jtag_message(usbprog_jtag,tmp,3);
+  _usbprog_jtag_message(usbprog_jtag,tmp,3);
 }
 
 int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit)
@@ -251,7 +251,7 @@ int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit)
   tmp[0] = PORT_GETBIT;
   tmp[1] = (char)bit;
 
-  if(usbprog_jtag_message(usbprog_jtag,tmp,2)>0)
+  if(_usbprog_jtag_message(usbprog_jtag,tmp,2)>0)
     return 1;
   else
     return 0;
@@ -260,22 +260,74 @@ int usbprog_jtag_get_bit(struct usbprog_jtag *usbprog_jtag, int bit)
 
 void usbprog_jtag_tap_goto_reset(struct usbprog_jtag *usbprog_jtag)
 {
+//#define TAP_RESET       0x0B
 
 }
 
 void usbprog_jtag_tap_goto_capture_dr(struct usbprog_jtag *usbprog_jtag)
 {
 
+//#define TAP_CAPTURE_DR  0x0D
 
 }
 
 void usbprog_jtag_tap_goto_capture_ir(struct usbprog_jtag *usbprog_jtag)
 {
 
+//#define TAP_CAPTURE_IR  0x0E
 }
+void usbprog_jtag_tap_shift_register_final(struct usbprog_jtag *usbprog_jtag,char * in, char * out, int size)
+{
+  char tmp[size+2];	// fastes packet size for usb controller
+  int i;
 
+  tmp[0] = TAP_SHIFT_FINAL;
+  tmp[1] = (char)(size); // high 
+  for(i=0;i<size;i++)
+    tmp[2+i] = in[i];
+    
+  //usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,size+2,1000);
+    
+  //while(usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 64, 100) < 1);
+  if(usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,size+2,1000)>1)                 {
+    usleep(1);
+    int timeout=0;
+    while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 1000) < 1){
+      timeout++;
+      if(timeout>10)                                         
+	break;
+    }
+
+    for(i=0;i<size ;i++) {
+      in[i] = tmp[2+i];
+    }
+  }
+
+//#define TAP_SHIFT       0x0C
+}
 void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * in, char * out, int size)
 {
+  char tmp[size+2];	// fastes packet size for usb controller
+  int i;
 
+  tmp[0] = TAP_SHIFT;
+  tmp[1] = (char)(size); // high 
+  for(i=0;i<size;i++)
+    tmp[2+i] = in[i];
+    
+  if(usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000)>1)                 {
+    usleep(1);
+    int timeout=0;
+    while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 1000) < 1){
+      timeout++;
+      if(timeout>10)                                         
+	break;
+    }
 
+    for(i=0; i<size ;i++) {
+      in[i] = tmp[2+i];
+    }
+  }
+
+//#define TAP_SHIFT       0x0C
 }

@@ -1,0 +1,28 @@
+Author: Benedikt Sauter <sauter@ixbat.de>
+License: GNU General Public License V2
+
+at89prog is software for programming Microcontrollers.
+
+Usage: at89prog [OPTION]
+        -r  reset controller
+	-e  erase code memory
+	-u  load .bin into code memory
+	-h  Show this help message
+	-v  version
+
+Delete flash:
+  at89prog -e  (GNU/Linux)
+  at89prog.exe -e (Windows versions)
+       
+Load .bin image into flash:       
+  at89prog -u /home/bene/test1.BIN 
+  at89prog.exe -u c:\test1.BIN
+
+
+Reset CPU:
+  at89prog -r
+  at89prog.exe -r
+	 
+
+This is a part of the project usbprog:
+http://www.embedded-projects.net/usbprog

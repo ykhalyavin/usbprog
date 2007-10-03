@@ -264,6 +264,7 @@ jtag_LDADD = \
 	-L../libbrux -lbrux \
 	-Lbus -lbus \
 	-lusb \
+	-lusbprogjtag \
 	@LIBINTL@
 
 INCLUDES = -DLOCALEDIR=\"$(localedir)\"

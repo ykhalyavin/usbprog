@@ -1,6 +1,6 @@
 all:
-	gcc -g -c main.c -I ../lib/ -pg
-	gcc -g -o demo main.o -lusb -I ../lib/  -ljtagusb -pg
+	gcc -g -c main.c 
+	gcc -g -o main main.o -lusb -lusbprogjtag 
 
 install:
 	cp jtagusb /usr/bin

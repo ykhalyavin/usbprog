@@ -42,6 +42,7 @@
 #define TAP_SHIFT	0x0C
 #define TAP_CAPTURE_DR	0x0D
 #define TAP_CAPTURE_IR	0x0E
+#define TAP_SHIFT_FINAL	0x0F
 
 
 #define F_CPU 16000000
@@ -62,9 +63,9 @@ SIGNAL(SIG_UART_RECV)
 
 
 char answer[64];
-struct usbprog_t 
+volatile struct usbprog_t 
 {
-  int datatogl;
+  volatile int datatogl;
 }usbprog;
 
 
@@ -93,6 +94,7 @@ void CommandAnswer(int length)
   for(i = 0; i < length; i++)
     USBNWrite(TXD1, answer[i]);
 
+
   /* control togl bit */
   if(usbprog.datatogl == 1) {
     USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
@@ -101,12 +103,12 @@ void CommandAnswer(int length)
     USBNWrite(TXC1, TX_LAST+TX_EN);
     usbprog.datatogl = 1;
   }
-
 }
 
 /* central command parser */
 void Commands(char *buf)
 {
+  //usbprog.datatogl = 1;   // 1MHz
   int i;
   switch(buf[0]) {
     case PORT_DIRECTION:
@@ -180,7 +182,7 @@ void Commands(char *buf)
     case WRITE_AND_READ:
       write_and_read(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
       
-      #if 1
+      #if 0
       // tck 0 tms 0 tdi 0
       CLEARPIN(PIN_WRITE,TCK);  // clk
       CLEARPIN(PIN_WRITE,TDI);  // tdi
@@ -189,18 +191,45 @@ void Commands(char *buf)
       // tck 1 tms 0 tdi 0
       SETPIN(PIN_WRITE,TCK);  // clk
       #endif
+
       for(i=0;i<64;i++)
 	answer[i]=buf[i];
       CommandAnswer(64);
     break;
     
+    case INIT_JTAG:
+      set_direction(0xf4);
+    break;
+
+    case TAP_RESET:
+    break;
+
+    case TAP_SHIFT:
+      tap_shift(buf,(uint8_t)buf[1]);
+      for(i=0;i<64;i++)
+	answer[i]=buf[i];
+      CommandAnswer(64);
+    break;
+ 
+    case TAP_SHIFT_FINAL:
+      tap_shift_final(buf,(uint8_t)buf[1]);
+      for(i=0;i<64;i++)
+	answer[i]=buf[i];
+      CommandAnswer(64);
+    break;
+    
+    case TAP_CAPTURE_DR:
+    break;
+
+    case TAP_CAPTURE_IR:
+    break;
+
     default:
       // unkown command
       answer[0] = UNKOWN_COMMAND; 
       answer[1] = 0x00; 
       CommandAnswer(2);
   }
-
 
 }
 

@@ -27,6 +27,7 @@
 #define	CABLE_H
 
 #include <stdint.h>
+#include <usbprogjtag.h>	// bene
 
 typedef struct cable_t cable_t;
 
@@ -54,6 +55,7 @@ struct cable_t {
 	parport_t *port;
 	void *params;
 	chain_t *chain;
+	struct usbprog_jtag * usbprogjtag_handle; //bene
 };
 
 void cable_free( cable_t *cable );

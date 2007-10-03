@@ -84,3 +84,7 @@ uint8_t get_port();
 void set_bit(uint8_t bit, uint8_t value);
 uint8_t get_bit(uint8_t bit);
 
+
+void tap_shift(char * buf, uint8_t size);
+void tap_shift_final(char * buf, uint8_t size);
+

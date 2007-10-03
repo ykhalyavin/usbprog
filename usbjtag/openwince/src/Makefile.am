@@ -61,6 +61,7 @@ jtag_LDADD = \
 	-L../libbrux -lbrux \
 	-Lbus -lbus \
 	-lusb \
+	-lusbprogjtag \
 	@LIBINTL@
 
 localedir = $(datadir)/locale

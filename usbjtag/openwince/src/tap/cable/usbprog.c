@@ -35,13 +35,22 @@
 
 #include "generic.h"
 
+#include <stdio.h>
+
+#include <usbprogjtag.h>
+
 #define VID 0x1781
 #define PID 0x0c62
 
 static int
 usbprog_init( cable_t *cable )
 {
-	
+	printf("usbprog_init\n");	
+	cable->usbprogjtag_handle = usbprog_jtag_open();
+	if(!cable->usbprogjtag_handle){
+	  return -1;
+	}
+	usbprog_jtag_init(cable->usbprogjtag_handle);
 	return 0;
 }
 
@@ -51,31 +60,33 @@ usbprog_clock( cable_t *cable, int tms, int tdi )
 	tms = tms ? 1 : 0;
 	tdi = tdi ? 1 : 0;
 
-	//simpleport_set_port(sp_handle,(PARAM_TRST(cable) << nTRST) | (0 << TCK) | (tms << TMS) | (tdi << TDI) ,0xFF);
-	//simpleport_set_port(sp_handle,(PARAM_TRST(cable) << nTRST) | (1 << TCK) | (tms << TMS) | (tdi << TDI) ,0xFF);
+	usbprog_jtag_write_slice(cable->usbprogjtag_handle,
+	  (PARAM_TRST(cable) << PIN_TRST) | (0 << PIN_TCK) | (tms << PIN_TMS) | (tdi << PIN_TDI));
+
+	usbprog_jtag_write_slice(cable->usbprogjtag_handle,
+	  (PARAM_TRST(cable) << PIN_TRST) | (1 << PIN_TCK) | (tms << PIN_TMS) | (tdi << PIN_TDI));
 
 }
 
 static int
 usbprog_get_tdo( cable_t *cable )
 {
-	//simpleport_set_port(sp_handle, (PARAM_TRST(cable) << nTRST) | (0 << TCK),(1<<nTRST)|(1<<TCK));
-	//return (simpleport_get_port(sp_handle) >> TDO) & 1;
-	return 0;
+   	usbprog_jtag_write_slice(cable->usbprogjtag_handle,
+	  (PARAM_TRST(cable) << PIN_TRST) | (0 << PIN_TCK) );
+	return (usbprog_jtag_get_port(cable->usbprogjtag_handle) >> PIN_TDO) & 1;
 }
 
 static int
 usbprog_set_trst( cable_t *cable, int trst )
 {
 	PARAM_TRST(cable) = trst ? 1 : 0;
-
-	//simpleport_set_port(sp_handle, (PARAM_TRST(cable) << nTRST),0xff);
+	usbprog_jtag_set_bit(cable->usbprogjtag_handle,3,PARAM_TRST(cable));
 	return PARAM_TRST(cable);
 }
 
 cable_driver_t usbprog_cable_driver = {
 	"USBPROG",
-	N_("JTAG Adaptor (http://www.embedded-projects.net/usbprorg)"),
+	N_("JTAG Interface (http://www.embedded-projects.net/usbprorg)"),
 	generic_connect,
 	generic_disconnect,
 	generic_cable_free,

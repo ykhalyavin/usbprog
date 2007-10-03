@@ -15,10 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#ifndef _USBPROGJTAG_H_
+#define _USBPROGJTAG_H_
 
 #define VID 0x1781
 #define PID 0x0c62
+
+#define PIN_TDI	  7 
+#define PIN_SRST  6
+#define PIN_TRST  5
+#define PIN_TMS   4
+#define PIN_TCK   2
+#define PIN_TDO   0
+
+#define PORT_TDI   0x80
+#define PORT_SRST  0x40
+#define PORT_TRST  0x20
+#define PORT_TMS   0x10
+#define PORT_TCK   0x04
+#define PORT_TDO   0x01
+
+
+
 
 #define UNKOWN_COMMAND  0x00
 #define PORT_DIRECTION  0x01
@@ -30,6 +48,13 @@
 #define READ_TDO     	0x07
 #define WRITE_AND_READ 	0x08
 #define WRITE_TMS     	0x09
+#define INIT_JTAG       0x0A
+#define TAP_RESET       0x0B
+#define TAP_SHIFT       0x0C
+#define TAP_CAPTURE_DR  0x0D
+#define TAP_CAPTURE_IR  0x0E
+#define TAP_SHIFT_FINAL 0x0F
+
 
 struct usbprog_jtag 
 {
@@ -64,8 +89,11 @@ void usbprog_jtag_tap_goto_capture_dr(struct usbprog_jtag *usbprog_jtag);
 void usbprog_jtag_tap_goto_capture_ir(struct usbprog_jtag *usbprog_jtag);
 
 void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * in, char * out, int size);
+void usbprog_jtag_tap_shift_register_final(struct usbprog_jtag *usbprog_jtag,char * in, char * out, int size);
 
 
 /* internal function for lib */
 
 unsigned char _usbprog_jtag_message(struct usbprog_jtag *usbprog_jtag, char *msg, int msglen);
+
+#endif //_USBPROGJTAG_H_
