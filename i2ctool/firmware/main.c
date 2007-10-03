@@ -25,12 +25,16 @@
 #include <inttypes.h>
 
 #define UNKOWN_COMMAND	0x00
-#define PORT_DIRECTION	0x01
-#define PORT_SET	0x02
-#define PORT_GET	0x03
-#define PORT_SETPIN	0x04
-#define PORT_GETPIN	0x05
-#define PORT_SETPINDIR	0x06
+#define I2CINIT		0x07  //Initializes the I2C interface pins
+#define I2CSTART	0x08  //i2c start condition generator
+#define I2CRESTART	0x09  //i2c restart condition generator
+#define I2CSENDBYTE	0x0A  //shifts out a byte, msb first, data is latched in on the rising edge
+#define I2CRECEIVEBYTE  0x0B  //shifts in a byte, msb first, data is latched in on the rising edge
+#define I2CACK		0x0C  //Master Acknowledge generator
+#define I2CNACK		0x0D  //Master NO Acknowledge generator
+#define I2CRECVACK	0x0E  //Checks for slave Acknowledge
+#define I2CSTOP		0x0F  //i2c stop condition generator
+
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -40,7 +44,7 @@
 #include "../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
-#include "simpleport.h"
+#include "i2ctool.h"
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -101,38 +105,24 @@ void Commands(char *buf)
 {
   usbprog.datatogl =0 ;
   switch(buf[0]) {
-    case PORT_DIRECTION:
-      set_direction((uint8_t)buf[1]);
-      answer[0] = PORT_DIRECTION; 
+    case I2CINIT:
+      //set_direction((uint8_t)buf[1]);
+      // call init here
+      answer[0] = I2CINIT; 
       answer[1] = 0x00;
     break;
-    case PORT_SET:
-      set_port((uint8_t)buf[1], (uint8_t)buf[2]);
-      answer[0] = PORT_SET; 
+    case I2CSTART:
+      //answer[0] = PORT_SET; 
+      // call start here
+      answer[0] = I2CSTART; 
       answer[1] = 0x00;
     break;
-    case PORT_GET:
-      answer[0] = PORT_GET; 
-      answer[1] = get_port();
+    case I2CSENDBYTE:
+      // call send byte
+      answer[0] = I2CSENDBYTE; 
+      //answer[1] = i2c_sendbye(); we need some response codes
       CommandAnswer(3);
     break;
-    case PORT_SETPIN:
-      set_pin((uint8_t)buf[1],(uint8_t)buf[2]);
-      answer[0] = PORT_SETPIN; 
-      answer[1] = 0x00;
-    break;
-    case PORT_SETPINDIR:
-      set_pin_dir((uint8_t)buf[1],(uint8_t)buf[2]);
-      answer[0] = PORT_SETPINDIR; 
-      answer[1] = 0x00;
-    break;
-
-    case PORT_GETPIN:
-      answer[0] = PORT_GETPIN; 
-      answer[1] = (char)get_pin((uint8_t)buf[1]);
-      CommandAnswer(2);
-    break;
-    
     default:
       // unkown command
       answer[0] = UNKOWN_COMMAND; 
@@ -161,8 +151,8 @@ int main(void)
     char lang[]={0x09,0x04};
     _USBNAddStringDescriptor(lang); // language descriptor
 
-    USBNDeviceManufacture("B.Sauter");
-    USBNDeviceProduct("SimplePort");
+    USBNDeviceManufacture("USBprog EmbeddedProjects");
+    USBNDeviceProduct("I2C Tool");
     USBNDeviceSerialNumber("GNU/GPL2");
 
     conf = USBNAddConfiguration();

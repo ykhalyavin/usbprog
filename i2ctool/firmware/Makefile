@@ -52,7 +52,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c usbn2mc/main/usbn960x.c usbn2mc.c usbn2mc/main/usbnapi.c uart.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c wait.c simpleport.c
+SRC = $(TARGET).c usbn2mc/main/usbn960x.c usbn2mc.c usbn2mc/main/usbnapi.c uart.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c wait.c i2ctool.c
 
 
 # List Assembler source files here.
@@ -444,9 +444,9 @@ reset:
 	avrdude -p m32 -c bsd -E noreset
 
 ready:
-	mv main.hex simpleport.hex
-	hex2bin simpleport.hex
+	mv main.hex i2ctool.hex
+	hex2bin i2ctool.hex
 
 upgrade:
-	hex2bin simpleport.hex 
-	usbprog simpleport.bin 
+	hex2bin i2ctool.hex 
+	usbprog i2ctool.bin 
