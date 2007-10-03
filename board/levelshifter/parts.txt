@@ -1,0 +1,17 @@
+Partlist
+
+Exported from Levelshifter.sch at 10/03/2007 20:45:06 
+
+EAGLE Version 4.16r2 Copyright (c) 1988-2006 CadSoft
+
+Part     Value          Device             Package     Library        Sheet	Reichelt Bst. Nr
+
+C1    	 100nF          C-EUC0805          C0805       rcl            1		X7R-G0805 100N  
+C2       100nF          C-EUC0805          C0805       rcl            1		X7R-G0805 100N
+C3       100F           CPOL-EU153CLV-0405 153CLV-0405 rcl            1		SMD ELKO 10/16 
+C4       100nF          C-EUC0805          C0805       rcl            1		X7R-G0805 100N
+IC1      MAX3002        MAX3002            TSSOP20     maxim-6b       1		den hast du
+JP1                     PINHD-1X2          1X02        pinhead        1		SL 1X36G 2,54		der ist 36 polig
+SV2                     ML10L              ML10L       con-harting-ml 1		WSL 10W
+SV3                     FE05-2W            FE05-2W     con-lsta       1		WSL 10W		//Eventuell den richtigen Pfostenstecker oder 2x5 Buchsenleiste gewinkelt
+U$1      M2920          M2920              SOT223      v-reg          1		den hast du
