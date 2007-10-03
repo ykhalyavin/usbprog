@@ -1,0 +1,7 @@
+> >T1: BC557(general purpose PNP transistor E-B-C)
+> >T2: BC547(general purpose NPN tranistor E-B-C)
+> >VR1: 78L12(voltage regulator for 12Volt with a max current of 100mA)
+> >D1-D2: 1N4148(general purpose rectifiers with a max current of 100mA)
+> >R1-R2: 1Kilo Ohm
+> >r3: 47 Ohm
+> >the rectifiers are in the ground lead of the Voltageregulator so the output of VR1 will be 13Volt except of 12Volt
