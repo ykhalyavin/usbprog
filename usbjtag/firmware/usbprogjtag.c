@@ -257,10 +257,13 @@ void tap_shift(char * buf, uint8_t size)
       CLEARPIN(PIN_WRITE,TDI);
    
     // clock
-    wait_ms(1);
+    //wait_ms(1);
     CLEARPIN(PIN_WRITE,TCK);
     SETPIN(PIN_WRITE,TCK);
-    wait_ms(1);
+    //wait_ms(1);
+    asm("nop");
+    asm("nop");
+    asm("nop");
     CLEARPIN(PIN_WRITE,TCK);
   }
 

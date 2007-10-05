@@ -144,6 +144,7 @@ tap_shift_register( chain_t *chain, const tap_register *in, tap_register *out, i
 		}
 	}
 */
+/* geht
 	for (i=0; i < (in->len-1); i++) {
 		//if (out && (i < out->len))
 	//		out->data[i] = cable_get_tdo( chain->cable );
@@ -157,12 +158,15 @@ tap_shift_register( chain_t *chain, const tap_register *in, tap_register *out, i
 		//  out->data[i] = &in->data[i];
 
 	} 
-   /* 
-	if (out)
-	usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,in->len,out->data,out->len);
-	else
-	usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,in->len,NULL,0);
 	*/
+   
+	if (out)
+	usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,in->len-1,out->data,out->len-1);
+	else
+	usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,in->len-1,NULL,0);
+
+	i = in->len-1;
+	
 
 	if (out && (i < out->len))
 		out->data[i] = cable_get_tdo( chain->cable );
