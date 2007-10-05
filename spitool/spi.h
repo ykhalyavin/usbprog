@@ -40,11 +40,7 @@ struct spi
 
 
 
-
-
 struct spi* spi_open();
-void spi_close(struct spi *spi);
-int spi_multi(struct spi *spi, char * send_buf, int send_size, char * recv_buf, int recv_size)
-void spi_speed(struct spi *spi,int speed);
-
-
+int spi_close(struct spi *spi);
+int spi_multi(struct spi *spi, char * send_buf, int send_size, char * recv_buf, int recv_size);
+int spi_speed(struct spi *spi,int speed);

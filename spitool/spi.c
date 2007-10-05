@@ -57,7 +57,7 @@ struct spi* spi_open()
 }
 
 
-void spi_close(struct spi *spi)
+int spi_close(struct spi *spi)
 {
   usb_close(spi->usb_handle);
   free(spi);
@@ -67,7 +67,7 @@ void spi_close(struct spi *spi)
 
 int spi_multi(struct spi *spi, char * send_buf, int send_size, char * recv_buf, int recv_size)
 {
-  char * cmd = (char*)malloc(sizeof(char)*send_size+i4);  
+  char * cmd = (char*)malloc(sizeof(char)*send_size+4);  
 
   // setup command
   cmd[0] = CMD_SPI_MULTI;
@@ -86,7 +86,7 @@ int spi_multi(struct spi *spi, char * send_buf, int send_size, char * recv_buf, 
   if(res > 0) {
     char * answer = (char*)malloc(sizeof(char)*recv_size+3);
     res = usb_bulk_read(spi->usb_handle,0x82,answer,recv_size + 3, 100);
-    if(res > ){
+    if(res > 0){
       if(answer[1]==STATUS_CMD_OK){
 	for(i=0;i<recv_size;i++){
 	  recv_buf[i] = answer[2+i];
@@ -96,19 +96,19 @@ int spi_multi(struct spi *spi, char * send_buf, int send_size, char * recv_buf, 
     } else {
       // can't get answer
     }
+    free(answer);
 
   } else {
     // can't send cmd
   }
 
   free(cmd);
-  free(answer);
 
   return 1;
 }
 
 
-void spi_speed(struct spi *spi,int speed)
+int spi_speed(struct spi *spi,int speed)
 {
   //PARAM_SCK_DURATION
 
