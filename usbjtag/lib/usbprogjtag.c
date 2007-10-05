@@ -287,8 +287,8 @@ void usbprog_jtag_tap_shift_register_final(struct usbprog_jtag *usbprog_jtag,cha
     tmp[2+i] = in[i];
     
   //usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,size+2,1000);
-    
   //while(usb_bulk_read(usbprog_jtag->usb_handle,2, tmp, 64, 100) < 1);
+  
   if(usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,size+2,1000)>1)                 {
     usleep(1);
     int timeout=0;
@@ -305,14 +305,14 @@ void usbprog_jtag_tap_shift_register_final(struct usbprog_jtag *usbprog_jtag,cha
 
 //#define TAP_SHIFT       0x0C
 }
-void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * in, char * out, int size)
+void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * in, int inlen, char * out, int outlen)
 {
-  char tmp[size+2];	// fastes packet size for usb controller
+  char tmp[inlen+2];	// fastes packet size for usb controller
   int i;
 
   tmp[0] = TAP_SHIFT;
-  tmp[1] = (char)(size); // high 
-  for(i=0;i<size;i++)
+  tmp[1] = (char)(inlen); // high 
+  for(i=0;i<inlen;i++)
     tmp[2+i] = in[i];
     
   if(usb_bulk_write(usbprog_jtag->usb_handle,3,tmp,64,1000)>1)                 {
@@ -320,14 +320,14 @@ void usbprog_jtag_tap_shift_register(struct usbprog_jtag *usbprog_jtag,char * in
     int timeout=0;
     while(usb_bulk_read(usbprog_jtag->usb_handle,0x82, tmp, 64, 1000) < 1){
       timeout++;
-      if(timeout>10)                                         
+      if(timeout>100)                                         
 	break;
     }
 
-    for(i=0; i<size ;i++) {
-      in[i] = tmp[2+i];
+    for(i=0; i<outlen ;i++) {
+      out[i] = tmp[2+i];
     }
+ 
   }
-
-//#define TAP_SHIFT       0x0C
+  //#define TAP_SHIFT       0x0C
 }

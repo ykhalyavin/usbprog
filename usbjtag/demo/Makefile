@@ -6,4 +6,4 @@ install:
 	cp jtagusb /usr/bin
 	
 clean:
-	rm *.o demo
+	rm *.o main

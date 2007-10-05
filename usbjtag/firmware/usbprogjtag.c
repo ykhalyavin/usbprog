@@ -23,6 +23,7 @@ void write_and_read(char * buf, uint16_t size)
   uint16_t i,j;
   // until byte 3 (0=cmd,1,2=size,3... data)
   uint16_t bit_cnt;
+  CLEARPIN(PIN_WRITE,TMS);
   for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
     // write tdi
     
@@ -31,7 +32,7 @@ void write_and_read(char * buf, uint16_t size)
       SETPIN(PIN_WRITE,TDI);
     else // tdi 0
       CLEARPIN(PIN_WRITE,TDI);
-    
+   /* 
     // control tms line - goes to high at last bit
     if(size != 488){
       if(bit_cnt==(size-1))
@@ -39,12 +40,14 @@ void write_and_read(char * buf, uint16_t size)
       else
 	CLEARPIN(PIN_WRITE,TMS);
     }
-    
+   */ 
     // clock
+    wait_ms(1);
     CLEARPIN(PIN_WRITE,TCK);
     //asm("nop");
     //for(i=0;i<0xFF;i++)asm("nop");
     asm("nop");
+    wait_ms(1);
     SETPIN(PIN_WRITE,TCK);
 
     // read tdo
@@ -231,6 +234,41 @@ uint8_t get_bit(uint8_t bit)
 
 void tap_shift(char * buf, uint8_t size)
 {
+  char tmp;
+  // until byte 3 (0=cmd,1,2=size,3... data)
+  uint8_t bit_cnt=2;
+  CLEARPIN(PIN_WRITE,TMS);
+  CLEARPIN(PIN_WRITE,TCK);
+  for (bit_cnt = 2; bit_cnt < size+2; bit_cnt++) {
+    // write tdi
+    
+    tmp = buf[bit_cnt];
+    // read tdo
+
+    if(IS_PIN8_SET())
+      buf[bit_cnt] = 0x01; 
+    else
+      buf[bit_cnt] = 0x00;
+
+    // control tdi
+    if (tmp==0x01) //tdi 1
+      SETPIN(PIN_WRITE,TDI);
+    else // tdi 0
+      CLEARPIN(PIN_WRITE,TDI);
+   
+    // clock
+    wait_ms(1);
+    CLEARPIN(PIN_WRITE,TCK);
+    SETPIN(PIN_WRITE,TCK);
+    wait_ms(1);
+    CLEARPIN(PIN_WRITE,TCK);
+  }
+
+}
+
+
+void tap_shift_final(char * buf,uint8_t size)
+{
   uint16_t i,j;
   char tmp;
   // until byte 3 (0=cmd,1,2=size,3... data)
@@ -252,69 +290,17 @@ void tap_shift(char * buf, uint8_t size)
       SETPIN(PIN_WRITE,TDI);
     else // tdi 0
       CLEARPIN(PIN_WRITE,TDI);
-   
-    // clock
-    SETPIN(PIN_WRITE,TCK);
-    wait_ms(1);
-    CLEARPIN(PIN_WRITE,TCK);
-
-  }
-
-}
-
-
-void tap_shift_final(char * buf,uint8_t size)
-{
-  uint16_t i,j;
-  // until byte 3 (0=cmd,1,2=size,3... data)
-  uint16_t bit_cnt;
-  CLEARPIN(PIN_WRITE,TMS);
-  for (bit_cnt = 2; bit_cnt < size+2; bit_cnt++) {
-    // write tdi
     
-    j =(uint16_t)buf[bit_cnt];
-    // read tdo
-    if(IS_PIN8_SET())
-      buf[bit_cnt] = 0x01; 
-    else
-      buf[bit_cnt] = 0x00;
-
-
-    // control tdi
-    if (j>0) //tdi 1
-      SETPIN(PIN_WRITE,TDI);
-    else // tdi 0
-      CLEARPIN(PIN_WRITE,TDI);
-   
     // control tms line - goes to high at last bit
     if(bit_cnt==(size-1))
       SETPIN(PIN_WRITE,TMS);
-   
 
     // clock
+    wait_ms(1);
     CLEARPIN(PIN_WRITE,TCK);
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
     SETPIN(PIN_WRITE,TCK);
+    wait_ms(1);
+    CLEARPIN(PIN_WRITE,TCK);
 
   }
 

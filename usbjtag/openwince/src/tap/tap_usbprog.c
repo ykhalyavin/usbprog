@@ -84,17 +84,22 @@ tap_shift_register( chain_t *chain, const tap_register *in, tap_register *out, i
 	}
 #endif
 
-#if 1
+#if 0
 	if(exit){
 		printf("final\n");
-		usbprog_jtag_tap_shift_register_final(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+		//usbprog_jtag_tap_shift_register_final(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+		i = 0;
+		chain_clock( chain, 1 , in->data[i] );	/* Shift (& Exit1) */
 	}
 	else{
 		//printf("n\n");
-		usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+		//usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+		usbprog_jtag_write_and_read(chain->cable->usbprogjtag_handle,in->data,in->len);
+
 	}
 	
-	if (out){
+	if (out && (exit!=1)){
+		//printf("next final\n");
 		//out->data = in->data;
 		for(i=0; i < out->len ;i++){
 			if((int)in->data[i] !=0)
@@ -102,14 +107,68 @@ tap_shift_register( chain_t *chain, const tap_register *in, tap_register *out, i
 			else 
 				out->data[i]=0;
 		}
+		//printf("end final\n");
+		//out->data = in->data;
 	}
+	/*
 	if(out){
 	printf("\n");
 	for (i = 0; i < in->len; i++) {
 	  printf("%i|%i ",in->data[i],out->data[i]);
 	}
 	}
+	*/
 
+#endif
+
+#if 1 
+	i =0;
+	if(in->len<=1){
+	  if (out && (i < out->len))
+			out->data[i] = cable_get_tdo( chain->cable );
+		chain_clock( chain, (exit && ((i + 1) == in->len)) ? 1 : 0, in->data[i] );
+
+	} else {
+
+	//usbprog_jtag_write_and_read(chain->cable->usbprogjtag_handle,in->data,in->len-1);
+	//usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,NULL,in->len);
+	//usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,NULL,in->len-1);
+	
+/*
+	if (out){
+		for(i=0; i < in->len-1 ;i++){
+			if((int)in->data[i] !=0)
+				out->data[i]=1;
+			else 
+				out->data[i]=0;
+		}
+	}
+*/
+	for (i=0; i < (in->len-1); i++) {
+		//if (out && (i < out->len))
+	//		out->data[i] = cable_get_tdo( chain->cable );
+		//chain_clock( chain, 0, in->data[i] );
+		if (out && (i < out->len))
+		usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,&in->data[i],1,&out->data[i],1);
+		else
+		usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,&in->data[i],1,NULL,0);
+		
+		//if (out && (i < out->len))
+		//  out->data[i] = &in->data[i];
+
+	} 
+   /* 
+	if (out)
+	usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,in->len,out->data,out->len);
+	else
+	usbprog_jtag_tap_shift_register(chain->cable->usbprogjtag_handle,in->data,in->len,NULL,0);
+	*/
+
+	if (out && (i < out->len))
+		out->data[i] = cable_get_tdo( chain->cable );
+	chain_clock( chain, (exit && ((i + 1) == in->len)) ? 1 : 0, in->data[i] );
+	
+	}
 #endif
 
 #if 0
@@ -118,13 +177,14 @@ tap_shift_register( chain_t *chain, const tap_register *in, tap_register *out, i
 			out->data[i] = cable_get_tdo( chain->cable );
 		chain_clock( chain, (exit && ((i + 1) == in->len)) ? 1 : 0, in->data[i] );	/* Shift (& Exit1) */
 	}
-
+/*
 	if(out){
 	printf("\n");
 	for (i = 0; i < in->len; i++) {
 	  printf("%i|%i ",in->data[i],out->data[i]);
 	}
 	}
+	*/
 #endif
 
 	/* Shift-DR, Shift-IR, Exit1-DR or Exit1-IR state */
