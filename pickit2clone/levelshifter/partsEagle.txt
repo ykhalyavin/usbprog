@@ -1,0 +1,19 @@
+Partlist
+
+Exported from levelshifter.sch at 10/07/2007 11:34:14 
+
+EAGLE Version 4.16r2 Copyright (c) 1988-2006 CadSoft
+
+Part     Value          Device       Package   Library        Sheet	Reichelt Ar. Nr
+
+D1       PMLL4150       PMLL4150     SOD80C    diode-1        1		SMD 1N 4148
+D2       PMLL4150       PMLL4150     SOD80C    diode-1        1		SMD 1N 4148
+IC1                     78LXX        78LXX     v-reg          1		CSD: 22-1201
+JP1                     PINHD-1X2    1X02      pinhead        1		von den 36 poligen runterschneiden!
+Q1       BC857ALT1SMD   BC857ALT1SMD SOT23-BEC transistor-pnp 1		BC 857C SMD
+R1       1k             R-EU_R0805   R0805     rcl            1		SMD-0805 1,00K
+R2       47             R-EU_R0805   R0805     rcl            1		SMD-0805 47,0
+R3       1k             R-EU_R0805   R0805     rcl            1		SMD-0805 1,00K
+SV1                     FE05-2W      FE05-2W   con-lsta       1
+SV2                     MA05-1       MA05-1    con-lstb       1		SL 1X36G 2,54		36 polig zum teilen
+T1       BC847          BC847        SOT23     transistor     1		BC 847C SMD
