@@ -62,6 +62,7 @@ int datatogl;
 char sck_duration;
 int fragmentnumber;
 int avrstudio;
+int reset_pol;
 } usbprog;
 
 #define _BUF_LEN     300
@@ -396,7 +397,15 @@ void USBFlash(char *buf)
       answer[1] = STATUS_CMD_OK;
   
       switch(buf[1]){
-        case PARAM_SCK_DURATION:
+        case PARAM_RESET_POLARITY:
+	  if(buf[2]==0x00)
+	    usbprog.reset_pol=0;
+	  else
+	    usbprog.reset_pol=1;
+
+	break;
+	
+	case PARAM_SCK_DURATION:
           switch(buf[2]){
             case 0x00:  //8MHz
               SPCR = (1<<SPE)|(1<<MSTR);
@@ -466,9 +475,12 @@ void USBFlash(char *buf)
         case PARAM_HW_VER:
           answer[2] = 0;
         break;
+
+
+
   
         case PARAM_VTARGET:
-          answer[2] = 42;
+          answer[2] = 50;
         break;
   
         case PARAM_SCK_DURATION:
@@ -541,10 +553,17 @@ void USBFlash(char *buf)
       //PORTB |=(1<<SCK);
       //PORTB &= ~(1<<SCK);
       // set_reset    ;  set RESET = 1
-      PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
-      wait_ms(10);
-      PORTB &= ~(1<<RESET_PIN);
-      wait_ms(10);
+      if(usbprog.reset_pol==1){
+	PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
+	wait_ms(10);
+	PORTB &= ~(1<<RESET_PIN);
+	wait_ms(10);
+      } else {
+	PORTB &= ~(1<<RESET_PIN);
+	wait_ms(10);
+	PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
+	wait_ms(10);
+      }
       
       answer[0] = CMD_ENTER_PROGMODE_ISP;
       answer[1] = STATUS_CMD_FAILED;
@@ -850,6 +869,7 @@ int main(void)
   usbprog.sck_duration = 3;   // 1MHz
   usbprog.avrstudio = 1;   // 1 no
   usbprog.fragmentnumber = 0;  // read flash fragment
+  usbprog.reset_pol = 1;  // 1= avr 0 = at89
 
   DDRA = (1 << PA4);
   LED_off;

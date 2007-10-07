@@ -45,7 +45,7 @@ MCU = atmega32
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex
+FORMAT = binary
 
 # Target file name (without extension).
 TARGET = main
@@ -276,15 +276,13 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter finished end
 
-build: elf hex eep lss sym hex2bin
+build: elf hex eep lss sym
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
 eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
-hex2bin:
-	hex2bin main.hex
 
 
 # Eye candy.
@@ -352,6 +350,7 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
+	mv main.hex main.bin
 
 %.eep: %.elf
 	@echo
