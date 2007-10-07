@@ -13,5 +13,5 @@ C4       100nF          C-EUC0805          C0805       rcl            1		X7R-G08
 IC1      MAX3002        MAX3002            TSSOP20     maxim-6b       1		den hast du
 JP1                     PINHD-1X2          1X02        pinhead        1		SL 1X36G 2,54		der ist 36 polig
 SV2                     ML10L              ML10L       con-harting-ml 1		WSL 10W
-SV3                     FE05-2W            FE05-2W     con-lsta       1		WSL 10W		//Eventuell den richtigen Pfostenstecker oder 2x5 Buchsenleiste gewinkelt
+SV3                     FE05-2W            FE05-2W     con-lsta       1		BL 2X10W 2,54		zum teilen!
 U$1      M2920          M2920              SOT223      v-reg          1		den hast du
