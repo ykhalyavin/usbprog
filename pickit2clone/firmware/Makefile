@@ -45,14 +45,14 @@ MCU = atmega32
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex
+FORMAT = binary
 
 # Target file name (without extension).
 TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c usbn2mc/main/usbn960x.c usbn2mc.c usbn2mc/main/usbnapi.c uart.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c wait.c i2ctool.c
+SRC = $(TARGET).c usbn2mc/main/usbn960x.c usbn2mc.c usbn2mc/main/usbnapi.c uart.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c wait.c
 
 
 # List Assembler source files here.
@@ -276,7 +276,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter finished end
 
-build: elf hex eep lss sym hex2bin
+build: elf hex eep lss sym
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
@@ -352,6 +352,7 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
+	mv main.hex main.bin
 
 %.eep: %.elf
 	@echo
@@ -444,9 +445,7 @@ reset:
 	avrdude -p m32 -c bsd -E noreset
 
 ready:
-	mv main.hex i2ctool.hex
-	hex2bin i2ctool.hex
+	mv main.hex picprog.hex
 
 upgrade:
-	hex2bin i2ctool.hex 
 	usbprog i2ctool.bin 

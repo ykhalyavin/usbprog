@@ -24,18 +24,6 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define UNKOWN_COMMAND	0x00
-#define I2CINIT		0x07  //Initializes the I2C interface pins
-#define I2CSTART	0x08  //i2c start condition generator
-#define I2CRESTART	0x09  //i2c restart condition generator
-#define I2CSENDBYTE	0x0A  //shifts out a byte, msb first, data is latched in on the rising edge
-#define I2CRECEIVEBYTE  0x0B  //shifts in a byte, msb first, data is latched in on the rising edge
-#define I2CACK		0x0C  //Master Acknowledge generator
-#define I2CNACK		0x0D  //Master NO Acknowledge generator
-#define I2CRECVACK	0x0E  //Checks for slave Acknowledge
-#define I2CSTOP		0x0F  //i2c stop condition generator
-
-
 #define F_CPU 16000000
 #include <util/delay.h>
 
@@ -44,7 +32,6 @@
 #include "../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
-#include "i2ctool.h"
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -143,8 +130,8 @@ int main(void)
 
     //DDRA = (1 << PA4);
 
-    USBNDeviceVendorID(0x1781);	//atmel ids
-    USBNDeviceProductID(0x0c62); // atmel ids
+    USBNDeviceVendorID(0x1781);	// we need pic ids
+    USBNDeviceProductID(0x0c62); // 
 
     USBNDeviceBCDDevice(0x0200);
 
@@ -152,7 +139,7 @@ int main(void)
     _USBNAddStringDescriptor(lang); // language descriptor
 
     USBNDeviceManufacture("USBprog EmbeddedProjects");
-    USBNDeviceProduct("I2C Tool");
+    USBNDeviceProduct("PIC Prog");
     USBNDeviceSerialNumber("GNU/GPL2");
 
     conf = USBNAddConfiguration();
