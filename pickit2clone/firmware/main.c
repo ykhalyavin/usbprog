@@ -91,6 +91,7 @@ void CommandAnswer(int length)
 void Commands(char *buf)
 {
   usbprog.datatogl =0 ;
+  /*
   switch(buf[0]) {
     case I2CINIT:
       //set_direction((uint8_t)buf[1]);
@@ -115,7 +116,7 @@ void Commands(char *buf)
       answer[0] = UNKOWN_COMMAND; 
       answer[1] = 0x00; 
   }
-
+  */
 
 }
 
