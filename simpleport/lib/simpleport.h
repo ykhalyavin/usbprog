@@ -28,6 +28,12 @@
 #define PORT_GETPIN     0x05
 #define PORT_SETPINDIR  0x06
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
 struct simpleport 
 {
   struct usb_dev_handle* usb_handle;
@@ -43,4 +49,8 @@ void simpleport_set_port(struct simpleport *simpleport,unsigned char value, unsi
 unsigned char simpleport_get_port(struct simpleport *simpleport);
 void simpleport_set_pin(struct simpleport *simpleport,int pin, int value);
 int simpleport_get_pin(struct simpleport *simpleport, int pin);
+
+#ifdef __cplusplus
+}
+#endif
 
