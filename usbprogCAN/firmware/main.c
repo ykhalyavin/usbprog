@@ -143,8 +143,8 @@ int main(void)
 
     //DDRA = (1 << PA4);
 
-    USBNDeviceVendorID(0x1781);	//atmel ids
-    USBNDeviceProductID(0x0c62); // atmel ids
+    USBNDeviceVendorID(0x1781);	
+    USBNDeviceProductID(0x0c66); 
 
     USBNDeviceBCDDevice(0x0200);
 
@@ -152,7 +152,7 @@ int main(void)
     _USBNAddStringDescriptor(lang); // language descriptor
 
     USBNDeviceManufacture("USBprog EmbeddedProjects");
-    USBNDeviceProduct("I2C Tool");
+    USBNDeviceProduct("usbprogCAN v.0.1");
     USBNDeviceSerialNumber("GNU/GPL2");
 
     conf = USBNAddConfiguration();
