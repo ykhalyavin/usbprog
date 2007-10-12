@@ -84,7 +84,7 @@ int main(void)
   USBNAlternateSetting(conf,interf,0);
 
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
-  USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,NULL);
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,NULL);
 
   
   MCUCR |=  (1 << ISC01); // fallende flanke

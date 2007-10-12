@@ -8,12 +8,12 @@ def led(timehigh,simpleport,samples):
     timelow = samples - timehigh
     simpleport.simpleport_set_pin(sp_handle, 11, 1)   
     while timehigh > 1:
-	simpleport.simpleport_set_pin(sp_handle, 11, 1)   
-	timehigh = timehigh-1
+        simpleport.simpleport_set_pin(sp_handle, 11, 1)   
+        timehigh = timehigh-1
 
     while timelow > 0:
-	simpleport.simpleport_set_pin(sp_handle, 11, 0)
-	timelow = timelow-1
+        simpleport.simpleport_set_pin(sp_handle, 11, 0)
+        timelow = timelow-1
 
 
 if __name__ == "__main__":
@@ -29,20 +29,20 @@ if __name__ == "__main__":
     up = 1
     dowm = 0
     while 1:
-	if up:
-	    i = i + 1
-	    #print i
-	    for p in range(1,11):
-		led(i,simpleport,samples)
-	    if i == samples:
-		down = 1; up = 0;
-	else:
-	    i = i - 1
-	    #print i
-	    for p in range(1,11):
-		led(i,simpleport,samples)
-	    if i == 0:
-		down = 0; up = 1;
+        if up:
+            i = i + 1
+            #print i
+            for p in range(1,11):
+                led(i,simpleport,samples)
+            if i == samples:
+                down = 1; up = 0;
+        else:
+            i = i - 1
+            #print i
+            for p in range(1,11):
+                led(i,simpleport,samples)
+            if i == 0:
+                down = 0; up = 1;
 
 
     # close handle (never reached in this case)
