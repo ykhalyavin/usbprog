@@ -1,0 +1,6 @@
+To do:
+- Nur wenn mehrere gleiche Geräte endeckt werden die Serial Nr anzeigen
+- XML Gegencheck ob das Gerät überhaupt die Möglichkeit hat in update modus zu wechseln
+- Geräte die mit der ID des updat Modus angezeigt werden sind nun falsch beschriftet
+- mehrer usbprog ansteuern
+- Statusbalken

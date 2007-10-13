@@ -1,0 +1,7 @@
+How to make a new release:
+
+Compile the project with wxDev C++
+Change the Icon of the output file with icon Changer from http://www.davidcornish.com
+The icon is stored in the installer Folder
+Create installer with the installer script (http://nsis.sourceforge.net/Main_Page) in the Installer Folder
+Installer.exe is ready to work

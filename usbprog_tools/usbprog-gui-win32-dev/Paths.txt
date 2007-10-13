@@ -1,0 +1,2 @@
+libusb0.dll C:\Windows\system32\
+libusb0.sys C:\Windows\system32\Drivers\

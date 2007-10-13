@@ -1,0 +1,51 @@
+# Project: Projekt2
+# Compiler: Default GCC compiler
+# Compiler Type: MingW 3
+# Makefile created by wxDev-C++ 6.10.2 on 18.08.07 22:34
+
+CPP       = g++.exe
+CC        = gcc.exe
+WINDRES   = windres.exe
+OBJ       = Objects/MingW/usbprogApp.o Objects/MingW/usbprogFrm.o Objects/MingW/usbprog.o Objects/MingW/http_error_codes.o Objects/MingW/http_fetcher.o Objects/MingW/xmlParser.o Objects/MingW/usbprog_private.res
+LINKOBJ   = Objects/MingW/usbprogApp.o Objects/MingW/usbprogFrm.o Objects/MingW/usbprog.o Objects/MingW/http_error_codes.o Objects/MingW/http_fetcher.o Objects/MingW/xmlParser.o Objects/MingW/usbprog_private.res
+LIBS      = -L"C:/Programme/Dev-Cpp/Lib" -L"C:/Programme/LibUSB-Win32/lib/gcc" -L"C:/usbprogProject/usbprog_tools/lib2" -lusb -mwindows -lwxmsw28 -lwxmsw28_gl -lwxtiff -lwxjpeg -lwxpng -lwxzlib -lwxregex -lwxexpat -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool -lwinmm -lshell32 -lcomctl32 -lole32 -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 -lodbc32 -lopengl32  
+INCS      = -I"include" -I"C:/Programme/LibUSB-Win32/include" -I"C:/usbprogProject/usbprog_tools/lib2"
+CXXINCS   = -I"C:/Programme/Dev-Cpp/lib/gcc/mingw32/3.4.2/include" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/backward" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/mingw32" -I"C:/Programme/Dev-Cpp/include/c++/3.4.2" -I"C:/Programme/Dev-Cpp/include" -I"C:/Programme/Dev-Cpp/" -I"C:/Programme/Dev-Cpp/include/common/wx/msw" -I"C:/Programme/Dev-Cpp/include/common/wx/generic" -I"C:/Programme/Dev-Cpp/include/common/wx/fl" -I"C:/Programme/Dev-Cpp/include/common/wx/gizmos" -I"C:/Programme/Dev-Cpp/include/common/wx/html" -I"C:/Programme/Dev-Cpp/include/common/wx/mmedia" -I"C:/Programme/Dev-Cpp/include/common/wx/net" -I"C:/Programme/Dev-Cpp/include/common/wx/ogl" -I"C:/Programme/Dev-Cpp/include/common/wx/plot" -I"C:/Programme/Dev-Cpp/include/common/wx/protocol" -I"C:/Programme/Dev-Cpp/include/common/wx/stc" -I"C:/Programme/Dev-Cpp/include/common/wx/svg" -I"C:/Programme/Dev-Cpp/include/common/wx/xml" -I"C:/Programme/Dev-Cpp/include/common/wx/xrc" -I"C:/Programme/Dev-Cpp/include/common/wx" -I"C:/Programme/Dev-Cpp/include/common" -I"C:/Programme/LibUSB-Win32/include" -I"C:/usbprogProject/usbprog_tools/lib2"
+RCINCS    = --include-dir "C:/PROGRA~1/Dev-Cpp/include/common"
+BIN       = Output/MingW/usbprog.exe
+DEFINES   =  -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__
+CXXFLAGS  = $(CXXINCS) $(DEFINES) -fno-exceptions -fno-pcc-struct-return -fstrict-aliasing -Wall -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__   -lusb -fexpensive-optimizations -O3
+CFLAGS    = $(INCS) $(DEFINES) -fno-exceptions -fno-pcc-struct-return -fstrict-aliasing -Wall -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__   -lusb -fexpensive-optimizations -O3
+GPROF     = gprof.exe
+RM        = rm -f
+LINK      = g++.exe
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	$(RM) $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(LINK) $(LINKOBJ) -o "Output\MingW\usbprog.exe" $(LIBS)
+
+Objects/MingW/usbprogApp.o: $(GLOBALDEPS) usbprogApp.cpp usbprogApp.h usbprogFrm.h
+	$(CPP) -c usbprogApp.cpp -o Objects/MingW/usbprogApp.o $(CXXFLAGS)
+
+Objects/MingW/usbprogFrm.o: $(GLOBALDEPS) usbprogFrm.cpp usbprogFrm.h ../lib2/usbprog.h ../lib2/xmlParser.h ../lib2/xmlParser.h Images/usbprogFrm_WxStaticBitmap1_XPM.xpm
+	$(CPP) -c usbprogFrm.cpp -o Objects/MingW/usbprogFrm.o $(CXXFLAGS)
+
+Objects/MingW/usbprog.o: $(GLOBALDEPS) ../lib2/usbprog.cpp ../lib2/usbprog.h ../lib2/xmlParser.h ../lib2/xmlParser.h ../lib2/http_fetcher.h ../lib2/http_error_codes.h
+	$(CPP) -c ../lib2/usbprog.cpp -o Objects/MingW/usbprog.o $(CXXFLAGS)
+
+Objects/MingW/http_error_codes.o: $(GLOBALDEPS) ../lib2/http_error_codes.c
+	$(CPP) -c ../lib2/http_error_codes.c -o Objects/MingW/http_error_codes.o $(CXXFLAGS)
+
+Objects/MingW/http_fetcher.o: $(GLOBALDEPS) ../lib2/http_fetcher.c ../lib2/http_fetcher.h ../lib2/http_error_codes.h
+	$(CPP) -c ../lib2/http_fetcher.c -o Objects/MingW/http_fetcher.o $(CXXFLAGS)
+
+Objects/MingW/xmlParser.o: $(GLOBALDEPS) ../lib2/xmlParser.cpp ../lib2/xmlParser.h
+	$(CPP) -c ../lib2/xmlParser.cpp -o Objects/MingW/xmlParser.o $(CXXFLAGS)
+
+Objects/MingW/usbprog_private.res: Objects/MingW/usbprog_private.rc usbprogApp.rc 
+	$(WINDRES) --input-format=rc -o Objects/MingW/usbprog_private.res $(RCINCS) Objects/MingW/USBPRO~1.RC -O coff
