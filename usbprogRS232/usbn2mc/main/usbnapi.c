@@ -21,7 +21,7 @@
 #include <string.h>
 #include "usbnapi.h"
 
-
+/*
 // setup global datastructure
 void USBNInit(void)
 {
@@ -52,6 +52,15 @@ void USBNInit(void)
 
 
   DescriptorList=NULL;
+  StringList=NULL;
+}
+
+*/
+// setup global datastructure
+void USBNInit(unsigned char* _DeviceDescriptor,unsigned char* _ConfigurationDescriptor)
+{
+  DeviceDescriptor=_DeviceDescriptor;
+  ConfigurationDescriptor=_ConfigurationDescriptor;
   StringList=NULL;
 }
 

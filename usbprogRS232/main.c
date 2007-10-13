@@ -63,9 +63,9 @@ const unsigned char usbrs232[] =
     	0x81,0x17,  // vendor id
     	0x64,0x0c,  // product id
     	0x00,0x01,  // revision id (e.g 1.02)
-    	0x00,       // index of manuf. string
-    	0x00,             // index of product string
-    	0x00,             // index of ser. number
+    	0x01,       // index of manuf. string
+    	0x02,       // index of product string
+    	0x00,       // index of ser. number
     	0x01        // number of configs
 };
 
@@ -313,6 +313,11 @@ int main(void)
 
 	// setup usbstack with your descriptors
 	USBNInit(usbrs232,usbrs232Conf);
+
+	_USBNAddStringDescriptor(""); //pseudo lang
+	_USBNAddStringDescriptor("USBprog EmbeddedProjects");
+	_USBNAddStringDescriptor("usbprogRS232");
+	_USBNCreateStringField();
 
 
 	USBNInitMC();		// start usb controller

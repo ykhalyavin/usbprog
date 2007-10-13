@@ -33,6 +33,14 @@ void USBNStart(void);
 /// handle usb chip interrupt
 void USBNInterrupt(void);
 
+/// move descriptor in a linear field and remove string descriptors
+void _USBNCreateStringField(void);
+
+uint8_t USBNAddToStringList( void* data);
+
+
+/// add new string descriptor and get index
+int _USBNAddStringDescriptor(char *string);
 
 
 #endif /* __USBNAPI_H__ */

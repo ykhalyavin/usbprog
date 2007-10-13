@@ -26,8 +26,32 @@
 
 unsigned char *DeviceDescriptor;
 unsigned char *ConfigurationDescriptor;
+struct string_entry*  StringList;
+char** FinalStringArray;
+
+
 
 void *RX1Callback;
+
+
+
+struct list_entry
+{
+  void *data;   uint8_t type;
+  uint8_t len;
+  uint8_t conf;
+  uint8_t interf;
+  uint8_t index;
+  struct list_entry *next;
+};
+
+struct string_entry
+{   void *data;
+  uint8_t index;
+  struct string_entry *next;
+};
+
+
 
 /*-------------------------------------------
  * global data structs

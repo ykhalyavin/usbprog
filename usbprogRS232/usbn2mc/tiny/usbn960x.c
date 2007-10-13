@@ -472,7 +472,7 @@ void _USBNClearFeature(void)
 
 void _USBNGetDescriptor(DeviceRequest *req)
 {
-  //unsigned char index =  req->wValue;
+  unsigned char index =  req->wValue;
   unsigned char type = req->wValue >> 8;
 
   EP0tx.Index = 0;
@@ -501,27 +501,20 @@ void _USBNGetDescriptor(DeviceRequest *req)
       EP0tx.Buf = ConfigurationDescriptor;
 
     break;
-#if 0
     case STRING:
-      #if DEBUG 
-	USBNDebug("STRING DESCRIPTOR ");  
-	SendHex(index);
-	USBNDebug("\r\n");
-      #endif
-
-      if(index ==1)
+      if(index >0)
       {
 	EP0tx.Buf = &FinalStringArray[index][0];
 	EP0tx.Size = EP0tx.Buf[0];
       }
-      else { 
+      else {
 	char lang[]={0x04,0x03,0x09,0x04};
-	EP0tx.Size=4;
-	EP0tx.Buf=lang;
-
+	  EP0tx.Buf = &FinalStringArray[0][0];
+	  EP0tx.Size=4;
+          EP0tx.Buf=lang;
       }
-    break;
-#endif
+      break;
+
   }
   //if (EP0rx.Buf[7]==0)                  //if less than 256 req'd  
   //  if (EP0tx.Size > EP0rx.Buf[6]) EP0tx.Size = EP0rx.Buf[6];

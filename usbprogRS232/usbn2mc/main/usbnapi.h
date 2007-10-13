@@ -29,7 +29,9 @@ void _USBNAddToList( void* data, uint8_t len,
 uint8_t USBNAddToStringList( void* data);
 
 /// initial global data structures
-void USBNInit(void);
+//void USBNInit(void);
+void USBNInit(unsigned char* _DeviceDescriptor,unsigned char* _ConfigurationDescriptor);
+
 
 /// define vendor/product/device id for usb function
 void USBNDeviceIDs(unsigned short idVendor, unsigned short idProduct, unsigned short bcdDevice);

@@ -27,6 +27,7 @@ void USBNInit(unsigned char* _DeviceDescriptor,unsigned char* _ConfigurationDesc
 {
   DeviceDescriptor=_DeviceDescriptor;
   ConfigurationDescriptor=_ConfigurationDescriptor;
+  StringList=NULL;
 }
 
 void USBNCallbackFIFORX1(void *fct)
@@ -92,6 +93,118 @@ void USBNInterrupt(void)
   USBNWrite(MAMSK,mask);
 
 }
+
+
+
+void _USBNCreateStringField(void)
+{
+  struct string_entry *tmp;
+  int index=0;
+  
+  tmp = StringList;
+  while(tmp->next != NULL)
+  {
+    tmp=tmp->next;
+    index++;
+  } 
+  // memory for all string descriptors
+  index++;
+  FinalStringArray = (char**)malloc(sizeof(char*)*index);
+
+  int x;
+  char *ptr;
+  tmp = StringList;
+  //USBNDebug("\r\n\r\n");
+  int first=1;
+  do
+  {
+    if(!first) 
+      tmp=tmp->next;
+    first=0;
+
+    ptr = (char*)tmp->data;
+    //USBNDebug("string index: ");
+    //SendHex(tmp->index);
+    //USBNDebug(" length: ");
+    //SendHex(ptr[0]);
+    //USBNDebug("\r\n\r\n");
+    FinalStringArray[tmp->index] = (char*)malloc(sizeof(char)*(int)ptr[0]);
+
+     for(x=0;x<(int)ptr[0];x++)
+       FinalStringArray[tmp->index][x] = ptr[x];
+
+
+  } while(tmp->next != NULL);
+
+}
+
+
+// string descriptor functions 
+int _USBNAddStringDescriptor(char *string)
+{
+  int i;
+  int j=2;
+  int index;
+  
+  
+  char *newstring = (char*)malloc(strlen(string)*2+2);
+  
+  newstring[0]=(strlen(string)*2)+2; // length;
+  newstring[1]=0x03; //Descriptor Type
+
+  // build string like it is defined in usb spec
+  for(i=0;i<strlen(string);i++)
+  {
+    newstring[j]=string[i];
+    newstring[j+1]=0x00;
+    j = j+2;
+  }
+
+  index = USBNAddToStringList((void*)newstring);
+
+  // return index   
+  return index;
+}
+
+
+
+uint8_t USBNAddToStringList( void* data)
+{
+  uint8_t index=0;
+  struct string_entry *tmp;
+
+  //USBNDebug("add to string list\r\n");
+  if(StringList == NULL)
+  {
+    //USBNDebug("first string elemennt\r\n");
+    StringList = (struct string_entry*)malloc(sizeof(struct string_entry));
+
+    StringList->data = data;
+    StringList->index = 0;
+    StringList->next = NULL;
+  }
+  else
+  {
+    //USBNDebug("next string element\r\n");
+    
+    index++;
+    tmp = StringList;
+    while(tmp->next != NULL)
+    {
+      tmp=tmp->next;
+      index++;
+    } 
+    tmp->next = (struct string_entry*)malloc(sizeof(struct string_entry));
+    tmp=tmp->next;
+
+    tmp->data = data;
+    tmp->index = index;
+    tmp->next=NULL;
+  }
+  //SendHex(index);    
+  return index;
+}
+
 
 
 
