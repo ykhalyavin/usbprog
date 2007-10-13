@@ -1,5 +1,5 @@
-int i2c_init(struct context *i2c);
-int i2c_deinit(struct context *i2c);
+int i2c_open(struct context *i2c);
+int i2c_close(struct context *i2c);
 int i2c_speed(struct context *i2c, int speed);
 int i2c_start(struct context *i2c);
 int i2c_stop(struct context *i2c);
