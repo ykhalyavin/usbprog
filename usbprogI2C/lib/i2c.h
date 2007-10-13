@@ -1,0 +1,12 @@
+int i2c_init(struct context *i2c);
+int i2c_deinit(struct context *i2c);
+int i2c_speed(struct context *i2c, int speed);
+int i2c_start(struct context *i2c);
+int i2c_stop(struct context *i2c);
+int i2c_restart(struct context *i2c);
+int i2c_slave_address(struct context *i2c, unsigned char address);
+int i2c_send(struct context *i2c, unsigned char * data, int length);
+unsigned char i2c_recv(struct context *i2c, int length);
+int i2c_recv_ack(struct context *i2c);
+int i2c_send_ack(struct context *i2c);
+int i2c_send_nack(struct context *i2c);
