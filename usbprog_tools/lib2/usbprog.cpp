@@ -279,6 +279,104 @@ int usbprog_online_print_netlist(struct usbprog_context* usbprog, char** buf, in
 }
 
 
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *         \param number index of device_list arrar (from usbprog_print_devicelist)
+ *
+ *         \retval Pointer to error string
+ */
+int usbprog_update_mode_device(struct usbprog_context* usbprog, int number)
+{
+    struct usb_bus *busses;
+    struct usb_dev_handle* usb_handle;
+    struct usb_bus *bus;
+    struct usb_device *dev;
+    
+    usb_find_busses();
+    usb_find_devices();
+    busses = usb_get_busses();
+    int i=0;
+    
+    char vendor[255];
+    char product[255];
+    int vendorlen=0, productlen=0;
+
+
+    usb_dev_handle * tmp_handle = usb_open(usbprog->devList[number]);
+
+    if(usbprog->devList[number]->descriptor.idVendor==0x1781 && usbprog->devList[number]->descriptor.idProduct==0x0c62)
+    {
+        usb_set_configuration(tmp_handle,1);
+        usb_claim_interface(tmp_handle,0);
+        usb_set_altinterface(tmp_handle,0);
+        vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+        productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+        if(vendorlen<=0 && productlen<=0)
+        {
+	    //printf("update mode\n");
+	    // update modus
+            usbprog->usb_handle = tmp_handle;
+            return 1;
+        }
+	}
+	//printf("nun muss man umschalten\n");
+	usb_set_configuration(tmp_handle,1);
+	usb_claim_interface(tmp_handle,0);
+	usb_set_altinterface(tmp_handle,0);
+
+	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
+	usb_close(tmp_handle);
+	//printf("jetzt sollte windows pling machen\n");
+	#ifdef _WIN32
+	Sleep(7000);
+	#else
+	sleep(3);
+	#endif
+	//printf("jetzt ZUM ZWEITEN MAL windows pling machen\n");
+	int timeout = 30;
+
+	while(1)
+    {
+        usb_find_busses();
+	    usb_find_devices();
+        busses = usb_get_busses();
+        for (bus = busses; bus; bus = bus->next) 
+        {
+            for (dev = bus->devices; dev; dev = dev->next)
+            {
+                //printf("%i %i",dev->descriptor.idVendor,dev->descriptor.idProduct);
+                if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62)
+                {
+                    //printf("und nun wurde der update modus erkannt und das handel gesichert\n");
+                    usbprog->usb_handle = usb_open(dev);
+                    usb_set_configuration(usbprog->usb_handle,1);
+                    usb_claim_interface(usbprog->usb_handle,0);
+                    usb_set_altinterface(usbprog->usb_handle,0);
+                    //exit(1);
+                    #ifdef _WIN32
+                    Sleep(3000);
+                    #endif
+
+		            return 1;
+	            }
+	           //printf("\nHallo Robert!\n");
+            }
+        }
+        timeout++;
+        if(timeout>100)
+	       break;
+
+        #ifdef _WIN32
+        Sleep(1000);
+        #else
+        sleep(1);
+        #endif
+    }
+  return 0;
+}
+
 
 
 

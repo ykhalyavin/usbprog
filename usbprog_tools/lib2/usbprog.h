@@ -34,6 +34,7 @@ struct usbprog_context{
   char * versions_xml;
   XMLNode xMainNode;
   usb_dev_handle *usb_handle;
+  struct usb_device *devList[20];
 };
 
 int usbprog_init(struct usbprog_context* usbprog);
@@ -76,6 +77,8 @@ int usbprog_stop_updatemode(struct usbprog_context* usbprog);
 
 /* is usbprog in update mode */
 int is_usbprog_in_update_mode(struct usbprog_context* usbprog);
+
+int usbprog_update_mode_device(struct usbprog_context* usbprog, int number);
 
 
 
