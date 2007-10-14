@@ -120,8 +120,8 @@ void _USBNInitEP0(void);
 void USBNDebug(char *msg);
 
 //only for compiler
-void USBNDecodeVendorRequest(DeviceRequest *req);
-void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep);
+//void USBNDecodeVendorRequest(DeviceRequest *req);
+//void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep);
 
 
 
