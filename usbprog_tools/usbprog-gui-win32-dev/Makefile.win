@@ -1,7 +1,7 @@
 # Project: Projekt2
 # Compiler: Default GCC compiler
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 14.10.07 20:56
+# Makefile created by wxDev-C++ 6.10.2 on 14.10.07 21:44
 
 CPP       = g++.exe
 CC        = gcc.exe
@@ -32,7 +32,7 @@ $(BIN): $(OBJ)
 Objects/MingW/usbprogApp.o: $(GLOBALDEPS) usbprogApp.cpp usbprogApp.h usbprogFrm.h
 	$(CPP) -c usbprogApp.cpp -o Objects/MingW/usbprogApp.o $(CXXFLAGS)
 
-Objects/MingW/usbprogFrm.o: $(GLOBALDEPS) usbprogFrm.cpp usbprogFrm.h ../lib2/usbprog.h ../lib2/xmlParser.h ../lib2/xmlParser.h Images/usbprogFrm_WxStaticBitmap1_XPM.xpm usbprog.xpm
+Objects/MingW/usbprogFrm.o: $(GLOBALDEPS) usbprogFrm.cpp usbprogFrm.h ../lib2/usbprog.h ../lib2/xmlParser.h ../lib2/xmlParser.h Images/usbprogFrm_WxStaticBitmap1_XPM.xpm
 	$(CPP) -c usbprogFrm.cpp -o Objects/MingW/usbprogFrm.o $(CXXFLAGS)
 
 Objects/MingW/usbprog.o: $(GLOBALDEPS) ../lib2/usbprog.cpp ../lib2/usbprog.h ../lib2/xmlParser.h ../lib2/xmlParser.h ../lib2/http_fetcher.h ../lib2/http_error_codes.h

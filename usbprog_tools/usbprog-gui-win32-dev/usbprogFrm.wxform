@@ -240,10 +240,10 @@ object frmNewForm: TfrmNewForm
   end
   object WxButton3: TWxButton
     Left = 270
-    Top = 143
+    Top = 141
     Width = 75
     Height = 25
-    Caption = 'Update'
+    Caption = '(2) Update'
     TabOrder = 10
     EVT_BUTTON = 'WxButton3Click'
     Wx_BKColor = clBlack
@@ -2430,6 +2430,36 @@ object frmNewForm: TfrmNewForm
     Wx_IDName = 'ID_WXSTATICTEXT5'
     Wx_IDValue = 1054
     Wx_LabelStyle = []
+  end
+  object WxButton6: TWxButton
+    Left = 180
+    Top = 141
+    Width = 75
+    Height = 25
+    Caption = '(1) Bootoader'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 20
+    EVT_BUTTON = 'WxButton6Click'
+    Wx_BKColor = clBlack
+    Wx_ButtonStyle = []
+    Wx_Class = 'wxButton'
+    Wx_ControlOrientation = wxControlVertical
+    Wx_Default = False
+    Wx_EventList.Strings = (
+      'EVT_BUTTON:OnClick'
+      'EVT_UPDATE_UI:OnUpdateUI')
+    Wx_FGColor = clBlack
+    Wx_GeneralStyle = []
+    Wx_Hidden = False
+    Wx_IDName = 'ID_WXBUTTON6'
+    Wx_IDValue = 1055
+    Wx_Height = 25
+    Wx_Width = 75
   end
   object WxOpenFileDialog1: TWxOpenFileDialog
     Left = 392

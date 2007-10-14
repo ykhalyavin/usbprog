@@ -63,6 +63,7 @@ class usbprogFrm : public wxFrame
 		
 		// No description
 		void printWxEdit2(char * text);
+		void WxButton6Click(wxCommandEvent& event);
 
 		
 	private:
@@ -70,8 +71,9 @@ class usbprogFrm : public wxFrame
 		//GUI Control Declaration Start and GUI Control Declaration End.
 		//wxDev-C++ will remove them. Add custom code after the block.
 		////GUI Control Declaration Start
-		wxStaticText *WxStaticText5;
+		wxButton *WxButton6;
 		wxFileDialog *WxOpenFileDialog1;
+		wxStaticText *WxStaticText5;
 		wxStaticText *WxStaticText4;
 		wxStaticBitmap *WxStaticBitmap1;
 		wxButton *WxButton5;
@@ -100,6 +102,7 @@ class usbprogFrm : public wxFrame
 		enum
 		{
 			////GUI Enum Control ID Start
+			ID_WXBUTTON6 = 1055,
 			ID_WXSTATICTEXT5 = 1054,
 			ID_WXSTATICTEXT4 = 1053,
 			ID_WXSTATICBITMAP1 = 1052,
