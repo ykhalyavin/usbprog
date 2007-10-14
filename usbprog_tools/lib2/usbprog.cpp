@@ -618,6 +618,37 @@ int usbprog_flash_buffer(struct usbprog_context* usbprog, char *buffer, int len)
 }
 
 
+/**
+ *     Get string representation for last error code
+ *
+ *         \param usbprog pointer to ftdi_context
+ *         \param number index of device_list arrar (from usbprog_print_devicelist)
+ *
+ *         \retval Pointer to error string 
+ */
+int usbprog_start_updatemode(struct usbprog_context* usbprog, int number)
+{
+	// potenzielles geraet gefunden
+	//printf("found %i %i %i %i\n",i,number,dev->descriptor.idVendor, dev->descriptor.idProduct);
+	usb_dev_handle * tmp_handle = usb_open(usbprog->devList[number]);
+
+	usb_set_configuration(tmp_handle,1);
+	usb_claim_interface(tmp_handle,0);
+	usb_set_altinterface(tmp_handle,0);
+
+	    
+	usb_control_msg(tmp_handle, 0xC0, 0x01, 0, 0, NULL,8, 10);
+	usb_close(tmp_handle);
+	//printf("jetzt sollte windows pling machen\n");
+	#ifdef _WIN32
+	Sleep(7000);
+	#else
+	sleep(3);
+	#endif
+  return 0;
+}
+
+
 
 /**
  *     Get string representation for last error code
