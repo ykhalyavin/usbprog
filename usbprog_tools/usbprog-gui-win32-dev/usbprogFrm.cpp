@@ -292,7 +292,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     #endif
          
   	printWxEdit2("Starting");
-    usbprog_update_mode_number(&usbprog, WxComboBox1->GetCurrentSelection());   //Set the usbprog in update mode
+    usbprog_update_mode_device(&usbprog, WxComboBox1->GetCurrentSelection());   //Set the usbprog in update mode
     WxGauge1->SetValue(40);
     
     if(WxRadioButton1->GetValue() == true)     //Online Pool
@@ -443,7 +443,7 @@ void usbprogFrm::WxButton4Click(wxCommandEvent& event)
 {
 	// insert your code here
 	
-    int devices = usbprog_get_numberof_devices(&usbprog);  //Get number of usb devices
+    /*int devices = usbprog_get_numberof_devices(&usbprog);  //Get number of usb devices
     char *buf[devices];
     usbprog_print_devices(&usbprog,buf);    //Get Names of devices and save in Buffer
     
@@ -460,7 +460,86 @@ void usbprogFrm::WxButton4Click(wxCommandEvent& event)
     
     char status[40];
     sprintf(status, "Found %d devices on USB Bus", devices);    //Print Status
-    printWxEdit2(status);  
+    printWxEdit2(status);   */
+    
+    WxComboBox1->Clear();
+    struct usb_bus *busses;
+    char vendor[255];
+    char product[255];
+    char serial[255];
+    int vendorlen=0, productlen=0, seriallen=0;
+    int i=0;
+    struct usb_device *dev;
+
+    usb_init();
+    usb_find_busses();
+    usb_find_devices();
+
+    busses = usb_get_busses();
+    struct usb_bus *bus;
+    
+   struct usb_device *devList[20];
+    
+    for (bus = busses; bus; bus = bus->next) 
+    {
+        for (dev = bus->devices; dev; dev = dev->next)
+        {
+	        #ifndef _WIN32
+            if(dev->descriptor.bDeviceClass==0x09) // hub devices
+                continue;
+            #endif
+
+            if(dev->descriptor.bDescriptorType !=1)
+                continue;
+                        
+            vendor[0]=0x00; product[0]=0x00;serial[0]=0x00;
+            
+            if(dev->descriptor.idVendor==0x1781 && dev->descriptor.idProduct==0x0c62)
+            {
+                usb_dev_handle * tmp_handle = usb_open(dev);
+                if(usb_get_string_simple(tmp_handle, 1, vendor, 255) <= 0 && usb_get_string_simple(tmp_handle, 2, product, 255) <= 0)
+                {
+                    sprintf(vendor,"usbprog");
+                    sprintf(product,"update mode");
+                    vendorlen = strlen(vendor);
+                    productlen = strlen(product);
+                } 
+                else 
+                {
+                    vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+                    productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+                    seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
+                }
+                usb_close(tmp_handle);
+            } 
+            else 
+            {
+                usb_dev_handle * tmp_handle = usb_open(dev);
+                vendorlen = usb_get_string_simple(tmp_handle, 1, vendor, 255);
+                productlen = usb_get_string_simple(tmp_handle, 2, product, 255);
+                seriallen = usb_get_string_simple(tmp_handle, 3, serial, 255);
+                usb_close(tmp_handle);
+                
+                if(vendorlen<=0) sprintf(vendor,"unkown vendor");
+                if(productlen<=0) sprintf(product,"unkown product");
+                if(seriallen<=0) sprintf(serial,"none");
+            }
+
+            if(vendorlen<=0 && productlen<=0)
+                continue;
+	
+	       char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+30));
+        	/*sprintf(complete,"(%i) %s from %s (Serial: %s)%i:%i",i,product,vendor,serial, \
+        	dev->descriptor.idVendor,dev->descriptor.idProduct); */
+        	//sprintf(complete,"%s %s %i",vendor,product,i);
+	       sprintf(complete,"%s",product);
+	        WxComboBox1->Append(wxString(complete, wxConvUTF8));
+	       //usb_close(tmp_handle);
+	       
+	       devList[i] = dev;
+	       i++;
+        }
+    }
 }
 
 
