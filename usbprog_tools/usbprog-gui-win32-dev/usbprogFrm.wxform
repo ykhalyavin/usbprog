@@ -251,6 +251,7 @@ object frmNewForm: TfrmNewForm
     Wx_Class = 'wxButton'
     Wx_ControlOrientation = wxControlVertical
     Wx_Default = False
+    Wx_Enabled = False
     Wx_EventList.Strings = (
       'EVT_BUTTON:OnClick'
       'EVT_UPDATE_UI:OnUpdateUI')

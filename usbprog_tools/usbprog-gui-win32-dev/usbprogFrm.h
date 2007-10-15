@@ -64,6 +64,7 @@ class usbprogFrm : public wxFrame
 		// No description
 		void printWxEdit2(char * text);
 		void WxButton6Click(wxCommandEvent& event);
+		void getUsbDevices(void);
 
 		
 	private:
@@ -71,8 +72,8 @@ class usbprogFrm : public wxFrame
 		//GUI Control Declaration Start and GUI Control Declaration End.
 		//wxDev-C++ will remove them. Add custom code after the block.
 		////GUI Control Declaration Start
-		wxButton *WxButton6;
 		wxFileDialog *WxOpenFileDialog1;
+		wxButton *WxButton6;
 		wxStaticText *WxStaticText5;
 		wxStaticText *WxStaticText4;
 		wxStaticBitmap *WxStaticBitmap1;
@@ -130,5 +131,7 @@ class usbprogFrm : public wxFrame
 		void OnClose(wxCloseEvent& event);
 		void CreateGUIControls();
 };
+
+
 
 #endif
