@@ -120,7 +120,50 @@ void _USBNAlternateEvent(void)
 {
   unsigned char event;
   event = USBNRead(ALTEV);
+  USBNDebug("alt event\r\n");
+
+  if(event & ALT_RESET)
+  {
+    USBNWrite(NFSR,RST_ST);                   // NFS = NodeReset
+    USBNWrite(FAR,AD_EN+0); 
+    USBNWrite(EPC0,0x00);
+    USBNWrite(TXC0,FLUSH);
+    USBNWrite(RXC0,RX_EN);                    // allow reception
+    USBNWrite(NFSR,OPR_ST);                   // NFS = NodeOperational
+  	USBNDebug("reset\r\n");
+  }
+  if(event & ALT_SD3)
+  {
+    USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
+  /*
+    USBNWrite(NFSR,SUS_ST);                   // enter suspend state
+  	USBNDebug("sd3\r\n");
+  */
+  }
+  if(event & ALT_RESUME)
+  {
+    USBNWrite(ALTMSK,ALT_SD3+ALT_RESET+ALT_RESUME);
+  /*
+    USBNWrite(EPC0,0x00);
+    USBNWrite(RXC0,RX_EN);                    // allow reception
+    USBNWrite(TXC0,FLUSH);
+    USBNWrite(NFSR,OPR_ST);
+  	USBNDebug("resume\r\n");
+	*/
+  }
+  if(event & ALT_EOP)
+  {
+  	USBNDebug("eop\r\n");
+  }
+
+}
+
+
 #if 0
+void _USBNAlternateEvent(void)
+{
+  unsigned char event;
+  event = USBNRead(ALTEV);
   //USBNDebug("alt event\r\n");
 
   if(event & ALT_RESET)
@@ -145,8 +188,8 @@ void _USBNAlternateEvent(void)
   else
   {
   }
-#endif
 }
+#endif
 
 
 // ********************************************************************
