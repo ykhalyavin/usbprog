@@ -63,7 +63,7 @@ const unsigned char usbprogPICDevice[] =
     	0x01,0x00,  // revision id (e.g 1.02)
     	0x01,       // index of manuf. string
     	0x02,             // index of product string
-    	0x00,             // index of ser. number
+    	0x03,             // index of ser. number
     	0x01        // number of configs
 };
 
@@ -209,9 +209,16 @@ int main(void)
 
   	// setup usbstack with your descriptors
   	USBNInit(usbprogPICDevice,usbprogPIC);
+	/*
 	_USBNAddStringDescriptor(""); // pseudo langid
 	_USBNAddStringDescriptor("USBprog EmbeddedProjects");
 	_USBNAddStringDescriptor("usbprogPIC v.0.1");
+*/	
+	_USBNAddStringDescriptor(""); // pseudo langid
+	_USBNAddStringDescriptor("Microchip Technology Inc."); // pseudo langid
+	_USBNAddStringDescriptor("PICkit 2 Microcontroller Programmer"); // pseudo langid
+	_USBNAddStringDescriptor("PIC18F2550"); // pseudo langid
+	
 	_USBNCreateStringField();
 
 
