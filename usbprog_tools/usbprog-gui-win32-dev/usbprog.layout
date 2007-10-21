@@ -1,7 +1,7 @@
 [Editor_4]
-CursorCol=7
-CursorRow=445
-TopLine=428
+CursorCol=1
+CursorRow=434
+TopLine=413
 LeftChar=1
 Open=1
 Top=1
@@ -13,9 +13,9 @@ LeftChar=1
 Open=1
 Top=0
 [Editor_5]
-CursorCol=17
-CursorRow=315
-TopLine=286
+CursorCol=1
+CursorRow=66
+TopLine=51
 LeftChar=1
 Open=1
 Top=0
@@ -74,8 +74,8 @@ LeftChar=1
 [Editor_10]
 Open=1
 Top=0
-CursorCol=56
-CursorRow=87
+CursorCol=1
+CursorRow=43
 TopLine=23
 LeftChar=1
 [Editor_11]

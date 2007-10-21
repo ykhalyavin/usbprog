@@ -214,7 +214,6 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
 	WxButton3->Enable(false);
 	WxGauge1->SetValue(40);
 
-	
 	if(WxRadioButton1->GetValue() == true)     //online
 	{
          firmware = WxComboBox2->GetCurrentSelection();  //Get Firmware from ComboBox
@@ -253,7 +252,11 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
         }
     }
     #endif
-         
+     
+    usbprog.usb_handle = usb_open(usbprog.devList[WxComboBox1->GetCurrentSelection()]);
+    usb_set_configuration(usbprog.usb_handle,1);
+    usb_claim_interface(usbprog.usb_handle,0);
+    usb_set_altinterface(usbprog.usb_handle,0);        
     
     if(WxRadioButton1->GetValue() == true)     //Online Pool
 	{
@@ -415,6 +418,7 @@ void usbprogFrm::WxButton6Click(wxCommandEvent& event)
 {
     WxGauge1->SetValue(20);
     WxButton6->Enable(false);
+
     printWxEdit2("Starting");
     int device = WxComboBox1->GetCurrentSelection();
     
@@ -424,42 +428,19 @@ void usbprogFrm::WxButton6Click(wxCommandEvent& event)
         WxButton6->Enable(true);
         return;
     }
-    
-  /*  if(usbprog.devList[device]->descriptor.idVendor==0x1781 && usbprog.devList[device]->descriptor.idProduct==0x0c62)
+           
+    if(usbprog.devList[device]->descriptor.bcdDevice == 0)
     {
-        char vendor[255];
-        char product[255];
-        usb_dev_handle * tmp_handle = usb_open(usbprog.devList[device]);
-        usb_set_configuration(tmp_handle,1);
-        usb_claim_interface(tmp_handle,0);
-        usb_set_altinterface(tmp_handle,0);
-                
-        if(usb_get_string_simple(tmp_handle, 1, vendor, 255) <= 0 && usb_get_string_simple(tmp_handle, 2, product, 255) <= 0)   //That's a usbprog in Update Mode
-        { */
-        
-        struct usb_device *test;
-        test = usbprog.devList[device];
-            
-
-        char buf[10];
-       itoa(test->descriptor.idVendor, buf, 10);
-        printWxEdit2(buf);
-         
-        if(test->descriptor.bcdDevice == 0)
-        {
-            printWxEdit2("Device already in update mode");
-        }
-          
-
+        printWxEdit2("Device already in update mode");
+    }
     else
     {
         usbprog_update_mode_number(&usbprog, device);   //Set the usbprog in update mode
         getUsbDevices();
     }
     WxGauge1->SetValue(40);
-
-
     WxButton3->Enable(true);
+
 }
 
 void usbprogFrm::getUsbDevices(void)
@@ -480,9 +461,7 @@ void usbprogFrm::getUsbDevices(void)
     busses = usb_get_busses();
     struct usb_bus *bus;
 
-   struct usb_device *devList[20];
-
-    for (bus = busses; bus; bus = bus->next)
+      for (bus = busses; bus; bus = bus->next)
     {
         for (dev = bus->devices; dev; dev = dev->next)
         {
@@ -539,7 +518,7 @@ void usbprogFrm::getUsbDevices(void)
                 WxComboBox1->Append(wxString(complete, wxConvUTF8));
 	       //usb_close(tmp_handle);
 
-	       devList[i] = dev;
+	       usbprog.devList[i] = dev;
 	       i++;
         }
     }
