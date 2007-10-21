@@ -304,14 +304,8 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     }
     else        //local Firmware
     {
-        #if WIN32
 	wxString wxPath = WxEdit1->GetValue();
         char* charPath = (char*)wxPath.c_str(); //converts wxString to charArray
-	#else
-	wxString wxPath = WxEdit1->GetValue();
-	wxCharBuffer wxBuf = wxPath.fn_str();
-	const char* charPath = wxBuf; //converts wxString to charArray[/code]
-	#endif
         
         if((error = usbprog_flash_firmware(&usbprog, charPath)) == -1)          //Flash firmware
             printWxEdit2(usbprog.error_str);                                    //If an error occurs print Error String
