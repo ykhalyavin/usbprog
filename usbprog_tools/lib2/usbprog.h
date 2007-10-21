@@ -38,8 +38,12 @@ struct usbprog_context{
 };
 
 int usbprog_init(struct usbprog_context* usbprog);
+
+/* closes USB handle for usbprog */
 int usbprog_close(struct usbprog_context* usbprog);
 
+/* opens USB Handle for usbprog */
+int usbprog_open(struct usbprog_context *usbprog, int number);
 
 /* get number of available usb devices */
 int usbprog_get_numberof_devices(struct usbprog_context* usbprog);

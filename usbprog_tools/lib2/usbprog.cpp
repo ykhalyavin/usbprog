@@ -56,6 +56,15 @@ int usbprog_init(struct usbprog_context *usbprog)
   return 0;
 }
 
+int usbprog_open(struct usbprog_context *usbprog, int number)
+{
+    usbprog->usb_handle = usb_open(usbprog->devList[number]);
+    usb_set_configuration(usbprog->usb_handle,1);
+    usb_claim_interface(usbprog->usb_handle,0);
+    usb_set_altinterface(usbprog->usb_handle,0);
+    return 0;
+}
+
 /**
  *     Get string representation for last error code
  *
@@ -144,7 +153,6 @@ int usbprog_get_numberof_devices(struct usbprog_context *usbprog)
 int usbprog_print_devices(struct usbprog_context *usbprog, char** buf)
 {
   struct usb_bus *busses;
-  struct usb_dev_handle* usb_handle;
   struct usb_bus *bus;
   struct usb_device *dev;
 

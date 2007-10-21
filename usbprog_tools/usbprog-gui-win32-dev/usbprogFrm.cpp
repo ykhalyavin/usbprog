@@ -187,6 +187,7 @@ void usbprogFrm::CreateGUIControls()
 	WxStaticBox1->SetFont(wxFont(9, wxSWISS, wxNORMAL,wxNORMAL, false, wxT("Tahoma")));
 	////GUI Items Creation End
 	// SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 }
 
 void usbprogFrm::OnClose(wxCloseEvent& event)
@@ -253,11 +254,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     }
     #endif
      
-    usbprog.usb_handle = usb_open(usbprog.devList[WxComboBox1->GetCurrentSelection()]);
-    usb_set_configuration(usbprog.usb_handle,1);
-    usb_claim_interface(usbprog.usb_handle,0);
-    usb_set_altinterface(usbprog.usb_handle,0);        
-    
+    usbprog_open(&usbprog, WxComboBox1->GetCurrentSelection());
     if(WxRadioButton1->GetValue() == true)     //Online Pool
 	{
         
