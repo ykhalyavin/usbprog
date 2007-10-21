@@ -254,7 +254,8 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     }
     #endif
      
-    usbprog_open(&usbprog, WxComboBox1->GetCurrentSelection());
+    if(usbprog_open(&usbprog, WxComboBox1->GetCurrentSelection()))
+         printWxEdit2(usbprog.error_str);
     if(WxRadioButton1->GetValue() == true)     //Online Pool
 	{
         
@@ -432,7 +433,7 @@ void usbprogFrm::WxButton6Click(wxCommandEvent& event)
     }
     else
     {
-        usbprog_update_mode_number(&usbprog, device);   //Set the usbprog in update mode
+        usbprog_update_mode_device(&usbprog, device);   //Set the usbprog in update mode
         getUsbDevices();
     }
     WxGauge1->SetValue(40);

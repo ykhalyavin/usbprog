@@ -59,9 +59,13 @@ int usbprog_init(struct usbprog_context *usbprog)
 int usbprog_open(struct usbprog_context *usbprog, int number)
 {
     usbprog->usb_handle = usb_open(usbprog->devList[number]);
-    usb_set_configuration(usbprog->usb_handle,1);
-    usb_claim_interface(usbprog->usb_handle,0);
-    usb_set_altinterface(usbprog->usb_handle,0);
+    
+    if(usb_set_configuration(usbprog->usb_handle,1))
+        usbprog_error_return(1,"usb_set_configuration Error");
+    if(usb_claim_interface(usbprog->usb_handle,0))
+            usbprog_error_return(1,"usb_claim_interface Error");
+    if(usb_set_altinterface(usbprog->usb_handle,0))
+            usbprog_error_return(1,"usb_set_altinterface Error");
     return 0;
 }
 
