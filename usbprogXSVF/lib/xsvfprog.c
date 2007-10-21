@@ -19,7 +19,6 @@
 #include "xsvfprog.h"
 #include "../firmware/defines.h"
 
-#include <stdio.h>
 #include <usb.h>
 
 struct xsvfprog* xsvfprog_open()
@@ -87,7 +86,7 @@ int xsvfprog_init(struct xsvfprog *xsvfprog) {
 	char tmp[2];
 	tmp[0] = XSVF_INIT;
 	if(xsvfprog_message(xsvfprog, tmp, 1, tmp, 2) != -1) {
-		printf("%02x %02x\n", (unsigned char) tmp[0], (unsigned char) tmp[1]);
+		//printf("%02x %02x\n", (unsigned char) tmp[0], (unsigned char) tmp[1]);
 		return (unsigned char) tmp[0];
 	} else {
 		return -1;
