@@ -210,21 +210,10 @@ void usbprogFrm::usbprogFrmActivate(wxActivateEvent& event)
 void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
 {
 	// insert your code here
-	
-	int device = WxComboBox1->GetCurrentSelection();   //Get selected Device
 	int firmware = 0, error = 0;
-	
-	WxGauge1->SetValue(0);
-	WxButton6->Enable(true);
-    WxButton3->Enable(false);
-	
-	if(device == -1)   //No Device selceted
-	{
-        printWxEdit2("No Device Selected");
-        return;
-    }
-    
-    WxGauge1->SetValue(20);
+	WxButton3->Enable(false);
+	WxGauge1->SetValue(40);
+
 	
 	if(WxRadioButton1->GetValue() == true)     //online
 	{
@@ -233,6 +222,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
        	if(firmware == -1)   //No selceted Firmware
     	{
              printWxEdit2("No Firmware selected");
+             WxButton6->Enable(true);
              return;
         }
     }
@@ -243,7 +233,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     {  
 	
 	XMLNode xNode = usbprog.xMainNode.getChildNode("pool");     //Device Check
-	int deviceStat = 0;                                       //Device Staus Var
+	int deviceStat = 0;                                       //Device Status Var
       
        for(int i = 0; i < xNode.nChildNode("firmware"); i++)   
         {
@@ -258,6 +248,7 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
         {
             printWxEdit2("Wrong Device");
             WxGauge1->SetValue(0);
+            WxButton6->Enable(true);
             return;
         }
     }
@@ -290,25 +281,15 @@ void usbprogFrm::WxButton3Click(wxCommandEvent& event)  //Update Button
     #endif
     
     /* Refresh device list */
-    int devices = usbprog_get_numberof_devices(&usbprog);
-    char *buf[devices];
-    usbprog_print_devices(&usbprog,buf);
-
-    WxComboBox1->Clear();
-
-    for(int i = 0; i < devices; i++)
-    {
-        //Fill Combo Box
-        if(strcmp(buf[i], "update mode") == 0)
-            WxComboBox1->Append(wxString("Usbprog (Update Mode)", wxConvUTF8));
-        else
-            WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
-    }
+    getUsbDevices();
     
     if(!error)
         printWxEdit2("Job Done");   //Print Status Message
+    else
+        printWxEdit2("Error during Flashing");
         
     WxGauge1->SetValue(100);
+    WxButton6->Enable(true);
 }
 
 /*
@@ -410,27 +391,6 @@ void usbprogFrm::WxButton5Click(wxCommandEvent& event)
  */
 void usbprogFrm::WxButton4Click(wxCommandEvent& event)
 {
-	// insert your code here
-	
-    /*int devices = usbprog_get_numberof_devices(&usbprog);  //Get number of usb devices
-    char *buf[devices];
-    usbprog_print_devices(&usbprog,buf);    //Get Names of devices and save in Buffer
-    
-    WxComboBox1->Clear();
-    
-    for(int i = 0; i < devices; i++)
-    {
-        //Print devices in Combo Box
-        if(strcmp(buf[i], "update mode") == 0)
-            WxComboBox1->Append(wxString("Usbprog (Update Mode)", wxConvUTF8));
-        else
-            WxComboBox1->Append(wxString(buf[i], wxConvUTF8));
-    }
-    
-    char status[40];
-    sprintf(status, "Found %d devices on USB Bus", devices);    //Print Status
-    printWxEdit2(status);   */
-    
     getUsbDevices();
 }
 
@@ -449,14 +409,56 @@ void usbprogFrm::printWxEdit2(char * text)
 
 
 /*
- * WxButton6Click
+ * WxButton6Click Start Update Mode
  */
 void usbprogFrm::WxButton6Click(wxCommandEvent& event)
 {
-  	printWxEdit2("Starting");
-    //usbprog_update_mode_number(&usbprog, WxComboBox1->GetCurrentSelection());   //Set the usbprog in update mode
-    WxGauge1->SetValue(40);
+    WxGauge1->SetValue(20);
     WxButton6->Enable(false);
+    printWxEdit2("Starting");
+    int device = WxComboBox1->GetCurrentSelection();
+    
+  	if(device == -1)   //No Device selceted
+	{
+        printWxEdit2("No Device Selected");
+        WxButton6->Enable(true);
+        return;
+    }
+    
+  /*  if(usbprog.devList[device]->descriptor.idVendor==0x1781 && usbprog.devList[device]->descriptor.idProduct==0x0c62)
+    {
+        char vendor[255];
+        char product[255];
+        usb_dev_handle * tmp_handle = usb_open(usbprog.devList[device]);
+        usb_set_configuration(tmp_handle,1);
+        usb_claim_interface(tmp_handle,0);
+        usb_set_altinterface(tmp_handle,0);
+                
+        if(usb_get_string_simple(tmp_handle, 1, vendor, 255) <= 0 && usb_get_string_simple(tmp_handle, 2, product, 255) <= 0)   //That's a usbprog in Update Mode
+        { */
+        
+        struct usb_device *test;
+        test = usbprog.devList[device];
+            
+
+        char buf[10];
+       itoa(test->descriptor.idVendor, buf, 10);
+        printWxEdit2(buf);
+         
+        if(test->descriptor.bcdDevice == 0)
+        {
+            printWxEdit2("Device already in update mode");
+        }
+          
+
+    else
+    {
+        usbprog_update_mode_number(&usbprog, device);   //Set the usbprog in update mode
+        getUsbDevices();
+    }
+    WxGauge1->SetValue(40);
+
+
     WxButton3->Enable(true);
 }
 
@@ -529,16 +531,20 @@ void usbprogFrm::getUsbDevices(void)
                 continue;
 
 	       char * complete = (char*)malloc(sizeof(char)*(strlen(vendor)+strlen(product)+strlen(serial)+30));
-        	/*sprintf(complete,"(%i) %s from %s (Serial: %s)%i:%i",i,product,vendor,serial, \
-        	dev->descriptor.idVendor,dev->descriptor.idProduct); */
-        	//sprintf(complete,"%s %s %i",vendor,product,i);
 	       sprintf(complete,"%s",product);
-	        WxComboBox1->Append(wxString(complete, wxConvUTF8));
+	               
+            if(strcmp(complete, "update mode") == 0)
+                WxComboBox1->Append(wxString("Usbprog (Update Mode)", wxConvUTF8));
+            else
+                WxComboBox1->Append(wxString(complete, wxConvUTF8));
 	       //usb_close(tmp_handle);
 
 	       devList[i] = dev;
 	       i++;
         }
     }
+    char status[40];
+    sprintf(status, "Found %d devices on USB Bus", i);    //Print Status
+    printWxEdit2(status);
 }
     
