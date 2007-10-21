@@ -54,7 +54,8 @@
  *
  * A value of five is sufficient for up to six devices in a chain.
  */
-#define MAX_BITVEC_BYTES    5
+//5
+#define MAX_BITVEC_BYTES    63
 
 /*!
  * \brief Default repeat.
