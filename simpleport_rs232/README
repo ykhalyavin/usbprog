@@ -1,0 +1,20 @@
+Controller the IO Pins of SimplePort with an terminal!
+
+#define PORT_DIRECTION 'r'
+#define PORT_SET 's'
+#define PORT_GET 'g'
+#define PORT_SETPIN 'p'
+#define PORT_GETPIN 'i'
+#define PORT_SETPINDIR 'd'
+
+Serial Console Configuration:
+
+9600 Baud 8N1
+
+Example:
+
+Set direction of IO 1 = d11  (1 = out)
+Set IO 1	    s11
+Clear IO 1	    s10
+
+
