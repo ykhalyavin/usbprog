@@ -120,52 +120,7 @@ void _USBNAlternateEvent(void)
 {
   unsigned char event;
   event = USBNRead(ALTEV);
-  USBNDebug("alt event\r\n");
-
-  if(event & ALT_RESET)
-  {
-    USBNWrite(NFSR,RST_ST);                   // NFS = NodeReset
-    USBNWrite(FAR,AD_EN+0); 
-    USBNWrite(EPC0,0x00);
-    USBNWrite(TXC0,FLUSH);
-    USBNWrite(RXC0,RX_EN);                    // allow reception
-    USBNWrite(NFSR,OPR_ST);                   // NFS = NodeOperational
-  	USBNDebug("reset\r\n");
-  }
-  #if 0
-  if(event & ALT_SD3)
-  {
-    USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
-  /*
-    USBNWrite(NFSR,SUS_ST);                   // enter suspend state
-  	USBNDebug("sd3\r\n");
-  */
-  }
-  if(event & ALT_RESUME)
-  {
-    USBNWrite(ALTMSK,ALT_SD3+ALT_RESET+ALT_RESUME);
-  /*
-    USBNWrite(EPC0,0x00);
-    USBNWrite(RXC0,RX_EN);                    // allow reception
-    USBNWrite(TXC0,FLUSH);
-    USBNWrite(NFSR,OPR_ST);
-  	USBNDebug("resume\r\n");
-	*/
-  }
-  if(event & ALT_EOP)
-  {
-  	USBNDebug("eop\r\n");
-  }
-  #endif
-
-}
-
-
 #if 0
-void _USBNAlternateEvent(void)
-{
-  unsigned char event;
-  event = USBNRead(ALTEV);
   //USBNDebug("alt event\r\n");
 
   if(event & ALT_RESET)
@@ -180,18 +135,18 @@ void _USBNAlternateEvent(void)
   else if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
-    USBNWrite(NFSR,SUS_ST);                   // enter suspend state
+    //USBNWrite(NFSR,SUS_ST);                   // enter suspend state
   }
   else if(event & ALT_RESUME)
   {
     USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
-    USBNWrite(NFSR,OPR_ST);
+    //USBNWrite(NFSR,OPR_ST);
   }
   else
   {
   }
-}
 #endif
+}
 
 
 // ********************************************************************
@@ -315,15 +270,17 @@ void _USBNReceiveFIFO0(void)
 				#if DEBUG
 				USBNDebug("Class request\n\r");
 				#endif
-				USBNDecodeClassRequest(req);
-				USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+				USBNDecodeClassRequest(req,&EP0tx);
+				_USBNTransmit(&EP0tx);
+				//USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 			break;
 			case DO_VENDOR:				// vendor request        
 				#if DEBUG
 				USBNDebug("Vendor request\n\r");
 				#endif
 				USBNDecodeVendorRequest(req);
-				USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+				_USBNTransmit(&EP0tx);
+				//USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 			break;              
 			default:					// unsupported req type    
 				#if DEBUG
@@ -515,7 +472,7 @@ void _USBNClearFeature(void)
 
 void _USBNGetDescriptor(DeviceRequest *req)
 {
-  unsigned char index =  req->wValue;
+  //unsigned char index =  req->wValue;
   unsigned char type = req->wValue >> 8;
 
   EP0tx.Index = 0;
@@ -582,16 +539,16 @@ void _USBNSetConfiguration(DeviceRequest *req)
   // load fct pointer list for out eps
   //
 
-//USBNWrite(TXC1,FLUSH);
-//USBNWrite(EPC1,EP_EN+0x01);      // enable EP1 at adr 1
+	// interrupt ddresse 83 raus
+	USBNWrite(TXC1,FLUSH);
+	USBNWrite(EPC1,EP_EN+0x03); 
 
-USBNWrite(RXC1,FLUSH);
-USBNWrite(EPC2,EP_EN+0x02); 
-USBNWrite(RXC1,RX_EN);
+	USBNWrite(RXC1,FLUSH);					// EP1 rein	mit callback function rein
+	USBNWrite(EPC2,EP_EN+0x01); 
+	USBNWrite(RXC1,RX_EN);
 
-//USBNWrite(TXC3,FLUSH);
-//USBNWrite(EPC5,EP_EN+0x05); 
-
+	USBNWrite(TXC2,FLUSH);					// interrupt ddresse 83 raus
+	USBNWrite(EPC3,EP_EN+0x01); 
 
 	
 /* 
@@ -617,7 +574,8 @@ USBNWrite(RXC1,RX_EN);
   USBNWrite(RXC2,RX_EN);
   USBNWrite(RXC3,RX_EN);
 */
-  //USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+  
 }
 
            
