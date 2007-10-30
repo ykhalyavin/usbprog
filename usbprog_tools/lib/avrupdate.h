@@ -11,13 +11,17 @@
  * don't forget to add a symbolic description to the string table in
  * get_device_name_for_type()
  */
+
 enum DeviceType {
     UNKNOWN	    = -1,
     AVRUPDATE   = 0x00,
     BLINKDEMO   = 0x01,
     USBPROG	    = 0x02,
     AVRISPMKII  = 0x03,
-    JTAGICEMKII = 0x04
+    JTAGICEMKII = 0x04,
+    OPENOCD = 0x05,
+    SIMPLEPORT = 0x06,
+    XSVF = 0x07
 };
 
 struct device {

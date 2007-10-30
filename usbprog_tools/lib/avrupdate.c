@@ -149,7 +149,10 @@ static const char *get_device_name_for_type(int type)
         "USBprog with blinkdemo",                   /* 1 */
         "USBprog",                                  /* 2 */
         "USBprog with AVRisp MKII",                 /* 3 */
-        "USBprog with JTAG ICE MKII"                /* 4 */
+        "USBprog with JTAG ICE MKII",               /* 4 */
+        "USBprog with OpenOCD",			    /* 5 */
+        "USBprog with Simpleport",		    /* 6 */
+        "USBprog with XSVF Player"		    /* 7 */
     };
 
     if (type == UNKNOWN)
@@ -193,6 +196,8 @@ int avrupdate_find_usbdevice(struct device *device)
                             type = USBPROG;
                         else if (dev->descriptor.bcdDevice ==BLINKDEMO)
                             type = BLINKDEMO;
+                        else if (dev->descriptor.idProduct ==0x0c63)
+                            type = OPENOCD;
                         else
                             type = BLINKDEMO;
                         found_dev = dev;
