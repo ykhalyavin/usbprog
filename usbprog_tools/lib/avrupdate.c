@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include <usb.h>
 
 #include "avrupdate.h"
 
-#if WITHNETWORKSUPPOER
+#if WITHNETWORKSUPPORT
 #include "http_fetcher.h"
 #endif
 
@@ -14,17 +15,49 @@
 #define SETVERSION     0x04
 #define STOPPROGMODE   0x05
 
-void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
+/*
+ * Must be called as first function
+ */
+void avrupdate_init(int debuglevel)
+{
+    usb_init();
+    usb_find_busses();
+
+    if (debuglevel > 0)
+        usb_set_debug(1);
+}
+
+/*
+ * Helper function to find a USB device.
+ */
+static struct usb_device *avrupdate_find_device(uint16_t vendorid,
+                                                uint16_t prodid)
+{
+    struct usb_device   *dev;
+    struct usb_bus      *bus;
+
+    usb_find_devices();
+    for (bus = usb_get_busses(); bus; bus = bus->next)
+        for (dev = bus->devices; dev; dev = dev->next)
+            if (dev->descriptor.idVendor == vendorid &&
+                    dev->descriptor.idProduct == prodid)
+                return dev;
+
+    return NULL;
+}
+
+int avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
 {
     char buf[64];
     char cmd[64];
+    int ret;
 
     FILE *fd;
 
 
     // get page size
     // get flash size
- 
+
     // send every page in a usb package
     // 1. header ( action, page number)
     // 2. data   
@@ -38,42 +71,62 @@ void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file)
     int page=0;
     int offset=0;
 
-   // open bin file
+    // open bin file
     fd = fopen(file, "r+b");
     if(!fd) {
-      fprintf(stderr, "Unable to open file %s, ignoring.\n", file);
+        fprintf(stderr, "Unable to open file %s, ignoring.\n", file);
+        return -1;
     }
 
     while(!feof(fd))
     {
-      buf[offset]=fgetc(fd);
+        buf[offset]=fgetc(fd);
 
-      offset++;
-      if(offset == 64)
-      {
-          //printf("send package\n");
-          // command message
-          cmd[0]=WRITEPAGE;
-          cmd[1]=(char)page; // page number
-          usb_bulk_write(usb_handle,2,cmd,64,100);
+        offset++;
+        if(offset == 64)
+        {
+            //printf("send package\n");
+            // command message
+            cmd[0]=WRITEPAGE;
+            cmd[1]=(char)page; // page number
+            ret = usb_bulk_write(usb_handle,2,cmd,64,100);
+            if (ret < 0) {
+                printf("Error while writing to USB device: %s\n", usb_strerror());
+                return -1;
+            }
 
-          // data message 
-          usb_bulk_write(usb_handle,2,buf,64,100);
-          offset = 0;
-          page++;
-      }
+
+            // data message
+            ret = usb_bulk_write(usb_handle,2,buf,64,100);
+            if (ret < 0) {
+                printf("Error while writing to USB device: %s\n", usb_strerror());
+                return -1;
+            }
+            offset = 0;
+            page++;
+        }
     }
     if(offset > 0)
     {
-      //printf("rest\n");
-      // command message
-      cmd[0]=WRITEPAGE;
-      cmd[1]=(char)page; // page number
-      usb_bulk_write(usb_handle,2,cmd,64,100);
+        //printf("rest\n");
+        // command message
+        cmd[0]=WRITEPAGE;
+        cmd[1]=(char)page; // page number
+        usb_bulk_write(usb_handle,2,cmd,64,100);
+        if (ret < 0) {
+            printf("Error while writing to USB device: %s\n", usb_strerror());
+            return -1;
+        }
 
-      // data message 
-      usb_bulk_write(usb_handle,2,buf,64,100);
+        // data message
+        usb_bulk_write(usb_handle,2,buf,64,100);
+        if (ret < 0) {
+            printf("Error while writing to USB device: %s\n", usb_strerror());
+            return -1;
+        }
     }   
+
+    return 0;
 }
 
 
@@ -89,133 +142,191 @@ void avrupdate_startapp(struct usb_dev_handle* usb_handle)
      usb_bulk_write(usb_handle,2,ptr,64,100);
 }
 
-
-int avrupdate_find_usbdevice()
+static const char *get_device_name_for_type(int type)
 {
-   struct usb_bus *busses;
+    const char *devices[] = {
+        "USBprog in update mode",                   /* 0 */
+        "USBprog with blinkdemo",                   /* 1 */
+        "USBprog",                                  /* 2 */
+        "USBprog with AVRisp MKII",                 /* 3 */
+        "USBprog with JTAG ICE MKII"                /* 4 */
+    };
+
+    if (type == UNKNOWN)
+        return "Unknown device";
+    if (type >= 0 || type < array_size(devices))
+        return devices[type];
+
+    return NULL;
+}
+
+int avrupdate_find_usbdevice(struct device *device)
+{
+    struct usb_device   *dev, *found_dev = NULL;
+    enum DeviceType     type = UNKNOWN;
+    struct usb_bus 	    *bus;
 
     //usb_set_debug(2);
-    usb_init();
-    usb_find_busses();
+
+    if (!device)
+        return -EINVAL;
+
+    /* rescan */
     usb_find_devices();
+    for (bus = usb_get_busses(); bus; bus = bus->next) {
+        for (dev = bus->devices; dev; dev = dev->next) {
+            switch (dev->descriptor.idVendor) {
+                case USB_VID_ATMEL:
+                    if(dev->descriptor.idProduct == USB_PID_AVRISPMKII)
+                        type = AVRISPMKII;
+                    else if (dev->descriptor.idProduct == USB_PID_JTAGICEMKII)
+                        type = JTAGICEMKII;
+                    found_dev = dev;
+                    break;
 
-    busses = usb_get_busses();
+                case USB_VID_USBPROG:
+                    if (is_between(dev->descriptor.idProduct,
+                                USB_PID_USBPROG_L, USB_PID_USBPROG_H)) {
+                        if (dev->descriptor.bcdDevice==AVRUPDATE)
+                            type = AVRUPDATE;
+                        else if (dev->descriptor.bcdDevice==0x0200)
+                            type = USBPROG;
+                        else if (dev->descriptor.bcdDevice ==BLINKDEMO)
+                            type = BLINKDEMO;
+                        else
+                            type = BLINKDEMO;
+                        found_dev = dev;
+                    }
+                    break;
 
-   struct usb_dev_handle* usb_handle;
-   struct usb_bus *bus;
-
-
-    unsigned char send_data=0xff;
-
-    for (bus = busses; bus; bus = bus->next)
-    {
-      struct usb_device *dev;
-
-      for (dev = bus->devices; dev; dev = dev->next){
-          switch (dev->descriptor.idVendor)
-          {
-            case 1003:
-              if(dev->descriptor.idProduct==0x2104)
-                return AVRISPMKII;
-	      if(dev->descriptor.idProduct==0x2103)
-                return JTAGICEMKII;
-
-            break;
-            case 6017:
-              if(dev->descriptor.idProduct==0x0c62 || dev->descriptor.idProduct==0x0c64 || dev->descriptor.idProduct==0x0c63 || dev->descriptor.idProduct==0x0c65){
-                if(dev->descriptor.bcdDevice==AVRUPDATE)
-                  return AVRUPDATE;
-                if(dev->descriptor.bcdDevice==0x0200)
-                  return USBPROG;
-                if(dev->descriptor.bcdDevice==BLINKDEMO)
-                  return BLINKDEMO;
-		else 
-		  return BLINKDEMO;
-              }
-            break;
-	      default:
-		return BLINKDEMO;
-          }
+                default:
+                    break;
+            }
         }
-      }  
+    }
+
+    if (found_dev) {
+        device->type = type;
+        device->productid = found_dev->descriptor.idProduct;
+        device->vendorid = found_dev->descriptor.idVendor;
+        device->description = get_device_name_for_type(device->type);
+        return 0;
+    }
+
     return -1;
 }
 
-void avrupdate_start_with_vendor_request(short vendorid, short productid)
+int avrupdate_start_with_vendor_request(struct device *usb_device)
 {
-  struct usb_bus *busses;
+    struct usb_dev_handle   *usb_handle = NULL;
+    struct usb_device       *dev;
+    int                     usb_interface;
+    int                     ret;
 
-  //usb_set_debug(2);
-  usb_init();
-  usb_find_busses();
-  usb_find_devices();
+    // usb_set_debug(2);
 
-  busses = usb_get_busses();
+    /*
+     * no need to run the procedure here
+     */
+    if (usb_device->type == USBPROG)
+        return 0;
 
-   struct usb_dev_handle* usb_handle;
-  struct usb_bus *bus;
+    dev = avrupdate_find_device(usb_device->vendorid,
+            usb_device->productid);
+    if (!dev) {
+        printf("Device %s doesn't exist\n", usb_device->description);
+        return -ENODEV;
+    }
 
-  //if(avrupdate_find_usbdevice()==USBPROG)
-  //  return;
+    usb_handle = usb_open(dev);
+    if (!usb_handle) {
+        printf("Could not open USB device: %s", usb_strerror());
+        goto err;
+    }
 
-  unsigned char send_data=0xff;
+    usb_set_configuration (usb_handle, dev->config[0].bConfigurationValue);
 
-  for (bus = busses; bus; bus = bus->next) {
-    struct usb_device *dev;
+    usb_interface = dev->config[0].interface[0].altsetting[0].bInterfaceNumber;
+    ret = usb_claim_interface(usb_handle, usb_interface);
+    if (ret < 0) {
+        printf("Error when claiming interface %d: %s\n",
+                usb_interface, usb_strerror());
+        goto err;
+    }
 
-    for (dev = bus->devices; dev; dev = dev->next){
-      if (dev->descriptor.idVendor == vendorid){
-         int i,stat;
-        //printf("found: %i\n",dev->descriptor.idVendor);
-         usb_handle = usb_open(dev);
-         usb_set_configuration (usb_handle,1);
-        usb_claim_interface(usb_handle,0);
-        usb_set_altinterface(usb_handle,0);
+    /* needed ?*/
+    usb_set_altinterface(usb_handle, 0);
+    if (ret < 0) {
+        printf("Error when setting altinterface to 0: %s\n", usb_strerror());
+        goto err;
+    }
 
-        int timeout=6;
+    int timeout = 6;
 
-        while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL,8, 1000)<0){
-          timeout--;
-          if(timeout==0)
+    while(usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL, 8, 1000) < 0){
+        if (--timeout == 0) {
+            printf("Timeout exceeded, it's possible that switching to "
+                    "update mode failed \n(%s)\n", usb_strerror());
             break;
         }
-        usb_close(usb_handle);
-       }
-     }  
-   }
+        sleep(1);
+    }
+
+    usb_release_interface(usb_handle, usb_interface);
+    usb_close(usb_handle);
+
+    return 0;
+
+err:
+    if (usb_handle)
+        usb_release_interface(usb_handle, usb_interface);
+    return -1;
 }
 
-struct usb_dev_handle* avrupdate_open(short vendorid, short productid)
+struct usb_dev_handle* avrupdate_open(struct device *usb_device)
 {
-  struct usb_bus *busses;
+    struct usb_dev_handle   *usb_handle;
+    struct usb_device       *dev;
+    int                     usb_interface;
+    int                     ret;
 
-   //usb_set_debug(2);
-   usb_init();
-   usb_find_busses();
-   usb_find_devices();
+    dev = avrupdate_find_device(usb_device->vendorid,
+            usb_device->productid);
+    if (!dev) {
+        printf("Device %s doesn't exist\n", usb_device->description);
+        goto err;
+    }
 
-   busses = usb_get_busses();
+    usb_handle = usb_open(dev);
+    if (!usb_handle) {
+        printf("usb_open failed: %s\n", usb_strerror());
+        goto err;
+    }
 
-   struct usb_dev_handle* usb_handle;
-   struct usb_bus *bus;
+    usb_set_configuration (usb_handle, dev->config[0].bConfigurationValue);
 
+    usb_interface = dev->config[0].interface[0].altsetting[0].bInterfaceNumber;
+    ret = usb_claim_interface(usb_handle, usb_interface);
+    if (ret < 0) {
+        printf("Claiming interface failed: %s\n", usb_strerror());
+        goto err_close;
+    }
 
-   unsigned char send_data=0xff;
+    /* ret = usb_set_altinterface(usb_handle, 0); */
+    if (ret < 0) {
+        printf("Setting alternative configuration to 0 failed: %s\n",
+                usb_strerror());
+        goto err_release;
+    }
 
-   for (bus = busses; bus; bus = bus->next){
-     struct usb_device *dev;
-     for (dev = bus->devices; dev; dev = dev->next){
-      if (dev->descriptor.idVendor == vendorid){
-         int i,stat;
-         //printf("vendor: %i\n",dev->descriptor.idVendor);
-         usb_handle = usb_open(dev);
-        usb_set_configuration(usb_handle,1);
-        usb_claim_interface(usb_handle,0);
-        usb_set_altinterface(usb_handle,0);
-        return usb_handle;  
-       }
-    }  
-  }
+    return usb_handle;
+
+err_release:
+    usb_release_interface(usb_handle, usb_interface);
+err_close:
+    usb_close(usb_handle);
+err:
+    return NULL;
 }
 
 
@@ -234,7 +345,6 @@ char avrupdate_get_version(struct usb_dev_handle* usb_handle)
 
 void avrupdate_set_version(char version, struct usb_dev_handle* usb_handle)
 {
-
 }
 
 
@@ -246,6 +356,7 @@ void avrupdate_close(struct usb_dev_handle* usb_handle)
     usb_set_configuration(usb_handle,1);
     sleep(2);
     */
+    usb_release_interface(usb_handle, 1);
     usb_close(usb_handle);
 }
 
@@ -256,10 +367,9 @@ size_t _write_data(void *data, size_t size, size_t nmemb, void *userp)
 }
 
 
-int avrupdate_net_get_versionfile(char * url, char **buffer)
+int avrupdate_net_get_versionfile(const char *url, char **buffer)
 {
-
-#if WITHNETWORKSUPPOER
+#if WITHNETWORKSUPPORT
   return http_fetch(url, buffer); 
 #else
   return 0;  
@@ -267,10 +377,10 @@ int avrupdate_net_get_versionfile(char * url, char **buffer)
 
 }
 
-int avrupdate_net_versions(char * url)
+int avrupdate_net_versions(const char *url)
 {
   char *buffer;
-  int size = avrupdate_net_get_versionfile(url,&buffer);
+  int size = avrupdate_net_get_versionfile(url, &buffer);
   //printf("data %i\n",size);
   int i; int star=0;
 
@@ -284,35 +394,37 @@ int avrupdate_net_versions(char * url)
 }
 
 
-void avrupdate_net_flash_version(char * url,int number, int vendorid, int productid)
+void avrupdate_net_flash_version(const char     *url,
+                                 int            number,
+                                 struct device  *usb_device)
 {
 #if WITHNETWORKSUPPORT
-  struct avrupdate_info * tmp = avrupdate_net_get_version_info(url,number);
-  
-  int ret;
-  char *buffer;
-  ret = http_fetch(tmp->file, &buffer);    /* Downloads page */
-  if(ret == -1)                       /* All HTTP Fetcher functions return */
-    http_perror("http_fetch");      /*  -1 on error. */
-  else {
-       printf("Page successfully downloaded. (%s)\n", url);
-    FILE *fp;
-    fp = fopen("flash.bin", "w+b");
-    int i;
-    for(i=0;i<ret;i++)
-      fputc(buffer[i], fp);
-      //fprintf(fp,"%s",buffer);
-    fclose(fp);
+    struct avrupdate_info * tmp = avrupdate_net_get_version_info(url,number);
 
-    //while(avrupdate_find_usbdevice()!=AVRUPDATE);
+    int ret;
+    char *buffer;
+    ret = http_fetch(tmp->file, &buffer);   /* Downloads page */
+    if (ret == -1)                          /* All HTTP Fetcher functions return */
+        http_perror("http_fetch");          /*  -1 on error. */
+    else {
+        printf("Page successfully downloaded. (%s)\n", url);
+        FILE *fp;
+        fp = fopen("flash.bin", "w+b");
+        int i;
+        for(i=0;i<ret;i++)
+            fputc(buffer[i], fp);
+        //fprintf(fp,"%s",buffer);
+        fclose(fp);
 
-    struct usb_dev_handle* usb_handle = avrupdate_open(vendorid,productid);
-    avrupdate_flash_bin(usb_handle,"flash.bin");
-    avrupdate_startapp(usb_handle);
-    avrupdate_close(usb_handle);
+        //while(avrupdate_find_usbdevice()!=AVRUPDATE);
 
-    remove("flash.bin");
-  }
+        struct usb_dev_handle* usb_handle = avrupdate_open(usb_device);
+        avrupdate_flash_bin(usb_handle,"flash.bin");
+        avrupdate_startapp(usb_handle);
+        avrupdate_close(usb_handle);
+
+        remove("flash.bin");
+    }
 #endif
 }
 
@@ -333,7 +445,7 @@ void split_string(char *c_str, char **ret, char *delim)
 }
 
 
-struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number)
+struct avrupdate_info * avrupdate_net_get_version_info(const char *url, int number)
 {
   char *buffer;
 

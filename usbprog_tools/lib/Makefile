@@ -1,7 +1,11 @@
+CC 	= gcc
+CFLAGS 	= -W -Wall -Wno-unused-parameter
+
+
 all:
-	gcc -c avrupdate.c
-	gcc -c http_fetcher.c
-	gcc -c http_error_codes.c
+	$(CC) $(CFLAGS) -c avrupdate.c
+	$(CC) $(CFLAGS) -c http_fetcher.c
+	$(CC) $(CFLAGS) -c http_error_codes.c
 	ar rcs libavrupdate.a avrupdate.o http_fetcher.o http_error_codes.o
 
 clean:

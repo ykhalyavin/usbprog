@@ -1,25 +1,51 @@
 #include <stdio.h>
+#include <stdint.h>
+
 #include <usb.h>
 
-
 #define WITHNETWORKSUPPORT	1
+#define array_size(a)	((int)(sizeof(a)/sizeof(a[0])))
 
 
-#define	AVRUPDATE		0x00
-#define	BLINKDEMO		0x01
-#define	USBPROG			0x02
-#define AVRISPMKII		0x03
-#define JTAGICEMKII		0x04
+/*
+ * don't forget to add a symbolic description to the string table in
+ * get_device_name_for_type()
+ */
+enum DeviceType {
+    UNKNOWN	    = -1,
+    AVRUPDATE   = 0x00,
+    BLINKDEMO   = 0x01,
+    USBPROG	    = 0x02,
+    AVRISPMKII  = 0x03,
+    JTAGICEMKII = 0x04
+};
 
-void avrupdate_start_with_vendor_request(short vendorid, short productid);
+struct device {
+    enum DeviceType type;
+    uint16_t	vendorid;
+    uint16_t	productid;
+    const char      *description;
+};
 
+#define USB_VID_ATMEL       0x03eb
+#define USB_VID_USBPROG     0x1781
+#define USB_PID_AVRISPMKII  0x2104
+#define USB_PID_JTAGICEMKII 0x2103
+#define USB_PID_USBPROG_L   0x0c62  /* lower bounds for the range */
+#define USB_PID_USBPROG_H   0x0c65  /* upper bounds for the range */
+
+#define is_between(val, a, b) \
+    (((val) >= (a)) && ((val) <= (b)))
+
+void avrupdate_init(int debuglevel);
+int avrupdate_start_with_vendor_request(struct device *usb_device);
 
 /* start usb connection to device */
-struct usb_dev_handle* avrupdate_open(short vendorid, short productid);
+struct usb_dev_handle* avrupdate_open(struct device *usb_device);
 void avrupdate_close(struct usb_dev_handle* usb_handle);
 
 /* lowlevel funktions for avr */
-void avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file);
+int avrupdate_flash_bin(struct usb_dev_handle* usb_handle,char *file);
 void avrupdate_startapp(struct usb_dev_handle* usb_handle);
 
 int avrupdate_find_usbdevice();
@@ -43,10 +69,10 @@ struct avrupdate_info {
 };
 
 /* online functions */
-int avrupdate_net_get_versionfile(char * url, char **buffer);
-int avrupdate_net_versions(char * url);
-void avrupdate_net_flash_version(char * url,int number,int vendorid, int productid);
-struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number);
+int avrupdate_net_get_versionfile(const char *url, char **buffer);
+int avrupdate_net_versions(const char *url);
+void avrupdate_net_flash_version(const char *, int, struct device *);
+struct avrupdate_info * avrupdate_net_get_version_info(const char *url,int number);
 
 
 /* implicit function */
@@ -54,6 +80,14 @@ struct avrupdate_info * avrupdate_net_get_version_info(char * url,int number);
 void avrupdate_flash_version(int version);
 
 
+/*
+ * inline stuff
+ */
+
+static inline int avrupdate_need_switch_update_mode(struct device *usb_device)
+{
+    return usb_device->type != AVRUPDATE;
+}
 
 
 

@@ -642,7 +642,7 @@ void http_perror(const char *string)
 		#endif
 	else if(errorSource == FETCHER_ERROR)
 		{
-		char *stringIndex;
+		const char *stringIndex;
 
 		if(strstr(http_errlist[http_errno], "%d") == NULL)
 			{
