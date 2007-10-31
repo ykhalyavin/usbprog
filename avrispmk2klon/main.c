@@ -94,6 +94,13 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
     avrupdate_start();
 }
 
+void spi_softinit(void)
+{
+  SPCR = 0;  //1si68tel alt
+  DDR_SPI &=~(1 << MISO);
+  DDR_SPI = (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
+}
+
 
 void spi_init(void)
 {
@@ -115,21 +122,54 @@ void spi_active(void)
 
 void spi_out(char data)
 {
-  SPDR = data;
-  while ( !(SPSR & (1 << SPIF)) ) ;
+  
+  if(usbprog.sck_duration >= 0 && usbprog.sck_duration <= 6){
+    SPDR = data;
+    while ( !(SPSR & (1 << SPIF)) ) ;
+  } else {
+
+    // software SPI
+    int i;
+    unsigned char output = (unsigned char)data;
+    for (i = 8; i; i--) {
+    if(output & 0x01)
+      PORTB   |=  (1 << MOSI);
+    else
+      PORTB   &=  ~(1 << MOSI);
+    output = output >> 1;
+    PORTB   &=  ~(1 << SCK);
+    wait_ms(5);
+    PORTB   |=  (1 << SCK);
+    wait_ms(5);
+    }
+  }
 }
 
 
 char spi_in(void)
 {
-  SPDR = 0;
-  int timeout = 1000;
-  while(!(SPSR & (1 << SPIF))){
-    timeout--;
-    if(timeout == 0)
-      break;
+  if(usbprog.sck_duration >= 0 && usbprog.sck_duration <= 6){
+    SPDR = 0;
+    int timeout = 1000;
+    while(!(SPSR & (1 << SPIF))){
+      timeout--;
+      if(timeout == 0)
+	break;
+    }
+    return SPDR;
+  } else {
+  // software spi
+  int i;
+  char b;
+  for(i = 7; i >= 0; i--) {
+    if( PINB & (1<<MISO))
+      b |= 1 << i;
+    PORTB   |=  (1 << SCK);
+    wait_ms(5);
+    PORTB   &=  ~(1 << SCK);
   }
-  return SPDR;
+  return b;
+  } 
 }
 
 
@@ -409,7 +449,7 @@ void USBFlash(char *buf)
           switch(buf[2]){
             case 0x00:  //8MHz
               SPCR = (1<<SPE)|(1<<MSTR);
-                  SPSR = (1<<SPI2X);
+              SPSR = (1<<SPI2X);
             break;
   
             case 0x01:  //4MHz
@@ -442,10 +482,15 @@ void USBFlash(char *buf)
               SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);
                   SPSR = 0x00;
             break;
+
+	    case 0x95: //100Hz
+	      spi_softinit();
+	      buf[2]=0x95;   
+	    break;
   
-              default:
-              SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
-                  SPSR = 0x00;
+            default:
+	      SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+              SPSR = 0x00;
               buf[2] = 3;
           }
           usbprog.sck_duration = buf[2];

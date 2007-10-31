@@ -25,7 +25,7 @@
 /// initial global data structures
 void USBNInit(unsigned char *_DeviceDescriptor,unsigned char *_ConfigurationDescriptor);
 
-USBNCallbackFIFORX1(void *fct);
+void USBNCallbackFIFORX1(void *fct);
 
 /// start usb system after configuration
 void USBNStart(void);
@@ -33,6 +33,14 @@ void USBNStart(void);
 /// handle usb chip interrupt
 void USBNInterrupt(void);
 
+/// move descriptor in a linear field and remove string descriptors
+void _USBNCreateStringField(void);
+
+uint8_t USBNAddToStringList( void* data);
+
+
+/// add new string descriptor and get index
+int _USBNAddStringDescriptor(char *string);
 
 
 #endif /* __USBNAPI_H__ */

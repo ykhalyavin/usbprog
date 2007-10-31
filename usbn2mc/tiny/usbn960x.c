@@ -132,7 +132,6 @@ void _USBNAlternateEvent(void)
     USBNWrite(NFSR,OPR_ST);                   // NFS = NodeOperational
   	USBNDebug("reset\r\n");
   }
-  #if 0
   if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
@@ -156,7 +155,6 @@ void _USBNAlternateEvent(void)
   {
   	USBNDebug("eop\r\n");
   }
-  #endif
 
 }
 
@@ -180,12 +178,12 @@ void _USBNAlternateEvent(void)
   else if(event & ALT_SD3)
   {
     USBNWrite(ALTMSK,ALT_RESUME+ALT_RESET);   // adjust interrupts
-    USBNWrite(NFSR,SUS_ST);                   // enter suspend state
+    //USBNWrite(NFSR,SUS_ST);                   // enter suspend state
   }
   else if(event & ALT_RESUME)
   {
     USBNWrite(ALTMSK,ALT_SD3+ALT_RESET);
-    USBNWrite(NFSR,OPR_ST);
+    //USBNWrite(NFSR,OPR_ST);
   }
   else
   {
@@ -306,7 +304,7 @@ void _USBNReceiveFIFO0(void)
 				else
 				{
 					// default request but for interface not for device
-					USBNInterfaceRequests(req,&EP0tx);
+					//USBNInterfaceRequests(req,&EP0tx);
 					_USBNTransmit(&EP0tx);
 				}
 			break;
@@ -315,15 +313,17 @@ void _USBNReceiveFIFO0(void)
 				#if DEBUG
 				USBNDebug("Class request\n\r");
 				#endif
-				USBNDecodeClassRequest(req);
-				USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+				USBNDecodeClassRequest(req,&EP0tx);
+				_USBNTransmit(&EP0tx);
+				//USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 			break;
 			case DO_VENDOR:				// vendor request        
 				#if DEBUG
 				USBNDebug("Vendor request\n\r");
 				#endif
 				USBNDecodeVendorRequest(req);
-				USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+				_USBNTransmit(&EP0tx);
+				//USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 			break;              
 			default:					// unsupported req type    
 				#if DEBUG
@@ -544,27 +544,20 @@ void _USBNGetDescriptor(DeviceRequest *req)
       EP0tx.Buf = ConfigurationDescriptor;
 
     break;
-#if 0
     case STRING:
-      #if DEBUG 
-	USBNDebug("STRING DESCRIPTOR ");  
-	SendHex(index);
-	USBNDebug("\r\n");
-      #endif
-
-      if(index ==1)
+      if(index >0)
       {
 	EP0tx.Buf = &FinalStringArray[index][0];
 	EP0tx.Size = EP0tx.Buf[0];
       }
-      else { 
+      else {
 	char lang[]={0x04,0x03,0x09,0x04};
-	EP0tx.Size=4;
-	EP0tx.Buf=lang;
-
+	  EP0tx.Buf = &FinalStringArray[0][0];
+	  EP0tx.Size=4;
+          EP0tx.Buf=lang;
       }
-    break;
-#endif
+      break;
+
   }
   //if (EP0rx.Buf[7]==0)                  //if less than 256 req'd  
   //  if (EP0tx.Size > EP0rx.Buf[6]) EP0tx.Size = EP0rx.Buf[6];
@@ -582,16 +575,16 @@ void _USBNSetConfiguration(DeviceRequest *req)
   // load fct pointer list for out eps
   //
 
-//USBNWrite(TXC1,FLUSH);
-//USBNWrite(EPC1,EP_EN+0x01);      // enable EP1 at adr 1
+	// interrupt ddresse 83 raus
+	USBNWrite(TXC1,FLUSH);
+	USBNWrite(EPC1,EP_EN+0x03); 
 
-USBNWrite(RXC1,FLUSH);
-USBNWrite(EPC2,EP_EN+0x02); 
-USBNWrite(RXC1,RX_EN);
+	USBNWrite(RXC1,FLUSH);					// EP1 rein	mit callback function rein
+	USBNWrite(EPC2,EP_EN+0x01); 
+	USBNWrite(RXC1,RX_EN);
 
-//USBNWrite(TXC3,FLUSH);
-//USBNWrite(EPC5,EP_EN+0x05); 
-
+	USBNWrite(TXC2,FLUSH);					// interrupt ddresse 83 raus
+	USBNWrite(EPC3,EP_EN+0x01); 
 
 	
 /* 
@@ -617,7 +610,8 @@ USBNWrite(RXC1,RX_EN);
   USBNWrite(RXC2,RX_EN);
   USBNWrite(RXC3,RX_EN);
 */
-  //USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+  USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+  
 }
 
            

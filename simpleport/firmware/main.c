@@ -156,7 +156,7 @@ int main(void)
     USBNDeviceVendorID(0x1781);	//atmel ids
     USBNDeviceProductID(0x0c62); // atmel ids
 
-    USBNDeviceBCDDevice(0x0200);
+    USBNDeviceBCDDevice(0x0300);
 
     char lang[]={0x09,0x04};
     _USBNAddStringDescriptor(lang); // language descriptor

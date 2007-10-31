@@ -88,11 +88,9 @@ int main(int argc, char **argv)
         printf("Not possible to open USB device.\n");
         goto err;
     }
-
     ret = avrupdate_flash_bin(usb_handle,argv[1]);
     if (ret < 0)
         goto err;
-
     printf("=> Starting new firmware\n\n");
     avrupdate_startapp(usb_handle);
     avrupdate_close(usb_handle);
