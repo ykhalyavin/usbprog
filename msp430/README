@@ -1,0 +1,13 @@
+firmware  
+
+
+msp430-gdbproxy:
+(Schnittstellentreiber)
+  hardware_access  
+
+
+
+msp430-jtag:
+(Python Flashtool)
+ serJTAGfirmware
+
