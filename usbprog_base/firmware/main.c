@@ -10,13 +10,6 @@
 #include <util/delay.h>
 #include <avr/eeprom.h>
 
-// EEMEM wird bei aktuellen Versionen der avr-lib in eeprom.h definiert
-// hier: definiere falls noch nicht bekannt ("alte" avr-libc)
-#ifndef EEMEM
-// alle Textstellen EEMEM im Quellcode durch __attribute__ ... ersetzen
-#define EEMEM  __attribute__ ((section (".eeprom")))
-#endif
-
 #include "uart.h"
 #include "usbn2mc.h"
 
@@ -33,7 +26,7 @@ uint8_t state;
 uint8_t page_addr;
 uint8_t page_addr_w;
 uint8_t pageblock[128];
-uint8_t collect128;
+volatile uint8_t collect128;
 
 #define NONE	    		0x00
 
@@ -45,9 +38,14 @@ uint8_t collect128;
 
 
 /* usbn2mc tiny needs this */
-void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
+//void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep){}
+//void USBNDecodeVendorRequest(DeviceRequest *req){}
+//void USBNDecodeClassRequest(DeviceRequest *req){}
+
 void USBNDecodeVendorRequest(DeviceRequest *req){}
-void USBNDecodeClassRequest(DeviceRequest *req){}
+void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep){}
+
+
 
 
 
@@ -107,15 +105,15 @@ void avrupdate_program_page (uint32_t page)
 // start programm from application sector
 void avrupdate_start_app()
 {	
-		// switch to run app mode
-		eeprom_write_byte(&eeFooByte,0x00);
+	// switch to run app mode
+	//eeprom_write_byte(&eeFooByte,0x77);
 
   	//UARTWrite("start\r\n");
   	if(collect128){
-    	//SendHex(page_addr);
-    	page_addr = page_addr/2;
-    	avrupdate_program_page (page_addr);
-    	//UARTWrite("programm rest\r\n"); 
+	  //SendHex(page_addr);
+	  page_addr = page_addr/2;
+	  avrupdate_program_page (page_addr);
+	  //UARTWrite("programm rest\r\n"); 
   	}
 
   	USBNWrite(RXC1,FLUSH);
@@ -125,6 +123,7 @@ void avrupdate_start_app()
 
   	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
   	GICR = 0x00; // Interrupts auf Application Section umschalten
+	sei();
 
   	avrupdate_jump_to_app();	  // Jump to application sector
 }
@@ -132,20 +131,20 @@ void avrupdate_start_app()
 
 void avrupdate_cmd(char *buf)
 {
+
   	int i;
   	// check state first ist 
   	switch(state)
   	{
-			case STOPPROGMODE:
+		case STOPPROGMODE:
 				//eeprom_write_byte(&eeFooByte,0x00);
 				//wait_ms(10);
-			break;
-
-			case STARTAPP:
-				//UARTWrite("start app now!!!\n\r");
-				//eeprom_write_byte(&eeFooByte,0x00);
-				avrupdate_start_app();
-			break;
+		break;
+		case STARTAPP:
+			//UARTWrite("start app now!!!\n\r");
+			//eeprom_write_byte(&eeFooByte,0x00);
+			avrupdate_start_app();
+		break;
 
     	case WRITEPAGE:
       		//UARTWrite("write\r\n");
@@ -210,30 +209,34 @@ void avrupdate_cmd(char *buf)
 
 int main(void)
 {
-	uint8_t myByte;
-	myByte = eeprom_read_byte(&eeFooByte);
-	
 	cli();
  	// spm (bootloader mode from avr needs this, to use an own isr table)	
  	GICR = _BV(IVCE);  // enable wechsel der Interrupt Vectoren
  	GICR = _BV(IVSEL); // Interrupts auf Boot Section umschalten
  	sei();
-	
-  //UARTInit();
 
-  //UARTWrite("\r\nbootloader is now active\r\n");
-	/* if is no program in flash start bootloader, else start programm */
+	DDRA |= (1 << PA4); //Led Output
 
-	//SendHex(myByte);
-	//if(pgm_read_byte(0)!=0xFF && myByte !=0x77)
-	//if(pgm_read_byte(0)!=0xFF){
-	//UARTWrite("start app");
-	if(myByte == 0x00){
-		avrupdate_start_app();
+
+	UARTInit();
+
+	int i;
+	for(i=0;i<5;i++){
+	  UARTPutChar(0x83);
+	  wait_ms(10);
+	  if(UARTGetChar()==0x83){
+	    goto next;
+	  } 
 	}
+	// call twice , actual I don't know why but it works only so
+	avrupdate_start_app();
+	avrupdate_start_app();
 
+	
+next:
+	collect128=0;
+	
 
-wait_ms(200);
   	// bootloader application starts here
 
   	const unsigned char avrupdateDevice[] =
@@ -248,8 +251,8 @@ wait_ms(200);
     0x81,0x17,  // vendor id
     0x62,0x0c,  // product id
     0x00,0x00,  // revision id (e.g 1.02)
-    0x00,       // index of manuf. string
-    0x00,	      // index of product string
+    0x01,       // index of manuf. string
+    0x02,	      // index of product string
     0x00,	      // index of ser. number
     0x01        // number of configs
   	};
@@ -273,7 +276,7 @@ wait_ms(200);
     0x04,       // descriptor type = interface descriptor 
     0x00,	      // interface number 
     0x00,	      // alternate setting for this interface 
-    0x02,	      // number endpoints without 0
+    0x01,	      // number endpoints without 0
     0x00,       // class code 
     0x00,       // sub-class code 
     0x00,       // protocoll code
@@ -301,16 +304,28 @@ wait_ms(200);
   
   	USBNInit(avrupdateDevice,avrupdateConf);   
   	USBNCallbackFIFORX1(&avrupdate_cmd);
+	_USBNAddStringDescriptor(""); //pseudo lang
+        _USBNAddStringDescriptor("USBprog EmbeddedProjects");
+        _USBNAddStringDescriptor("usbprogBase Mode");
+        _USBNCreateStringField();
 
   	USBNInitMC();
 
   	// start usb chip
   	USBNStart();
 
-  	collect128=0;
   	// wait 2 seconds then start application
 
-	while(1);	
+	while(1){
+	  PORTA |= (1 << PA4);
+	  wait_ms(100);
+	  PORTA &= ~(1 << PA4);
+	  wait_ms(100);
+	  PORTA |= (1 << PA4);
+	  wait_ms(100);
+	  PORTA &= ~(1 << PA4);
+	  wait_ms(800);
+	}
 
 }
 

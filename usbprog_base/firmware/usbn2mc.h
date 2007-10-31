@@ -32,9 +32,9 @@ void USBNInitMC(void);
 // print debug messages
 void USBNDebug(char *msg);
 
-void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep);
-void USBNDecodeVendorRequest(DeviceRequest *req);
-void USBNDecodeClassRequest(DeviceRequest *req);
+//void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep);
+//void USBNDecodeVendorRequest(DeviceRequest *req);
+//void USBNDecodeClassRequest(DeviceRequest *req);
 
 
 /// The Atmega register used to send data/address to the USBN9604

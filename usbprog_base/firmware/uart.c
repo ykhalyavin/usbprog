@@ -7,14 +7,10 @@
 
 void UARTInit(void)
 {
-  	//UCSRB |= (1<<TXEN);			// UART TX einschalten
-  	//UCSRC |= (1<<URSEL)|(3<<UCSZ0);	// Asynchron 8N1
-	//UCSRB |= ( 1 << RXEN ); // RX aktivieren
-	//UCSRB |= ( 1 << RXCIE ); // RX interrupt aktivieren
-	//UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
  	
 	UCSRA = (1 << RXC) | (1 << TXC);
-  	UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
+  	//UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
+  	UCSRB = (1 << RXEN) | (1 << TXEN);
   	UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
 	
 	//ATmega32 bei 16MHz und für 19200 Baud
@@ -43,8 +39,8 @@ void UARTPutChar(unsigned char sign)
 
 unsigned char UARTGetChar(void)
 {
-    while (!(UCSRA & (1<<RXC)));  // warten bis Zeichen verfuegbar
-  		return UDR;                   // Zeichen aus UDR an Aufrufer zurueckgeben
+  //while (!(UCSRA & (1<<RXC)));  // warten bis Zeichen verfuegbar
+  return UDR;                   // Zeichen aus UDR an Aufrufer zurueckgeben
 }
 
 void UARTWrite(char* msg)
