@@ -258,17 +258,7 @@ void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 // usb zu rs232
 void USBtoRS232(char * buf)
 {
-
-	//fifo_put(toRS232FIFO,0x33);
-	//fifo_put(toRS232FIFO,0x34);
-	//fifo_put(toRS232FIFO,0x35);
 	UARTPutChar(buf[0]);
-
-	//USBNWrite(TXC2,FLUSH);
-	//USBNWrite(TXD2,0x44);
-	//rs232_send();	
-	//UARTWrite("usb to rs232");
-	
 }
 
 
@@ -316,7 +306,7 @@ int main(void)
 
 	_USBNAddStringDescriptor(""); //pseudo lang
 	_USBNAddStringDescriptor("USBprog EmbeddedProjects");
-	_USBNAddStringDescriptor("usbprogRS232");
+	_USBNAddStringDescriptor("MSP430 Serial Programmer");
 	_USBNCreateStringField();
 
 
