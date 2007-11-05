@@ -206,7 +206,6 @@ void avrupdate_cmd(char *buf)
 	
 }
 
-
 int main(void)
 {
 	cli();
@@ -218,9 +217,15 @@ int main(void)
 	DDRA |= (1 << PA4); //Led Output
 
 
+	// check for first test after bootloader is installed
+	uint8_t i, check;
+	uint8_t myByte;
+	myByte = pgm_read_byte((void *)0);
+	if(myByte==0xFF)
+	  goto next;
+
 	UARTInit();
 
-	int i;
 	for(i=0;i<5;i++){
 	  UARTPutChar(0x83);
 	  wait_ms(10);
