@@ -9,7 +9,7 @@
 #include "uart.h"
 #include "usbn2mc.h"
 #include "usbn2mc/fifo.h"
-#include "../usbprog_base/firmwarelib/avrupdate.h"
+#include "../../usbprog_base/firmwarelib/avrupdate.h"
 
 
 

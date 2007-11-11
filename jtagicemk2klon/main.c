@@ -73,31 +73,30 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
   }
 }
 
+void USBToglAndSend(void)
+{
+  if(jtagice.datatogl == 1) {
+    USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
+    jtagice.datatogl = 0;
+  } else {
+    USBNWrite(TXC1, TX_LAST+TX_EN);
+    jtagice.datatogl = 1;
+  }
+}
+
+
 volatile unsigned char answer[300];
 
 void CommandAnswer(int length)
 {
   int i;
-	
-  UARTWrite("1\n");	
-	
-  for(char j = 0; j < ((length - 1) >> 6) + 1; j++)
-  {
-    USBNWrite(TXC1,FLUSH);
 
-    for(i=0;i<length;i++)
-      USBNWrite(TXD1,answer[(j << 6) + i]);
+  USBNWrite(TXC1, FLUSH);
+  for(i = 0; i < length; i++)
+    USBNWrite(TXD1, answer[i]);
 
-    //SendHex(0x11);
-    /* control togl bit */
-    if(jtagice.datatogl==1) {
-      USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
-      jtagice.datatogl=0;
-    } else {
-      USBNWrite(TXC1,TX_LAST+TX_EN);
-      jtagice.datatogl=1;
-    }
-  }
+   /* control togl bit */
+   USBToglAndSend();
 }
 
 /* called after data where send to pc */
@@ -106,147 +105,122 @@ void USBSend(void)
 
 }
 
-unsigned char rxbuf[320];	//Recievebuffer for long packages
+unsigned char buf[320];	//Recievebuffer for long packages
 static char recieveCounter = 0;
 
 /* is called when received data from pc */
 void USBReceive(char *buf)
 {
 
-  if(!recieveCounter)		//First Packet
-  {
-    memcpy(rxbuf, buf, 64);
-    recieveCounter++;
-		
-    if(((rxbuf[4] << 8) | rxbuf[3]) <= 64)
-      goto PARSER;
-  }
-	
-	
-  if(((rxbuf[4] << 8) | rxbuf[3]) > (recieveCounter << 6))
-  {
-     memcpy(&rxbuf[recieveCounter << 6], buf, 64);
-     recieveCounter++;		
-  }
-  else
-  {
-PARSER:
-      recieveCounter = 0;
-			
-      // check if package is a cmdpackage
-      if(buf[0]==MESSAGE_START)
-	jtagice.cmdpackage=1;
-      else
-	jtagice.cmdpackage=0;
-		
-      if(jtagice.cmdpackage==1) {
+      if(buf[0]==MESSAGE_START){
 	jtagice.seq1=buf[1];		// save sequence number
 	jtagice.seq2=buf[2];		// save sequence number
       }
     
-/*
-		// check if package is a longpackage
-		jtagice.size = buf[3]+(255*buf[4])+(512*buf[5])+(1024*buf[6]);
-		//jtagice.size = buf[3]+(buf[4]<<8)+(buf[5]<<16)+(buf[6]<<24);
-*/
-//		if(jtagice.size>54)
-//			jtagice.longpackage = 1;
+
+	// check if package is a longpackage
+	//jtagice.size = buf[3]+(255*buf[4])+(512*buf[5])+(1024*buf[6]);
 	
 		int cmdlength=0;
-
+UARTWrite("Com: ");
+SendHex(buf[8]);
+UARTWrite("\r\n");
 		switch(buf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				cmdlength = cmd_get_sign_on((char*)rxbuf,(char *)answer);
+				cmdlength = cmd_get_sign_on((char*)buf,(char *)answer);
 			break;
 
 			case CMND_GET_SIGN_OFF:
-				cmdlength = cmd_sign_off((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_sign_off((char*)buf,(char*)answer);
 			break;
 
 			case CMND_SET_PARAMETER:
-				cmdlength = cmd_set_parameter((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_set_parameter((char*)buf,(char*)answer);
 			break;
 		
 			case CMND_READ_MEMORY:
-				cmdlength = cmd_read_memory((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_read_memory((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_GET_PARAMETER:
-				cmdlength = cmd_get_parameter((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_get_parameter((char*)buf,(char*)answer);
 			break;
 			case CMND_GET_SYNC:
-				cmdlength = cmd_get_sync((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_get_sync((char*)buf,(char*)answer);
 			break;
 			case CMND_FORCED_STOP:
-				cmdlength = cmd_forced_stop((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_forced_stop((char*)buf,(char*)answer);
 				forcedStop = 1;
 			break;
 
 			case CMND_SET_DEVICE_DESCRIPTOR:
-				cmdlength = cmd_set_device_descriptor((char*)rxbuf, (char*)answer);
+				cmdlength = cmd_set_device_descriptor((char*)buf, (char*)answer);
 			break;
 	
 			case CMND_GO:
-				cmdlength = cmd_go((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_go((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_RESTORE_TARGET:
-				cmdlength = cmd_restore_target((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_restore_target((char*)buf,(char*)answer);
 			break;
 
 			case CMND_LEAVE_PROGMODE:
-				cmdlength = cmd_leave_progmode((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_leave_progmode((char*)buf,(char*)answer);
 			break;
 
 			case CMND_ENTER_PROGMODE:
-				cmdlength = cmd_enter_progmode((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_enter_progmode((char*)buf,(char*)answer);
 			break;
 
 			case CMND_RESET:
-				cmdlength = cmd_reset((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_reset((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_READ_PC:
-				cmdlength = cmd_read_pc((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_read_pc((char*)buf,(char*)answer);
 			break;
 	
 			case CMND_SET_BREAK:
-				cmdlength = cmd_set_break((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_set_break((char*)buf,(char*)answer);
 			break;
 
 			case CMND_CLR_BREAK:
-				cmdlength = cmd_clr_break((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_clr_break((char*)buf,(char*)answer);
 			break;
 
 			case CMND_SINGLE_STEP:
-				cmdlength = cmd_single_step((char*)rxbuf,(char*)answer);
+				cmdlength = cmd_single_step((char*)buf,(char*)answer);
 			break;
 			
 			case CMND_SELFTEST:
-				cmdlength = cmd_selftest((char*)rxbuf, (char*)answer);
+				cmdlength = cmd_selftest((char*)buf, (char*)answer);
 			break;
 			
 			case CMND_WRITE_MEMORY:
-					cmdlength = cmd_write_memory((char*)rxbuf, (char*)answer);
-				
+				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
 			break;
 			
 			case CMND_CHIP_ERASE:
-				cmdlength = cmd_chip_erase((char*)rxbuf, (char*)answer);
+				cmdlength = cmd_chip_erase((char*)buf, (char*)answer);
+			break;
+
+			case CMND_WRITE_PC:
+				cmdlength = cmd_write_pc((char*)buf,(char*)answer);
 			break;
 
 			default:
-				answer[0]=RSP_FAILED;
-				cmdlength=0;
+				//answer[0]=RSP_FAILED;
+				//cmdlength=1;
+				;
 		}
-		if(cmdlength!=0){
-			//jtagice.datatogl=1; //bene
-			CommandAnswer(cmdlength);
+		if(cmdlength>0){
+		  CommandAnswer(cmdlength);
 		}
 		// recalculate size
-		jtagice.size = jtagice.size -54;
-		
+//		jtagice.size = jtagice.size -54;
+	
 		if(forcedStop)
 		{
 			forcedStop = 0;
@@ -268,8 +242,7 @@ PARSER:
 			crc16_append(answer,(unsigned long)14);
 			CommandAnswer(16);
 		}
-	}
-
+	
 }
 
 
@@ -284,7 +257,7 @@ int main(void)
 #endif
   
   USBNInit();   
-  jtagice.datatogl=0;
+  jtagice.datatogl=1;
 
   jtag_init();
 
@@ -322,8 +295,9 @@ int main(void)
   USBNStart();
 
 
-	unsigned char recvbuf[10];
-	unsigned char jtagbuf[10];
+#if 0
+  unsigned char recvbuf[10];
+  unsigned char jtagbuf[10];
 
 
 	//char reg=0x12;	//9	10010	(0. bit = read)	BSR (ff07 12)
@@ -334,7 +308,6 @@ int main(void)
 
 	avr_reset(1);
 	avr_reset(0);
-#if 0
 	// JTAG Befehl  AVR_OCD waehlen
 	jtag_reset();
 	avr_jtag_instr(AVR_OCD,0);
@@ -376,7 +349,6 @@ int main(void)
 	jtagbuf[2]=0x00;
 	jtagbuf[3]=0x00;
 	jtag_write_and_read(32,jtagbuf,recvbuf);
-#endif
 #ifdef DEBUG_ON
 	SendHex(recvbuf[0]);
 	SendHex(recvbuf[1]);
@@ -384,6 +356,7 @@ int main(void)
 	SendHex(recvbuf[3]);
 #endif
 
+#endif
 
 	// ask for new events
 	// while send an event block usb receive routine

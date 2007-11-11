@@ -251,6 +251,24 @@ int cmd_read_pc(char *msg, char * answer)
 	return 15;
 }
 
+int cmd_write_pc(char *msg, char * answer)
+{
+	// TODO (program answer always with ok!)
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+
+	answer[8]	= 0x80;		// (0x80 = ok)
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+
+}
+
 int cmd_clr_break(char *msg, char * answer)
 {
 	// TODO (program answer always with ok!)
@@ -613,6 +631,7 @@ int cmd_selftest(char *msg, char *answer)
 
 int cmd_write_memory(char *msg, char *answer)
 {
+SendHex(msg[9]);
 	switch(msg[9])
 	{
 		case LOCK_BITS:
@@ -623,10 +642,14 @@ int cmd_write_memory(char *msg, char *answer)
 		break;
 		case SRAM:
 		break;
+		
 		case SPM:
+			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 24) | ((unsigned long) msg[15] << 16) | msg[14], &msg[18]);
 		break;
+		
 		case FLASH_PAGE:
-				wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 24) | ((unsigned long) msg[15] << 16) | msg[14], &msg[18]);
+		  UARTWrite("flash");
+			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 24) | ((unsigned long) msg[15] << 16) | msg[14], &msg[18]);
 		break;
 		
 		case EEPROM_PAGE:
@@ -645,7 +668,7 @@ int cmd_write_memory(char *msg, char *answer)
 	answer[5] = 0;
 	answer[6] = 0;
 	answer[7] = TOKEN;
-	answer[8]	= RSP_OK;		// (0x80 = ok)
+	answer[8] = RSP_OK;		// (0x80 = ok)
 	
 	crc16_append(answer,(unsigned long)9);
 	

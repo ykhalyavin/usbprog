@@ -175,16 +175,16 @@ void chip_erase(void)
 
 void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data)
 {
+#if 0
 	/*char tmp[2];
 	
 	int adr = adress >> 1;
 	
 
-	UARTWrite("Write Flash Page\n");
-	UARTWrite("Adress: ");
+	//UARTWrite("Write Flash Page Address: ");
 	SendHex((adr >> 8) & 0xFF);
 	SendHex(adr & 0xFF);
-	UARTWrite("\n");
+	UARTWrite("\n\r");
 
 	avr_prog_cmd();					//Prog Enable
 	avr_sequence(0x23, 0x10, tmp);
@@ -197,7 +197,7 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 	for(int i = 0; i < byteCount; i++)
 	{
 		SendHex(data[i]);
-		UARTWrite("\n");
+		UARTWrite("\n\r");
 		jtag_write(7, &data[i]);
 	}
 
@@ -214,15 +214,17 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 		avr_sequence(0x37, 0x00, tmp);
 	}
 	while(!(tmp[1] & 0x02)); */
+#endif
+	
 	
 	unsigned char tmp[2];
 	adress >>= 1;	//divide by two: convert byte adress to word adress
 	
 #ifdef DEBUG_ON
-	UARTWrite("Write Flash page\n");
-	UARTWrite("Adress");
+	UARTWrite("Write Flash page ");
+	UARTWrite("Address");
 	SendHex((char) adress);
-	UARTWrite("\n");
+	UARTWrite("\n\r");
 #endif
 	
 	avr_prog_cmd();					//Prog Enable
@@ -244,7 +246,7 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 		UARTWrite(" Data: ");
 		SendHex(data[i]);
 		SendHex(data[i + 1]);	
-		UARTWrite("\n");
+		UARTWrite("\n\r");
 #endif
 		avr_sequence(0x37, 0x00, tmp);
 		avr_sequence(0x77, 0x00, tmp);
@@ -252,7 +254,7 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 	}
 	
 #ifdef DEBUG_ON
-	UARTWrite("Flash succesfully\n");
+	UARTWrite("Flash succesfully\n\r");
 #endif
 	avr_sequence(0x37, 0x00, tmp);
 	avr_sequence(0x35, 0x00, tmp);
