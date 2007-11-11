@@ -4,8 +4,8 @@
 /* Needs some header files from avr-libc for the bit manipulation
    macros etc. */
 
-#include <avr/io.h>
-#include <avr/progmem.h>
+#include <io.h>
+#include <progmem.h>
 
 /* Include this to get the TRAP() macro and access to the SendByte()
    function from the debug monitor. */
@@ -50,6 +50,7 @@ void sendprgstr(prog_char *s)
 /* 90s8515 (28 pins) and 90s2313 (20 pins)                          */
 /*------------------------------------------------------------------*/
 
+#if (__AVR_AT90S8515__ || __AVR_AT90S2313__)
 void Test(void)
 {
   unsigned char a = 0;
@@ -77,6 +78,7 @@ void Test(void)
     }
   }
 }
+#endif /* (__AVR_AT90S8515__ || __AVR_AT90S2313__) */
 
 /*------------------------------------------------------------------*/
 
