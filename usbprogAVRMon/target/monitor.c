@@ -14,7 +14,7 @@
         May be ECP mode also work? 
 */
 
-#include <io.h>
+#include <avr/io.h>
 #include "monitor.h"
 
 /*------------------------------------------------------------------*/
@@ -87,6 +87,10 @@ struct sreg_bits_s
 #  define CLK PB7   /* SCK */
 #else
 #  warning "Device type not defined"
+#  define RX PB5    /* MOSI */
+#  define TX PB6    /* MISO */
+#  define CLK PB7   /* SCK */
+
 #endif
 
 /* Initialize the three communication lines. This may cause some
@@ -95,39 +99,48 @@ struct sreg_bits_s
 
 void InitComm(void)
 {
+#if 0
   cbi(DDRB, RX);   /* input */
   cbi(PORTB, RX);  /* no pullup */
   cbi(DDRB, CLK);  /* input */
   cbi(PORTB, CLK); /* no pullup */
   sbi(DDRB, TX);   /* output */
   cbi(PORTB, TX);  /* low */
+#endif
 }
 
 void TxBit(uint8_t b) {
+#if 0
   loop_until_bit_is_set(PINB, CLK);    /* Wait for CLK Lo -> Hi */
   if (b) sbi(PORTB, TX);               /* Output data bit */
   else cbi(PORTB, TX);
   loop_until_bit_is_clear(PINB, CLK);  /* Wait for CLK Hi -> Lo */
   cbi(PORTB, TX);                      /* Clear output */
+#endif
 }
 
 void TxByte(uint8_t b) {
+#if 0 
   uint8_t i;
   for(i = 0; i < 8; i++) {             /* Loop over each bit */
     TxBit(b & 0x80);                   /* Tx the MSB */
     b <<= 1;                           /* Shift left */
   }
+#endif
 }
 
 uint8_t RxBit(void) {
+#if 0
   uint8_t bit;
   loop_until_bit_is_set(PINB, CLK);    /* Wait for CLK Lo -> Hi */
   bit = (inp(PINB) >> RX) & 1;         /* Read input bit */
   loop_until_bit_is_clear(PINB, CLK);  /* Wait for CLK Hi -> Lo */
   return bit;
+#endif
 }
 
 uint8_t RxByte(void) {
+#if 0
   uint8_t i;
   uint8_t b = 0;
     for(i = 0; i < 8; i++) {
@@ -135,6 +148,7 @@ uint8_t RxByte(void) {
     b |= RxBit();
   }
   return b;
+#endif
 }
 
 /* High level routine for sending one byte of data. Blocks until the
@@ -319,8 +333,8 @@ void _overflow0_ (void)
     ("out	__SREG__, r30\n"
      "pop	r30\n"
      "ret");
-
   asm volatile ("_stepping_:push r31");
+  
   asm volatile
     ("in	r31, %0\n"
      "ori	r31, %1\n"

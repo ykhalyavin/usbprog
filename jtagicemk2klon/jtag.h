@@ -29,10 +29,16 @@
 #define JTAG_PORT_INIT		DDRB
 #define JTAG_PORT_WRITE		PORTB
 #define JTAG_PORT_READ		PINB
+/*
 #define	TCK			0	
 #define TMS			7
 #define TDI			5	
 #define TDO			6	
+*/
+#define	TCK			5	
+#define TMS			0	
+#define TDI			6	
+#define TDO			4	
 
 
 // check if tdo == 1
@@ -49,7 +55,7 @@
 #define JTAG_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
 
 // a jtag clock
-#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); JTAG_SET_TCK(); }
+#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");JTAG_SET_TCK(); }
 
 
 // JTAG State Machine
