@@ -118,13 +118,13 @@ int main(void)
     USBNDeviceVendorID(VID);
     USBNDeviceProductID(PID);
 
-    USBNDeviceBCDDevice(0x0400);
+    USBNDeviceBCDDevice(0x0200);
 
     char lang[]={0x09,0x04};
     _USBNAddStringDescriptor(lang); // language descriptor
 
     USBNDeviceManufacture ("USBprog EmbeddedProjects");
-    USBNDeviceProduct("usbprogXSVF Play");
+    USBNDeviceProduct("usbprogXSVF");
     //USBNDeviceSerialNumber("GNU/GPL2");
 
     conf = USBNAddConfiguration();
