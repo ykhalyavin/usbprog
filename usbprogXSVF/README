@@ -1,0 +1,20 @@
+XSVF USB Player (usbprogXSVF)
+
+by Sven Luetkemeier, sven@sl-ware.de, 2007
+
+XSVF files are a standard to describe arbitrary JTAG operations. 
+This firmware enables usbprog to "play" such files, that means 
+to execute the JTAG operations contained in the XSVF file via 
+the usbprog adapter. That way CPLDs, FPGAs, or JTAG-enabled 
+microcontrollers can be programmed, erased, tested etc. The only 
+need is a software that can produce XSVF files for the target device.
+
+Status
+
+The XSVF player is functional if all single XSVF instructions are 
+not bigger than 64 bytes. Tested under Linux 
+(openSUSE 10.3 x86_64, Debian/Sarge) with a Xilinx XC9572 CPLD and an XC9572XL CPLD.
+
+
+
+
