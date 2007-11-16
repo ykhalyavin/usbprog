@@ -544,8 +544,10 @@ void DevicesCommand::printLongHelp(ostream &os) const
 /* DeviceCommand {{{1 */
 
 /* -------------------------------------------------------------------------- */
-DeviceCommand::DeviceCommand(DeviceManager *devicemanager)
-    : AbstractCommand("device"), m_devicemanager(devicemanager)
+DeviceCommand::DeviceCommand(DeviceManager *devicemanager,
+                             Firmwarepool *firmwarepool)
+    : AbstractCommand("device"), m_devicemanager(devicemanager),
+      m_firmwarepool(firmwarepool)
 {}
 
 /* -------------------------------------------------------------------------- */
@@ -554,10 +556,8 @@ bool DeviceCommand::execute(CommandArgVector args, ostream &os)
 {
     unsigned int device = args[0]->getUInteger();
 
-    if (m_devicemanager->getNumberUpdateDevices() == 0) {
-        os << "You may want to run the \"devices\" command first." << endl;
-        return true;
-    }
+    if (m_devicemanager->getNumberUpdateDevices() == 0)
+        m_devicemanager->discoverUpdateDevices(m_firmwarepool);
 
     if (device < 0 || device >= m_devicemanager->getNumberUpdateDevices())
         throw ApplicationError("Invalid device number specified.");

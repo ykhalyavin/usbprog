@@ -1,0 +1,10 @@
+2007-11-16  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* added README, INSTALL, NEWS and COPYING
+	* remove superfluous usbprog/usbprog.cc file (which was only there for
+	  testing)
+	* always print the current update device (*) in the "devices" command,
+	  not only if there are more than 1 update devices
+	* run DeviceManager::discoverUpdateDevices() in the "devices" command
+	  instead of printing an error message when zero update devices are
+	  currently registered

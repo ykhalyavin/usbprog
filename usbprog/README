@@ -1,0 +1,94 @@
+                                    USBprog
+                                   =========
+
+General information
+-------------------
+
+From <http://www.embedded-projects.net/index.php?page_id=165>:
+
+1. What is USBprog?
+
+   USBprog is a free programming adapter. You can easily install different
+   firmware versions from an “online pool” over USB. The adapter can be used
+   for programming and debugging AVR and ARM processors, as USB-to-RS232
+   converter, as JTAG interface or as simple I/O interface (5 lines).
+
+2. Who needs USBprog?
+
+   Hardware and software developers who work with Windows, Linux and other
+   operating systems.
+
+3. What is so special about the concept of USBprog?
+
+   Given time, there will be a growing pool of firmware versions. If you have
+   to work with a new module you will ideally find the matching firmware to
+   program or connect to this new module in the online pool.
+
+   If there is no matching firmware for the required module you shouldn't
+   hastily buy a far too expensive adapter, but ask if it paid to write a new
+   firmware for USBprog and thus to invest in the firmware pool. Often it is
+   done quite quickly, because you can enhance existing software tools. Like in
+   the case of the AVR ISP 2 clone that can be used with every application that
+   supports the original adapter of Atmel, or the adapter for the OpenOCD, a
+   product developed within 2 to 3 days.
+
+
+This tool
+---------
+
+1. Overview
+
+   This is the programming tool needed to replace the firmware on the USBprog
+   hardware. It automatically retrieves a list of available firmwares from the
+   internet, downloads them and uploads it to the USBprog adapter.
+
+2. Operating systems
+
+   The tool runs on Linux (primary platform) and Microsoft Windows (secondary
+   platform). It should be very easy to port to other Unix-like operating
+   systems that have libusb -- including Apple MacOS X.
+
+3. Requirements
+
+     a) libusb <http://libusb.sourceforge.net> and
+        <http://libusb-win32.sourceforge.net>
+     b) libxml2 <http://xmlsoft.org>
+     c) libcurl <http://curl.haxx.se>
+
+4. Interfaces
+
+   The tool consists of a library (written in C++) that manages devices and the
+   firmware pool (i.e. the cache on disk) and a command line interface. That
+   interface is designed to be used interactively through a shell and in batch mode
+   (similar to avrdude).
+
+   A graphical interface is coming. The “old” GUI which doesn't use this
+   library is available at <http://www.ixbat.de/index.php?page_id=165>.
+
+5. Installation
+
+   Installation on Linux (or Unix-like operating systems) should be very straight
+   forward because it uses autoconf/automake/libtool (i.e. the familiar
+   ./configure mechanism).
+
+   For Win32, use the provided binary. If you want to compile yourself, install
+   MinGW. Devcpp project files are included. For more information about installing
+   libusb on Windows, see the web page.
+
+6. Usage
+
+   To learn how to use the program, just read its manual page, usbprog(1).
+   For Win32 users, a HTML version is included.
+
+7. Author, Copyright, Bugs
+
+   This tool was written by Bernhard Walle <bernhard.walle@gmx.de>. Parts of
+   the source code have been taken from the old tool which was written by
+   Benedikt Sauter <sauter@ixbat.de>.
+
+   For the copyright, see COPYING (GPLv2 or later).
+
+   Please report bugs to the usbprog mailing list
+   <https://lists.berlios.de/mailman/listinfo/usbprog-pub>, per private mail
+   <bernhard.walle@gmx.de> or the forum <http://forum.embedded-projects.net>.
+

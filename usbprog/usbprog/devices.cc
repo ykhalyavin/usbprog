@@ -25,7 +25,6 @@
 #include <usb.h>
 #include <usbprog/devices.h>
 
-using std::cout;
 using std::vector;
 using std::string;
 using std::ostream;
@@ -185,12 +184,10 @@ void DeviceManager::printDevices(ostream &os) const
     for (DeviceVector::const_iterator it = m_updateDevices.begin();
             it != m_updateDevices.end(); ++it) {
         os << " [" << setw(2) << right << i++ << "] " << left;
-        if (m_updateDevices.size() > 1) {
-            if (up != NULL && *up == **it)
-                os << " *  ";
-            else
-                os << "    ";
-        }
+        if (up != NULL && *up == **it)
+            os << " *  ";
+        else
+            os << "    ";
         os << (*it)->toString() << endl;
     }
 }
@@ -227,11 +224,8 @@ void DeviceManager::switchUpdateMode()
     int timeout = 6;
 
     while (usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL, 8, 1000) < 0){
-        if (--timeout == 0) {
-            cout << "Timeout exceeded, it's possible that switching to "
-                    "update mode failed." << endl;
+        if (--timeout == 0)
             break;
-        }
         sleep(1);
     }
 

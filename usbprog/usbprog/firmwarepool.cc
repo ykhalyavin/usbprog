@@ -40,9 +40,7 @@ using std::ifstream;
 using std::copy;
 using std::ios;
 using std::atoi;
-using std::cerr;
 using std::endl;
-using std::cout;
 using std::stringstream;
 using std::remove;
 using std::back_inserter;
@@ -415,14 +413,10 @@ void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
                 xmlFree(attrib);
             }
 
-            try {
-                attrib = xmlGetProp(cur, XMLCHAR("date"));
-                if (attrib) {
-                    fw->setDate(DateTime(reinterpret_cast<char *>(attrib), DTF_ISO_DATE));
-                    xmlFree(attrib);
-                }
-            } catch (const ParseError &err) {
-                cerr << "Invalid date: " << err.what() << endl;
+            attrib = xmlGetProp(cur, XMLCHAR("date"));
+            if (attrib) {
+                fw->setDate(DateTime(reinterpret_cast<char *>(attrib), DTF_ISO_DATE));
+                xmlFree(attrib);
             }
         } else if (xmlStrcmp(cur->name, XMLCHAR("description")) == 0) {
             attrib = xmlGetProp(cur, XMLCHAR("vendorid"));

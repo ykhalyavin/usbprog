@@ -163,7 +163,8 @@ class DevicesCommand : public AbstractCommand {
 
 class DeviceCommand : public AbstractCommand {
     public:
-        DeviceCommand(DeviceManager *devicemanager);
+        DeviceCommand(DeviceManager *devicemanager,
+                Firmwarepool *firmwarepool);
 
     public:
         bool execute(CommandArgVector args, std::ostream &os)
@@ -178,6 +179,7 @@ class DeviceCommand : public AbstractCommand {
 
     private:
         DeviceManager *m_devicemanager;
+        Firmwarepool *m_firmwarepool;
 };
 
 /* UploadCommand {{{1 */

@@ -10,8 +10,7 @@ pkginclude_HEADERS    = usbprog.h \
 			devices.h
 
 lib_LTLIBRARIES       = libusbprog.la
-libusbprog_la_SOURCES  = usbprog.cc \
-			 inifile.cc \
+libusbprog_la_SOURCES  = inifile.cc \
 			 util.cc \
 			 downloader.cc \
 			 date.cc \
