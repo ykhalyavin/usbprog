@@ -439,9 +439,7 @@ void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
 
             attrib = xmlGetProp(cur, XMLCHAR("bcddevice"));
             if (attrib) {
-                uint16_t bcdDev = parse_long(reinterpret_cast<char *>(attrib));
-                // swap bytes
-                fw->setBcdDevice(((bcdDev & 0xff) << 8) | ((bcdDev & 0xff00) >> 8));
+                fw->setBcdDevice(parse_long(reinterpret_cast<char *>(attrib)));
                 xmlFree(attrib);
             }
 

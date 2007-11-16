@@ -42,6 +42,7 @@ using std::copy;
 
 #define VENDOR_ID_USBPROG       0x1781
 #define PRODUCT_ID_USBPROG      0x0c62
+#define BCDDEVICE_UPDATE        0x0000
 
 /* Device {{{1 */
 
@@ -153,8 +154,10 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
         for (struct usb_device *dev = bus->devices; dev; dev = dev->next) {
             uint16_t vendorid = dev->descriptor.idVendor;
             uint16_t productid = dev->descriptor.idProduct;
+            uint16_t bcddevice = dev->descriptor.bcdDevice;
             if (vendorid == VENDOR_ID_USBPROG &&
-                    productid == PRODUCT_ID_USBPROG) {
+                    productid == PRODUCT_ID_USBPROG &&
+                    bcddevice == BCDDEVICE_UPDATE) {
                 Device *d = new Device(dev);
                 d->setUpdateMode(true);
                 d->setName("USBprog in update mode");
@@ -164,7 +167,8 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
                         it != firmwares.end(); ++it)
                     if (vendorid != 0 && productid != 0 &&
                             (*it)->getVendorId() == vendorid &&
-                            (*it)->getProductId() == productid) {
+                            (*it)->getProductId() == productid &&
+                            (*it)->getBcdDevice() == bcddevice) {
                         Device *d = new Device(dev);
                         d->setName("USBprog with \"" + (*it)->getLabel() + 
                                 "\" firmware");
