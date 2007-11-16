@@ -69,9 +69,16 @@ bool ListCommand::execute(CommandArgVector args, ostream &os)
     for (StringList::const_iterator it = firmwarelist.begin();
             it != firmwarelist.end(); ++it) {
         Firmware *fw = m_firmwarepool->getFirmware(*it);
-        os << left << setw(maxSize) << fw->getName() << ": "
-             << fw->getLabel() << endl;
+        os << left << setw(maxSize) << fw->getName();
+        if (m_firmwarepool->isFirmwareOnDisk(fw->getName()))
+            os << "[*] ";
+        else
+            os << "[ ] ";
+        os << fw->getLabel() << endl;
     }
+
+    if (!Configuration::config()->getBatchMode())
+        os << endl << "*: Firmware file downloaded" << endl;
 
     return true;
 }
@@ -124,7 +131,9 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
                             << endl;
 
     // vendor ID and/or Product ID
-    if (fw->getVendorId() != 0 || fw->getProductId() != 0)
+    bool hasDeviceInfo = fw->getVendorId() != 0 || fw->getProductId() != 0 ||
+            fw->getBcdDevice() != 0;
+    if (hasDeviceInfo)
         os << "Device ID(s) : ";
     if (fw->getVendorId() != 0)
         os << "Vendor: 0x" << setw(4) << hex << setfill('0') << fw->getVendorId();
@@ -132,7 +141,12 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
         os << ", ";
     if (fw->getProductId() != 0)
         os << "Product: 0x" << setw(4) << hex << fw->getProductId();
-    if (fw->getVendorId() != 0 || fw->getProductId() != 0)
+    if (fw->getBcdDevice() != 0 && (fw->getProductId() != 0 
+                || fw->getVendorId() != 0))
+        os << ", ";
+    if (fw->getBcdDevice() != 0)
+        os << "BCDDevice: 0x" << setw(4) << hex << fw->getBcdDevice();
+    if (hasDeviceInfo)
         os << endl;
 
     os << "Version      : " << fw->getVersion() << endl;

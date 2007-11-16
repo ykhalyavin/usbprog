@@ -81,6 +81,9 @@ class Firmware {
         void setProductId(uint16_t productid);
         uint16_t getProductId() const;
 
+        void setBcdDevice(uint16_t bcdDevice);
+        uint16_t getBcdDevice() const;
+
         std::string toString() const;
 
     public:
@@ -100,6 +103,7 @@ class Firmware {
         ByteVector            m_data;
         uint16_t              m_vendorId;
         uint16_t              m_productId;
+        uint16_t              m_bcdDevice;
 };
 
 /* Firmwarepool {{{1 */
@@ -130,6 +134,8 @@ class Firmwarepool {
             throw (DownloadError, GeneralError);
         void fillFirmware(const std::string &name)
             throw (IOError, GeneralError);
+        bool isFirmwareOnDisk(const std::string &name)
+            throw (IOError);
 
         void deleteCache()
             throw (IOError);
@@ -141,8 +147,7 @@ class Firmwarepool {
             throw (ParseError);
         void parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
             throw (ParseError);
-        bool isFirmwareOnDisk(const std::string &name)
-            throw (IOError);
+        std::string getFirmwareFilename(Firmware *fw) const;
 
     private:
         const std::string m_cacheDir;

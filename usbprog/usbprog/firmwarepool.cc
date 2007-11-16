@@ -234,6 +234,18 @@ uint16_t Firmware::getProductId() const
 }
 
 /* -------------------------------------------------------------------------- */
+void Firmware::setBcdDevice(uint16_t bcdDevice)
+{
+    m_bcdDevice = bcdDevice;
+}
+
+/* -------------------------------------------------------------------------- */
+uint16_t Firmware::getBcdDevice() const
+{
+    return m_bcdDevice;
+}
+
+/* -------------------------------------------------------------------------- */
 string Firmware::toString() const
 {
     stringstream ss;
@@ -362,10 +374,9 @@ void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
     throw (ParseError)
 {
     Firmware *fw;
-    xmlChar *attrib;
 
     // set name
-    attrib = xmlGetProp(firmware, XMLCHAR("name"));
+    xmlChar *attrib = xmlGetProp(firmware, XMLCHAR("name"));
     if (!attrib)
         throw ParseError("Firmware has no name");
     fw = new Firmware(string(reinterpret_cast<char *>(attrib)));
@@ -414,14 +425,6 @@ void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
                 cerr << "Invalid date: " << err.what() << endl;
             }
         } else if (xmlStrcmp(cur->name, XMLCHAR("description")) == 0) {
-            xmlChar *key;
-
-            key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-            if (key) {
-                fw->setDescription(strip(string(reinterpret_cast<char *>(key))));
-                xmlFree(key);
-            }
-        } else if (xmlStrcmp(cur->name, XMLCHAR("device")) == 0) {
             attrib = xmlGetProp(cur, XMLCHAR("vendorid"));
             if (attrib) {
                 fw->setVendorId(parse_long(reinterpret_cast<char *>(attrib)));
@@ -432,6 +435,20 @@ void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
             if (attrib) {
                 fw->setProductId(parse_long(reinterpret_cast<char *>(attrib)));
                 xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("bcddevice"));
+            if (attrib) {
+                uint16_t bcdDev = parse_long(reinterpret_cast<char *>(attrib));
+                // swap bytes
+                fw->setBcdDevice(((bcdDev & 0xff) << 8) | ((bcdDev & 0xff00) >> 8));
+                xmlFree(attrib);
+            }
+
+            xmlChar *key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+            if (key) {
+                fw->setDescription(strip(string(reinterpret_cast<char *>(key))));
+                xmlFree(key);
             }
         } else if (xmlStrcmp(cur->name, XMLCHAR("pins")) == 0) {
             for (xmlNodePtr pin = cur->xmlChildrenNode; pin != NULL;
@@ -506,7 +523,7 @@ void Firmwarepool::fillFirmware(const string &name)
     if (!fw)
         throw GeneralError("Firmware doesn't exist");
 
-    string file(pathconcat(m_cacheDir, fw->getVerFilename()));
+    string file = getFirmwareFilename(fw);
     ifstream fin(file.c_str(), ios::binary);
     if (!fin)
         throw IOError("Opening " + file + " failed");
@@ -522,6 +539,12 @@ void Firmwarepool::fillFirmware(const string &name)
     }
 
     fin.close();
+}
+
+/* -------------------------------------------------------------------------- */
+string Firmwarepool::getFirmwareFilename(Firmware *fw) const
+{
+    return pathconcat(m_cacheDir, fw->getVerFilename());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -603,8 +626,7 @@ bool Firmwarepool::isFirmwareOnDisk(const string &name)
     if (!fw)
         return false;
 
-    string file(pathconcat(m_cacheDir, fw->getVerFilename()));
-    return Fileutil::isFile(file);
+    return Fileutil::isFile(getFirmwareFilename(fw));
 }
 
 /* -------------------------------------------------------------------------- */
