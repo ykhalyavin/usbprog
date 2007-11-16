@@ -1,0 +1,76 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.57)
+AC_INIT(usbprog, 0.1.0, bernhard.walle@gmx.de)
+AC_CONFIG_SRCDIR([usbprog/usbprog.h])
+AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_HEADERS([config.h])
+AC_CANONICAL_SYSTEM
+AM_INIT_AUTOMAKE
+
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_LIBTOOL
+
+# Checks for libraries.
+
+#
+# CURL
+# 
+LIBCURL_CHECK_CONFIG([yes], [], [have_libcurl="yes"], [have_libcurl="no"])
+
+if test "${have_libcurl}" != yes; then
+	AC_MSG_ERROR([libcurl library not found, please install it])
+else
+	CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
+	LIBS="${LIBS} ${LIBCURL}"
+fi
+
+#
+# readline
+#
+AC_CHECK_LIB([readline], [readline])
+
+#
+# libxml
+#
+AM_PATH_XML2([], [have_libxml="yes"], [have_libxml="no"])
+
+if test "${have_libxml}" != yes; then
+	AC_MSG_ERROR([libxml not found, please install it])
+else
+	CPPFLAGS="$CPPFLAGS $XML_CPPFLAGS"
+	LIBS="$LIBS $XML_LIBS"
+fi
+
+
+#
+# libusb
+#
+PKG_PROG_PKG_CONFIG()
+PKG_CHECK_MODULES([usb], [libusb],[have_libusb="yes"],[have_libusb="no"])
+
+if test "${have_libusb}" != yes; then
+	AC_MSG_ERROR([libusb not found, please install it])
+else
+	CPPFLAGS="$CPPFLAGS $usb_CFLAGS"
+	LIBS="$LIBS $usb_LIBS"
+fi
+
+
+
+# Checks for header files.
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+
+AC_CONFIG_FILES([Makefile
+                 usbprog/Makefile
+                 src/Makefile])
+AC_OUTPUT
+
+
+# vim: set sw=4 ts=4:
