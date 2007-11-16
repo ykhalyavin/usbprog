@@ -331,8 +331,13 @@ bool DownloadCommand::downloadAll(ostream &os)
     for (vector<Firmware *>::const_iterator it = firmwares.begin();
             it != firmwares.end(); ++it) {
         try {
-            os << "Downloading " << (*it)->getLabel() << " ..." << endl;
-            m_firmwarepool->downloadFirmware((*it)->getName());
+            if (m_firmwarepool->isFirmwareOnDisk((*it)->getName()))
+                os << "Firmware " << (*it)->getLabel() << " is already there."
+                   << endl;
+            else {
+                os << "Downloading " << (*it)->getLabel() << " ..." << endl;
+                m_firmwarepool->downloadFirmware((*it)->getName());
+            }
         } catch (const std::exception &ex) {
             os << "Error while downloading firmware " + (*it)->getName() +
                 ": " + ex.what() << endl;
