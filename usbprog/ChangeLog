@@ -1,3 +1,16 @@
+2007-11-17  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* Win32 port.
+	* replace strptime() by snprintf() for Win32
+	* reset fill character to ' ' in the "devices" and "list" command
+	  to fix the "pin" command
+	* make the output of the "devices" command 2 lines for each device
+	  because the device "number" is much longer on Win32 than on Linux
+	* various other small improvements
+	* make "pins" an alias for "pin"
+	* make 'x' and 'q' an alias for "quit" (mostly for Windows where
+	  Ctrl-d doesn't work)
+
 2007-11-16  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* added README, INSTALL, NEWS and COPYING

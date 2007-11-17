@@ -82,6 +82,8 @@ class PinCommand : public AbstractCommand {
         CommandArg::Type getArgType(size_t pos) const;
         std::string getArgTitle(size_t pos) const;
 
+        StringVector aliases() const;
+
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
 

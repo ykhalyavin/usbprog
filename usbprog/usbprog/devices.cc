@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <usb.h>
 #include <usbprog/devices.h>
+#include <usbprog/util.h>
 
 using std::vector;
 using std::string;
@@ -183,12 +184,25 @@ void DeviceManager::printDevices(ostream &os) const
     Device *up = getUpdateDevice();
     for (DeviceVector::const_iterator it = m_updateDevices.begin();
             it != m_updateDevices.end(); ++it) {
+
+        Device *dev = *it;
         os << " [" << setw(2) << right << i++ << "] " << left;
-        if (up != NULL && *up == **it)
+        if (up != NULL && *up == *dev)
             os << " *  ";
         else
             os << "    ";
-        os << (*it)->toString() << endl;
+        os << "Bus " << dev->getBus() << " "
+           << "Device " << dev->getDevice() << ": "
+           << setw(4) << std::hex << setfill('0') << dev->getVendor()
+           << setw(1) << ":"
+           << setw(4) << std::hex << setfill('0') << dev->getProduct()
+           << endl;
+
+        if (dev->getName().size() > 0)
+            os << "          " + dev->getName() << endl;
+
+        // reset fill character
+        os << setfill(' ');
     }
 }
 
@@ -226,7 +240,7 @@ void DeviceManager::switchUpdateMode()
     while (usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL, 8, 1000) < 0){
         if (--timeout == 0)
             break;
-        sleep(1);
+        usbprog_sleep(1);
     }
 
     usb_release_interface(usb_handle, usb_interface);

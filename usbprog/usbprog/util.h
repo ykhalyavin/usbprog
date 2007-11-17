@@ -34,6 +34,7 @@ std::string pathconcat(const std::string &a, const std::string &b);
 std::string strip(std::string a);
 unsigned long parse_long(const char *string);
 std::string wordwrap(const std::string &text, size_t margins);
+unsigned int usbprog_sleep(unsigned int seconds);
 
 #endif /* USBPROG_UTIL_H */
 

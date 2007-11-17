@@ -354,6 +354,8 @@ StringVector ExitCommand::aliases() const
 {
     StringVector sv;
     sv.push_back("quit");
+    sv.push_back("q");
+    sv.push_back("x");
     return sv;
 }
 
@@ -367,7 +369,7 @@ string ExitCommand::help() const
 void ExitCommand::printLongHelp(ostream &os) const
 {
     os << "Name:            exit" << endl;
-    os << "Aliases:         quit" << endl;
+    os << "Aliases:         quit, q, x" << endl;
     os << endl;
     os << "Description:" << endl;
     os << "Exits the program." << endl;

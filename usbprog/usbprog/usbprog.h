@@ -21,6 +21,10 @@
 #include <map>
 #include <stdexcept>
 
+/* Preprocessor definitions {{{1 */
+
+#define USBPROG_VERSION_STRING "0.1.0"
+
 /* Typedefs {{{1 */
 
 struct Device;

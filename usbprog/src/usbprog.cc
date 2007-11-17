@@ -132,12 +132,12 @@ void Usbprog::parseCommandLine(int argc, char *argv[])
         conf->setDebug(true);
 
     if (op.getValue("help").getFlag()) {
-        op.printHelp(cerr, PACKAGE_STRING);
+        op.printHelp(cerr, "usbprog " USBPROG_VERSION_STRING);
         exit(EXIT_SUCCESS);
     }
 
     if (op.getValue("version").getFlag()) {
-        cerr << PACKAGE_STRING << endl;
+        cerr << "usbprog " << USBPROG_VERSION_STRING << endl;
         exit(EXIT_SUCCESS);
     }
 

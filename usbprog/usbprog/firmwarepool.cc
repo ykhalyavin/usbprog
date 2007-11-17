@@ -606,8 +606,6 @@ void Firmwarepool::deleteCache()
     }
 
     closedir(dir);
-
-    m_firmware.clear();
 }
 
 /* -------------------------------------------------------------------------- */

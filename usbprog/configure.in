@@ -29,6 +29,11 @@ else
 fi
 
 #
+# strptime
+#
+AC_CHECK_FUNCS([strptime])
+
+#
 # readline
 #
 AC_CHECK_LIB([readline], [readline])

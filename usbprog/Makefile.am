@@ -6,7 +6,7 @@ AUX_DIST_EXTRA        = $(auxdir)/readline.m4 $(auxdir)/sys_errlist.m4 \
 EXTRA_DIST            = bootstrap
 
 AUTOMAKE_OPTIONS      = foreign
-SUBDIRS               = usbprog src
+SUBDIRS               = usbprog src win32
 MAINTAINERCLEANFILES  = Makefile.in aclocal.m4 configure config.h.in \
 			config/depcomp config/missing config/config.guess \
 			config/config.sub config/install-sh \

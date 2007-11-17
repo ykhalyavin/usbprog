@@ -127,8 +127,9 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
     os << "URL          : " << fw->getUrl() << endl;
     os << "File name    : " << fw->getFilename() << endl;
     os << "Author       : " << fw->getAuthor() << endl;
-    os << "Date         : " << fw->getDate().getDateTimeString(DTF_ISO_DATE)
-                            << endl;
+    os << "Version      : " << fw->getVersion() << " ["
+                            << fw->getDate().getDateTimeString(DTF_ISO_DATE)
+                            << "]" << endl;
 
     // vendor ID and/or Product ID
     bool hasDeviceInfo = fw->getVendorId() != 0 || fw->getProductId() != 0 ||
@@ -149,7 +150,6 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
     if (hasDeviceInfo)
         os << endl;
 
-    os << "Version      : " << fw->getVersion() << endl;
     os << endl;
     os << "Description" << endl;
     os << wordwrap(fw->getDescription(), DEFAULT_TERMINAL_WIDTH) << endl;
@@ -157,8 +157,11 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
     if (!Configuration::config()->getBatchMode()) {
         os << endl;
         os << "For information about the Pin assignment, use the "
-           << "\"pins " << fw->getName() << "\" command." << endl;
+           << "\"pin " << fw->getName() << "\" command." << endl;
     }
+
+    // reset fill character
+    os << setfill(' ');
 
     return true;
 }
@@ -299,6 +302,14 @@ string PinCommand::getArgTitle(size_t pos) const
 }
 
 /* -------------------------------------------------------------------------- */
+StringVector PinCommand::aliases() const
+{
+    StringVector ret;
+    ret.push_back("pins");
+    return ret;
+}
+
+/* -------------------------------------------------------------------------- */
 string PinCommand::help() const
 {
     return "Prints information about pin assignment.";
@@ -307,7 +318,8 @@ string PinCommand::help() const
 /* -------------------------------------------------------------------------- */
 void PinCommand::printLongHelp(ostream &os) const
 {
-    os << "Name:            pins\n"
+    os << "Name:            pin\n"
+       << "Aliases:         pins\n"
        << "Argument:        firmware\n\n"
        << "Description:\n"
        << "Prints a list about pin usage. This might help you when connecting\n"
@@ -730,7 +742,7 @@ CopyingCommand::CopyingCommand()
 bool CopyingCommand::execute(CommandArgVector args, ostream &os)
     throw (ApplicationError)
 {
-    os << "USBprog " << PACKAGE_VERSION << endl;
+    os << "USBprog " << USBPROG_VERSION_STRING << endl;
     os << "Copyright (c) 2007 Bernhard Walle <bernhard.walle@gmx.de>\n\n";
     os << "This program is free software: you can redistribute it and/or modify\n"
        << "it under the terms of the GNU General Public License as published by\n"

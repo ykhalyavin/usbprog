@@ -46,7 +46,7 @@ class Configuration {
         void dumpConfig(std::ostream &stream);
 
     protected:
-        Configuration() {}
+        Configuration();
 
     private:
         std::string m_dataDir;

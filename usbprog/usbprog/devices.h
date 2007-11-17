@@ -22,9 +22,14 @@
 #include <vector>
 #include <iostream>
 
-#include <usb.h>
 #include <usbprog/usbprog.h>
 #include <usbprog/firmwarepool.h>
+
+/* Forward declarations {{{1 */
+
+struct usb_dev_handle;
+struct usb_device;
+
 
 /* Device {{{1 */
 

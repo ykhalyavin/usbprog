@@ -14,10 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#define _XOPEN_SOURCE
 #include <string>
 #include <time.h>
 
 #include <usbprog/date.h>
+
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
 
 using std::mktime;
 using std::time;
@@ -69,6 +74,7 @@ void DateTime::setDateTime(struct tm *time)
 }
 
 /* -------------------------------------------------------------------------- */
+#ifdef HAVE_STRPTIMEx
 void DateTime::setDateTime(const std::string &string, DateTimeFormat format)
     throw (ParseError)
 {
@@ -83,6 +89,47 @@ void DateTime::setDateTime(const std::string &string, DateTimeFormat format)
 
     setDateTime(&time);
 }
+#else
+void DateTime::setDateTime(const std::string &string, DateTimeFormat format)
+    throw (ParseError)
+{
+    int day, month, year, hour = 0, minute = 0;
+    int ret;
+
+    switch (format) {
+        case DTF_ISO_DATETIME:
+        case DTF_ISO_SHORT_DATETIME:
+            ret = sscanf(string.c_str(), "%d-%d-%d %d:%d",
+                    &year, &month, &day, &minute, &hour);
+            if (ret != 5)
+                throw ParseError("Invalid string for the specified format");
+
+            break;
+
+        case DTF_ISO_DATE:
+        case DTF_ISO_SHORT_DATE:
+            ret = sscanf(string.c_str(), "%d-%d-%d", &year, &month, &day);
+            if (ret != 3)
+                throw ParseError("Invalid string for the specified format");
+
+            break;
+    }
+
+    if (format == DTF_ISO_SHORT_DATE || format == DTF_ISO_SHORT_DATETIME)
+        year += year < 30 ? 2000 : 1900;
+
+    struct tm my_tm;
+    memset(&my_tm, 0, sizeof(struct tm));
+
+    my_tm.tm_min = minute;
+    my_tm.tm_hour = hour;
+    my_tm.tm_mday = day;
+    my_tm.tm_mon = month - 1;
+    my_tm.tm_year = year - 1900;
+
+    setDateTime(&my_tm);
+}
+#endif
 
 /* -------------------------------------------------------------------------- */
 time_t DateTime::getDateTimeSeconds() const

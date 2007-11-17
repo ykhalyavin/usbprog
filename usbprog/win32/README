@@ -1,0 +1,24 @@
+To comple USBprog on Win32, perform following steps:
+
+  1. Download Devcpp 5
+
+  2. Install the libxml, iconv and libcurl option packs.
+
+  3. Download libusb (e.g. libusb-win32-device-bin-0.1.12.1.tar.gz).
+
+  4. Extract usbprog to some directory that doesn't contain spaces (so your
+     “home directory” is the wrong place on Windows).
+
+  5. Extract the libusb tarball to win32/ directory of usbprog. Rename the
+     libusb-win32-device-bin-0.1.12.1 directory to libusb-win32 (you should have
+     win32/libusb-win32/include now).
+
+  6. Open the win32/libusbprog.dev in Devcpp and compile it with Ctrl+F9.
+     Then open the win32/usbprog.dev and compile with Ctrl+F9 also.
+
+  7. Copy libcurl.dll, libiconv-2.dll, libxml2.dll and zlib1.dll to the win32
+     directory.
+
+  8. Execute usbprog.exe.
+
+

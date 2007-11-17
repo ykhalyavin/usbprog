@@ -31,6 +31,11 @@ Configuration* Configuration::config()
 }
 
 /* -------------------------------------------------------------------------- */
+Configuration::Configuration()
+    : m_debug(false), m_offline(false)
+{}
+
+/* -------------------------------------------------------------------------- */
 void Configuration::setDataDir(const string &dir)
 {
     m_dataDir = dir;

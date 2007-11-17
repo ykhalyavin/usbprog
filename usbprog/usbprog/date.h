@@ -62,6 +62,7 @@ bool operator>=(const DateTime &a, const DateTime &b);
 long long operator-(const DateTime &a, const DateTime &b);
 long long operator+(const DateTime &a, const DateTime &b);
 
+
 #endif /* USBPROG_DATE_H */
 
 // vim: set sw=4 ts=4 et:

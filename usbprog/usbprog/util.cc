@@ -27,9 +27,10 @@
 #else
 #  include <pwd.h>
 #  include <sys/types.h>
-#  include <sys/stat.h>
 #  include <unistd.h>
 #endif
+
+#include <sys/stat.h>
 
 using std::hex;
 using std::stringstream;
@@ -212,5 +213,18 @@ string wordwrap(const string &text, size_t margins)
 
     return ret;
 }
+
+/* -------------------------------------------------------------------------- */
+#ifdef _WIN32
+unsigned int usbprog_sleep(unsigned int seconds)
+{
+    Sleep(seconds * 1000);
+}
+#else
+unsigned int usbprog_sleep(unsigned int seconds)
+{
+    sleep(seconds);
+}
+#endif
 
 // vim: set sw=4 ts=4 fdm=marker et:
