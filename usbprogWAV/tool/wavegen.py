@@ -5,18 +5,20 @@
 
 import wave
 import math
+import struct
 
 wavefile = wave.open('test.wav','w')
 
 wavefile.setnchannels(1)
 wavefile.setsampwidth(1)
 wavefile.setframerate(1000)
+wavefile.setnframes(1000)
 
+for i in range(1,1000):
+    #data=struct.pack("h",int(math.sin(i) * 10))
+    data=struct.pack("h",i % 255)
+    wavefile.writeframesraw(data)
 
-
-for i in range(1,100):
-    wavefile.writeframes(str(1))
-    wavefile.writeframes(str(255))
 
 wavefile.close()
 
