@@ -1,13 +1,13 @@
 all:
-	gcc -g -c ../../lib/vscopedevice.c
-	gcc -g -o logic2vcd main.c vscopedevice.o -lusb
+	gcc -g -c logic.c
+	gcc -g -o logic2vcd main.c logic.o -lusb
 
 install:
-	cp vscopec /usr/bin
-	chmod o+rx /usr/bin/vscopec
+	cp logicc /usr/bin
+	chmod o+rx /usr/bin/logicc
 	cat usb.usermap >> /etc/hotplug/usb.usermap
-	cp hotplug.vscope /etc/hotplug/usb/vscope
-	chmod o+x /etc/hotplug/usb/vscope
+	cp hotplug.logic /etc/hotplug/usb/logic
+	chmod o+x /etc/hotplug/usb/logic
 	
 clean:
-	rm demo vscopedevice.o 
+	rm demo logicdevice.o 

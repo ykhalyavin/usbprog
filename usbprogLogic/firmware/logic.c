@@ -40,7 +40,7 @@ void LogicSendScopeData()
 // get and extract commands from the application on the pc
 void LogicCommand(char *buf)
 {
-
+  UARTWrite("COMMMAND");
   switch(buf[0])
   { 
     case CMD_SETMODE:
@@ -48,9 +48,9 @@ void LogicCommand(char *buf)
     break;
 
     case CMD_SETSAMPLERATE:
-      //UARTWrite("set mode ");
-      //SendHex(buf[2]);
-      //UARTWrite("\r\n");
+      UARTWrite("set mode ");
+      SendHex(buf[2]);
+      UARTWrite("\r\n");
       logic.samplerate=buf[2];
     break;
 

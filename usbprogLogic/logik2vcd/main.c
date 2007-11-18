@@ -1,5 +1,5 @@
 /*
-Demoapplication for libvscopedevice
+Demoapplication for liblogicdevice
 Copyright (C) 2006 Benedikt Sauter <sauter@ixbat.de>
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
-#include "../../lib/vscopedevice.h"
+#include "logic.h"
 
 
 struct globalArgs_t {
@@ -43,7 +43,7 @@ struct globalArgs_t {
 } globalArgs;
 
 char * progname;
-VScope *vscope;
+Logic *logic;
 
 static const char *optString = "f:R:T:c:t:i:s:n:vaq?h";
 
@@ -201,8 +201,8 @@ void logic2vcd( void )
 
 
 	// open connection to device
-	vscope = openVScope();
-	if(vscope==0)
+	logic = openLogic();
+	if(logic==0)
 	{
 		fprintf(stderr,"Device not found!\n");
 		exit(0);	
@@ -222,19 +222,19 @@ void logic2vcd( void )
 		if(globalArgs.verbose)
 			fprintf(stderr,"start edge trigger channel %i, value %i\n",
 				globalArgs.channel,globalArgs.triggervalue);
-		ActivateEdgeTrigger(vscope,globalArgs.channel,value);
+		ActivateEdgeTrigger(logic,globalArgs.channel,value);
 	}
 	else if(globalArgs.triggertype==TRIGGER_PATTERN)
 	{
 		if(globalArgs.verbose)
 			fprintf(stderr,"start pattern trigger value %i\n",
 				globalArgs.triggervalue);
-		ActivatePatternTrigger(vscope,(char)globalArgs.triggervalue,(char)globalArgs.triggerignore);
+		ActivatePatternTrigger(logic,(char)globalArgs.triggervalue,(char)globalArgs.triggerignore);
 	}
 	else {
 		if(globalArgs.verbose)
 			fprintf(stderr,"deactivate trigger\n");
-		DeActivateTrigger(vscope);
+		DeActivateTrigger(logic);
 	}
 
 	char buf[globalArgs.numbers];
@@ -245,15 +245,15 @@ void logic2vcd( void )
 	{
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording intern\n"); // TODO say if n > 1000
-		RecordingInternal(vscope,globalArgs.samplerate_v);
-		GetRecordInternal(vscope,buf,1000);
+		RecordingInternal(logic,globalArgs.samplerate_v);
+		GetRecordInternal(logic,buf,1000);
 	}
 	// intern - start, catch values
 	else if(globalArgs.recordtype==1)
 	{
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording online\n");
-		Recording(vscope,globalArgs.samplerate_v,globalArgs.numbers,buf);
+		Recording(logic,globalArgs.samplerate_v,globalArgs.numbers,buf);
 
 	}
 	// snapshot - get one value
@@ -282,7 +282,7 @@ void logic2vcd( void )
   		fprintf (globalArgs.file, "$timescale\n");
 		fprintf (globalArgs.file, "\t1ns\n");
   		fprintf (globalArgs.file, "$end\n");
-  		fprintf (globalArgs.file, "$scope module vscope $end\n");
+  		fprintf (globalArgs.file, "$scope module logic $end\n");
   		fprintf (globalArgs.file, "$var wire       1 !    channel1 $end\n");
   		fprintf (globalArgs.file, "$var wire       1 *    channel2 $end\n");
   		fprintf (globalArgs.file, "$var wire       1 $    channel3 $end\n");
@@ -320,7 +320,7 @@ void logic2vcd( void )
     		s++;
   	}
 	fclose(globalArgs.file);
-	closeVScope(vscope);
+	closeLogic(logic);
 	
 	// write data to file
 	printf("Summary: values(%i), samplerate(%s), file(%s)\n",

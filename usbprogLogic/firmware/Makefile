@@ -52,7 +52,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c uart.c ../../usbn2mc/main/usbn960x.c usbn2mc.c ../../usbn2mc/fifo.c ../../usbn2mc/main/usbnapi.c logic.c ring.c
+SRC = $(TARGET).c uart.c ../../usbn2mc/main/usbn960x.c usbn2mc.c ../../usbn2mc/fifo.c ../../usbn2mc/main/usbnapi.c logic.c ring.c ../../usbprog_base/firmwarelib/avrupdate.c
 
 
 # List Assembler source files here.
@@ -437,4 +437,4 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c bsd -U flash:w:main.hex -E noreset
+	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex -E noreset

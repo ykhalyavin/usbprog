@@ -1,5 +1,5 @@
 /*
-An API for the vscopedevice
+An API for the logicdevice
 Copyright (C) 2006 Benedikt Sauter <sauter@ixbat.de> 
 
 This library is free software; you can redistribute it and/or
@@ -63,41 +63,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define HIGH		  1
 #define LOW		  0
 
-typedef struct vscope VScope;
+typedef struct logic Logic;
 
-struct vscope {
-  struct usb_dev_handle *vscope_handle;
-//  struct usb_device *vscope_device;
+struct logic {
+  struct usb_dev_handle *logic_handle;
+//  struct usb_device *logic_device;
 };
 
-VScope* openVScope();
-int closeVScope(VScope* self);
-int sendVScopeCommand(VScope* self,char *command);
-int readVScopeData(VScope* self, char* data,int length);
-int readVScopeResults(VScope* self,char *data);
+Logic* openLogic();
+int closeLogic(Logic* self);
+int sendLogicCommand(Logic* self,char *command);
+int readLogicData(Logic* self, char* data,int length);
+int readLogicResults(Logic* self,char *data);
 
 
-void SetVScopeMode(VScope* self,char state);
-void SetVScopeSampleRate(VScope* self,char samplemode);
-void StartVScope(VScope* self);
-void StopVScope(VScope* self);
-int GetVScopeState(VScope* self);
-int GetVScopeMode(VScope* self);
-int GetVScopeFIFOLoad(VScope* self);
+void SetLogicMode(Logic* self,char state);
+void SetLogicSampleRate(Logic* self,char samplemode);
+void StartLogic(Logic* self);
+void StopLogic(Logic* self);
+int GetLogicState(Logic* self);
+int GetLogicMode(Logic* self);
+int GetLogicFIFOLoad(Logic* self);
 
 
 
 //************* user functions are here
 
-void Recording(VScope* self,char samplerate,int numbers,char* data);
+void Recording(Logic* self,char samplerate,int numbers,char* data);
 
-char TakeSnapshot(VScope* self);
+char TakeSnapshot(Logic* self);
 
-void RecordingInternal(VScope* self,char samplerate);
-void GetRecordInternal(VScope* self,char*data,int length);
+void RecordingInternal(Logic* self,char samplerate);
+void GetRecordInternal(Logic* self,char*data,int length);
 
-void ActivateEdgeTrigger(VScope* self,int channel,int value);
-void ActivatePatternTrigger(VScope* self,char pattern,char ignore);
-void DeActivateTrigger(VScope* self);
+void ActivateEdgeTrigger(Logic* self,int channel,int value);
+void ActivatePatternTrigger(Logic* self,char pattern,char ignore);
+void DeActivateTrigger(Logic* self);
 
 

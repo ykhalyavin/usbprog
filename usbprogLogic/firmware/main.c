@@ -6,6 +6,8 @@
 
 #include "uart.h"
 #include "usbn2mc.h"
+#include "../../usbprog_base/firmwarelib/avrupdate.h"
+
 
 #include "ring.h"
 
@@ -74,6 +76,16 @@ SIGNAL(SIG_OUTPUT_COMPARE1A)
   }*/
 }
 
+void USBNDecodeVendorRequest(DeviceRequest *req)
+{
+  switch(req->bRequest)
+  {
+    case STARTAVRUPDATE:
+      avrupdate_start();
+    break;
+  }
+}
+
 int main(void)
 {
   int conf, interf;
@@ -89,31 +101,26 @@ int main(void)
   char lang[]={0x09,0x04};
   _USBNAddStringDescriptor(lang); // language descriptor
   
-  //USBNDeviceManufacture ("www.logic.de");
-  USBNDeviceProduct	("Logic Device");
-  //USBNDeviceSerialNumber("2006-04-24");
+  USBNDeviceManufacture ("EmbeddedProjects");
+  USBNDeviceProduct	("usbprogLogic Analyzer 5V");
 
   conf = USBNAddConfiguration();
 
-  //USBNConfigurationName(conf,"StandardKonfiguration");
   USBNConfigurationPower(conf,50);
 
   interf = USBNAddInterface(conf,0);
   USBNAlternateSetting(conf,interf,0);
 
-  //USBNInterfaceName(conf,interf,"usbstorage");
   
-
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,&LogicPingPongTX1); // scope data
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&LogicCommand); // scope commands
-  USBNAddInEndpoint(conf,interf,1,0x03,BULK,64,0,&LogicPingPongTX1); // scope data
-  //USBNAddInEndpoint(conf,interf,2,0x03,BULK,64,0,&LogicPingPongTX2); // scope data
-  USBNAddInEndpoint(conf,interf,3,0x04,BULK,64,0,NULL); //result logging
 
   
   USBNInitMC();
+  sei();
 
   // init ring
-  //ring_init(&logic.ring, ringbuffer, 1000);   
+  ring_init(&logic.ring, ringbuffer, 1000);   
 
 
   //setup logic state and mode
@@ -127,7 +134,7 @@ int main(void)
   USBNStart();
 
   //DDRB=0xff;
-  DDRA=0xff;
+  //DDRA=0xff;
   DDRB=0x00; //in port
   PORTB = 0xff; //internal pull up resistors
 

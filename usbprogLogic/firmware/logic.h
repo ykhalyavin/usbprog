@@ -39,7 +39,7 @@
 
 int togl;
 
-int8_t ringbuffer[1000];
+volatile int8_t ringbuffer[1000];
 
 typedef struct {
   uint8_t state;
