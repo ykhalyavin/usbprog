@@ -98,7 +98,6 @@ Section "!USBprog CLI" SEC01
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${SHORTCUT_NAME}.lnk" "$INSTDIR\${PRODUCT_EXE_FILE}"
-  CreateShortCut "$DESKTOP\${SHORTCUT_NAME}.lnk" "$INSTDIR\${PRODUCT_EXE_FILE}"
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
@@ -174,7 +173,6 @@ Section Uninstall
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Website.lnk"
-  Delete "$DESKTOP\${SHORTCUT_NAME}.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\${SHORTCUT_NAME}.lnk"
 
   RMDir "$WINDIR\system32\drivers\"
