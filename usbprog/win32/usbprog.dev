@@ -1,7 +1,7 @@
 [Project]
 FileName=usbprog.dev
 Name=usbprog
-UnitCount=13
+UnitCount=14
 Type=1
 Ver=1
 ObjFiles=
@@ -30,7 +30,7 @@ CompilerSet=0
 CompilerSettings=0000000000000000000000
 
 [Unit1]
-FileName=../src/commands.cc
+FileName=..\src\commands.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -40,7 +40,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=../src/commands.h
+FileName=..\src\commands.h
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -50,7 +50,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=../src/configuration.cc
+FileName=..\src\configuration.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -60,7 +60,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=../src/configuration.h
+FileName=..\src\configuration.h
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -70,7 +70,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=../src/io.cc
+FileName=..\src\io.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -80,7 +80,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=../src/io.h
+FileName=..\src\io.h
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -90,7 +90,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=../src/main.cc
+FileName=..\src\main.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -100,7 +100,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=../src/optionparser.cc
+FileName=..\src\optionparser.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -110,7 +110,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=../src/optionparser.h
+FileName=..\src\optionparser.h
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -120,7 +120,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=../src/shell.cc
+FileName=..\src\shell.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -130,7 +130,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=../src/shell.h
+FileName=..\src\shell.h
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -140,7 +140,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=../src/usbprog.cc
+FileName=..\src\usbprog.cc
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -150,7 +150,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=../src/usbprog.h
+FileName=..\src\usbprog.h
 CompileCpp=1
 Folder=usbprog
 Compile=1
@@ -176,4 +176,13 @@ OriginalFilename=
 ProductName=
 ProductVersion=
 AutoIncBuildNr=0
+
+[Unit14]
+FileName=..\src\usbprog.rc
+Folder=Resources
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 

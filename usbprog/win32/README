@@ -22,3 +22,5 @@ To comple USBprog on Win32, perform following steps:
   8. Execute usbprog.exe.
 
 
+To create the installer just “compile” the installer.nsi file with NSIS from
+<http://nsis.sourceforge.net>.

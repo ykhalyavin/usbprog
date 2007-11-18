@@ -1,3 +1,8 @@
+2007-11-18  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* created installer (based on installer for the USBprog GUI)
+	* added resource file to get an application icon on MS Windows
+
 2007-11-17  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Win32 port.

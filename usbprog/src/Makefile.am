@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES  = Makefile.in
 INCLUDES                = -I$(top_builddir) -I$(top_srcdir)
 
+EXTRA_DIST              = usbprog.rc
 bin_PROGRAMS            = usbprog
 usbprog_SOURCES  	= io.h io.cc \
 			  usbprog.h usbprog.cc \
