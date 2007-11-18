@@ -14,6 +14,22 @@ volatile int tx1togl=0; 		// inital value of togl bit
 
 char ReportDescriptorKeyboard[] = 
 { 
+    0x06, 0x00, 0xFF,       // Usage Page (Vendor Defined)
+    0x09, 0x01,             // Usage (Vendor Usage)
+    0xA1, 0x01,             // Collection (Application)
+    0x19, 0x01,             //      Usage Minimum (Vendor Usage = 1)
+    0x29, 0x40,             //      Usage Maximum (Vendor Usage = 64)
+    0x15, 0x00,             //      Logical Minimum (Vendor Usage = 0)
+    0x26, 0xFF, 0x00,       //      Logical Maximum (Vendor Usage = 255)
+    0x75, 0x08,             //      Report Size (Vendor Usage = 8)
+    0x95, 0x40,             //      Report Count (Vendor Usage = 64)
+    0x81, 0x02,             //      Input (Data, Var, Abs)
+    0x19, 0x01,             //      Usage Minimum (Vendor Usage = 1) 
+    0x29, 0x40,             //      Usage Maximum (Vendor Usage = 64)
+    0x91, 0x02,             //      Output (Data, Var, Ads)     
+    0xC0};                  
+
+/*
 	5, 1, // Usage_Page (Generic Desktop) 
 	9, 6, // Usage (Keyboard) 
 	0xA1, 1, // Collection (Application) 
@@ -44,7 +60,9 @@ char ReportDescriptorKeyboard[] =
 	0x95, 3, // Report_Count (3) 
 	0x91, 1, // Output (Constant) = Pad (3 bits) 
 	0xC0 // End_Collection 
+
 };
+	*/
 
 
 /* Device Descriptor */
@@ -141,11 +159,20 @@ void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep)
     		case GET_DESCRIPTOR:
         		ep->Index=0;
 			ep->DataPid=1;
-        		ep->Size=59;
+        		ep->Size=29;
 			ep->Buf=ReportDescriptorKeyboard;
     		break;
+
+		case SET_INTERFACE:
+		  USBNWrite(TXC0,FLUSH);
+		  USBNWrite(TXD0,0);
+		  USBNWrite(TXC0,TX_TOGL+TX_EN);
+
+		  //UARTWrite("set interface");
+		break;
     		default:
-      		UARTWrite("unkown interface request");
+		  // NICO
+		  UARTWrite("unkown interface request");
    	}
 }
 
@@ -154,12 +181,14 @@ void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep)
 // vendor requests
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
+UARTWrite("vendor");
 }
 
 
 // class requests
 void USBNDecodeClassRequest(DeviceRequest *req)
 {
+UARTWrite("class");
 }
 
 
@@ -209,19 +238,13 @@ int main(void)
 
   	// setup usbstack with your descriptors
   	USBNInit(usbprogPICDevice,usbprogPIC);
-	/*
-	_USBNAddStringDescriptor(""); // pseudo langid
-	_USBNAddStringDescriptor("USBprog EmbeddedProjects");
-	_USBNAddStringDescriptor("usbprogPIC v.0.1");
-*/	
+	
 	_USBNAddStringDescriptor(""); // pseudo langid
 	_USBNAddStringDescriptor("Microchip Technology Inc."); // pseudo langid
 	_USBNAddStringDescriptor("PICkit 2 Microcontroller Programmer"); // pseudo langid
 	_USBNAddStringDescriptor("PIC18F2550"); // pseudo langid
 	
 	_USBNCreateStringField();
-
-
 
   	USBNInitMC();		// start usb controller
   	USBNStart();		// start device stack

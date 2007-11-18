@@ -1,0 +1,90 @@
+Interface of vscope
+
+EP0 - Control Endpoint
+
+Commands	= EP1 Addr = 0x82 - OUT Enpoint for Scope Commands
+Data Pipe	= EP2 Addr = 0x03 - IN Endpoint for Scope Data
+Results/Logging = EP3 Addr = 0x04 - IN Scope Logging Data
+
+
+
+Commands:
+Over this pipe the application on pc can control the scope device.
+<length> = complete length of command (with all bytes)
+
+Here is the protocol:
+  0x01 <length> <mode> =  SETMODE ( Set the scope mode)
+  0x02 <length> = STARTVSCOPE (Start the scope in the actual mode)
+  0x03 <length> = STOPVSCOPE (Start the scope in the actual mode)
+  0x04 <length> = GETVSCOPEMODE
+  0x05 <length> = GETVSCOPESTATE
+  0x06 <length> = GETFIFOLOAD
+  
+  Scope Modes:
+    0x00 = none 
+    0x01 = Counter
+    0x02 = Logik
+    0x03 = 1 Channel Scope
+
+  Scope States:
+    0x01 = DO NOTHING 
+    0x02 = RUNNING
+    0x03 = TRIGGER MODE
+
+--
+Data Pipe:
+Values from the scope send over this pipe back. Only Raw
+datas are send over this endpoint.
+
+The meaning of the data is depend of the scope mode.
+You can get the acutal mode over the Command Endpoint.
+Send the GetMode Message to it an read the result from
+Result/Logging endpoint.
+
+--
+
+Result Logging Pipe:
+
+The first Byte tells what the result is:
+  0x01 = result of an command
+  0x02 = log message
+
+The second Byte is the length of the package (with type field):
+  0x00 - 0xFF
+
+All Next Bytes are the real package.
+
+
+Result Messages:
+  SET MODE:
+    0x01 0x03 0x01 (acknowledge for SETMODE command <type><length><SETMODE command code>)
+
+  START VSCOPE:
+    0x01 0x03 0x02 <type><length><STARTVSCOPE command>
+
+  STOP VSCOPE:
+    0x01 0x03 0x03 <type><length><STOPVSCOPE command>
+ 
+  GET VSCOPE MODE:
+    0x01 0x04 0x04 0x00 <type><length><GETVSCOPEMODE command><mode>
+  
+  GET VSCOPE STATE:
+    0x01 0x04 0x05 0x00 <type><length><GETVSCOPESTATE command><mode>
+
+  GET FIFO LOAD:
+    0x01 0x05 0x06 0x00 0x00 <type><length><GETFIFOLOAD command><high (number of bytes)> <low (number of bytes)>
+
+
+
+Logging Messages:
+
+
+  FIFO IS FULL:
+    0x02 0x03 0x01 <type><length><FIFOISFULL>
+
+
+
+
+
+
+
