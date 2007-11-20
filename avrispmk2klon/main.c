@@ -23,6 +23,8 @@
 #include <stdint.h>
 #include <avr/interrupt.h>
 #include <inttypes.h>
+#include <avr/eeprom.h>
+
 
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -49,6 +51,10 @@
 #define LED_off    (LED_PORT   &= ~(1 << LED_PIN))
 #define RESET_high (RESET_PORT |=  (1 << RESET_PIN))
 #define RESET_low  (RESET_PORT &= ~(1 << RESET_PIN)) // reset
+
+/*	EEPROM usage	*/
+#define EEPROM_SCK_DURATION_LOC 0	//sck_duration 1 byte
+
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
@@ -494,6 +500,10 @@ void USBFlash(char *buf)
               buf[2] = 3;
           }
           usbprog.sck_duration = buf[2];
+
+		  if(eeprom_read_byte(EEPROM_SCK_DURATION_LOC) != usbprog.sck_duration){	//check if a write is needed (EEPROM reads are unlimited, writes not)
+		  	eeprom_write_byte(EEPROM_SCK_DURATION_LOC, usbprog.sck_duration);		//save sck_duration as default
+		  }
         break;
       }
   
@@ -903,6 +913,7 @@ void USBFlash(char *buf)
 int main(void)
 {
   int conf, interf;
+  char tempEEP;
 
   //UARTInit();
 
@@ -915,6 +926,13 @@ int main(void)
   usbprog.avrstudio = 1;   // 1 no
   usbprog.fragmentnumber = 0;  // read flash fragment
   usbprog.reset_pol = 1;  // 1= avr 0 = at89
+
+	
+  tempEEP  = eeprom_read_byte(EEPROM_SCK_DURATION_LOC);	//read stored sck_duration
+
+  if( (tempEEP >= 0 && tempEEP <= 6) || (tempEEP == 0x95) ){	//is valid 8MHz - 125khz or 100Hz?
+	usbprog.sck_duration = tempEEP; //then use it as default
+  }
 
   DDRA = (1 << PA4);
   LED_off;
