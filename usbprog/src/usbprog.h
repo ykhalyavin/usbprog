@@ -24,9 +24,7 @@
 
 /* constants {{{1 */
 
-#define DEFAULT_INDEX_URL       "http://www.ixbat.de/usbprog/versions.xml"
 #define DEFAULT_TERMINAL_WIDTH  80
-#define AUTO_NOT_UPDATE_TIME    10
 
 /* ApplicationError {{{1 */
 

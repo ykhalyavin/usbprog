@@ -1,3 +1,7 @@
+2007-11-21  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* implemented GUI (tested on Linux)
+
 2007-11-18  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* created installer (based on installer for the USBprog GUI)

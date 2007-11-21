@@ -122,6 +122,20 @@ string Device::toString() const
     return ss.str();
 }
 
+/* -------------------------------------------------------------------------- */
+string Device::toShortString() const
+{
+    stringstream ss;
+
+    ss << setw(4) << std::hex << setfill('0') << getVendor();
+    ss << setw(1) << ":";
+    ss << setw(4) << std::hex << setfill('0') << getProduct();
+
+    if (m_name.size() > 0)
+        ss << " - " + m_name;
+
+    return ss.str();
+}
 
 /* DeviceManager {{{1 */
 
@@ -276,6 +290,15 @@ Device *DeviceManager::getUpdateDevice() const
         return NULL;
     } else
         return m_updateDevices[m_currentUpdateDevice];
+}
+
+/* -------------------------------------------------------------------------- */
+Device *DeviceManager::getDevice(size_t number) const
+{
+    if (number >= m_updateDevices.size())
+        return NULL;
+
+    return m_updateDevices[number];
 }
 
 /* -------------------------------------------------------------------------- */

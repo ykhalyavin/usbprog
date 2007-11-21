@@ -44,6 +44,7 @@ class Device {
         std::string getDevice() const;
         std::string getBus() const;
         std::string toString() const;
+        std::string toShortString() const;
 
         bool isUpdateMode() const;
         void setUpdateMode(bool updateMode);
@@ -77,6 +78,7 @@ class DeviceManager {
             throw (IOError);
 
         size_t getNumberUpdateDevices() const;
+        Device *getDevice(size_t number) const;
         Device *getUpdateDevice() const;
         void setCurrentUpdateDevice(ssize_t number);
 

@@ -25,6 +25,9 @@
 
 #define USBPROG_VERSION_STRING "0.1.0"
 
+#define DEFAULT_INDEX_URL       "http://www.ixbat.de/usbprog/versions.xml"
+#define AUTO_NOT_UPDATE_TIME    10
+
 /* Typedefs {{{1 */
 
 struct Device;

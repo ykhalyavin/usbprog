@@ -18,7 +18,7 @@ AC_PROG_LIBTOOL
 
 #
 # CURL
-# 
+#
 LIBCURL_CHECK_CONFIG([yes], [], [have_libcurl="yes"], [have_libcurl="no"])
 
 if test "${have_libcurl}" != yes; then
@@ -64,9 +64,17 @@ else
 	LIBS="$LIBS $usb_LIBS"
 fi
 
+#
+# wxGtk
+#
+AM_OPTIONS_WXCONFIG
+AM_PATH_WXCONFIG(2.6.0, wxWin=1)
+CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
+CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
+AC_SUBST(WX_LIBS)
+#LIBS="$LIBS $WX_LIBS"
 
-
-# Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -74,8 +82,36 @@ AC_C_CONST
 
 AC_CONFIG_FILES([Makefile
                  usbprog/Makefile
+                 gui/Makefile
                  src/Makefile])
 AC_OUTPUT
+
+#
+# Print summary
+#
+
+echo
+echo
+echo
+echo "---------------------------------------------------"
+echo "           Build summary"
+echo "---------------------------------------------------"
+echo -n "Readline         : "
+if test x"${ac_cv_lib_readline_readline}" = xyes ; then
+    echo "enabled"
+else
+    echo "disabled"
+fi
+
+echo -n "GUI (wxWidgets)  : "
+if test x"${wx_ver_ok}" = xyes ; then
+    echo "enabled"
+else
+    echo "disabled"
+fi
+
+echo "---------------------------------------------------"
+echo
 
 
 # vim: set sw=4 ts=4:

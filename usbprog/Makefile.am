@@ -7,7 +7,7 @@ EXTRA_DIST            = bootstrap win32/libusbprog.dev win32/usbprog.dev \
 			win32/README
 
 AUTOMAKE_OPTIONS      = foreign
-SUBDIRS               = usbprog src
+SUBDIRS               = usbprog src gui
 MAINTAINERCLEANFILES  = Makefile.in aclocal.m4 configure config.h.in \
 			config/depcomp config/missing config/config.guess \
 			config/config.sub config/install-sh \
