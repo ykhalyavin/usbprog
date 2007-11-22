@@ -36,22 +36,20 @@
 #include <usbprog/devices.h>
 #include <usbprog/firmwarepool.h>
 
-#define usbprogFrm_STYLE \
-    wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX
-
 class usbprogFrm : public wxFrame {
     private:
         DECLARE_EVENT_TABLE();
 
     public:
         usbprogFrm(wxWindow *parent, wxWindowID id = 1,
-                const wxString &title = wxT("Usbprog-Update"),
+                const wxString &title = wxT("USBprog"),
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize);
         virtual ~usbprogFrm();
 
     public:
-        void quitButtonHandler(wxCommandEvent &evt);
+        void exitMenuHandler(wxCommandEvent &evt);
+        void aboutMenuHandler(wxCommandEvent &evt);
         void deviceComboHandler(wxCommandEvent &evt);
         void deviceRefreshHandler(wxCommandEvent &evt);
         void firmwareRefreshHandler(wxCommandEvent &evt);
@@ -85,13 +83,10 @@ class usbprogFrm : public wxFrame {
         wxTextCtrl     *m_pathText;
         wxButton       *m_browseButton;
         wxButton       *m_uploadButton;
-        wxButton       *m_quitButton;
-        wxStaticText   *m_progressLabel;
         wxGauge        *m_progressGauge;
-        wxStaticText   *m_statusLabel;
-        wxTextCtrl     *m_statusText;
-        wxStaticText   *m_copyrightLabel;
         wxFileDialog   *m_fileDialog;
+        wxBoxSizer     *m_topBox;
+        wxPanel        *m_panel;
 
         DeviceManager  *m_deviceManager;
         Firmwarepool   *m_firmwarepool;
@@ -110,12 +105,10 @@ class usbprogFrm : public wxFrame {
             ID_PATH_TEXT,
             ID_BROWSE_BUTTON,
             ID_UPLOAD_BUTTON,
-            ID_QUIT_BUTTON,
-            ID_PROCESS_LABEL,
             ID_PROCESS_GAUGE,
-            ID_STATUS_LABEL,
-            ID_STATUS_TEXT,
-            ID_COPYRIGHT_LABEL
+            ID_COPYRIGHT_LABEL,
+            ID_EXIT_MENU,
+            ID_ABOUT_MENU
         };
 };
 

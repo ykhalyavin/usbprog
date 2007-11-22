@@ -5,12 +5,14 @@
 !define PRODUCT_VERSION "0.1.0"
 !define PRODUCT_PUBLISHER "Bernhard Walle, Benedikt Sauter"
 !define PRODUCT_WEB_SITE "http://www.embedded-projects.net/usbprog"
-!define PRODUCT_EXE_FILE "usbprog.exe"
+!define PRODUCT_EXE_FILE "usbprog-gui.exe"
+!define CLI_EXE_FILE "usbprog.exe"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_EXE_FILE}"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
-!define SHORTCUT_NAME "${PRODUCT_NAME} Commandline"
+!define SHORTCUT_NAME "${PRODUCT_NAME} GUI"
+!define CLI_SHORTCUT_NAME "${PRODUCT_NAME} Commandline"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
@@ -73,14 +75,16 @@ Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
 
-Section "!USBprog CLI" SEC01
+Section "!USBprog" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "${PRODUCT_EXE_FILE}"
+  File "${CLI_EXE_FILE}"
   File "libxml2.dll"
   File "libiconv-2.dll"
   File "zlib1.dll"
   File "libcurl.dll"
+  File "mingwm10.dll"
   SetOutPath "$WINDIR\inf\"
   SetOverwrite off
   File "usbprog.inf"
@@ -97,6 +101,7 @@ Section "!USBprog CLI" SEC01
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${CLI_SHORTCUT_NAME}.lnk" "$INSTDIR\${CLI_EXE_FILE}"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${SHORTCUT_NAME}.lnk" "$INSTDIR\${PRODUCT_EXE_FILE}"
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -174,6 +179,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Website.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\${SHORTCUT_NAME}.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\${CLI_SHORTCUT_NAME}.lnk"
 
   RMDir "$WINDIR\system32\drivers\"
   RMDir "$WINDIR\system32\"

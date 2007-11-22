@@ -1,6 +1,7 @@
 2007-11-22  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fixed and tested GUI on Win32
+	* added the GUI to the installer on Win32
 
 2007-11-21  Bernhard Walle <bernhard.walle@gmx.de>
 
