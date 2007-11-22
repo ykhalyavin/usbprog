@@ -105,8 +105,8 @@ void GUIProgressNotifier::finished()
 
 /* -------------------------------------------------------------------------- */
 usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title,
-		const wxPoint &position, const wxSize& size, long style)
-    : wxFrame(parent, id, title, position, size, style), m_deviceManager(NULL),
+		const wxPoint &position, const wxSize& size)
+    : wxFrame(parent, id, title, position, size), m_deviceManager(NULL),
       m_firmwarepool(NULL)
 
 {
@@ -137,123 +137,129 @@ void usbprogFrm::CreateGUIControls()
 	SetTitle(wxT("USBprog GUI " USBPROG_VERSION_STRING));
 	SetIcon(usbprog_icon_xpm);
 
+    wxPanel *panel = new wxPanel(this, wxID_ANY);
+
     wxBoxSizer *topBox = new wxBoxSizer(wxHORIZONTAL);
     wxGridBagSizer *topSizer = new wxGridBagSizer;
+    wxBoxSizer *frameSizer = new wxBoxSizer(wxHORIZONTAL);
 
     // logo on the left
-	m_logoBitmap = new wxStaticBitmap(this, ID_LOGOBITMAP,
+	m_logoBitmap = new wxStaticBitmap(panel, ID_LOGOBITMAP,
             wxBitmap(usbprog_xpm));
 	m_logoBitmap->Enable(true);
     topSizer->Add(m_logoBitmap, wxGBPosition(0, 0), wxGBSpan(7, 1),
             wxRIGHT, 10);
 
     // device label
-    m_deviceLabel = new wxStaticText(this, ID_DEVICELABEL, wxT("Device"));
+    m_deviceLabel = new wxStaticText(panel, ID_DEVICELABEL, wxT("Device"));
     topSizer->Add(m_deviceLabel, wxGBPosition(0, 1), wxGBSpan(),
             wxALIGN_CENTER_VERTICAL);
 
     // device combo box
-    m_deviceCombo = new wxComboBox(this, ID_DEVICECOMBO, wxT(""),
+    m_deviceCombo = new wxComboBox(panel, ID_DEVICECOMBO, wxT(""),
             wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
     topSizer->Add(m_deviceCombo, wxGBPosition(0, 2), wxGBSpan(),
             wxLEFT|wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
     // refresh devices button
-    m_refreshDevButton = new wxButton(this, ID_REFRESH_DEV_BUTTON,
+    m_refreshDevButton = new wxButton(panel, ID_REFRESH_DEV_BUTTON,
             wxT("&Refresh"));
     topSizer->Add(m_refreshDevButton, wxGBPosition(0, 3), wxGBSpan(),
             wxALIGN_RIGHT);
 
     // device info text
-    m_devInfo = new wxStaticText(this, ID_DEV_INFO, wxT("No device selected"));
+    m_devInfo = new wxStaticText(panel, ID_DEV_INFO, wxT("No device selected"));
     topSizer->Add(m_devInfo, wxGBPosition(1, 2), wxGBSpan(),
             wxLEFT|wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
     // online radio button
-    m_onlineRB = new wxRadioButton(this, ID_ONLINE_RB, wxT("&Online Pool"));
+    m_onlineRB = new wxRadioButton(panel, ID_ONLINE_RB, wxT("&Online Pool"));
     m_onlineRB->SetValue(true);
     topSizer->Add(m_onlineRB, wxGBPosition(2, 1), wxGBSpan(),
             wxALIGN_CENTER_VERTICAL);
 
     // pool combo box
-    m_poolCombo = new wxComboBox(this, ID_POOL_COMBO, wxT(""),
+    m_poolCombo = new wxComboBox(panel, ID_POOL_COMBO, wxT(""),
             wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
     topSizer->Add(m_poolCombo, wxGBPosition(2, 2), wxGBSpan(),
             wxTOP|wxBOTTOM|wxLEFT|wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
 
     // pool refresh
-    m_refreshPoolButton = new wxButton(this, ID_REFRESH_POOL_BUTTON,
+    m_refreshPoolButton = new wxButton(panel, ID_REFRESH_POOL_BUTTON,
             wxT("R&efresh"));
     topSizer->Add(m_refreshPoolButton, wxGBPosition(2, 3), wxGBSpan(),
             wxALIGN_RIGHT);
 
     // local disk radio button
-    m_localRB = new wxRadioButton(this, ID_LOCAL_RB, wxT("&Local disk"));
+    m_localRB = new wxRadioButton(panel, ID_LOCAL_RB, wxT("&Local disk"));
     topSizer->Add(m_localRB, wxGBPosition(3, 1), wxGBSpan(),
             wxALIGN_CENTER_VERTICAL);
 
     // pool combo box
-    m_pathText = new wxTextCtrl(this, ID_PATH_TEXT, wxT(""));
+    m_pathText = new wxTextCtrl(panel, ID_PATH_TEXT, wxT(""));
     m_pathText->Enable(false);
     topSizer->Add(m_pathText, wxGBPosition(3, 2), wxGBSpan(),
             wxTOP|wxBOTTOM|wxLEFT|wxRIGHT | wxALIGN_CENTER_VERTICAL |
             wxEXPAND, 5);
 
     // pool refresh
-    m_browseButton = new wxButton(this, ID_BROWSE_BUTTON,
+    m_browseButton = new wxButton(panel, ID_BROWSE_BUTTON,
             wxT("&Browse"));
     m_browseButton->Enable(false);
     topSizer->Add(m_browseButton, wxGBPosition(3, 3), wxGBSpan(), wxALIGN_RIGHT);
 
     // upload button
-    m_uploadButton = new wxButton(this, ID_UPLOAD_BUTTON, wxT("U&pload"));
+    m_uploadButton = new wxButton(panel, ID_UPLOAD_BUTTON, wxT("U&pload"));
     topSizer->Add(m_uploadButton, wxGBPosition(4, 3), wxGBSpan(),
             wxALIGN_RIGHT);
 
     // quit button
-    m_quitButton = new wxButton(this, ID_QUIT_BUTTON, wxT("&Quit"));
+    m_quitButton = new wxButton(panel, ID_QUIT_BUTTON, wxT("&Quit"));
     topSizer->Add(m_quitButton, wxGBPosition(4, 2), wxGBSpan(),
             wxALIGN_RIGHT);
 
     // progress text
-    m_progressLabel = new wxStaticText(this, ID_PROCESS_LABEL, wxT("Progress:"));
+    m_progressLabel = new wxStaticText(panel, ID_PROCESS_LABEL, wxT("Progress:"));
     topSizer->Add(m_progressLabel, wxGBPosition(5, 1), wxGBSpan(),
             wxALIGN_CENTER_VERTICAL);
 
     // progress bar
-    m_progressGauge = new wxGauge(this, ID_PROCESS_GAUGE, 100, wxDefaultPosition,
+    m_progressGauge = new wxGauge(panel, ID_PROCESS_GAUGE, 100, wxDefaultPosition,
             wxSize(2, 2));
     topSizer->Add(m_progressGauge, wxGBPosition(5, 2), wxGBSpan(1, 2),
             wxTOP|wxBOTTOM|wxLEFT| wxALIGN_CENTER_VERTICAL |
             wxEXPAND, 5);
 
     // status label
-    m_statusLabel = new wxStaticText(this, ID_STATUS_LABEL, wxT("Status"));
+    m_statusLabel = new wxStaticText(panel, ID_STATUS_LABEL, wxT("Status"));
     topSizer->Add(m_statusLabel, wxGBPosition(6, 1), wxGBSpan(),
             wxALIGN_CENTER_VERTICAL);
 
     // status text
-    m_statusText = new wxTextCtrl(this, ID_STATUS_TEXT, wxT(""),
+    m_statusText = new wxTextCtrl(panel, ID_STATUS_TEXT, wxT(""),
             wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
     topSizer->Add(m_statusText, wxGBPosition(6, 2), wxGBSpan(1, 2),
             wxTOP|wxBOTTOM|wxLEFT| wxALIGN_CENTER_VERTICAL |
             wxEXPAND, 5);
 
     // copyright mark
-    m_copyrightLabel = new wxStaticText(this, ID_COPYRIGHT_LABEL,
+    m_copyrightLabel = new wxStaticText(panel, ID_COPYRIGHT_LABEL,
             wxT("(c) 2007, Bernhard Walle <bernhard.walle@gmx.de>\n"
                 "http://www.embedded-projects.net/usbprog"));
     topSizer->Add(m_copyrightLabel, wxGBPosition(7, 1), wxGBSpan(1, 3),
             wxTOP|wxBOTTOM, 5);
 
     // file dialog
-	m_fileDialog = new wxFileDialog(this, wxT("Choose a file"),
+	m_fileDialog = new wxFileDialog(panel, wxT("Choose a file"),
             wxT(""), wxT(""), wxT("*.bin"), wxOPEN);
 
 
     topBox->Add(topSizer, wxEXPAND, wxALL, 10);
-    SetSizer(topBox);
-    GetSizer()->SetSizeHints(this);
+    topBox->SetSizeHints(panel);
+
+    frameSizer->Add(topBox, wxEXPAND);
+    SetSizer(frameSizer);
+    frameSizer->SetSizeHints(this);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -510,7 +516,7 @@ void usbprogFrm::uploadHandler(wxCommandEvent &evt)
 
     status("Upload successful!");
     wxGetApp().Yield();
-    sleep(2);
+    usbprog_sleep(2);
     wxGetApp().Yield();
     wxCommandEvent dummy;
     deviceRefreshHandler(evt);

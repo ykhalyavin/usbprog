@@ -1,0 +1,6 @@
+//Ressourcen-Skriptedatei *.rc
+
+#include <windows.h>
+
+
+ID_ICON              ICON        "../win32/usbprog.ico"

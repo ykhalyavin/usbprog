@@ -47,8 +47,7 @@ class usbprogFrm : public wxFrame {
         usbprogFrm(wxWindow *parent, wxWindowID id = 1,
                 const wxString &title = wxT("Usbprog-Update"),
                 const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = usbprogFrm_STYLE);
+                const wxSize& size = wxDefaultSize);
         virtual ~usbprogFrm();
 
     public:
@@ -98,7 +97,7 @@ class usbprogFrm : public wxFrame {
         Firmwarepool   *m_firmwarepool;
 
         enum {
-            ID_LOGOBITMAP = wxID_HIGHEST,
+            ID_LOGOBITMAP = wxID_HIGHEST + 1,
 
             ID_DEVICELABEL,
             ID_DEVICECOMBO,

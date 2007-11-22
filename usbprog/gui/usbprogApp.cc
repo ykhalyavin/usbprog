@@ -24,8 +24,8 @@ IMPLEMENT_APP(usbprogFrmApp)
 bool usbprogFrmApp::OnInit()
 {
     usbprogFrm* frame = new usbprogFrm(NULL);
+    frame->Show(true);
     SetTopWindow(frame);
-    frame->Show();
     return true;
 }
 

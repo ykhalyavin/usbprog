@@ -16,8 +16,8 @@ To comple USBprog on Win32, perform following steps:
   6. Open the win32/libusbprog.dev in Devcpp and compile it with Ctrl+F9.
      Then open the win32/usbprog.dev and compile with Ctrl+F9 also.
 
-  7. Copy libcurl.dll, libiconv-2.dll, libxml2.dll and zlib1.dll to the win32
-     directory.
+  7. Copy libcurl.dll, libiconv-2.dll, libxml2.dll, mingw10.dll and zlib1.dll
+     to the win32 directory.
 
   8. Execute usbprog.exe.
 
