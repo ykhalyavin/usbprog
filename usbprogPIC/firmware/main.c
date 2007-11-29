@@ -78,6 +78,7 @@ void CommandAnswer(int length)
 /* central command parser */
 void Commands(char *buf)
 {
+    usbprog.datatogl = 0;
 int i;
 for(i=0;i<64;i++)
   answer[i]=i;
