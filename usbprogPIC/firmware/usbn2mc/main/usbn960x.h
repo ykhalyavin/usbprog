@@ -19,11 +19,11 @@
 #ifndef _USBN960X_H
 #define _USBN960X_H
 
-#define DEBUG 1 
+#define DEBUG 1
 
-#include "usbn960xreg.h"
-#include "usb11spec.h"
-#include "fifo.h"
+#include "../usbn960xreg.h"
+#include "../usb11spec.h"
+#include "../fifo.h"
 
 struct usb_device_descriptor DeviceDescriptor;
 
@@ -132,6 +132,7 @@ void _USBNSetAddress(DeviceRequest *req);
 void _USBNGetDescriptor(DeviceRequest *req);
 void _USBNSetConfiguration(DeviceRequest *req);
 void _USBNGetConfiguration(DeviceRequest *req);
+void _USBNGetStatus(DeviceRequest *req);
 void _USBNClearFeature(void);
 
 void _USBNToggle(EPInfo* ep);

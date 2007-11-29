@@ -21,7 +21,7 @@
 #include <string.h>
 #include "usbnapi.h"
 
-/*
+
 // setup global datastructure
 void USBNInit(void)
 {
@@ -52,15 +52,6 @@ void USBNInit(void)
 
 
   DescriptorList=NULL;
-  StringList=NULL;
-}
-
-*/
-// setup global datastructure
-void USBNInit(unsigned char* _DeviceDescriptor,unsigned char* _ConfigurationDescriptor)
-{
-  DeviceDescriptor=_DeviceDescriptor;
-  ConfigurationDescriptor=_ConfigurationDescriptor;
   StringList=NULL;
 }
 
@@ -170,6 +161,7 @@ int USBNAddConfiguration(void)
   conf->bNumInterfaces=0x00;
   conf->bConfigurationValue=index; // number of configuration
   conf->iConfiguration=0x00; // string index for configuration 
+  //conf->bmAttributes=0x80;  // bus powered
   conf->bmAttributes=0xA0;  // bus powered
   conf->MaxPower=0x1A;  // max power 
 
@@ -563,7 +555,7 @@ void USBNStart(void)
   USBNWrite(MCNTRL,SRST);           // clear all registers
   while(USBNRead(MCNTRL)&SRST);
 
-  USBNWrite(CCONF, 0x80);           // clock output off, divisor to 4 MHz
+  USBNWrite(CCONF, 0x02);           // clock to 16 MHz
   USBNWrite(NAKMSK,0xFF);
   USBNWrite(NAKMSK,NAK_OUT0);
   USBNWrite(FAR,AD_EN+0x00);            // set default address
@@ -576,7 +568,7 @@ void USBNStart(void)
   USBNWrite(RXMSK, RX_FIFO0+RX_FIFO1+RX_FIFO2+RX_FIFO3);            // data incoming EP0
   USBNWrite(TXMSK, TX_FIFO0+TX_FIFO1+TX_FIFO2+TX_FIFO3);            // data incoming EP0
  
-  USBNWrite(ALTMSK, ALT_RESET+ALT_SD3+ALT_EOP);
+  USBNWrite(ALTMSK, ALT_RESET+ALT_SD3+ALT_EOP+ALT_RESUME);
   USBNWrite(MAMSK, (INTR_E+RX_EV+ALT+TX_EV+NAK) );
  
   
@@ -594,7 +586,7 @@ void USBNStart(void)
 
 void USBNInterrupt(void)
 {
-  UARTWrite("irq\r\n");
+  //UARTWrite("irq\r\n");
   unsigned char maev,mask;
   
   maev = USBNRead(MAEV);
