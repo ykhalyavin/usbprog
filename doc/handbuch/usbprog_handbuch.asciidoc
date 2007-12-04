@@ -1,0 +1,362 @@
+USBprog Handbuch
+===================
+:Author: http://www.embedded-projects.net/usbprog
+:Email: sauter@ixbat.de
+:Revision: 0.1
+:Date: November 2007
+:encoding: ISO-8859-1
+
+
+Im folgenden Handbuch wird die Inbetriebnahme und der Einsatz von Octopus
+in den Betriebssystemen GNU/Linux und Windows beschrieben.
+
+Mit kleinen Beispielen wird gezeigt, wie von den verschiedensten Programmiersprachen
+aus auf Octopus zugriffen werden kann.
+
+
+*Support im Forum*
+
+Support gibt es im Forum auf http://forum.embedded-projects.net/
+
+*Weitere Hilfetexte/Beschreibungen*
+
+Weitere Hilfetexte bzw. Beschreibungen stehen im Wiki unter
+http://wiki.embedded-projects.net. Es können jederzeit die bestehenden
+Artikel angepasst, oder neue verfasst werden.
+
+Einsatzgebiet und Funktionsumfang
+---------------------------------
+
+TDB
+
+Montage und Aufbau der Hardware
+-------------------------------
+
+TDB
+
+Löten der restlichen Bauteile
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* 10-polige Wannenbuchse einlöten
+* USB Buchse montieren und einlöten
+* 4-polige Stiftleiste fixieren und einlöten
+
+Programmierung der Firmware
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*avrdude unter Linux und Windows*
+
+Falls die Firmware mit einem AVR ISP mkII (oder USBprog AVR Programmer)
+programmiert werden soll, muss als Parameter _-c avrispv2 -P usb_ angegeben werden.
+Für ein einfaches Parallelportkabel reicht _-c bsd_.
+
+* Firmware flashen: avrdude -p m128 -c avrispv2 -P usb -B 8 -U flash:w:octopus.hex
+* lfuse programmieren: avrdude -p m128 -c avrispv2 -P -B 8 -U lfuse:w:0xe0
+* hfuse programmieren: avrdude -p m128 -c avrispv2 -P -B 8 -U hfuse:w:0xdd
+* efuse programmieren: avrdude -p m128 -c avrispv2 -P -B 8 -U efuse:w:0xff
+
+*AVR Studio*
+
+TDB mit fuse ISP Speed
+
+*PonyProg*
+
+TDB mit fuse ISP Speed
+
+
+Installation der Treiber und Software für USBprog
+-------------------------------------------------
+
+Die zentrale Kompomente für Octopus auf dem Computer ist die Zugriffsbibliothek
+liboctopus. Sie bietet Funktionen für den Zugriff auf die einzelnen Schnittstellen
+und Möglichkeiten von Octopus an. Die Bibliotthek liboctopus realisiert die Kommunikation
+über die betriebssystemunabhängige Bibliothek libusb.
+libusb ist eine Funktionsbibliothek, die Anwendungsprogrammen den Zugriff auf USB-Geraete ermoeglicht.
+Daher kann Octopus auf jedem Betriebssystem, für das es die libusb gibt, eingesetzt werden.
+
+Aktuell gibt es Portierungen für:
+
+* GNU/Linux
+* Windows (Win98SE, WinME, Win2k, WinXP)
+* FreeBSD
+* NetBSD
+* OpenBSD
+* Darwin
+* MacOS X
+
+Die Installation der Bibliothek ist die Grundvorraussetzung für Octopus.
+
+
+Installation unter Windows
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unter Windows wurde die Installation mit einem Installer weitestgehend automatisiert.
+
+* Octopus abstecken
+* Download Installer (http://www.embedded-projects.net/octopus -> Unternavigation Downloads)
+* Starten des setup.exe
+* Anschliessend Octopus anstecken
+* Treiber automatisch wÃ¤hlen selektieren
+* Windows sollte den passenden Treiber finden
+* Falls nicht, manuell den Pfad angeben (c:\Windows\system32\ fÃ¼r .sys und .dll und c:\windows\system32 fÃ¼r .inf)
+* In der System GerÃ¤te Ãœbersicht sollte das GerÃ¤t jetzt sichbar sein
+
+SCREENSHOT
+
+* Wichtig ist, dass es auch die .dll datei gibt + .h
+* Testprogramm
+* Octopus immer noch nicht anstecken
+* Wie octopus installiert wird, steht im Kapitel 5 Montage und Hardware.
+
+
+* libusb muss installiert sein! So wie in Kapitel .. beschrieben
+
+* Neuste Version herunterladen (Installer.exe)
+* Octopus vom Computer entfernen
+* Setup starten und durchfuehren
+* Octopis an Computer anstecken
+* Treiber aus dem Ordner auswaehlen .....
+* Fertig
+
+* libusb testprogram
+* Schauen in bla solle .dll und .h liegen (system32)
+
+* Mit Test Base Programm kann man alles mal checken
+
+Davon abhaengig, wie nun weiter gearbeitet werden
+soll, muss die Bibliothek in die entsprechende Programmiersprache
+eingebunden werden. Fuer einfache erste Tests kann das
+Beispielprogramm Octopus Base installiert werden.
+
+
+Installation unter Linux
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Die Installation unter Linux ist aufgeteilt in zwei Bereiche.
+Zuerst die Installation der Bibliothek libusb, was
+durch die verschiedenen Paketmanager unterschiedlich
+realisiert werden muss. Und als zweiten Teil, die Installation
+der Bibliothek liboctopus.
+
+
+Die Bibliothek libusb installieren
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Unter Linux sollte die Bibliothek libusb und wenn möglich die passenden
+Entwicklerdateien (Header-Dateien) über die Paketverwaltung installiert
+werden.
+
+
+Zusätzlich ist empfehlenswert, sich ausserdem die Pakete usbview und
+usbutils zu installieren.
+usbview ist ein sehr praktisches Programm, mit dem angezeigt
+werden kann, was auf dem USB steckt. In den usbutils sind
+kleine Hilfsprogramme wie lsusb enthalten,
+mit denen geschaut werden kann, was vom Betriebssystem
+auf dem USB gefunden worden ist.
+
+*Debian/Ubuntu*
+
+apt-get install libusb-dev libusb-0.1-4 usbview usbutils
+
+*openSUSE und sonstige SUSE Versionen *
+
+* YAST starten
+* libusb, libusb-dev, usbutils und usbview suchen
+* Markieren für die Installation
+* Installation starten
+
+*Fedore/Redhat*
+
+* Paketmanager starten
+* libusb, libusb-dev, usbutils und usbview suchen
+* Markieren für die Installation
+* Installation starten
+
+*Aus den Quellen installieren*
+
+* Download http://libusb.sourceforge.net/download.html
+* Entpacken: _tar xvzf libusb-0.1.12.tar.gz_
+* Verzeichnis wechseln: _cd libusb-0.1.12.t_
+* Übersetzung vorbereiten:_./conigure_
+* Übersetzung starten: _make_
+* Bibliothek installieren (als root): _make install_
+
+Sind die Bibliothek libusb und die Tools installiert, kann
+geprüft werden, ob nach dem Anstecken von Octopus dieser ordnungsgemäss
+erkannt wird.
+
+
+In der Ausgabe von lsusb sollten folgende Nummern mit auftauchen:
+
+.lsbusb Aufruf
+.............................................................
+big:/home/bene# lsusb
+Bus 003 Device 002: ID 1781:0c65
+............................................................
+
+Das Programm usbview hingegen ermöglicht eine detailiertere Ansicht:
+.............................................................
+big:/home/bene# usbview
+............................................................
+
+.usbview Ansicht
+image::images/usbview_octopus.png[usbview mit Octopus]
+
+Mögliche Ursachen, wenn Octopus nicht erkannt wird:
+
+* Schlechte Lötstellen an der USB-Buchse
+* Falsche Konfiguration der FUSE Bits
+* Firmware falsch in den Flash des Mikrocontrollers übertragen
+
+Die Bibliothek liboctopus installieren
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Neuste Version herunterladen (octopus.tar.gz)
+* Entpacken: _tar xvzf octopus.tar.gz_
+* Anpassen der Installation auf aktuelle Umgebung: _sh bootstrap_
+* Vorbereiten der Uebersetzung: _./configure_
+* Uebersetzung starten: _make_
+* Bibliothek + Zugriffsrechte installieren (als root): _make install_
+* Fertig
+
+* schauen in bla solle .so und .a und .h liegen
+
+Abhängig vom weiteren Arbeiten muss die Bibliothek in die entsprechende Programmiersprache
+eingebunden werden. Für einfache erste Tests kann das
+Beispielprogramm Octopus Base installiert werden.
+
+
+Installation unter MAC/OS
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+folgt (bitte im Forum nachfragen)
+
+Firmware wechseln
+-----------------
+
+TDB
+Windows
+~~~~~~~
+
+TDB
+
+usbprog-gui
+^^^^^^^^^^^
+
+TDB
+
+usbprog Konsole
+^^^^^^^^^^^^^^^
+
+TDB
+
+Linux
+~~~~~
+
+TDB
+
+usbprog-gui
+^^^^^^^^^^^
+
+TDB
+
+usbprog Konsole
+^^^^^^^^^^^^^^^
+
+TDB
+
+Anwendungen mit USBprog
+-----------------------
+
+TDB
+
+AVR ISP Programmer (STK500 kompatibel)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TDB
+
+OpenOCD ARM7/ARM9 Debugger
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TDB
+
+SimplePort
+~~~~~~~~~~
+
+TDB
+
+SimplePort RS232
+~~~~~~~~~~~~~~~~
+
+TDB
+
+USB zu RS232 Wandler
+~~~~~~~~~~~~~~~~~~~~
+
+TDB
+
+AT89 Programmer
+~~~~~~~~~~~~~~~
+
+TDB
+
+JTAG Adapter
+~~~~~~~~~~~~
+
+TDB
+
+Eigene Firmware entwickeln
+--------------------------
+
+Nachrichten dienen zum Austausch von Kommandos und Daten zwischen dem
+Computer und der Hardware. Die genauen Codes fuer die Funktionen und Kommandos stehen in der Header-Datei octopus.h.
+
+Beschreibung folgt
+
+Appendix A: Beispiele
+---------------------
+One or more optional appendixes go here at section level 1.
+
+Appendix Knight Rider Licht
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sub-section body.
+
+Appendix AD Plotter
+~~~~~~~~~~~~~~~~~~~
+Sub-section body.
+
+
+Appendix B: Datenblatt
+----------------------
+TDB
+
+Appendix C: Schaltplan
+----------------------
+TBD
+
+Apeendix D: Lizenzen
+----------------------
+TBD
+
+
+Bibliography
+------------
+The bibliography list is an example of an AsciiDoc SimpleList, the
+AsciiDoc source list items are bulleted with a `+` character. The
+first entry in this example has an anchor.
+
++ [[[taoup]]] Eric Steven Raymond. 'The Art of Unix Programming'.
+  Addison-Wesley. ISBN 0-13-142901-9.
+
++ [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definative Guide'. O'Reilly & Associates. 199.
+  ISBN 1-56592-580-7.
+
+
+Index
+-----
+////////////////////////////////////////////////////////////////
+The index is normally left completely empty, it's contents being
+generated automatically by the DocBook toolchain.
+////////////////////////////////////////////////////////////////
