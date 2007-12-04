@@ -29,7 +29,7 @@ void rs232_send();
 volatile int tx1togl=0; 		// inital value of togl bit
 
 
-char toUSBBuf[9];
+char toUSBBuf[10];
 int USBBuf_i=0;
 char toRS232Buf[100];
 char RS232_i=0;
@@ -38,7 +38,7 @@ fifo_t* toRS232FIFO;
 fifo_t* toUSBFIFO;
 
 int togl3=0;
-int togl1=0;
+volatile int togl1=0;
 
 
 struct {
@@ -168,7 +168,7 @@ const unsigned char usbrs232Conf[] =
     5,  /* descriptor type = endpoint */
     0x81,        /* IN endpoint number 1 */
     0x02,        /* attrib: Bulk endpoint */
-    8, 0,        /* maximum packet size */
+    9, 0,        /* maximum packet size */
     0,           /* in ms */
 
 };
@@ -293,6 +293,10 @@ void Commands()
 
   int pin,value;
 
+  int j;
+  for(j=0;j<8;j++)
+    toUSBBuf[j]=0;
+
   if((toRS232Buf[1]>=0x31) && (toRS232Buf[1]<=0x39))
     pin=(uint8_t)toRS232Buf[1]-0x30;
 
@@ -304,6 +308,7 @@ void Commands()
 
   toUSBBuf[0]=c;
   toUSBBuf[1]=toRS232Buf[2];
+  USBBuf_i=2;
   
   switch(c) {
   /*
@@ -316,13 +321,24 @@ void Commands()
   */
     
     case PORT_GET:
-      toUSBBuf[1] = (char)get_port();
+      USBBuf_i=8;
+      uint8_t port = PINB;
+      if((port & BIT(IO1))) toUSBBuf[0] = 0x31; else toUSBBuf[0] = 0x30;
+      if((port & BIT(IO2))) toUSBBuf[1] = 0x31; else toUSBBuf[1] = 0x30;
+      if((port & BIT(IO3))) toUSBBuf[2] = 0x31; else toUSBBuf[2] = 0x30;
+      if((port & BIT(IO4))) toUSBBuf[3] = 0x31; else toUSBBuf[3] = 0x30;
+      if((port & BIT(IO5))) toUSBBuf[4] = 0x31; else toUSBBuf[4] = 0x30;
+      if((port & BIT(IO6))) toUSBBuf[5] = 0x31; else toUSBBuf[5] = 0x30;
+      if((port & BIT(IO7))) toUSBBuf[6] = 0x31; else toUSBBuf[6] = 0x30;
+      if((port & BIT(IO8))) toUSBBuf[7] = 0x31; else toUSBBuf[7] = 0x30;
     break;
     case PORT_SETPIN:
       set_pin(pin,value);
+      USBBuf_i=0;
     break;
     case PORT_SETPINDIR:
       set_pin_dir(pin,value);
+      USBBuf_i=0;
     break;
 
     case PORT_GETPIN:
@@ -335,42 +351,26 @@ void Commands()
     default:
       // unkown command
       toUSBBuf[0]='x';
+      USBBuf_i=0;
   }
-  //sendUSBString(s);
-  //RS232_i = 0;
-   USBBuf_i=2;
-#if 1
-  //togl1=1;
-  USBNWrite(TXC2,FLUSH);
-  USBNWrite(TXD2,toUSBBuf[0]);
-  USBNWrite(TXD2,toUSBBuf[1]);
-  //USBNWrite(TXD2,0x46);
-  //send_toggle();	
+  
+  //USBNWrite(TXC2,FLUSH);
+  for(j=0;j<USBBuf_i;j++){
+    USBNWrite(TXD2,toUSBBuf[j]);
+  }
   rs232_send();
-#endif
+  USBBuf_i = 0;
 }
 
 // usb zu rs232
 void USBtoRS232(char * buf)
 {
-
-	//fifo_put(toRS232FIFO,0x33);
-	//fifo_put(toRS232FIFO,0x34);
-	//fifo_put(toRS232FIFO,0x35);
-	if(buf[0] == '*'){
-		Commands();
-		RS232_i=0;
-	}
-	else
-		toRS232Buf[RS232_i++] = buf[0];
-
-	//UARTPutChar(buf[0]);
-
-//	USBNWrite(TXC2,FLUSH);
-//	USBNWrite(TXD2,0x44);
-//	rs232_send();
-	//UARTWrite("usb to rs232");
-	
+  if(buf[0] == '*'){
+    Commands();
+    RS232_i=0;
+  }
+  else
+    toRS232Buf[RS232_i++] = buf[0];
 }
 
 
@@ -421,6 +421,7 @@ int main(void)
 
 	USBNInitMC();		// start usb controller
 	USBNStart();		// start device stack
+
 
 //	sendUSBString("Hello World!");
 

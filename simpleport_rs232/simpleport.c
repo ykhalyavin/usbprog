@@ -78,14 +78,16 @@ void set_port(uint8_t value, uint8_t mask)
 uint8_t get_port()
 {
   uint8_t result=0x00; 
-  if(IS_IO1_SET()) result |= 0x80;
-  if(IS_IO2_SET()) result |= 0x40;
-  if(IS_IO3_SET()) result |= 0x20;
-  if(IS_IO4_SET()) result |= 0x10;
-  if(IS_IO5_SET()) result |= 0x08;
-  if(IS_IO6_SET()) result |= 0x04;
-  if(IS_IO7_SET()) result |= 0x02;
-  if(IS_IO8_SET()) result |= 0x01;
+  uint8_t value = PINB;
+
+  if((value & BIT(IO1))) result |= 0x80;
+  if((value & BIT(IO2))) result |= 0x40;
+  if((value & BIT(IO3))) result |= 0x20;
+  if((value & BIT(IO4))) result |= 0x10;
+  if((value & BIT(IO5))) result |= 0x08;
+  if((value & BIT(IO6))) result |= 0x04;
+  if((value & BIT(IO7))) result |= 0x02;
+  if((value & BIT(IO8))) result |= 0x01;
   return result;
 }
 
