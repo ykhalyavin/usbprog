@@ -234,37 +234,18 @@ folgt (bitte im Forum nachfragen)
 Firmware wechseln
 -----------------
 
-TDB
-
-Windows
-~~~~~~~
-
-TDB
+so gehts. zu beachten ist in windows und linux bla bla
 
 usbprog-gui
 ^^^^^^^^^^^
-
-TDB
-
-usbprog Konsole
-^^^^^^^^^^^^^^^
-
-TDB
-
-Linux
-~~~~~
-
-TDB
-
-usbprog-gui
-^^^^^^^^^^^
-
-TDB
+in Windows erst manuell Bootloader starten!
+in Linux Rechte beachten
 
 usbprog Konsole
 ^^^^^^^^^^^^^^^
+in Windows erst manuell Bootloader starten!
+in Linux Rechte beachten
 
-TDB
 
 Anwendungen mit USBprog
 -----------------------
@@ -303,6 +284,16 @@ TDB
 
 JTAG Adapter
 ~~~~~~~~~~~~
+
+TDB
+
+XSVF Player (Xilinx CPLDs und FPGAs programmieren)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TDB
+
+Logik Analsator (250 kHz, 8 Signale, Trigger)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TDB
 
