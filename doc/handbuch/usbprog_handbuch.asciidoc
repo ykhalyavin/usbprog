@@ -1,5 +1,5 @@
 USBprog Handbuch
-===================
+================
 :Author: http://www.embedded-projects.net/usbprog
 :Email: sauter@ixbat.de
 :Revision: 0.1
@@ -98,7 +98,6 @@ Unter Windows wurde die Installation mit einem Installer weitestgehend automatis
 * Anschliessend Octopus anstecken
 * Treiber automatisch wählen selektieren
 * Windows sollte den passenden Treiber finden
-* Falls nicht, manuell den Pfad angeben (c:\Windows\system32\ für .sys und .dll und c:\windows\system32 für .inf)
 * In der System Geräte Übersicht sollte das Gerät jetzt sichbar sein
 
 SCREENSHOT
@@ -236,6 +235,7 @@ Firmware wechseln
 -----------------
 
 TDB
+
 Windows
 ~~~~~~~
 
@@ -312,20 +312,9 @@ Eigene Firmware entwickeln
 Nachrichten dienen zum Austausch von Kommandos und Daten zwischen dem
 Computer und der Hardware. Die genauen Codes fuer die Funktionen und Kommandos stehen in der Header-Datei octopus.h.
 
-Beschreibung folgt
-
 Appendix A: Beispiele
 ---------------------
 One or more optional appendixes go here at section level 1.
-
-Appendix Knight Rider Licht
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Sub-section body.
-
-Appendix AD Plotter
-~~~~~~~~~~~~~~~~~~~
-Sub-section body.
-
 
 Appendix B: Datenblatt
 ----------------------
