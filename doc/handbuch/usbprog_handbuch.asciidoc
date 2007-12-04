@@ -98,7 +98,6 @@ Unter Windows wurde die Installation mit einem Installer weitestgehend automatis
 * Anschliessend Octopus anstecken
 * Treiber automatisch wählen selektieren
 * Windows sollte den passenden Treiber finden
-* In der System Geräte Übersicht sollte das Gerät jetzt sichbar sein
 
 SCREENSHOT
 
@@ -237,12 +236,12 @@ Firmware wechseln
 so gehts. zu beachten ist in windows und linux bla bla
 
 usbprog-gui
-^^^^^^^^^^^
+~~~~~~~~~~~
 in Windows erst manuell Bootloader starten!
 in Linux Rechte beachten
 
 usbprog Konsole
-^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 in Windows erst manuell Bootloader starten!
 in Linux Rechte beachten
 
