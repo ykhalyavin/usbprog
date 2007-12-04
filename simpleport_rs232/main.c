@@ -2,16 +2,17 @@
 #include <avr/io.h>
 #include <stdint.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 #include <inttypes.h>
 
 #define  F_CPU   16000000
 
 #define UNKOWN_COMMAND	'u'
 #define PORT_DIRECTION	'r'
-#define PORT_SET		's'
-#define PORT_GET		'g'
-#define PORT_SETPIN		'p'
-#define PORT_GETPIN		'i'
+#define PORT_SET	's'
+#define PORT_GET	'g'
+#define PORT_SETPIN	'p'
+#define PORT_GETPIN	'i'
 #define PORT_SETPINDIR	'd'
 
 
@@ -28,7 +29,8 @@ void rs232_send();
 volatile int tx1togl=0; 		// inital value of togl bit
 
 
-char toUSBBuf[100];
+char toUSBBuf[9];
+int USBBuf_i=0;
 char toRS232Buf[100];
 char RS232_i=0;
 
@@ -286,45 +288,66 @@ void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 void Commands()
 {
   char c = toRS232Buf[0];
-  char s[4];
-  s[1] = ' ';
-  s[2] = '\n';
-  s[3] = '\0';
   
-  usbprog.datatogl =0 ;
+  usbprog.datatogl = 0;
+
+  int pin,value;
+
+  if((toRS232Buf[1]>=0x31) && (toRS232Buf[1]<=0x39))
+    pin=(uint8_t)toRS232Buf[1]-0x30;
+
+  if(toRS232Buf[1]=='A')pin=10;
+  if(toRS232Buf[1]=='B')pin=11;
+
+  if(toRS232Buf[2]==0x31)value=1;
+  else value=0;
+
+  toUSBBuf[0]=c;
+  toUSBBuf[1]=toRS232Buf[2];
+  
   switch(c) {
-    case PORT_DIRECTION:
+  /*
+    case PORT_DIRECTION:  //WASTE!!!
       set_direction((uint8_t)toRS232Buf[1]);
-      s[0] = PORT_DIRECTION;
     break;
-    case PORT_SET:
-      set_port((uint8_t)toRS232Buf[1], (uint8_t)toRS232Buf[2]);
-      s[0] = PORT_SET;
+    case PORT_SET:  // WASTE!!!
+      set_port(pin, (uint8_t)toRS232Buf[2]);
     break;
+  */
+    
     case PORT_GET:
-      s[0] = PORT_GET;
-      s[1] = get_port();
+      toUSBBuf[1] = (char)get_port();
     break;
     case PORT_SETPIN:
-      set_pin((uint8_t)toRS232Buf[1],(uint8_t)toRS232Buf[2]);
-      s[0] = PORT_SETPIN;
+      set_pin(pin,value);
     break;
     case PORT_SETPINDIR:
-      set_pin_dir((uint8_t)toRS232Buf[1],(uint8_t)toRS232Buf[2]);
-      s[0] = PORT_SETPINDIR;
+      set_pin_dir(pin,value);
     break;
 
     case PORT_GETPIN:
-      s[0] = PORT_GETPIN;
-      s[1] = (char)get_pin((uint8_t)toRS232Buf[1]);
+      if(get_pin(pin)==1)
+      toUSBBuf[1] = 0x31;
+      else
+      toUSBBuf[1] = 0x30;
     break;
     
     default:
       // unkown command
-      s[0] = c;
+      toUSBBuf[0]='x';
   }
-  sendUSBString(s);
-  RS232_i = 0;
+  //sendUSBString(s);
+  //RS232_i = 0;
+   USBBuf_i=2;
+#if 1
+  //togl1=1;
+  USBNWrite(TXC2,FLUSH);
+  USBNWrite(TXD2,toUSBBuf[0]);
+  USBNWrite(TXD2,toUSBBuf[1]);
+  //USBNWrite(TXD2,0x46);
+  //send_toggle();	
+  rs232_send();
+#endif
 }
 
 // usb zu rs232
@@ -334,8 +357,10 @@ void USBtoRS232(char * buf)
 	//fifo_put(toRS232FIFO,0x33);
 	//fifo_put(toRS232FIFO,0x34);
 	//fifo_put(toRS232FIFO,0x35);
-	if(buf[0] == '\n')
+	if(buf[0] == '*'){
 		Commands();
+		RS232_i=0;
+	}
 	else
 		toRS232Buf[RS232_i++] = buf[0];
 
@@ -405,10 +430,16 @@ int main(void)
 		// usb -> rs232
 	
 		// rs232 -> usb
-		USBNWrite(TXC1,FLUSH);
-		USBNWrite(TXD1,0x44);
-		send_toggle();	
-		wait_ms(100);
+		if( USBBuf_i>2){
+		USBNWrite(TXC2,FLUSH);
+		USBNWrite(TXD2,toUSBBuf[0]);
+		USBNWrite(TXD2,toUSBBuf[1]);
+		//USBNWrite(TXD2,0x46);
+		//send_toggle();	
+		rs232_send();
+		USBBuf_i=0;
+		}
+		_delay_ms(1);
 	  #endif
 
 	}

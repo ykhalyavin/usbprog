@@ -610,16 +610,16 @@ void _USBNSetConfiguration(DeviceRequest *req)
   //
 
 USBNWrite(TXC1,FLUSH);
-USBNWrite(EPC1,EP_EN+0x03);      // enable EP1 at adr 1
+USBNWrite(EPC1,EP_EN+0x01);      // enable EP1 at adr 1
 
 
 USBNWrite(RXC1,FLUSH);
-USBNWrite(EPC2,EP_EN+0x02); 
+USBNWrite(EPC2,EP_EN+0x01); 
 USBNWrite(RXC1,RX_EN);
 
 
 USBNWrite(TXC3,FLUSH);
-USBNWrite(EPC5,EP_EN+0x05); 
+USBNWrite(EPC5,EP_EN+0x03); 
 
 
 	

@@ -18,3 +18,34 @@ Set IO 1	    s11
 Clear IO 1	    s10
 
 
+
+
+
+* // init command parser
+
+
+d10* // use pin IO1 as input
+answer: d0 
+read 2 bytes
+
+i1* // read input value
+answer: i0 for low i1 for high
+read 2 bytes
+
+g* // get actual input port values
+answer: g00001111 //state of all input pins left IO1 right IO8
+read 9 bytes
+
+dB1* // status LED as output
+answer: d1
+read 2 bytes
+
+pB0* // led off
+answer: p0
+read 2 bytes
+
+pB1* // led on
+answer: p1
+read 2 bytes
+
+

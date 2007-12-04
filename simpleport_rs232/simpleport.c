@@ -49,6 +49,8 @@ void set_pin_dir(uint8_t pin, uint8_t value)
     default:
       ;
   }
+  if(value!=1)
+    set_pin(pin,1);
 }
 
 
