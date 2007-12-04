@@ -269,6 +269,130 @@ TDB
 SimplePort RS232
 ~~~~~~~~~~~~~~~~
 
+Mit SimplePortRS232 kann können einfach und bequem die IO-Pins von USBprog
+über ein Terminal oder Bibliotheken für die serielle Schnittstelle angesteuert werden.
+
+Das Gerät meldet sich in Windows als virtueller Comport und in GNU/Linux
+als /dev/ttyACM0 an. Jetzt kann mit jeder Programmiersprache die ein
+Interface für die serielle Schnittstelle anbietet gearbeitet werden.
+
+Die Durchnummerierung der einzelnen Pins sieht wie folgt aus:
+
+
+'-----'-------------'----------
+Pin    Bezeichnung   Aufrufname
+-------------------------------
+1      IO1	     1
+2      VCC	     
+3      IO2	     2 
+4      IO3	     3 
+5      IO4	     4 
+6      IO5	     5 
+7      IO6	     6 
+8      IO7	     7 
+9      IO8	     8
+10     GND	     
+LED    IO11          B
+-------------------------------
+
+
+*Kommandos für die Ansteuerung der Leitungen*
+
+Die Kommandos werden als ASCII-Zeichen übertragen. Das hat den Vorteil,
+das die Funktionalität bereits mit einem einfachen Terminal überprüft werden kann.
+
+
+*Datenrichtung einer einzelnen Leitung definieren*
+
+d<Aufrufname><Richtung>*
+
+* Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
+* Richtung - 1=Ausgang, 0=Eingang (mit internen Pullups)
+
+Rückgabewert: keiner
+
+Beispiel: dB1* (Status LED als Ausgang), d10* (IO1 als Eingang)
+
+*Signale einer Ausgangsleitung setzen*
+
+p<Aufrufname><Wert>*
+
+* Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
+* Wert - 1 = 5V (high) , 0 = GND (low)
+
+Rückgabewert: keiner
+
+Beispiel: pB1* (Status LED an), pB0* (Status LED aus)
+
+* Signal an einer Eingansleitung lesen*
+
+i<Aufrufname>*
+
+* Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
+
+Rückgabewert: 2 Bytes abholen 
+
+Als Rückgabewert müssen für die Funktion immer 2 Werte sofort
+nach dem ausführen des Kommandos abgeholt werden.
+Die Antwort ist wie folgt zu lesen: i0 = 0V (low), i1 = 5V (high).
+
+Beispiel Aufruf: i1* (Abfrage Signal IO1)
+Beispiel Antwort: i0 (Signale hatte den Wert low), i1 (Signal hatte den Wert high)
+
+* Ersten 8 IO Leitungen aufeinmal abfragen*
+
+g*
+
+Sollen zu einem Zeitpunkt mehrer Leitungen abgefragt werden,
+um Beispielsweise bei mehrern angeschlossenen Tastern eine Tastenkombination
+zu einem Zeitpunkt zu ermitteln, kann dies mit der aktuellen Funktion geschehen.
+Es werden beim Aufruf des Kommandos die Werte zum gleiche Zeitpunkt gemessen.
+
+Rückgabewert: 8 Bytes  abholen 
+
+Das Ergebnis ist eine Reihe von acht 0 und 1 Werten. Die ganz linke 
+Zahl entspricht IO1 und ganz rechts IO8. Ist entsprechend eine 1 gesetzt 
+war ein High am Signal angelegt, bei einer 0 entsprechend ein Low.
+
+Beispiel Aufruf: g* (IO1 - IO8 zu einem Zeitpunkt abfragen)
+Beispiel Antwort: 10001000 (IO1 und IO5 waren high, der Rest low)
+
+
+*Einsatz in Python*
+
+Das Paket serial für Python muss zuvor installiert werden. In Debian
+reich ein einfaches _apt-get install python-serial_.
+
+------------------------------------------------------
+import serial
+import time
+
+ser = serial.Serial('/dev/ttyACM0', 19200, timeout=1)
+
+ser.write("*")
+ser.write("*dB1*")
+
+while(1):
+  ser.write("pB0*")
+  time.sleep(1)
+  ser.write("pB1*")
+  time.sleep(1)
+------------------------------------------------------
+
+*Einsatz in C#*
+
+-------------------------------------
+
+// Portvariablen
+private System.IO.Ports.SerialPort sensorStream;
+private bool comPortOpen = false;
+
+private byte[] sensorBytes = new byte[20000];
+private int totalBytes = 0;
+-------------------------------------
+
+
+
 TDB
 
 USB zu RS232 Wandler
@@ -302,19 +426,15 @@ Eigene Firmware entwickeln
 Nachrichten dienen zum Austausch von Kommandos und Daten zwischen dem
 Computer und der Hardware. Die genauen Codes fuer die Funktionen und Kommandos stehen in der Header-Datei octopus.h.
 
-Appendix A: Beispiele
----------------------
-One or more optional appendixes go here at section level 1.
-
-Appendix B: Datenblatt
+Appendix A: Datenblatt
 ----------------------
 TDB
 
-Appendix C: Schaltplan
+Appendix B: Schaltplan
 ----------------------
 TBD
 
-Apeendix D: Lizenzen
+Apeendix C: Lizenzen
 ----------------------
 TBD
 
