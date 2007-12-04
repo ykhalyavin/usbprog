@@ -304,29 +304,29 @@ das die Funktionalität bereits mit einem einfachen Terminal überprüft werden kan
 
 *Datenrichtung einer einzelnen Leitung definieren*
 
-d<Aufrufname><Richtung>*
+Kommando: d<Aufrufname><Richtung>\*
 
 * Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
 * Richtung - 1=Ausgang, 0=Eingang (mit internen Pullups)
 
 Rückgabewert: keiner
 
-Beispiel: dB1* (Status LED als Ausgang), d10* (IO1 als Eingang)
+Beispiel: dB1\* (Status LED als Ausgang), d10\* (IO1 als Eingang)
 
 *Signale einer Ausgangsleitung setzen*
 
-p<Aufrufname><Wert>*
+Kommando: p<Aufrufname><Wert>\*
 
 * Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
 * Wert - 1 = 5V (high) , 0 = GND (low)
 
 Rückgabewert: keiner
 
-Beispiel: pB1* (Status LED an), pB0* (Status LED aus)
+Beispiel Aufruf: pB1\* (Status LED an), pB0\* (Status LED aus)
 
-* Signal an einer Eingansleitung lesen*
+*Signal an einer Eingansleitung lesen*
 
-i<Aufrufname>*
+Kommando: i<Aufrufname>\*
 
 * Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
 
@@ -336,12 +336,12 @@ Als Rückgabewert müssen für die Funktion immer 2 Werte sofort
 nach dem ausführen des Kommandos abgeholt werden.
 Die Antwort ist wie folgt zu lesen: i0 = 0V (low), i1 = 5V (high).
 
-Beispiel Aufruf: i1* (Abfrage Signal IO1)
+Beispiel Aufruf: i1\* (Abfrage Signal IO1)
 Beispiel Antwort: i0 (Signale hatte den Wert low), i1 (Signal hatte den Wert high)
 
-* Ersten 8 IO Leitungen aufeinmal abfragen*
+*Ersten 8 IO Leitungen aufeinmal abfragen*
 
-g*
+Kommando: g\*
 
 Sollen zu einem Zeitpunkt mehrer Leitungen abgefragt werden,
 um Beispielsweise bei mehrern angeschlossenen Tastern eine Tastenkombination
@@ -354,7 +354,7 @@ Das Ergebnis ist eine Reihe von acht 0 und 1 Werten. Die ganz linke
 Zahl entspricht IO1 und ganz rechts IO8. Ist entsprechend eine 1 gesetzt 
 war ein High am Signal angelegt, bei einer 0 entsprechend ein Low.
 
-Beispiel Aufruf: g* (IO1 - IO8 zu einem Zeitpunkt abfragen)
+Beispiel Aufruf: g\* (IO1 - IO8 zu einem Zeitpunkt abfragen)
 Beispiel Antwort: 10001000 (IO1 und IO5 waren high, der Rest low)
 
 
