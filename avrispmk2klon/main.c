@@ -25,7 +25,6 @@
 #include <inttypes.h>
 #include <avr/eeprom.h>
 
-
 #define F_CPU 16000000
 #include <util/delay.h>
 
@@ -54,7 +53,6 @@
 
 /*	EEPROM usage	*/
 #define EEPROM_SCK_DURATION_LOC 0	//sck_duration 1 byte
-
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
