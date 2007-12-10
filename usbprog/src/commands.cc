@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <fstream>
 
 #include <usbprog/firmwarepool.h>
 #include <usbprog/util.h>
@@ -45,6 +46,10 @@ using std::setfill;
 using std::max;
 using std::find;
 using std::hex;
+using std::ifstream;
+using std::ios;
+
+#define BUFFERSIZE       2048
 
 /* ListCommand {{{1 */
 
@@ -639,16 +644,42 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
     if (m_devicemanager->getNumberUpdateDevices() == 0)
         m_devicemanager->discoverUpdateDevices();
 
-    Firmware *fw = m_firmwarepool->getFirmware(firmware);
-    if (!fw)
-        throw ApplicationError(firmware+": Invalid firmware specified.");
+    ByteVector data;
 
-    try {
-        m_firmwarepool->fillFirmware(firmware);
-    } catch (const IOError &err) {
-        throw ApplicationError(string("I/O Error: ") + err.what());
-    } catch (const GeneralError &err) {
-        throw ApplicationError(string("General Error: ") + err.what());
+    if (firmware.find("/") != string::npos || Fileutil::isFile(firmware)) {
+        /* read from file */
+        ifstream fin(firmware.c_str(), ios::binary);
+        if (!fin)
+            throw ApplicationError("Firmware file invalid");
+
+        char buffer[BUFFERSIZE];
+        while (!fin.eof()) {
+            fin.read(buffer, BUFFERSIZE);
+            if (fin.bad()) {
+                fin.close();
+                throw ApplicationError("Error while reading data from file.");
+            }
+
+            copy(buffer, buffer + fin.gcount(), back_inserter(data));
+        }
+
+        fin.close();
+    } else {
+        /* use pool */
+
+        Firmware *fw = m_firmwarepool->getFirmware(firmware);
+        if (!fw)
+            throw ApplicationError(firmware+": Invalid firmware specified.");
+
+        try {
+            m_firmwarepool->fillFirmware(firmware);
+        } catch (const IOError &err) {
+            throw ApplicationError(string("I/O Error: ") + err.what());
+        } catch (const GeneralError &err) {
+            throw ApplicationError(string("General Error: ") + err.what());
+        }
+
+        data = fw->getData();
     }
 
     Device *dev = m_devicemanager->getUpdateDevice();
@@ -677,7 +708,7 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
         os << "Opening device ..." << endl;
         updater.updateOpen();
         os << "Writing firmware ..." << endl;
-        updater.writeFirmware(fw->getData());
+        updater.writeFirmware(data);
         os << "Starting device ..." << endl;
         updater.startDevice();
         updater.updateClose();
@@ -722,12 +753,13 @@ string UploadCommand::help() const
 void UploadCommand::printLongHelp(ostream &os) const
 {
     os << "Name:            upload\n"
-       << "Argument:        firmware\n\n"
+       << "Argument:        firmware|filename\n\n"
        << "Description:\n"
        << "Uploads a new firmware. The firmware identifier can be found with\n"
-       << "the \"list\" command. If you have more than one USBprog device\n"
-       << "connected, use the \"devices\" command to obtain a list of available\n"
-       << "update devices and select one with the \"device\" command."
+       << "the \"list\" command. Alternatively, you can just specify a filename.\n"
+       << "If you have more than one USBprog device connected, use the \"devices\"\n"
+       << "command to obtain a list of available update devices and select one\n"
+       << "with the \"device\" command."
        << endl;
 }
 
