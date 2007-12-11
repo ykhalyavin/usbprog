@@ -75,7 +75,7 @@ int xsvfprog_message(struct xsvfprog *xsvfprog, char *msg, int msglen, char *ans
 		 * because they run internal device tests (see Xilinx XAPP503, XRUNTEST and other
 		 * instructions).
 		 */
-		res =  usb_bulk_read(xsvfprog->usb_handle,2, answer, answerlen, 20000);
+		res =  usb_bulk_read(xsvfprog->usb_handle,0x82, answer, answerlen, 20000);
 		return res;
 	} else {
 		return 0;
