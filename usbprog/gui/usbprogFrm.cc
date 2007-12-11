@@ -463,9 +463,7 @@ void usbprogFrm::uploadHandler(wxCommandEvent &evt)
             return;
         }
 
-        stringstream ss;
-        ss << m_pathText->GetValue().c_str();
-        ifstream fin(ss.str().c_str(), ios::binary);
+        ifstream fin(m_pathText->GetValue().mb_str(), ios::binary);
         if (!fin) {
             status("Firmware file invalid");
             return;

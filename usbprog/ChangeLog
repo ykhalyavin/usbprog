@@ -1,3 +1,8 @@
+2007-12-11  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fixed wrong "firmware file invalid" error in the GUI when specifying
+	  a local file for uploading
+
 2007-12-10  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* the "upload" command also accepts filenames directly now
