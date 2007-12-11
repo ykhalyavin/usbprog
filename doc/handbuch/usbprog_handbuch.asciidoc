@@ -264,7 +264,208 @@ TDB
 SimplePort
 ~~~~~~~~~~
 
-TDB
+Mit dieser Firmware können ganz einfach die 10 nach außen geführten Leitungen als Ein- und Ausgabeleitungen verwendet werden. Dazu gibt es eine kleine Bibliotheken in C, Python und Java die in Windows, Linux, und wenn notwendig in Mac einsetzbar sind.
+
+Für erste Tests kann man die Leitung 11 als Ausgang verwenden, daran hängt die LED! So könnte ein C Beispiel aussehen:
+
+-----------------------------------------------------------
+  struct simpleport * sp_handle;
+    /* open connection to simpleport */
+    sp_handle = simpleport_open();
+  
+   simpleport_set_pin_dir(sp_handle,11,1);
+ 
+
+  for(i=0;i<4;i++){
+    simpleport_set_pin(sp_handle,11,1); // LED an
+    sleep(1);
+    simpleport_set_pin(sp_handle,11,0); // LED aus
+    sleep(1);
+  }
+  simpleport_close(sp_handle);
+-----------------------------------------------------------
+ 
+
+Im Downloadbereich gibt es Beispiele, in denen gezeigt wird, wie die Bibliotheken in den verschiedenen Sprachen eingesetzt werden können.
+
+Die verschiedenen Ansteuerungen aus den einzelnen Sprachen wie Java und Python wurden mit SWIG realisiert. Jederzeit können ohne grossen Aufwand weitere Anbindungen erzeugt werden. Mehr dazu gibt es hier. 
+
+SWIG kann aktuell Anbindungen für die folgenden Sprachen erzeugen: Allegro CL, C#, Chicken, Guile, Java, Modula-3, Mzscheme, OCAML, Perl, PHP, Python, Ruby, Tcl.
+
+Status
+^^^^^^
+    * getestet unter Linux mit C, Java und Python
+    * Windowstest fehlt noch, der Betrieb sollte aber klappen
+
+Downloads 
+^^^^^^^^^
+Beschreibung
+	 Download
+ Hex-Firmware
+	 simpleport.hex
+ Bin-Firmware 	 simpleport.bin
+ Bibliotheken	 SimplePort Bibliothek (C,Java,Python,Firmware)
+ Quelltextarchiv 	 SVN Repository
+
+Anschlussbelegung
+^^^^^^^^^^^^^^^^^
+10-polige Stecker
+
+'-----'-------------'----------
+Pin    Bezeichnung   Aufrufname
+-------------------------------
+1      IO1	     1
+2      VCC	     
+3      IO2	     2 
+4      IO3	     3 
+5      IO4	     4 
+6      IO5	     5 
+7      IO6	     6 
+8      IO7	     7 
+9      IO8	     8
+10     GND	     
+1-0    IO9  (JP3     9
+1-1    IO10 (JP3)    10
+LED    IO11          11
+-------------------------------
+
+Auf der Platine befindet sich zusätzlich eine rote LED. Diese kann wenn IO11 als Ausgang konfiguriert ist, angesteuert werden.
+
+ 
+Bibliothek in C
+^^^^^^^^^^^^^^^
+
+Verbindung mit SimplePort aufbauen:
+
+    struct simpleport* simpleport_open();
+
+Verbindung beenden: 
+
+    void simpleport_close(struct simpleport *simpleport);
+
+Datenrichtung der Signale definieren (IO 1 - IO 8) 1 = Ausgang, 0 = Eingang:
+
+    void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
+
+    Bsp: IO 1 - IO 4 = Taster, und IO 5 - IO 8 = LED:
+     IO 1
+    	IO 2  	IO 3 	IO 4  	IO 5
+    	IO 6
+    	IO 7
+    	IO 8 
+     0 	 0 	 0 	 0 	 0 	 1 	 1 	 1
+
+    (als Hexzahl ist das: 0x0F)
+
+
+    Mit der Funktion können nur die Datenrichtungen für IO 1 - I0 8 angebeben werden! Die für IO 9 - IO 11 müssen mit der Funktion void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir) einzeln angegeben werden.
+
+Datenrichtung einer einzelnen Leitung (auch IO 9 - IO 11) 1=Ausgang, 0=Eingang:
+
+    void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir);
+
+Port ausgeben (IO 1 - IO 8):
+
+     void simpleport_set_port(struct simpleport *simpleport,unsigned char value);
+
+Port lesen (IO 1 - IO 8): 
+
+    unsigned char simpleport_get_port(struct simpleport *simpleport);
+
+Eine einzelne Leitung setzen (IO 1 - IO 11):
+
+    void simpleport_set_pin(struct simpleport *simpleport,int pin, int value);
+
+Eine einzelne Leitung lesen (IO 1 - IO 11):
+
+    int simpleport_get_pin(struct simpleport *simpleport, int pin);
+
+
+Beispiel in C
+^^^^^^^^^^^^^
+
+--------------------------------------------------------------
+#include <stdio.h>
+  #include "simpleport.h"
+    
+  int main()
+  {
+    struct simpleport * sp_handle;
+    /* open connection to simpleport */
+    sp_handle = simpleport_open();
+    
+    if(sp_handle==0)
+      fprintf(stderr,"unable to open device\n");
+    
+    
+    simpleport_set_direction(sp_handle,0xFF);
+    
+    while(1){
+      simpleport_set_port(sp_handle,0xFF);
+      simpleport_set_port(sp_handle,0x00);
+    }
+    simpleport_close(sp_handle);
+    return 0;
+  }
+--------------------------------------------------------------    
+
+Beispiel in Java 
+^^^^^^^^^^^^^^^^
+
+--------------------------------------------------------------
+class demo
+  {
+    public static void main(String[] args){
+      try {
+        // tell the system to load the shared library into memory
+        System.load("/lib/_simpleport.so");
+        // the functions of '_simpleport.so' are accessed over the java-class
+        // 'simpleport', that was created by SWIG.
+        // 'simpleport_open()' returns a instance of 'SWIGTYPE_p_simpleport' if
+        // a suitable hardware was found.
+    
+        SWIGTYPE_p_simpleport sp_handle = simpleport.simpleport_open();
+        // set the port-direction to 'write'
+        simpleport.simpleport_set_direction(sp_handle, (short) 0xFF);
+        System.out.println("... blink!");
+    
+        // periodically set entire port to '00000000' and '11111111'
+    
+        while(true){
+          simpleport.simpleport_set_port(sp_handle,(short) 0xFF,(short) 0xFF);
+          Thread.sleep(1000);
+          simpleport.simpleport_set_port(sp_handle, (short) 0x00, (short) 0xFF);
+          Thread.sleep(1000);
+        }
+      } catch (Exception e) {
+        e.toString();
+      }
+    }
+  }
+--------------------------------------------------------------    
+
+Beispiel in Python 
+^^^^^^^^^^^^^^^^^^
+--------------------------------------------------------------    
+import simpleport
+  import time
+    
+  if __name__ == "__main__":
+      # call simpleport_open() to retrive a handle
+      sp_handle = simpleport.simpleport_open()
+    
+      # periodacally set entire port to '11111111' and '00000000'
+      while 1:
+          simpleport.simpleport_set_port(sp_handle, 0xFF, 0xFF)
+          time.sleep(1)
+          simpleport.simpleport_set_port(sp_handle, 0x00, 0xFF)
+          time.sleep(1)
+    
+      # close handle (never reached in this case)
+      simpleport.simpleport_close(sphand)
+--------------------------------------------------------------        
+    
+
 
 SimplePort RS232
 ~~~~~~~~~~~~~~~~
@@ -296,7 +497,8 @@ LED    IO11          B
 -------------------------------
 
 
-*Kommandos für die Ansteuerung der Leitungen*
+Kommandos für die Ansteuerung der Leitungen
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Die Kommandos werden als ASCII-Zeichen übertragen. Das hat den Vorteil,
 das die Funktionalität bereits mit einem einfachen Terminal überprüft werden kann.
@@ -333,20 +535,20 @@ Kommando: i<Aufrufname>\*
 Rückgabewert: 2 Bytes abholen 
 
 Als Rückgabewert müssen für die Funktion immer 2 Werte sofort
-nach dem ausführen des Kommandos abgeholt werden.
+nach dem Ausführen des Kommandos abgeholt werden.
 Die Antwort ist wie folgt zu lesen: i0 = 0V (low), i1 = 5V (high).
 
 Beispiel Aufruf: i1\* (Abfrage Signal IO1)
 Beispiel Antwort: i0 (Signale hatte den Wert low), i1 (Signal hatte den Wert high)
 
-*Ersten 8 IO Leitungen aufeinmal abfragen*
+*Ersten 8 IO Leitungen auf einmal abfragen*
 
 Kommando: g\*
 
-Sollen zu einem Zeitpunkt mehrer Leitungen abgefragt werden,
-um Beispielsweise bei mehrern angeschlossenen Tastern eine Tastenkombination
+Sollen zu einem Zeitpunkt mehrere Leitungen abgefragt werden,
+um beispielsweise bei mehreren angeschlossenen Tastern eine Tastenkombination
 zu einem Zeitpunkt zu ermitteln, kann dies mit der aktuellen Funktion geschehen.
-Es werden beim Aufruf des Kommandos die Werte zum gleiche Zeitpunkt gemessen.
+Es werden beim Aufruf des Kommandos die Werte zum gleichen Zeitpunkt gemessen.
 
 Rückgabewert: 8 Bytes  abholen 
 
@@ -358,7 +560,8 @@ Beispiel Aufruf: g\* (IO1 - IO8 zu einem Zeitpunkt abfragen)
 Beispiel Antwort: 10001000 (IO1 und IO5 waren high, der Rest low)
 
 
-*Einsatz in Python*
+Beispiel in Python
+^^^^^^^^^^^^^^^^^^
 
 Das Paket serial für Python muss zuvor installiert werden. In Debian
 reich ein einfaches _apt-get install python-serial_.
@@ -379,16 +582,53 @@ while(1):
   time.sleep(1)
 ------------------------------------------------------
 
-*Einsatz in C#*
-
+Einsatz in C#
+^^^^^^^^^^^^^
 -------------------------------------
 
-// Portvariablen
-private System.IO.Ports.SerialPort sensorStream;
-private bool comPortOpen = false;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO.Ports;
+using System.Threading;
 
-private byte[] sensorBytes = new byte[20000];
-private int totalBytes = 0;
+namespace Test1
+{
+    class Program
+    {	
+        static void Main(string[] args)
+        {			
+		// open comport: name (COM16) depends on your system
+		SerialPort USBProg = new SerialPort("COM16", 9600, 
+						Parity.None, 8, StopBits.One);
+		USBProg.Open();
+			
+		//set direction of Pin 11 (B)
+		USBProg.Write("dB1*");
+
+		char[] buffer = new char[255];
+		for (int i = 0; i < 5; i++)
+		{
+			//disable LED
+			USBProg.Write("pB0*");
+			Console.Write("Answer: ");
+			Console.WriteLine(USBProg.ReadExisting());
+			Thread.Sleep(500);
+			//enable LED
+			USBProg.Write("pB1*");
+			//sensorStream.Read(buffer,0,2);
+			Console.Write("Answer: ");
+			Console.WriteLine(USBProg.ReadExisting());
+			Thread.Sleep(500);
+		}
+		//close comport
+		USBProg.Close();
+			
+		//keep console open
+		Console.Read();
+        }
+    }
+} 
 -------------------------------------
 
 
@@ -413,12 +653,178 @@ TDB
 XSVF Player (Xilinx CPLDs und FPGAs programmieren)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TDB
+XSVF-Dateien stellen ein standardisiertes Format dar, um prinzipiell beliebige JTAG-Operationen zu beschreiben. Mit dieser Firmware für usbprog ist es möglich solche XSVF-Dateien "abzuspielen", das heißt die enthaltenen JTAG-Operationen über den usbprog-Adapter auszuführen. Damit kann man beispielsweise CPLDs, FPGAs oder Mikrocontroller mit JTAG-Schnittstelle programmieren, löschen, testen usw. Voraussetzung dafür ist, dass man eine Software hat, die entsprechende XSVF-Dateien für das Target-Device erstellen kann.
+Status
+
+Der XSVF Player funktioniert für den Fall, dass keine einzelne XSVF-Instruktion länger als 64 Bytes ist. Getestet wurde unter Linux (openSUSE 10.3 x86_64, Debian/Sarge) mit einem Xilinx XC9572 CPLD sowie mit einem XC9572XL CPLD.
+
+ 
+Anschlussbelegung 
+^^^^^^^^^^^^^^^^^
+
+10-polige Stecker
+Beschreibung (Pin Nr.)
+	Pin  	Pin  	Beschreibung 
+ TDI
+	 1 	 2
+	 VCC
+
+	 3 	 4 	
+ TMS
+	 5 	 6 	
+ TCK
+	 7 	 8 	
+ TDO
+	 9 	 10 	 GND
+ Belegung gilt für usbprog 2.0 und 3.0
+
+ 
+XSVF Player unter Linux
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Quelltextarchiv herunterladen mit Subversion:
+
+    * svn checkout http://svn.berlios.de/svnroot/repos/usbprog/trunk/usbprogXSVF
+
+
+Kommandozeilen-Tool kompilieren:
+
+    * cd lib
+    * make
+
+
+Benutzung:
+
+    * ./xsvfplayer <XSVF-Dateiname>
+
+ 
+XSVF-Dateien erstellen mit Xilinx ISE 9.2i WebPack
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Um XSVF-Dateien zu erstellen, mit denen ein Xilinx CPLD oder FPGA konfiguriert werden kann, kann man folgendermaßen vorgehen:
+
+In der ISE-Projektansicht die Top-Entity auswählen und dann "Implement Design" -> "Optional Implementation Tools" -> "Generate SVF/XSVF/STAPL File" ausführen. Es öffnet sich ein neues Fenster, dort "Prepare a Boundary-Scan File" aktivieren und als Format "XSVF" auswählen. Auf "Finish" klicken. Dann der zu erzeugenden XSVF-Datei einen Namen geben und im nächsten Fenster "Ok" klicken. In dem sich danach öffnenden Fenster ("Add Device") die Datei mit gleichem Namen wie die Top-Entity und Endung .jed im Projektordner auswählen. Anschließend im Hauptfenster Rechtsklick auf das CPLD- oder FPGA-Symbol in der JTAG-Chain und auf "Program" klicken, mit "Ok" bestätigen. Zum Schluss auf "Output" -> "XSVF File" -> "Stop Writing to XSVF File" und fertig ist das XSVF.
+
+Alternativ zum "Program"-Schritt kann man natürlich auch beliebige andere JTAG-Operationen ausführen und in der XSVF-Datei aufzeichnen.
+
+ 
+Interessante und hilfreiche Linkadressen  
+
+http://www.ethernut.de/en/xsvfexec/index.html (Fertige Routinen)
+
+http://www.xilinx.com/bvdocs/appnotes/xapp058.pdf (Beschreibung des XSVF Formats)
+
+http://www.xilinx.com/bvdocs/publications/ds300.pdf
+
 
 Logik Analsator (250 kHz, 8 Signale, Trigger)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TDB
+    * 8 Kanäle
+    * Online Modus ( Daten werden direkt während der Messung abtransportiert)
+    * Speicher Modus (es werden intern bis zu 1000 Messungen aufgezeichnet)
+    * Snapshot Modus (für langsame gezielte Aufzeichnungen z.B. Counter, Logiktests ... )
+    * einstellbare Abtastrate von 5us bis 100 ms (max 250kHz)
+    * einstellbare Trigger (Flanke an einer Leitung, Muster auf allen Leitungen)
+    * einfache Konsolenanwendung zum Aufzeichnen für Linux und Windows
+    * als Ausgabeformat werden vcd-Dateien erzeugt. Diese kann man mit vielen Tools bearbeiten. (Bsp. GTKWave)
+
+Das Gerät wurde nicht als Profi-Logikanalyser, sondern für einfache und relativ langsame Messungen (bis 250kHz) geplant. Interessant ist dieses Gerät für Bastler, die gerne mit kleinen Mikrocontrollern arbeiten und ab und an gerne in eine UART, SPI oder I2C Verbindung schauen möchte, oder einfach nur für Versuche oder den Schulunterricht.
+
+Das Projekt besteht aus drei Teilen. Der Hardware, die Bestandteil dieses Projektes ist (die Pläne dazu stehen im Downloadbereich zur Verfügung). Dann gibt es das Programm logic2vcd, um Messungen auf dem Gerät zu starten und zu steuern (gehört ebenfalls zu diesem Projekt). Dieses Programm erzeugt sogenannte .vcd-Dateinen, die mit dem dritten Programm GTKWave analysiert werden können. GTKWave ist nicht Bestandteil dieses Projektes aber ebenfalls ein Open Source Projekt. Beide Programme gibt es für Linux und Windows.
+Status
+
+Der Logikadapter wurde ausgiebig mit allem getestet was ich hier so gefunden hab. Bis jetzt ist mir noch kein Fehler bekannt. Da ihn aber noch einfach zu wenige getestet haben würde ich ihn als Beta einstufen
+
+Anschlussbelegung
+^^^^^^^^^^^^^^^^^
+10-polige Stecker
+Beschreibung (Pin Nr.)
+	Pin  	Pin  	Beschreibung 
+ Logik 6
+	 1 	 2
+	 VCC
+ Logik 5
+	 3 	 4 	 * Logik 4
+ Logik 1
+	 5 	 6 	 * Logik 3
+ Logik 8
+	 7 	 8 	 * Logik 2
+ Logik 7
+	 9 	 10 	 GND
+ * Belegung gilt nicht für usbprog 2.0
+
+
+Downloads
+^^^^^^^^^
+
+GTKWave:
+
+Homepage: http://home.nc.rr.com/gtkwave
+Download: http://www.dspia.com/gtkwave.html
+
+
+Aufzeichnung von Messungen mit logic2vcd
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Das Programm logic2vcd dient der Steuerung der Messung mit Hilfe der Hardware. Man startet das Programm mit den entsprechenden Kommandozeilenargumenten, und bekommt als Resultat eine .vcd Datei. Dieses Format kommt aus der Hardware Entwicklung. Es dient normalerweise dazu um Logikschaltungen nach einer Simmulation analysieren zu können. Der Vorteil dieses Datei Formates ist, dass es bereits einige Programme zum be- und verarbeiten gibt (unteranderem GTKWave).
+
+Einfache Online Messung:
+
+    ./logic2vcd -f messung.vcd -R online -s 1ms -n 1000
+
+Im Detail bedeutet dies:
+
+    -f Namer der Datei in die die Werte geschrieben werden sollen
+    -R (Recordtype) Aufnahmemodus = online
+    -s Abtastrate (jede Millisekunde wird ein neuer Wert gelesen )
+    -n Anzahl der Messungen
+
+Bei der Online Messung werden so schnell wie möglich die Daten von der Hardware abgeholt, so dass es im Analysator zu keinem Stau kommt. Kommt es jedoch zwischenzeitlich zu kurzen Unterbrechungen gehen Messdaten verloren. Dieses passiert bei hohen Abtastraten häufiger. Wenn es um hundertprozentige Genauigkeit geht, muss man auf den sogenannten internen Modus wechseln (siehe unten).
+
+Online Messung mit Start-Trigger:
+
+Bei der einfachen Messung beginnt die Aufzeichnung mit dem Starten des Kommandos. Da man so jedoch schwer den Bereich erwischt, den man wirklich aufzeichnen möchte, kann man einen Start-Trigger definieren. Erst wenn das Signal - wie im Trigger definiert erkannt wird, beginnt die Aufzeichnung mit den entsprechenden Parametern.
+
+  ./logic2vcd -f messung.vcd -R online -s 1ms -n 1000 -T edge -c 1 -t 1
+
+Im Detail bedeutet dies:
+
+    -T Art des Triggers, entweder kann man die Flanke eines Kanals beobachten (edge)
+        oder man kann den ganzen Port mit einem Muster vergleichen (pattern)
+    -c Kanalnummer (1-8) funktioniert nur beim Edge-Trigger
+    -t Der zu vergleichende Wert
+        * bei Edge=1 für einen Übergang von low - high und eine 0 für high - low
+        * bei Pattern das Hexmuster für den Port, wenn port 1,2 und 8 high sein sollen,
+          dann muss als Wert 193 (Hex: C1, Binär: 1100 0001) angegeben werden
+    -i  Wenn man bestimmte Kanäle beim Pattern Trigger ignorieren will, kann man
+        diese hier angeben, genau gleich wie bei -t. Wenn man Kanal 1-4
+        ignorieren möchte, muss man entsprechend 240 (Hex: 0xf0 und Binär 11110000) angeben.
+
+Die restlichen Parameter steuern wie auch bei der einfachen Messung die Aufzeichnung, die ab der erkannten Triggerbedingung startet.
+
+Genauere interne Messung mit Start-Trigger: 
+
+Im internen Modus werden maximal 1000 Messwerte in der Hardware aufgezeichnet. Danach stoppt die Messung und man kann die Messwerte abholen. 1000 Messwerte ist nicht gerade viel, aber dank der Trigger kann man sich gut an die entsprechenden Stelle in der Messung hinarbeiten.
+
+ 
+
+Snapshot Messung: 
+
+noch nicht fertig implementiert
+
+ 
+Datenanalyse mit GTKWave
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Mit GTKWave kann man einfach Messungen analysieren. Gestartet wird das Program direkt mit dem Dateinamen der Messung als Parameter:
+
+ gtkwave messung.vcd
+
+ 
+Als erstes muss auf vscope geklickt werden, um die Kanäle im Feld Signals einzublenden. Anschliessend kann man alle Kanäle makieren, und muss sie dann nur noch einfügen. Wenn man oben auf die Lupe klickt wird die komplette Messung in dem Fenster angezeigt. Jetzt kann man sich mit den restlichen Knöpfen an die entsprechende Stelle hinarbeiten. 
+
 
 Eigene Firmware entwickeln
 --------------------------
