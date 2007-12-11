@@ -82,6 +82,18 @@ bool Device::isUpdateMode() const
 }
 
 /* -------------------------------------------------------------------------- */
+void Device::setShortName(const string &shortName)
+{
+    m_shortName = shortName;
+}
+
+/* -------------------------------------------------------------------------- */
+string Device::getShortName() const
+{
+    return m_shortName;
+}
+
+/* -------------------------------------------------------------------------- */
 void Device::setUpdateMode(bool updateMode)
 {
     m_updateMode = updateMode;
@@ -175,6 +187,7 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
                 Device *d = new Device(dev);
                 d->setUpdateMode(true);
                 d->setName("USBprog in update mode");
+                d->setShortName("usbprog");
                 m_updateDevices.push_back(d);
             } else if (firmwarepool)
                 for (vector<Firmware *>::const_iterator it = firmwares.begin();
@@ -186,6 +199,7 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
                         Device *d = new Device(dev);
                         d->setName("USBprog with \"" + (*it)->getLabel() + 
                                 "\" firmware");
+                        d->setShortName((*it)->getName());
                         m_updateDevices.push_back(d);
                     }
         }
@@ -213,7 +227,8 @@ void DeviceManager::printDevices(ostream &os) const
            << endl;
 
         if (dev->getName().size() > 0)
-            os << "          " + dev->getName() << endl;
+            os << "          " + dev->getShortName() << ": "
+               << dev->getName() << endl;
 
         // reset fill character
         os << setfill(' ');

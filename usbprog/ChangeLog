@@ -2,6 +2,8 @@
 
 	* fixed wrong "firmware file invalid" error in the GUI when specifying
 	  a local file for uploading
+	* it's now possible to specify a device name for the "device" command
+	  instead of the device number
 
 2007-12-10  Bernhard Walle <bernhard.walle@gmx.de>
 

@@ -52,12 +52,16 @@ class Device {
         void setName(const std::string &name);
         std::string getName() const;
 
+        void setShortName(const std::string &shortName);
+        std::string getShortName() const;
+
         struct usb_device *getHandle() const;
 
     private:
         struct usb_device *m_handle;
         bool m_updateMode;
         std::string m_name;
+        std::string m_shortName;
 };
 
 bool operator==(const Device &a, const Device &b);

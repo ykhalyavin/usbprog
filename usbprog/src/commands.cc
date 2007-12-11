@@ -571,15 +571,44 @@ DeviceCommand::DeviceCommand(DeviceManager *devicemanager,
 bool DeviceCommand::execute(CommandArgVector args, ostream &os)
     throw (ApplicationError)
 {
-    unsigned int device = args[0]->getUInteger();
+    string device = args[0]->getString();
 
     if (m_devicemanager->getNumberUpdateDevices() == 0)
         m_devicemanager->discoverUpdateDevices(m_firmwarepool);
 
-    if (device < 0 || device >= m_devicemanager->getNumberUpdateDevices())
-        throw ApplicationError("Invalid device number specified.");
+    bool is_number = true;
+    for (int i = 0; i < device.size(); i++) {
+        if (!isdigit(device[i])) {
+            is_number = false;
+            break;
+        }
+    }
 
-    m_devicemanager->setCurrentUpdateDevice(device);
+    int updatedevice = -1;
+
+    if (is_number) {
+        stringstream ss;
+        ss << device;
+        ss >> updatedevice;
+
+        if (updatedevice < 0 || updatedevice >= m_devicemanager->getNumberUpdateDevices())
+            throw ApplicationError("Invalid device number specified.");
+    } else {
+
+        for (int i = 0; i < m_devicemanager->getNumberUpdateDevices(); i++) {
+            Device *dev = m_devicemanager->getDevice(i);
+
+            if (dev->getShortName() == device) {
+                updatedevice = i;
+                break;
+            }
+        }
+
+        if (updatedevice == -1)
+            throw ApplicationError("Invalid update device name specified.");
+    }
+
+    m_devicemanager->setCurrentUpdateDevice(updatedevice);
 
     return true;
 }
@@ -594,7 +623,7 @@ size_t DeviceCommand::getArgNumber() const
 CommandArg::Type DeviceCommand::getArgType(size_t pos) const
 {
     switch (pos) {
-        case 0:         return CommandArg::UINTEGER;
+        case 0:         return CommandArg::STRING;
         default:        return CommandArg::INVALID;
     }
 }
@@ -603,7 +632,7 @@ CommandArg::Type DeviceCommand::getArgType(size_t pos) const
 string DeviceCommand::getArgTitle(size_t pos) const
 {
     switch (pos) {
-        case 0:         return "device number";
+        case 0:         return "device";
         default:        return "";
     }
 }
@@ -618,10 +647,12 @@ string DeviceCommand::help() const
 void DeviceCommand::printLongHelp(ostream &os) const
 {
     os << "Name:            cache\n"
-       << "Argument:        device number\n\n"
+       << "Argument:        device number|device name\n\n"
        << "Description:\n"
        << "Sets the update device for the \"upload\" command. You have to use\n"
        << "an integer number which you can obtain with the \"devices\" command.\n"
+       << "Alternatively, you can also use the short device name in the 2nd line\n"
+       << "of the output of the \"devices\" command\n"
        << endl;
 }
 
