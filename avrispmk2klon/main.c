@@ -686,15 +686,16 @@ void USBFlash(char *buf)
       //PORTB |=(1<<SCK);
       //PORTB &= ~(1<<SCK);
       // set_reset    ;  set RESET = 1
+      
       if(usbprog.reset_pol==1)
-	  {
+      {
      	PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
      	wait_ms(10);
      	PORTB &= ~(1<<RESET_PIN);
      	wait_ms(10);
       }
-	  else
-	  {
+      else
+      {
     	PORTB &= ~(1<<RESET_PIN);
     	wait_ms(10);
     	PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
@@ -718,13 +719,13 @@ void USBFlash(char *buf)
 	wait_ms(10);
         result = spi_in();
         //SendHex(result);
-        if (result == buf[6]) {  //0x53 for avr
+        //if (result == buf[6]) {  //0x53 for avr
 		spi_out(0x00);
           answer[1] = STATUS_CMD_OK;
           CommandAnswer(2);
           return;
           break;
-        }
+        //}
         spi_out(0x00);
         wait_ms(20);
         spi_out(0xac);
