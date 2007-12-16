@@ -1,7 +1,8 @@
 MAINTAINERCLEANFILES  = Makefile.in
 INCLUDES                = -I$(top_builddir) -I$(top_srcdir)
 
-EXTRA_DIST              = usbprog.xpm usbprog_icon.xpm
+EXTRA_DIST              = usbprog.xpm usbprog_icon.xpm \
+			  usbprog-gui.pod usbprog-gui.1
 bin_PROGRAMS            = usbprog-gui
 usbprog_gui_SOURCES  	= usbprogFrm.h usbprogFrm.cc \
 			  usbprogApp.h usbprogApp.cc

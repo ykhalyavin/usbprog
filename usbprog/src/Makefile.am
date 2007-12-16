@@ -1,7 +1,7 @@
-MAINTAINERCLEANFILES  = Makefile.in
+MAINTAINERCLEANFILES    = Makefile.in
 INCLUDES                = -I$(top_builddir) -I$(top_srcdir)
 
-EXTRA_DIST              = usbprog.rc
+EXTRA_DIST              = usbprog.rc usbprog.pod usbprog.1
 bin_PROGRAMS            = usbprog
 usbprog_SOURCES  	= io.h io.cc \
 			  usbprog.h usbprog.cc \
@@ -15,8 +15,8 @@ usbprog_LDADD		= ../usbprog/libusbprog.la
 man_MANS		= usbprog.1
 
 
-usbprog.1: usbprog.pod 
+usbprog.1: usbprog.pod
 	$(POD2MAN) usbprog.pod          \
 		--center="USBprog" 	\
 		--release=$(VERSION)	\
-		> usbprog.1
+		> $(srcdir)/src/usbprog.1
