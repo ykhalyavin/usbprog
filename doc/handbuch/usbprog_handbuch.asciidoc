@@ -96,7 +96,7 @@ Unter Windows wurde die Installation mit einem Installer weitestgehend automatis
 * Download Installer (http://www.embedded-projects.net/octopus -> Unternavigation Downloads)
 * Starten des setup.exe
 * Anschliessend Octopus anstecken
-* Treiber automatisch wÃ¤hlen selektieren
+* Treiber automatisch wählen selektieren
 * Windows sollte den passenden Treiber finden
 
 SCREENSHOT
@@ -254,7 +254,148 @@ TDB
 AVR ISP Programmer (STK500 kompatibel)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Der AVR ISP Programmer wurde nach den freigegeben Datenblättern von Atmel entwickelt.
+Daher kann er mit allen Anwendungen die den AVR ISP mkII unterstützen genutzt werden.
+
+Die bekanntesten Anwendungen sind:
+
+* AVR Studio 4
+* avrdude (GNU/Linux,Windows,MacOS)
+* CodeVisionAVR http://www.hpinfotech.ro/html/download.htm
+
+Im folgenden wird kurz erklärt was bei der Installation und Verwendung vom AVR Studio
+und avrdude wichtig zu beachten ist.
+
+
+AVR Studio 4
+^^^^^^^^^^^^
+
+Das AVR Studio liefert eigene Treiber für den originalen AVR ISP Programmer mit.
+Bei der Installation muss jedoch explizit angegeben werden, dass diese auch
+installiert werden. Ist das AVR Studio bereits installiert, kann nachträglich
+über die Systemsteuerung -> Software -> Reparieren der Treiber aktiviert werden.
+
+Steckt man den USBprog mit der AVR Programmer Firmware an, so sollte Windows
+automatisch den AVR Stuido Treiber (Jungo) finden und aktivieren.
+
+
+avrdude unter Windows
+^^^^^^^^^^^^^^^^^^^^^
+Das bekannte Programm avrdude aus der Linux-Welt kann ebenfalls in Windows genutzt werden.
+Es befindet sich im Archiv von WinAVR. Das bedeutet es muss zuerst WinAVR aus dem Internet
+heruntergeladen und installiert werden.
+
+
+*Verwendung des AVR Studio Treibers*
+
+Nachdem WinAVR Installiert ist, muss man dafür sorgen das Windows einen Treiber für USBprog
+mit dem AVR Programmer hat. Entweder verwendet man den originalen AVR Studio Treiber, dafür
+muss man aber das AVR Stuido wie im Absatz AVR Studio 4 beschrieben installieren, oder man
+installiert einen freien libusb Treiber der bereits im WinAVR Paket mitgeliefert wird.
+
+*Verwendung des freien libusb Treibers*
+
+Alternativ zum originalen Treiber kann auch der freie libusb Treiber installiert werden. Wenn
+der Windowsassistent sich öffnet muss gewählt werden, dass der Pfad zum Treiber manuell angegeben wird.
+Die Treiberdateien befinden sich nach der Installation von WinAVR im Vereichnis c:\WinAVR\utils\libusb.
+
+avrdude unter GNU/Linux
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Entweder kann avrdude über die Paketverwaltung installiert werden oder es wird der klassische
+Linux Installationsprozess gewählt.
+
+Installation per APT (Debian/Ubuntu/etc) (als root ausführen)
+--------------------------------------------------------------------------
+rechner:/home/sauter# apt-get install avrdude
+Reading package lists... Done
+Building dependency tree... Done
+Suggested packages:
+  avrdude-doc
+The following NEW packages will be installed:
+  avrdude
+0 upgraded, 1 newly installed, 0 to remove and 47 not upgraded.
+Need to get 0B/154kB of archives.
+After unpacking 700kB of additional disk space will be used.
+Selecting previously deselected package avrdude.
+(Reading database ... 66442 files and directories currently installed.)
+Unpacking avrdude (from .../avrdude_5.2-2_i386.deb) ...
+Setting up avrdude (5.2-2) ...
+--------------------------------------------------------------------------
+
+Klassische Linux Installation
+
+Für die Installation muss das neuste Quelltextarchiv zuvor heruntergeladen werden.
+Die aktuelleste Version kann von der Internetseite http://download.savannah.gnu.org/releases/avrdude/
+ausgewählt werden.
+
+
+--------------------------------------------------------------------------
+sauter:/home/sauter# cd /usr/src/
+sauter:/usr/src# wget http://download.savannah.gnu.org/releases/avrdude/avrdude-5.5.tar.gz
+--13:11:10--  http://download.savannah.gnu.org/releases/avrdude/avrdude-5.5.tar.gz
+           => `avrdude-5.5.tar.gz'
+Resolving download.savannah.gnu.org... 199.232.41.75
+Connecting to download.savannah.gnu.org|199.232.41.75|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 453,614 (443K) [application/x-gzip]
+
+100%[=======================>] 453,614      211.89K/s             
+
+13:11:13 (211.44 KB/s) - `avrdude-5.5.tar.gz' saved [453614/453614]
+
+sauter:/usr/src# tar xzf avrdude-5.5.tar.gz 
+sauter:/usr/src# cd avrdude-5.5
+sauter:/usr/src/avrdude-5.5# ./configure 
+....
+config.status: creating doc/Makefile
+config.status: creating windows/Makefile
+config.status: creating avrdude.spec
+config.status: creating Makefile
+config.status: creating avrdude.conf.tmp
+config.status: creating ac_cfg.h
+config.status: executing depfiles commands
+sauter:/usr/src/avrdude-5.5# 
+--------------------------------------------------------------------------
+
+An dieser Stelle kann es zu Fehler kommen, wenn die Bibliothek libusb
+nicht installiert ist. Auf einem Debian basierenden System kann wieder
+per APT die fehlenden Komponenten installiert werden. Ebenso werden
+die Programme bison, flex und g++ für die Übersetzung des Quelltextes benötigt.
+
+------------------------------------------------------------------------------------
+rechner:/usr/src/avrdude-5.5# apt-get install libusb-0.1-4 libusb-dev bison flex g++
+------------------------------------------------------------------------------------
+
+Der letzte Befehl muss zwingend als root ausgeführt werden.
+
+--------------------------------------------------------------------------
+sauter:/usr/src/avrdude-5.5# make
+sauter:/usr/src/avrdude-5.5# make install 
+--------------------------------------------------------------------------
+
+
+avrdude Bedienhinweise
+^^^^^^^^^^^^^^^^^^^^^^
+
 TDB
+
+Ein Aufruf um die Signatur eines ATMega32 auszulesen sieht wie folgt aus:
+-----------------------------------
+avrdude -p m32 -c avrispv2 -P usb
+-----------------------------------
+
+
+Beliebte Fehlerquellen bei AVR ISP Programmer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+BLA
+
+* VCC Jumper falsch gesteckt
+* Reset Jumper gesteckt obwohl er entfernt sein muss
+* Falsche ISP Geschwindigkeit (max 1/4 des CPU Takts)
+* Angabe der richtigen ISP Geschwindigkeit mit avrdude mit dem Parameter -B 8 (125 kHz) oder -B 1 (1MHz)
+
 
 OpenOCD ARM7/ARM9 Debugger
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
