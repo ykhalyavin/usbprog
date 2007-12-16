@@ -12,3 +12,11 @@ usbprog_SOURCES  	= io.h io.cc \
 			  commands.cc commands.h \
 			  main.cc
 usbprog_LDADD		= ../usbprog/libusbprog.la
+man_MANS		= usbprog.1
+
+
+usbprog.1: usbprog.pod 
+	$(POD2MAN) usbprog.pod          \
+		--center="USBprog" 	\
+		--release=$(VERSION)	\
+		> usbprog.1

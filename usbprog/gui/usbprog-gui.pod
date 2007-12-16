@@ -1,0 +1,31 @@
+
+=head1 NAME
+
+usbprog-gui - GUI Programmer for the USBprog hardware
+
+
+=head1 SYNOPSIS
+
+usbprog-gui
+
+
+=head1 DESCRIPTION
+
+This is the GUI version of the USBprog programmer. There are no command line
+options. Use B<usbprog> is you prefer a command line version.
+
+
+
+=head1 AUTHOR
+
+The USBprog program and documentation has been written by Bernhard Walle
+E<lt>bernhard.walle@gmx.deE<gt>.
+
+=head1 SEE ALSO
+
+usbprog(1), I<http://www.embedded-projects.net/index.php?page_id=135>
+
+
+=cut
+
+# vim: set spelllang=en_gb spell fdm=marker tw=78:

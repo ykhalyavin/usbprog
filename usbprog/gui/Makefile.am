@@ -7,3 +7,10 @@ usbprog_gui_SOURCES  	= usbprogFrm.h usbprogFrm.cc \
 			  usbprogApp.h usbprogApp.cc
 usbprog_gui_LDADD	= ../usbprog/libusbprog.la \
 			  @WX_LIBS@
+man_MANS		= usbprog-gui.1
+
+usbprog-gui.1: usbprog-gui.pod 
+	$(POD2MAN) usbprog-gui.pod      \
+		--center="USBprog GUI" 	\
+		--release=$(VERSION)	\
+		> usbprog-gui.1

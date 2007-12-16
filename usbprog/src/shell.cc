@@ -396,7 +396,7 @@ bool HelpCommand::execute(CommandArgVector args, ostream &os)
     }
 
     os << endl;
-    os << "To get more information about a specific command, use"
+    os << "To get more information about a specific command, use "
        << "\"helpcmd command\"." << endl;
 
     return true;

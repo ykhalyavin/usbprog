@@ -1,6 +1,8 @@
 2007-12-16  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* implemented cache commands in the GUI
+	* small corrections in command descriptions
+	* added manpages
 
 2007-12-11  Bernhard Walle <bernhard.walle@gmx.de>
 

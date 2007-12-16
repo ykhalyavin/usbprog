@@ -412,7 +412,7 @@ CommandArg::Type DownloadCommand::getArgType(size_t pos) const
 string DownloadCommand::getArgTitle(size_t pos) const
 {
     switch (pos) {
-        case 0:         return "download";
+        case 0:         return "firmware";
         default:        return "";
     }
 }
@@ -457,9 +457,9 @@ bool CacheCommand::execute(CommandArgVector args, ostream &os)
     string cmd = args[0]->getString();
 
     try {
-        if (cmd == "cleanup")
+        if (cmd == "clean")
             m_firmwarepool->cleanCache();
-        else if (cmd == "clear")
+        else if (cmd == "delete")
             m_firmwarepool->deleteCache();
         else
             throw ApplicationError(cmd + ": Invalid command for \"cache\".");
@@ -489,7 +489,7 @@ CommandArg::Type CacheCommand::getArgType(size_t pos) const
 string CacheCommand::getArgTitle(size_t pos) const
 {
     switch (pos) {
-        case 0:         return "operation [clear/cleanup]";
+        case 0:         return "operation [clean/delete]";
         default:        return "";
     }
 }
@@ -504,10 +504,10 @@ string CacheCommand::help() const
 void CacheCommand::printLongHelp(ostream &os) const
 {
     os << "Name:            cache\n"
-       << "Argument:        operation (clear/cleanup)\n\n"
+       << "Argument:        operation (clean/delete)\n\n"
        << "Description:\n"
-       << "The \"clear\" operation deletes the whole cache. All firmware files\n"
-       << "have to be downloaded again. The \"cleanup\" operation only deletes\n"
+       << "The \"delete\" operation deletes the whole cache. All firmware files\n"
+       << "have to be downloaded again. The \"clean\" operation only deletes\n"
        << "obsolete firmware files, i.e. firmware data for which a newer version\n"
        << "is available."
        << endl;

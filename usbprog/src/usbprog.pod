@@ -1,0 +1,163 @@
+
+=head1 NAME
+
+usbprog - Programmer for the USBprog hardware
+
+
+=head1 SYNOPSIS
+
+usbprog [options] [commands]
+
+
+=head1 DESCRIPTION
+
+USBprog has two modes: An interactive mode and a batch mode. Both mode use
+exactly the same commands. As every command takes a fixed number of arguments,
+no separator is necessary between commands -- just specify as much commands as
+you would like to execute.
+
+The B<help> command gives a list of all commands, B<?> I<command> can be used
+to get help for a specific command. Example:
+
+  (usbprog) help
+  (usbprog) ? upload
+
+
+=head1 OPTIONS
+
+Following options can be specified, both for the interactive and the batch
+mode:
+
+=over 7
+
+=item B<-h> | B<--help>
+
+Prints a short help.
+
+=item B<-v> | B<--version>
+
+Prints the version number to standard output.
+
+=item B<-d> | B<--datadir> I<datadir>
+
+Uses I<datadir> instead of F<~/.usbprog>.
+
+=item B<-o> | B<--offline>
+
+Don't try to connect to the internet. Use the cached firmware and index
+file(s) only.
+
+=item B<-d> | B<--debug>
+
+Enable some debugging output. Almost useless.
+
+=back
+
+=head1 COMMANDS
+
+This section describes all commands. As mentioned above, the syntax is the
+same for interactive and batch usage.
+
+=over 7
+
+=item B<help>
+
+This just prints an overview about every command, i.e. the command name
+and an one-sentence description.
+
+=item B<helpcmd> | B<?> I<command>
+
+Print a detailed description for I<command>.
+
+=item B<exit> | B<quit>
+
+Quit the program. On Unix, you can also send an I<EOF> by pressing I<Ctrl-d>
+on your terminal.
+
+=item B<copying> | B<license>
+
+Prints a short license (GPL) text and the version number of the program.
+
+=item B<list> | B<firmwares>
+
+Prints a list of available firmwares. A I<[*]> shows that the firmware is
+available in the offline cache.
+
+=item B<download> I<firmware>
+
+Downloads the specified I<firmware>. Use the same string as you retrieved from
+the B<firmwares> command described above. This command doesn't work in offline
+mode.
+
+=item B<info> I<firmware>
+
+Shows some basic information about I<firmware> like what it does, the latest
+version number, the author and the USB ID which the USBprog device has after
+this firmware has been uploaded. See also the B<pins> command.
+
+=item B<pins> I<firmware>
+
+This shows the PIN assignment of I<firmware> and the meaning of the LED and
+jumpers. See also the B<info> command for basic information about the
+I<firmware>.
+
+=item B<cache> I<clean> | I<delete>
+
+I<clean> deletes all old firmware versions from the firmware cache, i.e. if
+the latest version of a firmware is 5, then it deletes the versions 0 to 4 if
+they are still on disk. The I<delete> command deletes the whole firmware
+cache. Only the index and history file are in the cache directory after
+executing this command.
+
+=item B<devices>
+
+Shows a list of connected USB devices related to USBprog. The currently used
+update device an be set with B<device> and is also marked in the output.
+
+=item B<device> I<number> | I<name>
+
+Sets the update device for the B<upload> command. You have to use the integer
+I<number> or the device I<name> you retrieved from the B<devices> command.
+
+=item B<upload> I<firmware> | I<file>
+
+Uploads a new firmware. The firmware identifier can be found with the
+B<list> command. Alternatively, you can also specify a file name on the disk.
+The extension doesn't matter.
+
+=back
+
+=head1 FILES
+
+=over 7
+
+=item I<~/.usbprog/version.xml>
+
+Index file, downloaded from I<http://www.ixbat.de/usbprog/versions.xml>.
+
+=item I<~/.usbprog/history>
+
+The saved readline(1) history.
+
+=item I<~/.usbprog/*>
+
+The rest in that directory are firmware files. The naming scheme is
+I<name>.I<version>.
+
+=back
+
+
+=head1 AUTHOR
+
+The USBprog program and documentation has been written by Bernhard Walle
+E<lt>bernhard.walle@gmx.deE<gt>.
+
+=head1 SEE ALSO
+
+usbprog-gui(1), I<http://www.embedded-projects.net/index.php?page_id=135>
+
+
+
+=cut
+
+# vim: set spelllang=en_gb spell fdm=marker tw=78:
