@@ -59,6 +59,9 @@ class usbprogFrm : public wxFrame {
         void onlineRadioHandler(wxCommandEvent &evt);
         void poolRadioHandler(wxCommandEvent &evt);
         void uploadHandler(wxCommandEvent &evt);
+        void cleanCache(wxCommandEvent &evt);
+        void deleteCache(wxCommandEvent &evt);
+        void downloadAll(wxCommandEvent &evt);
 
     protected:
         Firmware *getSelectedFirmware();
@@ -108,7 +111,10 @@ class usbprogFrm : public wxFrame {
             ID_PROCESS_GAUGE,
             ID_COPYRIGHT_LABEL,
             ID_EXIT_MENU,
-            ID_ABOUT_MENU
+            ID_ABOUT_MENU,
+            ID_CACHE_DELETE,
+            ID_CACHE_CLEAN,
+            ID_CACHE_DOWNLOAD_ALL
         };
 };
 

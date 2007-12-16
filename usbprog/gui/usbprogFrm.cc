@@ -54,6 +54,9 @@ BEGIN_EVENT_TABLE(usbprogFrm,wxFrame)
 	EVT_CLOSE(usbprogFrm::OnClose)
     EVT_MENU(ID_EXIT_MENU,              usbprogFrm::exitMenuHandler)
     EVT_MENU(ID_ABOUT_MENU,             usbprogFrm::aboutMenuHandler)
+    EVT_MENU(ID_CACHE_DELETE,           usbprogFrm::deleteCache)
+    EVT_MENU(ID_CACHE_CLEAN,            usbprogFrm::cleanCache)
+    EVT_MENU(ID_CACHE_DOWNLOAD_ALL,     usbprogFrm::downloadAll)
     EVT_COMBOBOX(ID_DEVICECOMBO,        usbprogFrm::deviceComboHandler)
     EVT_BUTTON(ID_REFRESH_DEV_BUTTON,   usbprogFrm::deviceRefreshHandler)
     EVT_BUTTON(ID_REFRESH_POOL_BUTTON,  usbprogFrm::firmwareRefreshHandler)
@@ -144,13 +147,22 @@ void usbprogFrm::CreateGUIControls()
     // menu
     wxMenu *fileMenu = new wxMenu;
     wxMenu *helpMenu = new wxMenu;
+    wxMenu *cacheMenu = new wxMenu;
     fileMenu->Append(ID_EXIT_MENU, wxT("E&xit\tCtrl-q"),
             wxT("Quit this program"));
+    cacheMenu->Append(ID_CACHE_DELETE, wxT("&Delete cache"),
+            wxT("Deletes the whole cache from disk"));
+    cacheMenu->Append(ID_CACHE_CLEAN, wxT("C&lean"),
+            wxT("Deletes old firmware versions from the cache"));
+    cacheMenu->AppendSeparator();
+    cacheMenu->Append(ID_CACHE_DOWNLOAD_ALL, wxT("Download &all"),
+            wxT("Deletes old firmware versions from the cache"));
     helpMenu->Append(ID_ABOUT_MENU, wxT("&About\tF1"),
             wxT("Show version information"));
 
     wxMenuBar *menuBar = new wxMenuBar();
     menuBar->Append(fileMenu, wxT("&Program"));
+    menuBar->Append(cacheMenu, wxT("&Cache"));
     menuBar->Append(helpMenu, wxT("&Help"));
 
     SetMenuBar(menuBar);
@@ -304,6 +316,52 @@ void usbprogFrm::aboutMenuHandler(wxCommandEvent &evt)
             wxT("About ..."),
             wxOK | wxICON_INFORMATION);
     dlg.ShowModal();
+}
+
+/* -------------------------------------------------------------------------- */
+void usbprogFrm::cleanCache(wxCommandEvent &evt)
+{
+    m_firmwarepool->cleanCache();
+}
+
+/* -------------------------------------------------------------------------- */
+void usbprogFrm::deleteCache(wxCommandEvent &evt)
+{
+    m_firmwarepool->deleteCache();
+}
+
+/* -------------------------------------------------------------------------- */
+void usbprogFrm::downloadAll(wxCommandEvent &evt)
+{
+    vector<Firmware *> firmwares = m_firmwarepool->getFirmwareList();
+
+    int totalNo = firmwares.size() - 1;
+    int currentNo = 0;
+    wxBusyCursor cursor;
+
+    for (vector<Firmware *>::const_iterator it = firmwares.begin();
+            it != firmwares.end(); ++it) {
+        try {
+            m_progressGauge->SetValue(int((double(currentNo++)/totalNo*100)));
+            if (m_firmwarepool->isFirmwareOnDisk((*it)->getName()))
+                status("Firmware " + (*it)->getLabel() + " is already there.");
+            else {
+                status("Downloading " + (*it)->getLabel() + " ...");
+                m_firmwarepool->downloadFirmware((*it)->getName());
+            }
+        } catch (const std::exception &ex) {
+            status("Error while downloading firmware " + (*it)->getName() +
+                ": " + ex.what());
+        }
+    }
+
+    m_progressGauge->SetValue(100);
+    wxGetApp().Yield();
+
+    status("Downloading of firmware files has been successful!");
+
+    m_progressGauge->SetValue(0);
+    wxGetApp().Yield();
 }
 
 /* -------------------------------------------------------------------------- */

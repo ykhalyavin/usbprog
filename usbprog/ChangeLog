@@ -1,3 +1,7 @@
+2007-12-16  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* implemented cache commands in the GUI
+
 2007-12-11  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fixed wrong "firmware file invalid" error in the GUI when specifying
