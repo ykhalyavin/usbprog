@@ -45,7 +45,7 @@ MCU = atmega32
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = binary
+FORMAT = ihex 
 
 # Target file name (without extension).
 TARGET = main
@@ -298,6 +298,7 @@ finished:
 end:
 	@echo $(MSG_END)
 	@echo
+	hex2bin main.hex
 
 
 # Display size of file.
@@ -350,7 +351,8 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
-	mv main.hex main.bin
+	hex2bin main.hex
+	#mv main.hex main.bin
 
 %.eep: %.elf
 	@echo
@@ -437,7 +439,7 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex 
+	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex
 
 reset:
 	avrdude -p m32 -c bsd -E noreset

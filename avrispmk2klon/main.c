@@ -540,8 +540,11 @@ void USBFlash(char *buf)
   // if not, this is a command packet, we will decode here
   else {
     usbprog.lastcmd = buf[0]; // store current command for later use
+    //usbprog.datatogl=0;
     switch(buf[0]) {
     case CMD_SIGN_ON:
+
+      usbprog.datatogl=0;
       answer[0] = CMD_SIGN_ON;
       answer[1] = STATUS_CMD_OK;
       answer[2] = 10; // fixed length
@@ -556,6 +559,7 @@ void USBFlash(char *buf)
       answer[11] = 'K';
       answer[12] = '2';
       CommandAnswer(13);
+          
       return;
     break;
     case CMD_SET_PARAMETER:
@@ -719,7 +723,7 @@ void USBFlash(char *buf)
 	wait_ms(10);
         result = spi_in();
         //SendHex(result);
-        //if (result == buf[6]) {  //0x53 for avr
+        //if (result == buf[6]) {  //0x53 for avr //69 AT89
 		spi_out(0x00);
           answer[1] = STATUS_CMD_OK;
           CommandAnswer(2);
@@ -749,7 +753,10 @@ void USBFlash(char *buf)
 
       // wenn adapter vom avrdude aus angesteuert wird
       if(usbprog.avrstudio==0)
-        usbprog.datatogl=0;  // to be sure that togl is on next session clear
+       usbprog.datatogl=0;  // to be sure that togl is on next session clear
+      //usbprog.datatogl=1;  // to be sure that togl is on next session clear
+      //USBNWrite(RXC1, RX_EN);
+
       return;
     break;
 
@@ -819,7 +826,9 @@ void USBFlash(char *buf)
         pgmmode.numbytes = pgmmode.numbytes - 62;
         usbprog.fragmentnumber = 1;
       }
-      else CommandAnswer(pgmmode.numbytes + 2);
+      else {CommandAnswer(pgmmode.numbytes + 2);
+      usbprog.datatogl=0;
+      }
 
       return;
     break;
