@@ -17,6 +17,7 @@
 #define _XOPEN_SOURCE
 #include <string>
 #include <time.h>
+#include <cstring>
 
 #include <usbprog/date.h>
 
@@ -27,6 +28,7 @@
 using std::mktime;
 using std::time;
 using std::string;
+using std::memset;
 
 static const char *formatstrings[] = {
     "%Y-%m-%d %H:%M",           /* DTF_ISO_DATETIME */

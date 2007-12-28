@@ -55,10 +55,19 @@ fi
 # libusb
 #
 PKG_PROG_PKG_CONFIG()
-PKG_CHECK_MODULES([usb], [libusb],[have_libusb="yes"],[have_libusb="no"])
+PKG_CHECK_MODULES([usb], [libusb],[have_libusb="no"],[have_libusb="no"])
 
 if test "${have_libusb}" != yes; then
-	AC_MSG_ERROR([libusb not found, please install it])
+    AC_CHECK_LIB([usb], [usb_init], [have_libusb="yes"], [have_libusb="no"])
+    if test "${have_libusb}" == yes; then
+        AC_CHECK_HEADER([usb.h], [have_libusb="yes"],[have_libusb="no"])
+    fi
+
+    if test "${have_libusb}" != yes; then
+        AC_MSG_ERROR([libusb not found, please install it])
+    else
+        LIBS="$LIBS -lusb"
+    fi
 else
 	CPPFLAGS="$CPPFLAGS $usb_CFLAGS"
 	LIBS="$LIBS $usb_LIBS"

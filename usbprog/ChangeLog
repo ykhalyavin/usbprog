@@ -1,3 +1,8 @@
+2007-12-27  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix compilation with gcc 4.3
+	* fix libusb detection for old libusb versions that have no .pc file
+
 2007-12-16  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* implemented cache commands in the GUI

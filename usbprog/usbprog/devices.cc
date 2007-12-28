@@ -20,6 +20,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <cstring>
 
 #include <unistd.h>
 #include <usb.h>
@@ -39,6 +40,7 @@ using std::right;
 using std::left;
 using std::setw;
 using std::copy;
+using std::memset;
 
 #define VENDOR_ID_USBPROG       0x1781
 #define PRODUCT_ID_USBPROG      0x0c62

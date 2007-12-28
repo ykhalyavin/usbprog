@@ -16,10 +16,12 @@
  */
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 
 #define _GNU_SOURCE 1
 #include <getopt.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "optionparser.h"
 
@@ -31,6 +33,7 @@ using std::endl;
 using std::map;
 using std::list;
 using std::ostream;
+using std::memset;
 
 /* -------------------------------------------------------------------------- */
 OptionValue::OptionValue()

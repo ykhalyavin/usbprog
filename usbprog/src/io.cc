@@ -17,6 +17,8 @@
 #include <string>
 #include <iostream>
 #include <cerrno>
+#include <cstring>
+#include <cstdlib>
 
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
@@ -36,6 +38,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::strerror;
+using std::free;
 
 /* class definitions {{{1 */
 
