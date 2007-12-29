@@ -21,6 +21,8 @@
 #include <string.h>
 #include "usbn960x.h"
 
+#define DEBUG 0
+
 
 EPInfo	EP0rx;
 EPInfo	EP0tx;
@@ -54,10 +56,11 @@ void _USBNNackEvent(void)
 {
   unsigned char event;
   event = USBNRead(NAKEV);
-  //UARTWrite("nack");
+  UARTWrite("n");
  
   USBNWrite(RXC0,FLUSH);	//re-enable the receiver  
-  USBNWrite(TXC0,FLUSH);	    //flush TX0 and disable   
+  //USBNWrite(TXC0,FLUSH);	//re-enable the receiver  
+  //USBNWrite(TXC0,FLUSH);	    //flush TX0 and disable   
   
   //USBNWrite(TXC0,0);	    //flush TX0 and disable   
   USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
@@ -65,8 +68,11 @@ void _USBNNackEvent(void)
   //USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
   //USBNWrite(TXC0,TX_EN);	//re-enable the receiver  
                                                          
-  //USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
-
+  if(EP0tx.DataPid==1)
+    USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+  else
+    USBNWrite(TXC0,TX_EN);  //enable the TX (DATA1)
+/*
 
   if(EP0tx.DataPid==0){
     //ep->DataPid=1;
@@ -76,7 +82,7 @@ void _USBNNackEvent(void)
     //ep->DataPid=0;
     USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
   }
-
+*/
 
  
   /* 
@@ -368,7 +374,7 @@ void _USBNReceiveFIFO0(void)
 	}
 	else                              // if not a setuppacket
 	{
-		//USBNDebug("error transmit\r\n");
+		//USBNDebug("rr");
 		if (EP0tx.Size > EP0tx.usbnfifo)   // multi-pkt status stage? 
 		{
 			#if 0
@@ -380,8 +386,10 @@ void _USBNReceiveFIFO0(void)
 			}
 			#endif
 			EP0tx.Size=0;                // exit multi-packet mode  
+			//EP0tx.DataPid=0;                // exit multi-packet mode  
 			USBNWrite(TXC0,FLUSH);       // flush TX0 and disable   
-			USBNWrite(RXC0,RX_EN);          // re-enable the receiver  
+			USBNWrite(RXC0,FLUSH);       // flush TX0 and disable   
+			USBNWrite(RXC0,RX_EN);       // re-enable the receiver  
 		}
 	}		 
 }
@@ -454,6 +462,7 @@ void _USBNTransmit(EPInfo* ep)
   int i;
   if(ep->Size > 0)
   {
+    UARTWrite("t");
     if(ep->Index < ep->Size)
     {
       
@@ -466,12 +475,31 @@ void _USBNTransmit(EPInfo* ep)
       }
 
       // if end of multipaket
-      if(ep->Size<=ep->Index)
-	USBNWrite(RXC0,RX_EN);
+      if(ep->Size<=ep->Index){
+	UARTWrite("x");
+	SendHex(ep->Size);
+	SendHex(ep->Index);
+	
+	if(ep->Index==48){
+	  //USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
+
+	  //EP0tx.DataPid = 1;
+	  //USBNWrite(TXC0,FLUSH);
+	  //USBNWrite(TXD0,0);
+	  //USBNWrite(TXC0,TX_EN);
+	  //USBNWrite(RXC0,FLUSH);
+	  //USBNWrite(RXC0,RX_EN);
+
+	  //ep->DataPid =1;
+	  //return;
+	  }
+      }
     }
     else
     {
+      UARTWrite("e");
       USBNWrite(RXC0,RX_EN);
+      return;
     }
 
     // toggle mechanism
@@ -577,9 +605,21 @@ void _USBNGetDescriptor(DeviceRequest *req)
       }
       else {
 	char lang[]={0x04,0x03,0x09,0x04};
-	  EP0tx.Buf = &FinalStringArray[0][0];
-	  EP0tx.Size=4;
-          EP0tx.Buf=lang;
+	//EP0tx.Buf = &FinalStringArray[0][0];
+	EP0tx.Size=4;
+        EP0tx.Buf=lang;
+	_USBNTransmit(&EP0tx);
+	//USBNWrite(TXC0,FLUSH);
+	//USBNWrite(RXC0,FLUSH);
+	//USBNWrite(RXC0,RX_EN);
+	//USBNWrite(TXD0,0);
+	//USBNWrite(TXC0,TX_EN+TX_TOGL);
+	//if(EP0tx.DataPid==0)
+	//  USBNWrite(TXC0,TX_EN+TX_TOGL);
+	//else
+	//  USBNWrite(TXC0,TX_EN);
+
+	return;
       }
       break;
 
@@ -588,6 +628,12 @@ void _USBNGetDescriptor(DeviceRequest *req)
   //  if (EP0tx.Size > EP0rx.Buf[6]) EP0tx.Size = EP0rx.Buf[6];
 
   _USBNTransmit(&EP0tx);
+  //_USBNTransmit(&EP0tx);
+//USBNWrite(TXD0,0);
+	//USBNWrite(TXC0,FLUSH);
+	//USBNWrite(TXC0,TX_EN+TX_TOGL);
+
+
 }
 
 
