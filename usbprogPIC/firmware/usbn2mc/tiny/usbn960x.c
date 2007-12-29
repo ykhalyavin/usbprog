@@ -56,22 +56,26 @@ void _USBNNackEvent(void)
 {
   unsigned char event;
   event = USBNRead(NAKEV);
-  UARTWrite("n");
- 
-  USBNWrite(RXC0,FLUSH);	//re-enable the receiver  
-  //USBNWrite(TXC0,FLUSH);	//re-enable the receiver  
-  //USBNWrite(TXC0,FLUSH);	    //flush TX0 and disable   
-  
-  //USBNWrite(TXC0,0);	    //flush TX0 and disable   
-  USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
 
-  //USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
-  //USBNWrite(TXC0,TX_EN);	//re-enable the receiver  
-                                                         
-  if(EP0tx.DataPid==1)
+//UARTWrite("n");
+/* 
+USBNWrite(RXC0,FLUSH);	//re-enable the receiver  
+USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
+
+USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
+USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
+*/
+//USBNWrite(TXC0,TX_EN);	//re-enable the receiver  
+/*                                                       
+  if(EP0tx.DataPid==1){
+    //EP0tx.DataPid=0;
     USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
-  else
+  }
+  else {
+    //EP0tx.DataPid=1;
     USBNWrite(TXC0,TX_EN);  //enable the TX (DATA1)
+  }
+*/
 /*
 
   if(EP0tx.DataPid==0){
@@ -387,7 +391,7 @@ void _USBNReceiveFIFO0(void)
 			#endif
 			EP0tx.Size=0;                // exit multi-packet mode  
 			//EP0tx.DataPid=0;                // exit multi-packet mode  
-			USBNWrite(TXC0,FLUSH);       // flush TX0 and disable   
+			//USBNWrite(TXC0,FLUSH);       // flush TX0 and disable   
 			USBNWrite(RXC0,FLUSH);       // flush TX0 and disable   
 			USBNWrite(RXC0,RX_EN);       // re-enable the receiver  
 		}
@@ -403,7 +407,7 @@ void _USBNTransmitFIFO0(void)
 
   txstat = USBNRead(TXS0);                        // get transmitter status
     #if DEBUG
-    USBNDebug("t");
+    USBNDebug("o");
     #endif
 
   if(txstat & TX_DONE)                            // if transmit completed
@@ -463,7 +467,7 @@ void _USBNTransmit(EPInfo* ep)
   if(ep->Size > 0)
   {
     UARTWrite("t");
-    if(ep->Index < ep->Size)
+    if(ep->Index <= ep->Size)
     {
       
       USBNWrite(TXC0,FLUSH);       //send data to the FIFO
@@ -476,10 +480,11 @@ void _USBNTransmit(EPInfo* ep)
 
       // if end of multipaket
       if(ep->Size<=ep->Index){
-	UARTWrite("x");
-	SendHex(ep->Size);
-	SendHex(ep->Index);
 	
+	//UARTWrite("x");
+	//SendHex(ep->Size);
+	//SendHex(ep->Index);
+/*	
 	if(ep->Index==48){
 	  //USBNWrite(TXC0,TX_TOGL+TX_EN);  //enable the TX (DATA1)
 
@@ -493,6 +498,7 @@ void _USBNTransmit(EPInfo* ep)
 	  //ep->DataPid =1;
 	  //return;
 	  }
+	  */
       }
     }
     else
@@ -602,22 +608,26 @@ void _USBNGetDescriptor(DeviceRequest *req)
       {
 	EP0tx.Buf = &FinalStringArray[index][0];
 	EP0tx.Size = EP0tx.Buf[0];
+	
+	UARTWrite("a");
+	_USBNTransmit(&EP0tx);
+	UARTWrite("b");
+	return; 
+
       }
       else {
-	char lang[]={0x04,0x03,0x09,0x04};
+	char lang[]={0x04,0x03,0x09,0x04,0,0,0,0,0};
 	//EP0tx.Buf = &FinalStringArray[0][0];
 	EP0tx.Size=4;
         EP0tx.Buf=lang;
+	UARTWrite("x");
 	_USBNTransmit(&EP0tx);
+	UARTWrite("y");
 	//USBNWrite(TXC0,FLUSH);
 	//USBNWrite(RXC0,FLUSH);
 	//USBNWrite(RXC0,RX_EN);
 	//USBNWrite(TXD0,0);
 	//USBNWrite(TXC0,TX_EN+TX_TOGL);
-	//if(EP0tx.DataPid==0)
-	//  USBNWrite(TXC0,TX_EN+TX_TOGL);
-	//else
-	//  USBNWrite(TXC0,TX_EN);
 
 	return;
       }
@@ -648,14 +658,14 @@ void _USBNSetConfiguration(DeviceRequest *req)
 
 	// interrupt ddresse 83 raus
 	USBNWrite(TXC1,FLUSH);
-	USBNWrite(EPC1,EP_EN+0x03); 
+	USBNWrite(EPC1,EP_EN+0x01); 
 
 	USBNWrite(RXC1,FLUSH);					// EP1 rein	mit callback function rein
 	USBNWrite(EPC2,EP_EN+0x01); 
 	USBNWrite(RXC1,RX_EN);
 
-	USBNWrite(TXC2,FLUSH);					// interrupt ddresse 83 raus
-	USBNWrite(EPC3,EP_EN+0x01); 
+	//USBNWrite(TXC2,FLUSH);					// interrupt ddresse 83 raus
+	//USBNWrite(EPC3,EP_EN+0x01); 
 
 	
 /* 

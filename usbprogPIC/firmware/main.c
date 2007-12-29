@@ -11,6 +11,13 @@
 #include "usbn2mc/fifo.h"
 #include "../../usbprog_base/firmwarelib/avrupdate.h"
 
+void CommandAnswer(int length);
+volatile char answer[64];
+
+volatile struct usbprog_t {
+  int datatogl;
+} usbprog;
+
 
 
 void interrupt_ep_send();
@@ -127,17 +134,46 @@ SIGNAL(SIG_INTERRUPT0)
 	USBNInterrupt();
 }
 
+void CommandAnswer(int length)
+{
+  int i;
+
+  USBNWrite(TXC1, FLUSH);
+  for(i = 0; i < length; i++)
+    USBNWrite(TXD1, answer[i]);
+
+  /* control togl bit */
+  USBToglAndSend();
+}
+
+
+void USBToglAndSend(void)
+{
+  if(usbprog.datatogl == 1) {
+    USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
+    usbprog.datatogl = 0;
+  } else {
+    USBNWrite(TXC1, TX_LAST+TX_EN);
+    usbprog.datatogl = 1;
+  }
+}
+
 
 /*************** usb class HID requests  **************/
 
 // reponse for requests on interface
-//void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep)
 void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 {
   //UARTWrite("Class\r\n");
+  // uncompleted 
   USBNWrite(TXC0,FLUSH);
-  USBNWrite(TXD0,0);
+  USBNWrite(TXD0,0x29);
+  USBNWrite(TXD0,0x40);
+  USBNWrite(TXD0,0x91);
+  USBNWrite(TXD0,0x02);
+  USBNWrite(TXD0,0xC0);
   USBNWrite(TXC0,TX_TOGL+TX_EN);
+  
 }
 
 /* id need for live update of firmware */
@@ -152,7 +188,6 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 }
 
 // class requests
-//void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep)
 {
         // 81 06 22 get report descriptor
@@ -170,20 +205,22 @@ void USBNInterfaceRequests(DeviceRequest *req,EPInfo* ep)
 }
 
 
-// usb zu rs232
-void USBtoRS232(char * buf)
+// used
+void FromPC(char * buf)
 {
+      usbprog.datatogl=0;
 
-	//fifo_put(toRS232FIFO,0x33);
-	//fifo_put(toRS232FIFO,0x34);
-	//fifo_put(toRS232FIFO,0x35);
-	UARTPutChar(buf[0]);
+      SendHex(buf[0]);
+      SendHex(buf[1]);
+      SendHex(buf[2]);
 
-	//USBNWrite(TXC2,FLUSH);
-	//USBNWrite(TXD2,0x44);
-	//rs232_send();	
-	//UARTWrite("usb to rs232");
-	
+
+      int i;
+      for(i=0;i<64;i++)
+	answer[i]=0;
+      answer[0]=0x02;
+      answer[1]=0x0A;
+      CommandAnswer(64);
 }
 
 
@@ -220,7 +257,7 @@ int main(void)
 	fifo_init (toRS232FIFO, toRS232Buf, 100);
 	fifo_init (toUSBFIFO, toUSBBuf, 100);
 	
-	USBNCallbackFIFORX1(&USBtoRS232);
+	USBNCallbackFIFORX1(&FromPC);
 	//USBNCallbackFIFOTX2Ready(&USBtoRS232);
 
 	sei();			// activate global interrupts
@@ -232,7 +269,8 @@ int main(void)
 	_USBNAddStringDescriptor(""); //pseudo lang
 	_USBNAddStringDescriptor("Microchip Technology Inc.");
 	//_USBNAddStringDescriptor("abcdefgh");
-	_USBNAddStringDescriptor("PICkit 2 Microcontroller Programmer");
+	_USBNAddStringDescriptor("PICkit 2 Microcontroller Programmer     ");
+	//_USBNAddStringDescriptor("PICkit 2 Microcontroller Programmer");
 	//_USBNAddStringDescriptor("ijklmnop");
 	_USBNAddStringDescriptor("PIC18F2550");
 	//_USBNAddStringDescriptor("12345678");

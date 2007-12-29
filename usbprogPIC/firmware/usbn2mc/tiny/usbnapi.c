@@ -49,6 +49,7 @@ void USBNStart(void)
   USBNWrite(CCONF, 0x02);           // clock to 16 MHz
 
   USBNWrite(NAKMSK,0xFF);
+  //USBNWrite(NAKMSK,0x00);
   //USBNWrite(NAKMSK,NAK_OUT0);
   USBNWrite(FAR,AD_EN+0x00);            // set default address
   USBNWrite(EPC0,DEF);
