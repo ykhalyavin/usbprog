@@ -1,48 +1,127 @@
 USBprog Handbuch
 ================
-:Author: http://www.embedded-projects.net/usbprog
-:Email: sauter@ixbat.de
+:Author: Benedikt Sauter
+:Email: http://www.embedded-projects.net/usbprog
 :Revision: 0.1
-:Date: November 2007
+:Date: Dezember 2007
 :encoding: ISO-8859-1
 
 
-Im folgenden Handbuch wird die Inbetriebnahme und der Einsatz von Octopus
-in den Betriebssystemen GNU/Linux und Windows beschrieben.
+Im folgenden Handbuch wird die Inbetriebnahme und der Einsatz von USBprog beschrieben.
 
-Mit kleinen Beispielen wird gezeigt, wie von den verschiedensten Programmiersprachen
-aus auf Octopus zugriffen werden kann.
+An dieser Stelle möchte ich mich bei den viele Helfern rund um USBprog bedanken.
+Ohne der Community wäre das Projekt nicht das was es mittlerweile ist. 
 
 
-*Support im Forum*
+*Support*
 
 Support gibt es im Forum auf http://forum.embedded-projects.net/
+oder per E-Mail sauter@ixbat.de.
 
-*Weitere Hilfetexte/Beschreibungen*
-
-Weitere Hilfetexte bzw. Beschreibungen stehen im Wiki unter
-http://wiki.embedded-projects.net. Es können jederzeit die bestehenden
-Artikel angepasst, oder neue verfasst werden.
 
 Einsatzgebiet und Funktionsumfang
 ---------------------------------
 
-TDB
+*Was ist USBprog*
+
+usbprog ist ein freier Programmieradapter. Über USB kann man bequem verschiedene Firmware 
+Versionen aus einem "Firmware-Archiv" einspielen. Der Adapter kann aktuell für das Programmieren 
+und Debuggen von AVR und ARM Prozessoren, als USB zu RS232 Wandler, als JTAG Schnittstelle oder als 
+einfacher I/O-Port (10 Leitungen) eingesetzt werden.
+
+*Wer braucht usbprog?*
+
+Hardware- und Softwareentwickler die unter Windows, Linux & Co arbeiten.
+
+*Was ist das Besondere an dem Konzept von usbprog?*
+
+Mit der Zeit soll ein immer gösserer Pool an Firmware Versionen enstehen. Idealerweise kann man dann 
+als Besitzer von usbprog, wenn man einen neuen Baustein bekommt mit dem man arbeiten soll, in den 
+Online Pool schauen und suchen, ob es eine passende Firmware zum Programmieren oder Ansteuern 
+von diesem Baustein gibt.
+
+Sollte es gerade keine passende Firmware für den benötigten Baustein geben, so sollte man nicht 
+überstürzt hohe Einkaufspreise für Adapter auf sich nehmen, sondern zuerst lieber anfragen, 
+ob es lohnenswert ist, hier eine neue Firmware für usbprog zu schreiben, um somit in den Firmware-Pool 
+zu investieren. Oft ist dies relativ schnell geschehen, da man auf bestehenden Softwarewerkzeuge aufbauen 
+kann. Wie im Falle vom AVR ISP 2 Klon, diesen kann man mit allen Anwendungen nutzen die den originalen 
+Adapter von Atmel unterstützen, oder der Adapter für den OpenOCD war auch ein Produkt, das innerhalb weniger Tagen 
+entwickelt worden ist.
+
+Da alles unter einer Open Source Lizenz steht, sollte das Projekt lange Zeit interessant bleiben!
+
+*Auszug aus der Firmwareliste*
+
+* AVR ISP Programmer (kompatibel zu AVR ISP mkII)
+* OpenOCD Interface (ARM Debugging)
+* Freier JTAG Adapter + Bibliothek 
+* AT89 Programmer 
+* SimplePort (10 I/O Leitungen)
+* USB zu RS232 Wandler (ohne Treiber!!) 
+* XSVF Player (Xilinx CPLD/FPGA)
+* Logikanalysator
+
 
 Montage und Aufbau der Hardware
 -------------------------------
 
-TDB
+Folgende Übersicht gibt einen groben Leitfaden für die Installation an.
+
+- Auspacken des Bausatzes
+- USBprog fertig montieren (löten)
+
+Abhängig ob ein vorprogrammierter Adapter gekauft worden ist, gibt es jetzt zwei mögliche Wege.
+
+- USBprog ist bereits vorprogrammiert
+  . Benötigte Anwendung (z.B. AVR Studio oder Yagarto für OpenOCD installieren)
+  . USBprog Flash Tool installieren (nur optional wenn Firmware gewechselt werden soll)
+- USBprog ist noch nicht programmiert
+  . VCC Jumper entfernen falls externer AVR Programmierer keine Stromversorgung benötigt
+  . Externen AVR Programmierer anstecken
+  . Reset Jumper Stecken
+  . usbprog_base.hex flashen
+  . Fuse Bits programmieren
+  . Jumper entfernen
+  . USBprog Tool installieren (inkl. Treiber)
+  . Am PC anstecken -> Neues Gerät sollte erkannt werden (Treiber automatisch installieren)
+  . Per Flashtool gewünschte Firmware einspielen
+
+Dies war nur ein grober Leitfaden. In den weiteren Abschnitten werden die einzelnen Schritte
+genauer beschrieben.
+
 
 Löten der restlichen Bauteile
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Der Adapter ist anders als die vorherige Version bereits vormontiert. 
+Die SMD Bauteile sind gelötet, nur die "groben" Bauteile müssen angebracht werden. 
+Anstelle der USB-B-Buchse kann auch ein USB-A-Stecker eingelötet werden, welches den Vorteil hat, 
+dass USBprog als USB-Stick in einem passendem Gehäuse verwendet werden kann.
+
+Folgende Schritte sind somit zu erledigen:
 
 * 10-polige Wannenbuchse einlöten
 * USB Buchse montieren und einlöten
 * 4-polige Stiftleiste fixieren und einlöten
 
-Programmierung der Firmware
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FOTO MIT A-Stecker
+
+FOTO MIT Bauteilen
+
+
+Programmierung des Bootloaders
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+USBprog ohne Programmierung wird von keinem System erkannt. Das hat den einfachen Grund, 
+da die Ansteuerung des USB Beusteins über die Firmware implementiert ist. Und wenn diese
+eben nicht im ATmega32 des USBprogs ist, hat das Betriebssystem keine Chance das Gerät zu
+erkennen.
+
+Die Basis für USBprog ist ein Bootloader, der es ermöglich später ohne externen AVR Programmierer
+eine Firmware auszutauschen. Um den Bootloader auf USBprog übertragen zu können
+wird wie bereits ein externer AVR Programmierer benötigt. Im folgenden werden die bekanntesten
+Möglichkeiten beschrieben.
 
 *avrdude unter Linux und Windows*
 
@@ -50,179 +129,122 @@ Falls die Firmware mit einem AVR ISP mkII (oder USBprog AVR Programmer)
 programmiert werden soll, muss als Parameter _-c avrispv2 -P usb_ angegeben werden.
 Für ein einfaches Parallelportkabel reicht _-c bsd_.
 
-* Firmware flashen: avrdude -p m128 -c avrispv2 -P usb -B 8 -U flash:w:octopus.hex
-* lfuse programmieren: avrdude -p m128 -c avrispv2 -P -B 8 -U lfuse:w:0xe0
-* hfuse programmieren: avrdude -p m128 -c avrispv2 -P -B 8 -U hfuse:w:0xdd
-* efuse programmieren: avrdude -p m128 -c avrispv2 -P -B 8 -U efuse:w:0xff
+* Firmware flashen: avrdude -p m32 -c avrispv2 -P usb -B 8 -U flash:w:usbprog_bootloader.hex
+* lfuse programmieren: avrdude -p m32 -c avrispv2 -P -B 8 -U lfuse:w:0xe0
+* hfuse programmieren: avrdude -p m32 -c avrispv2 -P -B 8 -U hfuse:w:0xd8
 
 *AVR Studio*
 
-TDB mit fuse ISP Speed
+TDB FUSE Screenshot
 
 *PonyProg*
 
 TDB mit fuse ISP Speed
 
 
+
+Erster Funktionscheck
+~~~~~~~~~~~~~~~~~~~~~
+
+Nach dem flashen des Bootloader und dem einstelle der FUSE Bits
+kann USBprog bereits vom Betriebssystem erkannt werden.
+
+Es empfiehlt sich die Jumper in folgende Grundstellung zu bringen:
+
+. Resetjumper entfernen. Der Jumper wird wirklich nur für das programmieren des Bootloaders in den USBprog benötigt.
+. Bootloader Jumper entfernen. Nach dem programmieren des Bootloaders befindet sich noch keine Firmware aus USBprog
+und es wird automatisch der Bootloader gestartet.
+. VCC Jumper entfernen. Hiermit kann gesteuert werden wie die nach aussen geführte VCC Leitung beschalten werden soll,
+also ob die Zielschaltung über USBprog versorgt werden soll. Um sicher zu stellen, dass es keinen Kurzschluss
+oder ähnlich gibt sollte der VCC Pin keinen Kontakt haben. Das heisst der Jumper sollte keine Verbindung herstellen._
+
+Mit dem Auge kann geprüft werden, ob der Bootloader starten kann. Dies kann am Blinkrythmus der Status
+LED gesehen werden. Die LED blinkt im Rythmus: kurz an - kurz aus - kurz an - lang aus.
+
+Wenn die LED entsprechend blinkt, bedeutet dies nur, dass der ATmega32 korrekt arbeitet. Ob die
+USB Schnittstelle korrekt arbeitet kann aber nur mit einem Computer überprüft werden.
+
+Blinkt die LED trotz einspielen des Bootloaders und einstellen der Fuse Bits nicht,
+kann mit einem Oszilloskop fest gestellt werden ob die Schaltung denn irgendetwas macht,
+oder ob ein grösseres Problem vorliegt.
+
+Am einfachsten misst man dafür die Frequenz am Taktausgang des USB Bausteins, welcher als
+Taktquelle für den ATmega32 dient und dort auch einfacher gemessen werden kann.
+
+Befindet sich kein Bootloader im ATmega32, oder ist die Kommunikation zwischen dem USB Baustein und
+dem ATmega32 gestört sollten dort 4 MHz anliegen. Ist der Bootloader aktiv so kann dies anhang der
+anliegenden 16 MHz festgestellt werden. Das umschalten der Taktgeschwindigkeit von 4 Mhz auf 16 Mhz klappt
+nur dann wenn die Verbindung zwischen USB Baustein und ATmega32 in Ordunung ist und der Bootloader
+korrekt gestartet ist.
+
+
+BILD OSI MESSEN
+
+*GNU/Linux*
+
+Mit Hilfe des Kommandos lsusb aus den usbutils (Über die Paketverwaltung muss das Paket _usbutils_ zuvor installiert
+worden sein) geprüft werden, ob USBprog mit dem Bootloader vom Betriebssystem erkannt wird.
+
+------------------------------------------
+big:/home/bene# lsusb 
+Bus 002 Device 035: ID 1781:0c62  
+------------------------------------------
+
+Dies ist die Kennung der Bootloaders (1781 = Hersteller ID, 0c62 = Produktnummer)
+
+*Windows*
+
+In Windows sollte der typische Ping Pling Sound hörhbar sein und der Treiber Installationsassistent
+nach dem Ort des Treibers fragen. An dieser Stelle sollte man abbrechen, falls noch nicht
+die USBprog Tools installiert worden sind.
+
+
+
 Installation der Treiber und Software für USBprog
 -------------------------------------------------
 
-Die zentrale Kompomente für Octopus auf dem Computer ist die Zugriffsbibliothek
-liboctopus. Sie bietet Funktionen für den Zugriff auf die einzelnen Schnittstellen
-und Möglichkeiten von Octopus an. Die Bibliotthek liboctopus realisiert die Kommunikation
-über die betriebssystemunabhängige Bibliothek libusb.
-libusb ist eine Funktionsbibliothek, die Anwendungsprogrammen den Zugriff auf USB-Geraete ermoeglicht.
-Daher kann Octopus auf jedem Betriebssystem, für das es die libusb gibt, eingesetzt werden.
+Abhängig vom Betriebssystem müssen die USBprog Tools und Treiber
+entsprechend installiert werden.
 
-Aktuell gibt es Portierungen für:
 
-* GNU/Linux
-* Windows (Win98SE, WinME, Win2k, WinXP)
-* FreeBSD
-* NetBSD
-* OpenBSD
-* Darwin
-* MacOS X
 
-Die Installation der Bibliothek ist die Grundvorraussetzung für Octopus.
+Installation unter GNU/Linux
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Linux ist nicht gleich Linux. Das bedeutet die Installation ist stark abhängig von
+der eingesetzen Distribution.
+
+Installation aus den Quellen heraus
++++++++++++++++++++++++++++++++++++
+
+TDB
+
+Installation unter OpenSUSE
++++++++++++++++++++++++++++
+
+TDB
+
+Installation unter Debian/Ubuntu
+++++++++++++++++++++++++++++++++
+
+TDB
+
+Zugriff auf USBprog als Benutzer
+++++++++++++++++++++++++++++++++
+TDB
 
 
 Installation unter Windows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unter Windows wurde die Installation mit einem Installer weitestgehend automatisiert.
+Hier gestalltet sich der Installation sehr einfach. Es muss nur die aktuelle Installationsroutine
+von der Internetseite http://www.embedded-projects.net/usbprog (Bereich Download) heruntergeladen
+und installiert werden. Am besten wird USBprog (mit dem aktiven Bootloader - mit gestecktem Jumper
+USBprog anstecken) erst nachdem die Installationsroutine ausgeführt worden ist angesteckt.
 
-* Octopus abstecken
-* Download Installer (http://www.embedded-projects.net/octopus -> Unternavigation Downloads)
-* Starten des setup.exe
-* Anschliessend Octopus anstecken
-* Treiber automatisch wählen selektieren
-* Windows sollte den passenden Treiber finden
+Dann sollte der Windows Treiber Assistent die bereitliegenden Treiberdateien für
+USBprog automatisch finden und aktivieren.
 
-SCREENSHOT
-
-* Wichtig ist, dass es auch die .dll datei gibt + .h
-* Testprogramm
-* Octopus immer noch nicht anstecken
-* Wie octopus installiert wird, steht im Kapitel 5 Montage und Hardware.
-
-
-* libusb muss installiert sein! So wie in Kapitel .. beschrieben
-
-* Neuste Version herunterladen (Installer.exe)
-* Octopus vom Computer entfernen
-* Setup starten und durchfuehren
-* Octopis an Computer anstecken
-* Treiber aus dem Ordner auswaehlen .....
-* Fertig
-
-* libusb testprogram
-* Schauen in bla solle .dll und .h liegen (system32)
-
-* Mit Test Base Programm kann man alles mal checken
-
-Davon abhaengig, wie nun weiter gearbeitet werden
-soll, muss die Bibliothek in die entsprechende Programmiersprache
-eingebunden werden. Fuer einfache erste Tests kann das
-Beispielprogramm Octopus Base installiert werden.
-
-
-Installation unter Linux
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Die Installation unter Linux ist aufgeteilt in zwei Bereiche.
-Zuerst die Installation der Bibliothek libusb, was
-durch die verschiedenen Paketmanager unterschiedlich
-realisiert werden muss. Und als zweiten Teil, die Installation
-der Bibliothek liboctopus.
-
-
-Die Bibliothek libusb installieren
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Unter Linux sollte die Bibliothek libusb und wenn möglich die passenden
-Entwicklerdateien (Header-Dateien) über die Paketverwaltung installiert
-werden.
-
-
-Zusätzlich ist empfehlenswert, sich ausserdem die Pakete usbview und
-usbutils zu installieren.
-usbview ist ein sehr praktisches Programm, mit dem angezeigt
-werden kann, was auf dem USB steckt. In den usbutils sind
-kleine Hilfsprogramme wie lsusb enthalten,
-mit denen geschaut werden kann, was vom Betriebssystem
-auf dem USB gefunden worden ist.
-
-*Debian/Ubuntu*
-
-apt-get install libusb-dev libusb-0.1-4 usbview usbutils
-
-*openSUSE und sonstige SUSE Versionen *
-
-* YAST starten
-* libusb, libusb-dev, usbutils und usbview suchen
-* Markieren für die Installation
-* Installation starten
-
-*Fedore/Redhat*
-
-* Paketmanager starten
-* libusb, libusb-dev, usbutils und usbview suchen
-* Markieren für die Installation
-* Installation starten
-
-*Aus den Quellen installieren*
-
-* Download http://libusb.sourceforge.net/download.html
-* Entpacken: _tar xvzf libusb-0.1.12.tar.gz_
-* Verzeichnis wechseln: _cd libusb-0.1.12.t_
-* Übersetzung vorbereiten:_./conigure_
-* Übersetzung starten: _make_
-* Bibliothek installieren (als root): _make install_
-
-Sind die Bibliothek libusb und die Tools installiert, kann
-geprüft werden, ob nach dem Anstecken von Octopus dieser ordnungsgemäss
-erkannt wird.
-
-
-In der Ausgabe von lsusb sollten folgende Nummern mit auftauchen:
-
-.lsbusb Aufruf
-.............................................................
-big:/home/bene# lsusb
-Bus 003 Device 002: ID 1781:0c65
-............................................................
-
-Das Programm usbview hingegen ermöglicht eine detailiertere Ansicht:
-.............................................................
-big:/home/bene# usbview
-............................................................
-
-.usbview Ansicht
-image::images/usbview_octopus.png[usbview mit Octopus]
-
-Mögliche Ursachen, wenn Octopus nicht erkannt wird:
-
-* Schlechte Lötstellen an der USB-Buchse
-* Falsche Konfiguration der FUSE Bits
-* Firmware falsch in den Flash des Mikrocontrollers übertragen
-
-Die Bibliothek liboctopus installieren
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* Neuste Version herunterladen (octopus.tar.gz)
-* Entpacken: _tar xvzf octopus.tar.gz_
-* Anpassen der Installation auf aktuelle Umgebung: _sh bootstrap_
-* Vorbereiten der Uebersetzung: _./configure_
-* Uebersetzung starten: _make_
-* Bibliothek + Zugriffsrechte installieren (als root): _make install_
-* Fertig
-
-* schauen in bla solle .so und .a und .h liegen
-
-Abhängig vom weiteren Arbeiten muss die Bibliothek in die entsprechende Programmiersprache
-eingebunden werden. Für einfache erste Tests kann das
-Beispielprogramm Octopus Base installiert werden.
 
 
 Installation unter MAC/OS
@@ -230,26 +252,32 @@ Installation unter MAC/OS
 
 folgt (bitte im Forum nachfragen)
 
+
 Firmware wechseln
 -----------------
 
+TDB
+
+Beliebte Fehlerquellen
+~~~~~~~~~~~~~~~~~~~~~~
+
+* Schlechte Lötstellen an der USB-Buchse
+* Falsche Konfiguration der FUSE Bits
+* Firmware falsch in den Flash des Mikrocontrollers übertragen
+* Flashtool 0.2 mit neuem Bootloader
+
+
+
+
 so gehts. zu beachten ist in windows und linux bla bla
-
-usbprog-gui
-~~~~~~~~~~~
-in Windows erst manuell Bootloader starten!
-in Linux Rechte beachten
-
-usbprog Konsole
-~~~~~~~~~~~~~~~
-in Windows erst manuell Bootloader starten!
-in Linux Rechte beachten
-
 
 Anwendungen mit USBprog
 -----------------------
 
-TDB
+Im folgenden sind die wichtigsten Firmwareversionen hier beschrieben. Da dieses Handbuch nicht immer
+auf dem neusten Stand ist, empfiehlt es sich bei Problemen auf den Internetseiten von Embedded Projects
+mögliche Hilfen zu suchen.
+
 
 AVR ISP Programmer (STK500 kompatibel)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -395,12 +423,65 @@ BLA
 * Reset Jumper gesteckt obwohl er entfernt sein muss
 * Falsche ISP Geschwindigkeit (max 1/4 des CPU Takts)
 * Angabe der richtigen ISP Geschwindigkeit mit avrdude mit dem Parameter -B 8 (125 kHz) oder -B 1 (1MHz)
+* Angabe der richtigen ISP Geschindigkeit mit dem AVR Studio 4 über das Register Board (und Write drücken nicht vergessen)
 
 
 OpenOCD ARM7/ARM9 Debugger
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TDB
+Mit der OpenOCD-Firmware für den USBprog Adapter lassen sich viele ARM-basierte Mikrocontroller im eingebauten 
+Zustand (in-circuit) programmieren. Der Adapter ermöglicht Echtzeitdebugging, das Setzen von Breakpoints und 
+Ausführen von Einzelschritten, also die ganze Funktionspalette, welche zur erfolgreichen Anwendungsentwicklung 
+und zum effizienten Debugging benötigt werden. Angesteuert wird er über OpenOCD von Dominic Rath.
+
+
+NEU: Im Testing-Zweig von Debian Sarge ist mittlerweile OpenOCD samt USBprog unterstützung integriert! D.h. es 
+kann einfach über die Paketverwaltung alles benötigte installiert werden.
+
+ 
+
+Dieser Adapter ist nicht der Schnellste! Aber die Geschwindigkeit reicht für die meisten einfachen Programmierungen und 
+Debugsessions völlig aus! Ein Singlestep auf der Telnetkonsole geht fast ohne Verzögerung. 
+
+OpenOCD unter Linux
+^^^^^^^^^^^^^^^^^^^
+
+Debian (Sarge Testing)
+
+   1. apt-get install openocd 
+
+Aus dem Quelltext installieren
+
+   1. Quelltextarchiv herunterladen mit Subversion:
+       svn checkout http://svn.berlios.de/svnroot/repos/openocd/trunk
+   2. Kompilierung vorbereiten: ./configure --enable-usbprog
+   3. Kompilieren: make
+   4. Installieren in das Dateisystem: make install
+   5. Rechte anpassen: chmod +s /usr/local/bin/openocd (als Root)
+
+ 
+OpenOCD unter Windows 
+^^^^^^^^^^^^^^^^^^^^^
+
+Für Windows pflegt Michael Fischer eine Installationversion von OpenOCD. Diese ist über die Homepage   http://www.yagarto.de/ erreichbar. Da USBprog noch relativ frisch ist gibt es erstmal hier auf meiner Seite ausschliesslich eine Yagarto OpenOCD USBprog Version. Die Datei muss einfach heruntergeladen und installiert werden.
+
+Entweder kann man anschliessend openocd von der Dos-Box aus starten oder in eine Entwicklungsumgebung die aus Eclipse besteht integrieren.
+ 
+Arbeiten mit dem OpenOCD Debugger
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*GNU/Linux*
+
+Vor etwas längerer Zeit habe ich mal ein kleines Demo hier zusammengeschrieben. 
+Ich denke mal es sollte als Leitfaden ausreichend sein. LPC2103(ARM7) mit OpenOCD unter Linux entwickeln
+
+*Windows*
+
+Da ich selber aus der Linux Ecke komme verweise ich direk auf die Seiten von Michael Fischer. 
+Hier wird beschrieben wie man unter Windows mit OpenOCD und dem GCC entwickeln kann: http://www.yagarto.de/howto.html
+
+
+
 
 SimplePort
 ~~~~~~~~~~
@@ -478,48 +559,42 @@ Bibliothek in C
 
 Verbindung mit SimplePort aufbauen:
 
-    struct simpleport* simpleport_open();
+_struct simpleport* simpleport_open();_
 
 Verbindung beenden: 
 
-    void simpleport_close(struct simpleport *simpleport);
+_void simpleport_close(struct simpleport *simpleport);_
 
 Datenrichtung der Signale definieren (IO 1 - IO 8) 1 = Ausgang, 0 = Eingang:
 
-    void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);
+_void simpleport_set_direction(struct simpleport *simpleport, unsigned char direction);_
 
-    Bsp: IO 1 - IO 4 = Taster, und IO 5 - IO 8 = LED:
-     IO 1
-    	IO 2  	IO 3 	IO 4  	IO 5
-    	IO 6
-    	IO 7
-    	IO 8 
-     0 	 0 	 0 	 0 	 0 	 1 	 1 	 1
-
-    (als Hexzahl ist das: 0x0F)
+Bsp: IO 1 - IO 4 = Taster, und IO 5 - IO 8 = LED:
+(als Hexzahl ist das: 0x0F)
 
 
-    Mit der Funktion können nur die Datenrichtungen für IO 1 - I0 8 angebeben werden! Die für IO 9 - IO 11 müssen mit der Funktion void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir) einzeln angegeben werden.
+Mit der Funktion können nur die Datenrichtungen für IO 1 - I0 8 angebeben werden! Die für IO 9 - IO 11 
+müssen mit der Funktion void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir) einzeln angegeben werden.
 
 Datenrichtung einer einzelnen Leitung (auch IO 9 - IO 11) 1=Ausgang, 0=Eingang:
 
-    void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir);
+_void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir);_
 
 Port ausgeben (IO 1 - IO 8):
 
-     void simpleport_set_port(struct simpleport *simpleport,unsigned char value);
+ _void simpleport_set_port(struct simpleport *simpleport,unsigned char value);_
 
 Port lesen (IO 1 - IO 8): 
 
-    unsigned char simpleport_get_port(struct simpleport *simpleport);
+_unsigned char simpleport_get_port(struct simpleport *simpleport);_
 
 Eine einzelne Leitung setzen (IO 1 - IO 11):
 
-    void simpleport_set_pin(struct simpleport *simpleport,int pin, int value);
+_void simpleport_set_pin(struct simpleport *simpleport,int pin, int value);_
 
 Eine einzelne Leitung lesen (IO 1 - IO 11):
 
-    int simpleport_get_pin(struct simpleport *simpleport, int pin);
+_int simpleport_get_pin(struct simpleport *simpleport, int pin);_
 
 
 Beispiel in C
@@ -779,12 +854,56 @@ TDB
 USB zu RS232 Wandler
 ~~~~~~~~~~~~~~~~~~~~
 
-TDB
+Mit dieser Firmware Version kann man usbprog als einfachen RS232 Wandler in allen bekannten Betriebssystemen nuzten. 
+Er arbeitet mit den Standardtreibern vom Betriebssystem. 
+
+Um ein RS232 Gerät ansteuern zu können muss man sich nur einen Adapter von JP2 auf einen entsprechenden Stecker (evtl. 9 polig SUB-D) basteln. 
+
+Status
+^^^^^^
+
+* Mit einer festeingestellten Baudrate (fix in der Firmware) von 9600  8N1 getestet und einsatzfähig unter Linux und Windows XP
+* Das man zwischen verschiedenen Baudraten hin und herschalten kann ist nicht mehr viel Aufwand. Wenn das jemand dringend braucht, schreibt einfach eine Mail, dann kann ich das dann schnell machen.
+
+Linux
+^^^^^
+cdc-acm als Modul oder fest im Kernel (/dev/ttyACMx)
+
+MacOS
+^^^^^
+Das Gerät sollte als /dev/cu.usbmodem*** erscheinen. Mit Mac habe ich es noch nicht getestet, aber es sollte eigentlich funktionieren. Wenn nicht gebt mir kurz bescheid und ich schau mir das dann an.
+
 
 AT89 Programmer
 ~~~~~~~~~~~~~~~
 
-TDB
+Mit der at89prog Firmware kann mit dem usbprog Adapter der AT89S8252 programmiert, gelöscht und resetet werden. 
+Falls Bedarf an anderen Controllern der AT89 Familie besteht, meldet dies mir einach mal. Zu der Firmware gibt 
+es ein kleines Konsolenprogramm, über das man den Adapter ansteuer kann. Wie dies genau zu verwenden ist, 
+ist in dem Abschnitt "Hilfe für at89prog" beschrieben.
+
+Status
+^^^^^^
+Die Firmware ist mit dem AT89S8252 auf Windows und Linux erfolgreich getestet worden. 
+Da es noch wenig Feedback von Benutzern gibt, würde ich sagen sie befindet sich noch im Beta-Status. 
+Aktuell kann man mit der Firmware eine .Bin Datein in den Flashspeicher übertragen, den Flash löschen 
+und den AT89 reseten. Bei Bedarf an weiteren Funktionen einfach melden (sauter@ixbat.de). Die Struktur 
+steht, ja d.h. alles andere sollte schnell programmiert sein.
+
+
+*GNU/Linux*
+
+* Programm löschen _./at89prog -e_
+* Programm heraufladen _./at89prog -u /home/bene/test1.BIN_
+* CPU Reset _./at89prog -r_
+
+
+*Windows*
+* Programm löschen _at89prog.exe -e_
+* Programm heraufladen _at89prog.exe -u c:\test1.BIN_
+* CPU Reset _at89prog.exe -r_
+
+
 
 JTAG Adapter
 ~~~~~~~~~~~~
@@ -803,21 +922,7 @@ Der XSVF Player funktioniert für den Fall, dass keine einzelne XSVF-Instruktion 
 Anschlussbelegung 
 ^^^^^^^^^^^^^^^^^
 
-10-polige Stecker
-Beschreibung (Pin Nr.)
-	Pin  	Pin  	Beschreibung 
- TDI
-	 1 	 2
-	 VCC
-
-	 3 	 4 	
- TMS
-	 5 	 6 	
- TCK
-	 7 	 8 	
- TDO
-	 9 	 10 	 GND
- Belegung gilt für usbprog 2.0 und 3.0
+TDB
 
  
 XSVF Player unter Linux
@@ -880,22 +985,8 @@ Der Logikadapter wurde ausgiebig mit allem getestet was ich hier so gefunden hab
 
 Anschlussbelegung
 ^^^^^^^^^^^^^^^^^
-10-polige Stecker
-Beschreibung (Pin Nr.)
-	Pin  	Pin  	Beschreibung 
- Logik 6
-	 1 	 2
-	 VCC
- Logik 5
-	 3 	 4 	 * Logik 4
- Logik 1
-	 5 	 6 	 * Logik 3
- Logik 8
-	 7 	 8 	 * Logik 2
- Logik 7
-	 9 	 10 	 GND
- * Belegung gilt nicht für usbprog 2.0
 
+TDB
 
 Downloads
 ^^^^^^^^^
@@ -961,7 +1052,7 @@ Datenanalyse mit GTKWave
 
 Mit GTKWave kann man einfach Messungen analysieren. Gestartet wird das Program direkt mit dem Dateinamen der Messung als Parameter:
 
- gtkwave messung.vcd
+_gtkwave messung.vcd_
 
  
 Als erstes muss auf vscope geklickt werden, um die Kanäle im Feld Signals einzublenden. Anschliessend kann man alle Kanäle makieren, und muss sie dann nur noch einfügen. Wenn man oben auf die Lupe klickt wird die komplette Messung in dem Fenster angezeigt. Jetzt kann man sich mit den restlichen Knöpfen an die entsprechende Stelle hinarbeiten. 
