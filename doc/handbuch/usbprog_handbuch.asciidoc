@@ -272,12 +272,39 @@ die USBprog Tools installiert worden sind.
 
 
 
-Installation der Treiber und Software für USBprog
--------------------------------------------------
+USBprog Flashtool
+-----------------
 
-Abhängig vom Betriebssystem müssen die USBprog Tools und Treiber
-entsprechend installiert werden.
 
+Mit dem USBprog-Tool kann die Firmware des USBprog-Geräts einfach gewechselt werden. Es unterstützt
+
+* das Herunterladen der Firmware von einem Online-Pool,
+* einen Offline-Modus (Cache) zum Betrieb an PCs ohne Internet,
+* das Hochladen von lokalen Firmwaredateien zum Testen,
+* mehrere USBprog-Geräte an einem PC und
+* das Anzeigen von Informationen über eine Firmware, inkl. der Pinbelegung.
+
+Von USBprog gibt es sowohl eine GUI-Version als auch eine Kommandozeilen-Version. Die Kommandozeilen-Version 
+verfügt über einen interaktiven Modus (wie eine Shell) und einen Batch-Modus, kann daher problemlos in Skripte, 
+Makefiles o.ä. integriert werden.
+
+Beide Versionen verwenden die gleichen Funktionen, um auf das Gerät zuzugreifen und um den Firmware-Cache zu verwalten. 
+Dies wurde damit realisiert, dass diese Funktionen in einer Bibliothek gekapselt sind. Somit wird die Konsistenz beider 
+Versionen gewahrt und die Entwicklung vereinfacht.
+
+Sowohl die GUI-Version als auch die Kommandozeilen-Version laufen unter Microsoft Windows und Linux. 
+Eine Portierung auf anderen Unix-artige Betriebssysteme sollte sehr einfach möglich sein, wenn auch den Autoren die Zeit fehlt, dies zu testen.
+
+Da ein Bild bekanntlich mehr als tausend Worte sagt, hier ein Screenshot sowohl der GUI- als auch der Kommandozeilen-Version, um einen Eindruck der Applikation zu bekommen.
+GUI-Version (unter Linux)
+
+.USBprog GUI 
+image::images/gui.jpg[GUI]
+
+Kommandozeilenversion (unter Linux)
+
+.USBprog Konsole
+image::images/cli.jpg[Konsole]
 
 
 Installation unter GNU/Linux
@@ -288,13 +315,76 @@ der eingesetzen Distribution.
 
 Installation aus den Quellen heraus
 +++++++++++++++++++++++++++++++++++
+Zunächst sollte sichergestellt werden, dass das System folgende Abhängigkeiten erfüllt:
 
-TDB
+* libusb zum Zugriff auf das Gerät,
+* libxml zum Parsen der Firmwarebeschreibungsdatei,
+* libcurl zum Downloaden der Firmware,
+* readline zum einfachen Editieren der Kommandozeile (optional),
+* wxWidgets, falls die GUI-Version kompiliert werden soll und natürlich
+* ein hinreichend neuer C++-Compiler wie den g++.
+
+Nachdem dies sichergestellt wurde, erfolgt die Installation ganz üblich mit:
+
+. Auspacken des Tarballs und Wechseln in das Verzeichnis,
+. Ausführen von ./configure,
+. make zum Kompilieren und schließlich
+. make install zum Installieren der Dateien (als Administrator).
+
+
+
 
 Installation unter OpenSUSE
 +++++++++++++++++++++++++++
 
-TDB
+Distributionsunabhängige Binärpakete unter Linux sind mit einem relativ großen Aufwand verbunden (praktisch alle Bibliotheken müssten statisch hinzugebunden werden) und werden von uns nicht angeboten. Die Installation aus dem Quellcode ist hinreichend einfach — und die Zielgruppe von USBprog sind ja letztendlich Entwickler.
+
+Allerdings ist unser Ziel die Aufnahme in alle verbreiteten Distributionen. Pakete für openSUSE finden sich im openSUSE Build Service unter http://download.opensuse.org/repositories/electronics/. Das entsprechende Repository kann dem Paketmanager (YaST oder smart) hinzugefügt werden, somit kann mit relativ wenig Aufwand sichergestellt werden, dass immer die neuste USBprog-Version auf dem System installiert ist.
+
+Beispiel für zypper (openSUSE 10.3)
+
+-----------------------------------------------------------------------------------------
+$ zypper ar -r \
+     http://download.opensuse.org/repositories/electronics/openSUSE_10.3/electronics.repo
+ $ zypper ref
+ $ zypper install usbprog usbprog-gui
+-----------------------------------------------------------------------------------------
+
+Das Angebot für openSUSE hängt schlicht damit zusammen, dass der Autor des USBprog-Programms bei SUSE arbeitet und soll keine Präferenz für eine Distribution darstellen. Von uns werden alle verbreiteten Distributionen unterstützt.
+
+Wenn Sie in der Lage sind, Pakete für eine (verbreitete) Distribution zu bauen und auf Dauer zu pflegen, melden Sie Sich bitte auf der USBprog-Mailingliste.
+
+*Zugriffsrechte*
+Standardmäßig kann nur der Administrator unbeschränkt auf USB-Geräte zugreifen. Damit dies auch dem einfachen Benutzer möglich wird, müssen udev und HAL entsprechend konfiguriert werden, die jeweiligen Dateien unter /dev/bus/usb auch für normale Benutzer schreibbar zu machen.
+
+Unter openSUSE reicht das Anlegen einer Datei /etc/hal/fdi/policy/20customized mit folgendem Inhalt:
+-------------------------------------------------------------------------
+<?xml version="1.0" encoding="utf-8"?>
+ <deviceinfo version="0.2">
+  <!-- USBprog in update mode or various demos -->
+   <device>
+     <match key="info.bus" string="usb_device">
+       <match key="usb_device.vendor_id" int="0x1781">
+         <match key="usb_device.product_id" int="0x0c62">
+           <merge key="resmgr.class" type="string">scanner</merge>
+         </match>
+       </match>
+     </match>
+   </device>
+  <!-- Atmel AVR ISP MKII -->
+   <device>
+     <match key="info.bus" string="usb_device">
+       <match key="usb_device.vendor_id" int="0x03eb">
+         <match key="usb_device.product_id" int="0x2104">
+           <merge key="resmgr.class" type="string">scanner</merge>
+         </match>
+       </match>
+     </match>
+   </device>
+ </deviceinfo>
+-------------------------------------------------------------------------
+Damit werden USBprog-Geräte wie Scanner behandelt, was entsprechend bedeutet, dass der gerade (direkt, nicht über SSH) eingeloggte Benutzer auf das Gerät zugreifen darf.
+
 
 Installation unter Debian/Ubuntu
 ++++++++++++++++++++++++++++++++
@@ -303,20 +393,45 @@ TDB
 
 Zugriff auf USBprog als Benutzer
 ++++++++++++++++++++++++++++++++
-TDB
+
+Ohne ein weiteren Eingriff kann USBprog jetzt nur von root geöffnet und benutzt
+werden. Soll der Zugriff aber von einem anderen Benutzer aus möglich sein,
+muss dies entsprechend eingestellt werden, dass direkt nach dem anstecken 
+von USBprog die Rechte entsprechend gesetzt werden. Eine Möglichkeit
+ist dies über das udev System zu machen. Dafür müssen folgende Schritte
+als root vollzogen werden:
+
+
+* Neue Gruppe anlegen: _addgroup usbprog_
+* Benutzer der Grupper zuweisen: _adduser benutzer usbprog_ (umbedingt den Benutzer danach ein- und auslogen)
+* Öffnen und erweitern der Datei: /etc/udev/rules.d/80-usbprog.rules
+* Neustarten von udev: /etc/init.d/udev restart
+
+-------------------------------------------------------------------------------
+ATTRS{idVendor}=="1781", ATTRS{idProduct}=="0c62", GROUP="usbprog", MODE="0660"
+-------------------------------------------------------------------------------
+
+Voraussetzung ist natürlich, dass udev installiert ist. In Debian geht dies per _apt-get install udev_.
+
+Jetzt sollte der Zugriff mit jedem Benutzer der in der Gruppe usbprog ist funktionieren. 
 
 
 Installation unter Windows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Hier gestalltet sich der Installation sehr einfach. Es muss nur die aktuelle Installationsroutine
-von der Internetseite http://www.embedded-projects.net/usbprog (Bereich Download) heruntergeladen
-und installiert werden. Am besten wird USBprog (mit dem aktiven Bootloader - mit gestecktem Jumper
-USBprog anstecken) erst nachdem die Installationsroutine ausgeführt worden ist angesteckt.
+Die USBprog-Software läuft unter Windows 2000 und XP. Die DOS-basierten Windows-Versionen 95, 98 und ME werden nicht unterstützt.
+Da ein Installer verwendet wird, ist die Installation unter Windows denkbar einfach:
 
-Dann sollte der Windows Treiber Assistent die bereitliegenden Treiberdateien für
-USBprog automatisch finden und aktivieren.
+. Laden Sie die Datei aktuelle USBprog-Version herunter.
+. Führen Sie die Installationsdatei aus und folgen Sie den Anweisungen. Beachten Sie, dass das Treiberpacket zwingend notwendig ist.
+. Beim Anstecken des USBprog sollte ihn Windows im “Updatemodus” erkennen und beginnt mit der Plug-&-Play-Treiberinstallation.
+. Wählen Sie bei der Treiberinstallation die Option Software automatisch installieren.
+. Nun kann USBprog mit Hilfe des Flashtools aktualisiert werden.
 
+Achtung: 
+	
+Wechseln in den Update-Modus!
+Unter Windows sollte vor dem Wechseln immer manuell in den Update-Modus gebracht werden! Mehr dazu gibt es im Kapitel der Bootloader.
 
 
 Installation unter MAC/OS
@@ -324,14 +439,27 @@ Installation unter MAC/OS
 
 folgt (bitte im Forum nachfragen)
 
-
 Firmware wechseln
 -----------------
 
-TDB
+Nach der Installation sollte das Gerät zunächst getestet werden. Hierzu bietet sich die “blinkdemo” Firmware an. Die Bedienung der GUI-Version sollte hinreichend selbsterklärend sein. Gestartet wird die Software unter Windows über das entsprechende Icon, unter Linux über die Programmdatei usbprog-gui.
+Kommandozeilenversion
+
+. Starten Sie die Kommandozeilenversion in einem Terminal mit dem Aufruf von usbprog.
+. Das Programm lädt nun online eine Indexdatei herunter. Lassen Sie sich mit list eine Liste aller verfügbaren Firmwaredateien anzeigen.
+. Laden Sie mit download blinkdemo die oben erwähnte “blinkdemo” Firmware herunter.
+. Zeigen Sie sich mit devices alle verfügbaren USBprog-Geräte an. Mindestens ein Gerät sollte in der Liste enthalten sein. Falls das USBprog-Device bereits im Updatemodus ist, sollte dies in der Liste bereits mit einem Stern markiert sein. Andernfalls geben Sie manuell mit device 0 an, dass das erste Gerät als Updategerät verwendet werden soll.
+. Laden Sie nun mit upload blinkdemo die “blinkdemo” Firmware auf das Gerät. Die Firmware sollte automatisch starten.
+
+*Hilfe*
+
+Das Kommandozeilenprogramm gibt mit dem Kommando help eine Liste aller verfügbaren Kommandos aus. Mit helpcmd Kommando kann man sich spezifische Hilfe zu einem Kommando ausgeben lassen.
+
+Unter Linux sind zu beiden Programmen (also usbprog und usbprog-gui) Manpages installiert. Diese erhalten ebenfalls eine Kurzzusammenfassung der entsprechenden Befehle und Optionen.
+
 
 Beliebte Fehlerquellen
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 * Schlechte Lötstellen an der USB-Buchse
 * Falsche Konfiguration der FUSE Bits
@@ -339,9 +467,6 @@ Beliebte Fehlerquellen
 * Flashtool 0.2 mit neuem Bootloader
 
 
-
-
-so gehts. zu beachten ist in windows und linux bla bla
 
 Anwendungen mit USBprog
 -----------------------
