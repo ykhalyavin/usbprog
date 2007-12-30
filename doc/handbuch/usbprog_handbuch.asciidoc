@@ -1,16 +1,32 @@
 USBprog Handbuch
 ================
-:Author: Benedikt Sauter
-:Email: http://www.embedded-projects.net/usbprog
+:Author: http://www.embedded-projects.net/usbprog
 :Revision: 0.1
 :Date: Dezember 2007
-:encoding: ISO-8859-1
+:Language: German
 
 
 Im folgenden Handbuch wird die Inbetriebnahme und der Einsatz von USBprog beschrieben.
 
-An dieser Stelle möchte ich mich bei den viele Helfern rund um USBprog bedanken.
-Ohne der Community wäre das Projekt nicht das was es mittlerweile ist. 
+An dieser Stelle mÃ¶chte ich mich bei den viele Helfern rund um USBprog bedanken.
+Ohne der Community wÃ¤re das Projekt nicht das was es mittlerweile ist. 
+
+Die meisten Texte aus diesem Handbuch stammen von Benedikt Sauter. Es haben unteranderem
+Texte fÃ¼r diese Handbuch geschrieben: Robert Schilling, Bernhard Walle, Sven LÃ¼tke.
+
+*Kontakt*
+
+Embedded Projects Shop
+
+Inh. Dipl.-Inf. (FH) Benedikt Sauter
+
+KettengÃ¤sschen 6
+
+D-86152 Augsburg
+
+shop@embedded-projects.net
+
+http://www.embedded-projects.net
 
 
 *Support*
@@ -18,14 +34,20 @@ Ohne der Community wäre das Projekt nicht das was es mittlerweile ist.
 Support gibt es im Forum auf http://forum.embedded-projects.net/
 oder per E-Mail sauter@ixbat.de.
 
+*Lizenz*
+
+Dieses Handbuch wurde unter der freien Lizenz GFDL verÃ¶ffentlicht. Dies bedeutet
+jeder hat das Recht den Text zu bearbeiten, muss ihn jedoch ebenfalls wieder
+unter der freien Lizenz GFDL verÃ¶ffentlichen.
+
 
 Einsatzgebiet und Funktionsumfang
 ---------------------------------
 
 *Was ist USBprog*
 
-usbprog ist ein freier Programmieradapter. Über USB kann man bequem verschiedene Firmware 
-Versionen aus einem "Firmware-Archiv" einspielen. Der Adapter kann aktuell für das Programmieren 
+usbprog ist ein freier Programmieradapter. Ãœber USB kann man bequem verschiedene Firmware 
+Versionen aus einem "Firmware-Archiv" einspielen. Der Adapter kann aktuell fÃ¼r das Programmieren 
 und Debuggen von AVR und ARM Prozessoren, als USB zu RS232 Wandler, als JTAG Schnittstelle oder als 
 einfacher I/O-Port (10 Leitungen) eingesetzt werden.
 
@@ -35,17 +57,17 @@ Hardware- und Softwareentwickler die unter Windows, Linux & Co arbeiten.
 
 *Was ist das Besondere an dem Konzept von usbprog?*
 
-Mit der Zeit soll ein immer gösserer Pool an Firmware Versionen enstehen. Idealerweise kann man dann 
+Mit der Zeit soll ein immer gÃ¶sserer Pool an Firmware Versionen enstehen. Idealerweise kann man dann 
 als Besitzer von usbprog, wenn man einen neuen Baustein bekommt mit dem man arbeiten soll, in den 
 Online Pool schauen und suchen, ob es eine passende Firmware zum Programmieren oder Ansteuern 
 von diesem Baustein gibt.
 
-Sollte es gerade keine passende Firmware für den benötigten Baustein geben, so sollte man nicht 
-überstürzt hohe Einkaufspreise für Adapter auf sich nehmen, sondern zuerst lieber anfragen, 
-ob es lohnenswert ist, hier eine neue Firmware für usbprog zu schreiben, um somit in den Firmware-Pool 
+Sollte es gerade keine passende Firmware fÃ¼r den benÃ¶tigten Baustein geben, so sollte man nicht 
+Ã¼berstÃ¼rzt hohe Einkaufspreise fÃ¼r Adapter auf sich nehmen, sondern zuerst lieber anfragen, 
+ob es lohnenswert ist, hier eine neue Firmware fÃ¼r usbprog zu schreiben, um somit in den Firmware-Pool 
 zu investieren. Oft ist dies relativ schnell geschehen, da man auf bestehenden Softwarewerkzeuge aufbauen 
 kann. Wie im Falle vom AVR ISP 2 Klon, diesen kann man mit allen Anwendungen nutzen die den originalen 
-Adapter von Atmel unterstützen, oder der Adapter für den OpenOCD war auch ein Produkt, das innerhalb weniger Tagen 
+Adapter von Atmel unterstÃ¼tzen, oder der Adapter fÃ¼r den OpenOCD war auch ein Produkt, das innerhalb weniger Tagen 
 entwickelt worden ist.
 
 Da alles unter einer Open Source Lizenz steht, sollte das Projekt lange Zeit interessant bleiben!
@@ -65,69 +87,108 @@ Da alles unter einer Open Source Lizenz steht, sollte das Projekt lange Zeit int
 Montage und Aufbau der Hardware
 -------------------------------
 
-Folgende Übersicht gibt einen groben Leitfaden für die Installation an.
+Die folgende Ãœbersicht gibt einen groben Leitfaden fÃ¼r die Installation an.
 
-- Auspacken des Bausatzes
-- USBprog fertig montieren (löten)
+- Auspacken des Bausatzes (vormontierte Platine, 10-poliger Stecker, USB-Buchse, 2x4-polige Stifteleisten, 1x3-polige Stiftleiste,3xJumper)
+- USBprog fertig montieren (lÃ¶ten)
 
-Abhängig ob ein vorprogrammierter Adapter gekauft worden ist, gibt es jetzt zwei mögliche Wege.
+AbhÃ¤ngig davon ob ein bereits vorprogrammierter oder nichtvorprogrammierter Adapter gekauft worden ist, 
+gibt es zwei mÃ¶gliche Wege.
 
 - USBprog ist bereits vorprogrammiert
-  . Benötigte Anwendung (z.B. AVR Studio oder Yagarto für OpenOCD installieren)
+  . BenÃ¶tigte Anwendung (z.B. AVR Studio oder Yagarto fÃ¼r OpenOCD installieren)
   . USBprog Flash Tool installieren (nur optional wenn Firmware gewechselt werden soll)
 - USBprog ist noch nicht programmiert
-  . VCC Jumper entfernen falls externer AVR Programmierer keine Stromversorgung benötigt
+  . VCC Jumper entfernen falls externer AVR Programmierer keine Stromversorgung benÃ¶tigt
   . Externen AVR Programmierer anstecken
   . Reset Jumper Stecken
   . usbprog_base.hex flashen
   . Fuse Bits programmieren
   . Jumper entfernen
-  . USBprog Tool installieren (inkl. Treiber)
-  . Am PC anstecken -> Neues Gerät sollte erkannt werden (Treiber automatisch installieren)
-  . Per Flashtool gewünschte Firmware einspielen
+  . USBprog Tools installieren (inkl. Treiber)
+  . Am PC anstecken -> Neues GerÃ¤t sollte erkannt werden (Treiber automatisch installieren)
+  . Per Flashtool gewÃ¼nschte Firmware einspielen
 
 Dies war nur ein grober Leitfaden. In den weiteren Abschnitten werden die einzelnen Schritte
 genauer beschrieben.
 
 
-Löten der restlichen Bauteile
+LÃ¶ten der restlichen Bauteile
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Der Adapter ist anders als die vorherige Version bereits vormontiert. 
-Die SMD Bauteile sind gelötet, nur die "groben" Bauteile müssen angebracht werden. 
-Anstelle der USB-B-Buchse kann auch ein USB-A-Stecker eingelötet werden, welches den Vorteil hat, 
-dass USBprog als USB-Stick in einem passendem Gehäuse verwendet werden kann.
+Der USBprog Adapter 3.0 ist anders als die vorherige Version bereits vormontiert. 
+Die SMD Bauteile sind bereits gelÃ¶tet und nur die "groben" Bauteile mÃ¼ssen selbst angebracht werden. 
 
-Folgende Schritte sind somit zu erledigen:
+Der Adapter wurde so geplant, dass Anstelle der USB-B-Buchse auch ein USB-A-Stecker eingelÃ¶tet werden kann.
+Welches den Vorteil hat, dass USBprog in einem passendem GehÃ¤use als USB-Stick verwendet werden kann.
 
-* 10-polige Wannenbuchse einlöten
-* USB Buchse montieren und einlöten
-* 4-polige Stiftleiste fixieren und einlöten
+Folgende Schritte beim LÃ¶ten sind somit zu erledigen:
+
+* 10-polige Wannenbuchse einlÃ¶ten
+* USB Buchse montieren und einlÃ¶ten
+* 2x4-polige Stiftleiste fixieren und einlÃ¶ten
+* 3-polige Stiftleiste fixieren und einlÃ¶ten
+
+In der Abbildung USBprog Bausatz sind nochmal alle Bauteile gezeigt.
+
+.USBprog Bausatz
+image::images/bauteile.jpg[USBprog Bausatz]
+
+Nach den LÃ¶tarbeiten sollte USBprog nun wie folgt aussehen:
+
+.USBprog fertig montiert
+image::images/usbprog_montiert.jpg[USBprog Bausatz]
+
+AnschlussmÃ¶glichkeiten und Stiftleisten von USBprog
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.USBprog Ãœbersicht
+image::images/usbprog3uebersicht.gif[USBprog Ãœbersicht]
+
+. 8 IO Ports, (alternativ SPI) Port B vom ATMega32 + VCC und GND
+. Jumper kann als Schalter in einer Firmware verwendet werden (PA7)
+. Reset Jumper Ansteuerung (gesteckt ansteuerbar vom ISP Stecker)
+. VCC Spannungsversorgung Einstellung
+. LED Ansteuerbar aus den Firmware (PA4)
+. UART Anschluss + VCC und GND
+. Power LED
 
 
-FOTO MIT A-Stecker
+Mit dem VCC Jumper kann eingestellt werden, wie der VCC Pin am 10-poligen Stecker beschalten wird.
+Es werden drei Konfigurationen angeboten.
 
-FOTO MIT Bauteilen
+. Ohne Verbindung
+. 5V direkt Ã¼ber USB
+. 5V per Schottky-Diode Ã¼ber USB
 
+
+.VCC Konfiguration 1 (Ohne Verbindung)
+image::images/usbprog3vccleer.jpg[Konfiguration 2]
+
+.VCC Konfiguration 2 (5V direkt Ã¼ber USB)
+image::images/usbprog3vcclinks.jpg[Konfiguration 2]
+
+
+.VCC Konfiguration 3 (5V per Schottky-Diode Ã¼ber USB)
+image::images/usbprog3vccrechts.jpg[Konfiguration 3]
 
 Programmierung des Bootloaders
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-USBprog ohne Programmierung wird von keinem System erkannt. Das hat den einfachen Grund, 
-da die Ansteuerung des USB Beusteins über die Firmware implementiert ist. Und wenn diese
-eben nicht im ATmega32 des USBprogs ist, hat das Betriebssystem keine Chance das Gerät zu
-erkennen.
+Der USBprog wird ohne programmierten Bootloader von keinem Betriebsystem erkannt. Das hat den einfachen Grund, 
+da die Ansteuerung des USB-Bausteins in der Firmware des Bootloaders implementiert ist. Und wenn der Bootloader
+eben nicht im ATmega32 des USBprogs ist, hat das Betriebssystem keine Chance das GerÃ¤t zu erkennen.
 
-Die Basis für USBprog ist ein Bootloader, der es ermöglich später ohne externen AVR Programmierer
-eine Firmware auszutauschen. Um den Bootloader auf USBprog übertragen zu können
-wird wie bereits ein externer AVR Programmierer benötigt. Im folgenden werden die bekanntesten
-Möglichkeiten beschrieben.
+Die Basis fÃ¼r USBprog ist daher der Bootloader, der es ermÃ¶glich spÃ¤ter ohne externen AVR Programmierer
+eine Firmware auf USBprog auszutauschen. Um den Bootloader auf USBprog Ã¼bertragen zu kÃ¶nnen
+wird ein externer AVR Programmierer benÃ¶tigt. Im folgenden werden die bekanntesten
+MÃ¶glichkeiten beschrieben.
 
 *avrdude unter Linux und Windows*
 
 Falls die Firmware mit einem AVR ISP mkII (oder USBprog AVR Programmer)
 programmiert werden soll, muss als Parameter _-c avrispv2 -P usb_ angegeben werden.
-Für ein einfaches Parallelportkabel reicht _-c bsd_.
+FÃ¼r ein einfaches Parallelportkabel reicht _-c bsd_.
 
 * Firmware flashen: avrdude -p m32 -c avrispv2 -P usb -B 8 -U flash:w:usbprog_bootloader.hex
 * lfuse programmieren: avrdude -p m32 -c avrispv2 -P -B 8 -U lfuse:w:0xe0
@@ -135,13 +196,23 @@ Für ein einfaches Parallelportkabel reicht _-c bsd_.
 
 *AVR Studio*
 
-TDB FUSE Screenshot
+Falls ein ProgrammiergerÃ¤t zum programmramieren des Bootloaders in USBprog
+eingesetzt wird, das vom AVR Studio unterstÃ¼tzt wird kann wie in der folgenden Abbildung 
+die Fuse eingestellt werden. Als Zielprozessor muss der Typ ATmega32 angegeben werden.
+Ebenso muss die ISP Geschwindigkeit auf ca. 250 kHz gestellt werden,
+um sicherzustellen dass die ISP Schnittstelle mit max. 1/4 des CPU Taktes angesteuert wird.
+
+
+.AVR Studio Fuse Einstellung (Bootloader)
+image::images/Fuses_STK500.gif[AVR Studio Fuses]
 
 *PonyProg*
 
-TDB mit fuse ISP Speed
+Wird ein PonyProg kompatibles ProgrammiergerÃ¤t fÃ¼r die Erstprogrammierung
+des USBprogs mit dem Bootloader verwendet sieht die Fuse-Einstellung wie folgt aus:
 
-
+.PonyProg Fuse Einstellung (Bootloader)
+image::images/PonyProgFuses.gif[PonyProg Fuses]
 
 Erster Funktionscheck
 ~~~~~~~~~~~~~~~~~~~~~
@@ -151,39 +222,40 @@ kann USBprog bereits vom Betriebssystem erkannt werden.
 
 Es empfiehlt sich die Jumper in folgende Grundstellung zu bringen:
 
-. Resetjumper entfernen. Der Jumper wird wirklich nur für das programmieren des Bootloaders in den USBprog benötigt.
-. Bootloader Jumper entfernen. Nach dem programmieren des Bootloaders befindet sich noch keine Firmware aus USBprog
+. Resetjumper entfernen. Der Jumper wird wirklich nur fÃ¼r das programmieren des Bootloaders in den USBprog benÃ¶tigt.
+. Bootloader Jumper entfernen. Nach dem programmieren des Bootloaders befindet sich noch keine Firmware auf USBprog
 und es wird automatisch der Bootloader gestartet.
-. VCC Jumper entfernen. Hiermit kann gesteuert werden wie die nach aussen geführte VCC Leitung beschalten werden soll,
-also ob die Zielschaltung über USBprog versorgt werden soll. Um sicher zu stellen, dass es keinen Kurzschluss
-oder ähnlich gibt sollte der VCC Pin keinen Kontakt haben. Das heisst der Jumper sollte keine Verbindung herstellen._
+. VCC Jumper entfernen. Hiermit kann gesteuert werden wie die nach aussen gefÃ¼hrte VCC Leitung beschalten werden soll,
+also ob die Zielschaltung Ã¼ber USBprog versorgt werden soll. Um sicher zu stellen, dass es keinen Kurzschluss
+oder Ã¤hnlich gibt sollte der VCC Pin keinen Kontakt haben. Das heisst der Jumper sollte keine Verbindung herstellen.
 
-Mit dem Auge kann geprüft werden, ob der Bootloader starten kann. Dies kann am Blinkrythmus der Status
+Mit dem Auge kann geprÃ¼ft werden, ob der Bootloader starten kann. Dies kann am Blinkrythmus der Status
 LED gesehen werden. Die LED blinkt im Rythmus: kurz an - kurz aus - kurz an - lang aus.
 
 Wenn die LED entsprechend blinkt, bedeutet dies nur, dass der ATmega32 korrekt arbeitet. Ob die
-USB Schnittstelle korrekt arbeitet kann aber nur mit einem Computer überprüft werden.
+USB-Schnittstelle korrekt arbeitet kann aber nur mit einem Computer Ã¼berprÃ¼ft werden.
 
 Blinkt die LED trotz einspielen des Bootloaders und einstellen der Fuse Bits nicht,
 kann mit einem Oszilloskop fest gestellt werden ob die Schaltung denn irgendetwas macht,
-oder ob ein grösseres Problem vorliegt.
+oder ob ein grÃ¶sseres Problem vorliegt.
 
-Am einfachsten misst man dafür die Frequenz am Taktausgang des USB Bausteins, welcher als
-Taktquelle für den ATmega32 dient und dort auch einfacher gemessen werden kann.
+Am einfachsten misst man dafÃ¼r die Frequenz am Taktausgang des USB-Bausteins, welcher als
+Taktquelle fÃ¼r den ATmega32 dient und an dieser Seite auch einfacher gemessen werden kann (Da der USB-Baustein
+von unten angelÃ¶tet worden ist, und man daher nicht direkt an die Pads kommt).
 
-Befindet sich kein Bootloader im ATmega32, oder ist die Kommunikation zwischen dem USB Baustein und
-dem ATmega32 gestört sollten dort 4 MHz anliegen. Ist der Bootloader aktiv so kann dies anhang der
+Befindet sich kein Bootloader im ATmega32, oder ist die Kommunikation zwischen dem USB-Baustein und
+dem ATmega32 gestÃ¶rt sollten dort 4 MHz anliegen. Ist der Bootloader aktiv so kann dies anhang der
 anliegenden 16 MHz festgestellt werden. Das umschalten der Taktgeschwindigkeit von 4 Mhz auf 16 Mhz klappt
 nur dann wenn die Verbindung zwischen USB Baustein und ATmega32 in Ordunung ist und der Bootloader
 korrekt gestartet ist.
 
-
-BILD OSI MESSEN
+.Takteingang ATmega32
+image::images/usbprog_montiert_messen.jpg[Taktsignal]
 
 *GNU/Linux*
 
-Mit Hilfe des Kommandos lsusb aus den usbutils (Über die Paketverwaltung muss das Paket _usbutils_ zuvor installiert
-worden sein) geprüft werden, ob USBprog mit dem Bootloader vom Betriebssystem erkannt wird.
+Mit Hilfe des Kommandos lsusb aus den usbutils (Ãœber die Paketverwaltung muss das Paket _usbutils_ zuvor installiert
+worden sein) geprÃ¼ft werden, ob USBprog mit dem Bootloader vom Betriebssystem erkannt wird.
 
 ------------------------------------------
 big:/home/bene# lsusb 
@@ -194,16 +266,16 @@ Dies ist die Kennung der Bootloaders (1781 = Hersteller ID, 0c62 = Produktnummer
 
 *Windows*
 
-In Windows sollte der typische Ping Pling Sound hörhbar sein und der Treiber Installationsassistent
+In Windows sollte der typische Ping Pling Sound hÃ¶rhbar sein und der Treiber Installationsassistent
 nach dem Ort des Treibers fragen. An dieser Stelle sollte man abbrechen, falls noch nicht
 die USBprog Tools installiert worden sind.
 
 
 
-Installation der Treiber und Software für USBprog
+Installation der Treiber und Software fÃ¼r USBprog
 -------------------------------------------------
 
-Abhängig vom Betriebssystem müssen die USBprog Tools und Treiber
+AbhÃ¤ngig vom Betriebssystem mÃ¼ssen die USBprog Tools und Treiber
 entsprechend installiert werden.
 
 
@@ -211,7 +283,7 @@ entsprechend installiert werden.
 Installation unter GNU/Linux
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Linux ist nicht gleich Linux. Das bedeutet die Installation ist stark abhängig von
+Linux ist nicht gleich Linux. Das bedeutet die Installation ist stark abhÃ¤ngig von
 der eingesetzen Distribution.
 
 Installation aus den Quellen heraus
@@ -240,9 +312,9 @@ Installation unter Windows
 Hier gestalltet sich der Installation sehr einfach. Es muss nur die aktuelle Installationsroutine
 von der Internetseite http://www.embedded-projects.net/usbprog (Bereich Download) heruntergeladen
 und installiert werden. Am besten wird USBprog (mit dem aktiven Bootloader - mit gestecktem Jumper
-USBprog anstecken) erst nachdem die Installationsroutine ausgeführt worden ist angesteckt.
+USBprog anstecken) erst nachdem die Installationsroutine ausgefÃ¼hrt worden ist angesteckt.
 
-Dann sollte der Windows Treiber Assistent die bereitliegenden Treiberdateien für
+Dann sollte der Windows Treiber Assistent die bereitliegenden Treiberdateien fÃ¼r
 USBprog automatisch finden und aktivieren.
 
 
@@ -261,9 +333,9 @@ TDB
 Beliebte Fehlerquellen
 ~~~~~~~~~~~~~~~~~~~~~~
 
-* Schlechte Lötstellen an der USB-Buchse
+* Schlechte LÃ¶tstellen an der USB-Buchse
 * Falsche Konfiguration der FUSE Bits
-* Firmware falsch in den Flash des Mikrocontrollers übertragen
+* Firmware falsch in den Flash des Mikrocontrollers Ã¼bertragen
 * Flashtool 0.2 mit neuem Bootloader
 
 
@@ -276,14 +348,14 @@ Anwendungen mit USBprog
 
 Im folgenden sind die wichtigsten Firmwareversionen hier beschrieben. Da dieses Handbuch nicht immer
 auf dem neusten Stand ist, empfiehlt es sich bei Problemen auf den Internetseiten von Embedded Projects
-mögliche Hilfen zu suchen.
+mÃ¶gliche Hilfen zu suchen.
 
 
 AVR ISP Programmer (STK500 kompatibel)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Der AVR ISP Programmer wurde nach den freigegeben Datenblättern von Atmel entwickelt.
-Daher kann er mit allen Anwendungen die den AVR ISP mkII unterstützen genutzt werden.
+Der AVR ISP Programmer wurde nach den freigegeben DatenblÃ¤ttern von Atmel entwickelt.
+Daher kann er mit allen Anwendungen die den AVR ISP mkII unterstÃ¼tzen genutzt werden.
 
 Die bekanntesten Anwendungen sind:
 
@@ -291,17 +363,17 @@ Die bekanntesten Anwendungen sind:
 * avrdude (GNU/Linux,Windows,MacOS)
 * CodeVisionAVR http://www.hpinfotech.ro/html/download.htm
 
-Im folgenden wird kurz erklärt was bei der Installation und Verwendung vom AVR Studio
+Im folgenden wird kurz erklÃ¤rt was bei der Installation und Verwendung vom AVR Studio
 und avrdude wichtig zu beachten ist.
 
 
 AVR Studio 4
 ^^^^^^^^^^^^
 
-Das AVR Studio liefert eigene Treiber für den originalen AVR ISP Programmer mit.
+Das AVR Studio liefert eigene Treiber fÃ¼r den originalen AVR ISP Programmer mit.
 Bei der Installation muss jedoch explizit angegeben werden, dass diese auch
-installiert werden. Ist das AVR Studio bereits installiert, kann nachträglich
-über die Systemsteuerung -> Software -> Reparieren der Treiber aktiviert werden.
+installiert werden. Ist das AVR Studio bereits installiert, kann nachtrÃ¤glich
+Ã¼ber die Systemsteuerung -> Software -> Reparieren der Treiber aktiviert werden.
 
 Steckt man den USBprog mit der AVR Programmer Firmware an, so sollte Windows
 automatisch den AVR Stuido Treiber (Jungo) finden und aktivieren.
@@ -316,24 +388,24 @@ heruntergeladen und installiert werden.
 
 *Verwendung des AVR Studio Treibers*
 
-Nachdem WinAVR Installiert ist, muss man dafür sorgen das Windows einen Treiber für USBprog
-mit dem AVR Programmer hat. Entweder verwendet man den originalen AVR Studio Treiber, dafür
+Nachdem WinAVR Installiert ist, muss man dafÃ¼r sorgen das Windows einen Treiber fÃ¼r USBprog
+mit dem AVR Programmer hat. Entweder verwendet man den originalen AVR Studio Treiber, dafÃ¼r
 muss man aber das AVR Stuido wie im Absatz AVR Studio 4 beschrieben installieren, oder man
 installiert einen freien libusb Treiber der bereits im WinAVR Paket mitgeliefert wird.
 
 *Verwendung des freien libusb Treibers*
 
 Alternativ zum originalen Treiber kann auch der freie libusb Treiber installiert werden. Wenn
-der Windowsassistent sich öffnet muss gewählt werden, dass der Pfad zum Treiber manuell angegeben wird.
+der Windowsassistent sich Ã¶ffnet muss gewÃ¤hlt werden, dass der Pfad zum Treiber manuell angegeben wird.
 Die Treiberdateien befinden sich nach der Installation von WinAVR im Vereichnis c:\WinAVR\utils\libusb.
 
 avrdude unter GNU/Linux
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Entweder kann avrdude über die Paketverwaltung installiert werden oder es wird der klassische
-Linux Installationsprozess gewählt.
+Entweder kann avrdude Ã¼ber die Paketverwaltung installiert werden oder es wird der klassische
+Linux Installationsprozess gewÃ¤hlt.
 
-Installation per APT (Debian/Ubuntu/etc) (als root ausführen)
+Installation per APT (Debian/Ubuntu/etc) (als root ausfÃ¼hren)
 --------------------------------------------------------------------------
 rechner:/home/sauter# apt-get install avrdude
 Reading package lists... Done
@@ -353,9 +425,9 @@ Setting up avrdude (5.2-2) ...
 
 Klassische Linux Installation
 
-Für die Installation muss das neuste Quelltextarchiv zuvor heruntergeladen werden.
+FÃ¼r die Installation muss das neuste Quelltextarchiv zuvor heruntergeladen werden.
 Die aktuelleste Version kann von der Internetseite http://download.savannah.gnu.org/releases/avrdude/
-ausgewählt werden.
+ausgewÃ¤hlt werden.
 
 
 --------------------------------------------------------------------------
@@ -389,13 +461,13 @@ sauter:/usr/src/avrdude-5.5#
 An dieser Stelle kann es zu Fehler kommen, wenn die Bibliothek libusb
 nicht installiert ist. Auf einem Debian basierenden System kann wieder
 per APT die fehlenden Komponenten installiert werden. Ebenso werden
-die Programme bison, flex und g++ für die Übersetzung des Quelltextes benötigt.
+die Programme bison, flex und g++ fÃ¼r die Ãœbersetzung des Quelltextes benÃ¶tigt.
 
 ------------------------------------------------------------------------------------
 rechner:/usr/src/avrdude-5.5# apt-get install libusb-0.1-4 libusb-dev bison flex g++
 ------------------------------------------------------------------------------------
 
-Der letzte Befehl muss zwingend als root ausgeführt werden.
+Der letzte Befehl muss zwingend als root ausgefÃ¼hrt werden.
 
 --------------------------------------------------------------------------
 sauter:/usr/src/avrdude-5.5# make
@@ -423,25 +495,25 @@ BLA
 * Reset Jumper gesteckt obwohl er entfernt sein muss
 * Falsche ISP Geschwindigkeit (max 1/4 des CPU Takts)
 * Angabe der richtigen ISP Geschwindigkeit mit avrdude mit dem Parameter -B 8 (125 kHz) oder -B 1 (1MHz)
-* Angabe der richtigen ISP Geschindigkeit mit dem AVR Studio 4 über das Register Board (und Write drücken nicht vergessen)
+* Angabe der richtigen ISP Geschindigkeit mit dem AVR Studio 4 Ã¼ber das Register Board (und Write drÃ¼cken nicht vergessen)
 
 
 OpenOCD ARM7/ARM9 Debugger
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mit der OpenOCD-Firmware für den USBprog Adapter lassen sich viele ARM-basierte Mikrocontroller im eingebauten 
-Zustand (in-circuit) programmieren. Der Adapter ermöglicht Echtzeitdebugging, das Setzen von Breakpoints und 
-Ausführen von Einzelschritten, also die ganze Funktionspalette, welche zur erfolgreichen Anwendungsentwicklung 
-und zum effizienten Debugging benötigt werden. Angesteuert wird er über OpenOCD von Dominic Rath.
+Mit der OpenOCD-Firmware fÃ¼r den USBprog Adapter lassen sich viele ARM-basierte Mikrocontroller im eingebauten 
+Zustand (in-circuit) programmieren. Der Adapter ermÃ¶glicht Echtzeitdebugging, das Setzen von Breakpoints und 
+AusfÃ¼hren von Einzelschritten, also die ganze Funktionspalette, welche zur erfolgreichen Anwendungsentwicklung 
+und zum effizienten Debugging benÃ¶tigt werden. Angesteuert wird er Ã¼ber OpenOCD von Dominic Rath.
 
 
-NEU: Im Testing-Zweig von Debian Sarge ist mittlerweile OpenOCD samt USBprog unterstützung integriert! D.h. es 
-kann einfach über die Paketverwaltung alles benötigte installiert werden.
+NEU: Im Testing-Zweig von Debian Sarge ist mittlerweile OpenOCD samt USBprog unterstÃ¼tzung integriert! D.h. es 
+kann einfach Ã¼ber die Paketverwaltung alles benÃ¶tigte installiert werden.
 
  
 
-Dieser Adapter ist nicht der Schnellste! Aber die Geschwindigkeit reicht für die meisten einfachen Programmierungen und 
-Debugsessions völlig aus! Ein Singlestep auf der Telnetkonsole geht fast ohne Verzögerung. 
+Dieser Adapter ist nicht der Schnellste! Aber die Geschwindigkeit reicht fÃ¼r die meisten einfachen Programmierungen und 
+Debugsessions vÃ¶llig aus! Ein Singlestep auf der Telnetkonsole geht fast ohne VerzÃ¶gerung. 
 
 OpenOCD unter Linux
 ^^^^^^^^^^^^^^^^^^^
@@ -463,7 +535,7 @@ Aus dem Quelltext installieren
 OpenOCD unter Windows 
 ^^^^^^^^^^^^^^^^^^^^^
 
-Für Windows pflegt Michael Fischer eine Installationversion von OpenOCD. Diese ist über die Homepage   http://www.yagarto.de/ erreichbar. Da USBprog noch relativ frisch ist gibt es erstmal hier auf meiner Seite ausschliesslich eine Yagarto OpenOCD USBprog Version. Die Datei muss einfach heruntergeladen und installiert werden.
+FÃ¼r Windows pflegt Michael Fischer eine Installationversion von OpenOCD. Diese ist Ã¼ber die Homepage   http://www.yagarto.de/ erreichbar. Da USBprog noch relativ frisch ist gibt es erstmal hier auf meiner Seite ausschliesslich eine Yagarto OpenOCD USBprog Version. Die Datei muss einfach heruntergeladen und installiert werden.
 
 Entweder kann man anschliessend openocd von der Dos-Box aus starten oder in eine Entwicklungsumgebung die aus Eclipse besteht integrieren.
  
@@ -472,7 +544,7 @@ Arbeiten mit dem OpenOCD Debugger
 
 *GNU/Linux*
 
-Vor etwas längerer Zeit habe ich mal ein kleines Demo hier zusammengeschrieben. 
+Vor etwas lÃ¤ngerer Zeit habe ich mal ein kleines Demo hier zusammengeschrieben. 
 Ich denke mal es sollte als Leitfaden ausreichend sein. LPC2103(ARM7) mit OpenOCD unter Linux entwickeln
 
 *Windows*
@@ -486,9 +558,9 @@ Hier wird beschrieben wie man unter Windows mit OpenOCD und dem GCC entwickeln k
 SimplePort
 ~~~~~~~~~~
 
-Mit dieser Firmware können ganz einfach die 10 nach außen geführten Leitungen als Ein- und Ausgabeleitungen verwendet werden. Dazu gibt es eine kleine Bibliotheken in C, Python und Java die in Windows, Linux, und wenn notwendig in Mac einsetzbar sind.
+Mit dieser Firmware kÃ¶nnen ganz einfach die 10 nach auÃŸen gefÃ¼hrten Leitungen als Ein- und Ausgabeleitungen verwendet werden. Dazu gibt es eine kleine Bibliotheken in C, Python und Java die in Windows, Linux, und wenn notwendig in Mac einsetzbar sind.
 
-Für erste Tests kann man die Leitung 11 als Ausgang verwenden, daran hängt die LED! So könnte ein C Beispiel aussehen:
+FÃ¼r erste Tests kann man die Leitung 11 als Ausgang verwenden, daran hÃ¤ngt die LED! So kÃ¶nnte ein C Beispiel aussehen:
 
 -----------------------------------------------------------
   struct simpleport * sp_handle;
@@ -508,11 +580,11 @@ Für erste Tests kann man die Leitung 11 als Ausgang verwenden, daran hängt die L
 -----------------------------------------------------------
  
 
-Im Downloadbereich gibt es Beispiele, in denen gezeigt wird, wie die Bibliotheken in den verschiedenen Sprachen eingesetzt werden können.
+Im Downloadbereich gibt es Beispiele, in denen gezeigt wird, wie die Bibliotheken in den verschiedenen Sprachen eingesetzt werden kÃ¶nnen.
 
-Die verschiedenen Ansteuerungen aus den einzelnen Sprachen wie Java und Python wurden mit SWIG realisiert. Jederzeit können ohne grossen Aufwand weitere Anbindungen erzeugt werden. Mehr dazu gibt es hier. 
+Die verschiedenen Ansteuerungen aus den einzelnen Sprachen wie Java und Python wurden mit SWIG realisiert. Jederzeit kÃ¶nnen ohne grossen Aufwand weitere Anbindungen erzeugt werden. Mehr dazu gibt es hier. 
 
-SWIG kann aktuell Anbindungen für die folgenden Sprachen erzeugen: Allegro CL, C#, Chicken, Guile, Java, Modula-3, Mzscheme, OCAML, Perl, PHP, Python, Ruby, Tcl.
+SWIG kann aktuell Anbindungen fÃ¼r die folgenden Sprachen erzeugen: Allegro CL, C#, Chicken, Guile, Java, Modula-3, Mzscheme, OCAML, Perl, PHP, Python, Ruby, Tcl.
 
 Status
 ^^^^^^
@@ -551,7 +623,7 @@ Pin    Bezeichnung   Aufrufname
 LED    IO11          11
 -------------------------------
 
-Auf der Platine befindet sich zusätzlich eine rote LED. Diese kann wenn IO11 als Ausgang konfiguriert ist, angesteuert werden.
+Auf der Platine befindet sich zusÃ¤tzlich eine rote LED. Diese kann wenn IO11 als Ausgang konfiguriert ist, angesteuert werden.
 
  
 Bibliothek in C
@@ -573,8 +645,8 @@ Bsp: IO 1 - IO 4 = Taster, und IO 5 - IO 8 = LED:
 (als Hexzahl ist das: 0x0F)
 
 
-Mit der Funktion können nur die Datenrichtungen für IO 1 - I0 8 angebeben werden! Die für IO 9 - IO 11 
-müssen mit der Funktion void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir) einzeln angegeben werden.
+Mit der Funktion kÃ¶nnen nur die Datenrichtungen fÃ¼r IO 1 - I0 8 angebeben werden! Die fÃ¼r IO 9 - IO 11 
+mÃ¼ssen mit der Funktion void simpleport_set_pin_dir(struct simpleport *simpleport,int pin, int dir) einzeln angegeben werden.
 
 Datenrichtung einer einzelnen Leitung (auch IO 9 - IO 11) 1=Ausgang, 0=Eingang:
 
@@ -686,12 +758,12 @@ import simpleport
 SimplePort RS232
 ~~~~~~~~~~~~~~~~
 
-Mit SimplePortRS232 kann können einfach und bequem die IO-Pins von USBprog
-über ein Terminal oder Bibliotheken für die serielle Schnittstelle angesteuert werden.
+Mit SimplePortRS232 kann kÃ¶nnen einfach und bequem die IO-Pins von USBprog
+Ã¼ber ein Terminal oder Bibliotheken fÃ¼r die serielle Schnittstelle angesteuert werden.
 
-Das Gerät meldet sich in Windows als virtueller Comport und in GNU/Linux
+Das GerÃ¤t meldet sich in Windows als virtueller Comport und in GNU/Linux
 als /dev/ttyACM0 an. Jetzt kann mit jeder Programmiersprache die ein
-Interface für die serielle Schnittstelle anbietet gearbeitet werden.
+Interface fÃ¼r die serielle Schnittstelle anbietet gearbeitet werden.
 
 Die Durchnummerierung der einzelnen Pins sieht wie folgt aus:
 
@@ -713,11 +785,11 @@ LED    IO11          B
 -------------------------------
 
 
-Kommandos für die Ansteuerung der Leitungen
+Kommandos fÃ¼r die Ansteuerung der Leitungen
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Die Kommandos werden als ASCII-Zeichen übertragen. Das hat den Vorteil,
-das die Funktionalität bereits mit einem einfachen Terminal überprüft werden kann.
+Die Kommandos werden als ASCII-Zeichen Ã¼bertragen. Das hat den Vorteil,
+das die FunktionalitÃ¤t bereits mit einem einfachen Terminal Ã¼berprÃ¼ft werden kann.
 
 
 *Datenrichtung einer einzelnen Leitung definieren*
@@ -727,7 +799,7 @@ Kommando: d<Aufrufname><Richtung>\*
 * Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
 * Richtung - 1=Ausgang, 0=Eingang (mit internen Pullups)
 
-Rückgabewert: keiner
+RÃ¼ckgabewert: keiner
 
 Beispiel: dB1\* (Status LED als Ausgang), d10\* (IO1 als Eingang)
 
@@ -738,7 +810,7 @@ Kommando: p<Aufrufname><Wert>\*
 * Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
 * Wert - 1 = 5V (high) , 0 = GND (low)
 
-Rückgabewert: keiner
+RÃ¼ckgabewert: keiner
 
 Beispiel Aufruf: pB1\* (Status LED an), pB0\* (Status LED aus)
 
@@ -748,10 +820,10 @@ Kommando: i<Aufrufname>\*
 
 * Aufrufname - (siehe Tabelle Pin/Bezeichnung/Aufrufname)
 
-Rückgabewert: 2 Bytes abholen 
+RÃ¼ckgabewert: 2 Bytes abholen 
 
-Als Rückgabewert müssen für die Funktion immer 2 Werte sofort
-nach dem Ausführen des Kommandos abgeholt werden.
+Als RÃ¼ckgabewert mÃ¼ssen fÃ¼r die Funktion immer 2 Werte sofort
+nach dem AusfÃ¼hren des Kommandos abgeholt werden.
 Die Antwort ist wie folgt zu lesen: i0 = 0V (low), i1 = 5V (high).
 
 Beispiel Aufruf: i1\* (Abfrage Signal IO1)
@@ -766,7 +838,7 @@ um beispielsweise bei mehreren angeschlossenen Tastern eine Tastenkombination
 zu einem Zeitpunkt zu ermitteln, kann dies mit der aktuellen Funktion geschehen.
 Es werden beim Aufruf des Kommandos die Werte zum gleichen Zeitpunkt gemessen.
 
-Rückgabewert: 8 Bytes  abholen 
+RÃ¼ckgabewert: 8 Bytes  abholen 
 
 Das Ergebnis ist eine Reihe von acht 0 und 1 Werten. Die ganz linke 
 Zahl entspricht IO1 und ganz rechts IO8. Ist entsprechend eine 1 gesetzt 
@@ -779,7 +851,7 @@ Beispiel Antwort: 10001000 (IO1 und IO5 waren high, der Rest low)
 Beispiel in Python
 ^^^^^^^^^^^^^^^^^^
 
-Das Paket serial für Python muss zuvor installiert werden. In Debian
+Das Paket serial fÃ¼r Python muss zuvor installiert werden. In Debian
 reich ein einfaches _apt-get install python-serial_.
 
 ------------------------------------------------------
@@ -857,12 +929,12 @@ USB zu RS232 Wandler
 Mit dieser Firmware Version kann man usbprog als einfachen RS232 Wandler in allen bekannten Betriebssystemen nuzten. 
 Er arbeitet mit den Standardtreibern vom Betriebssystem. 
 
-Um ein RS232 Gerät ansteuern zu können muss man sich nur einen Adapter von JP2 auf einen entsprechenden Stecker (evtl. 9 polig SUB-D) basteln. 
+Um ein RS232 GerÃ¤t ansteuern zu kÃ¶nnen muss man sich nur einen Adapter von JP2 auf einen entsprechenden Stecker (evtl. 9 polig SUB-D) basteln. 
 
 Status
 ^^^^^^
 
-* Mit einer festeingestellten Baudrate (fix in der Firmware) von 9600  8N1 getestet und einsatzfähig unter Linux und Windows XP
+* Mit einer festeingestellten Baudrate (fix in der Firmware) von 9600  8N1 getestet und einsatzfÃ¤hig unter Linux und Windows XP
 * Das man zwischen verschiedenen Baudraten hin und herschalten kann ist nicht mehr viel Aufwand. Wenn das jemand dringend braucht, schreibt einfach eine Mail, dann kann ich das dann schnell machen.
 
 Linux
@@ -871,35 +943,35 @@ cdc-acm als Modul oder fest im Kernel (/dev/ttyACMx)
 
 MacOS
 ^^^^^
-Das Gerät sollte als /dev/cu.usbmodem*** erscheinen. Mit Mac habe ich es noch nicht getestet, aber es sollte eigentlich funktionieren. Wenn nicht gebt mir kurz bescheid und ich schau mir das dann an.
+Das GerÃ¤t sollte als /dev/cu.usbmodem*** erscheinen. Mit Mac habe ich es noch nicht getestet, aber es sollte eigentlich funktionieren. Wenn nicht gebt mir kurz bescheid und ich schau mir das dann an.
 
 
 AT89 Programmer
 ~~~~~~~~~~~~~~~
 
-Mit der at89prog Firmware kann mit dem usbprog Adapter der AT89S8252 programmiert, gelöscht und resetet werden. 
+Mit der at89prog Firmware kann mit dem usbprog Adapter der AT89S8252 programmiert, gelÃ¶scht und resetet werden. 
 Falls Bedarf an anderen Controllern der AT89 Familie besteht, meldet dies mir einach mal. Zu der Firmware gibt 
-es ein kleines Konsolenprogramm, über das man den Adapter ansteuer kann. Wie dies genau zu verwenden ist, 
-ist in dem Abschnitt "Hilfe für at89prog" beschrieben.
+es ein kleines Konsolenprogramm, Ã¼ber das man den Adapter ansteuer kann. Wie dies genau zu verwenden ist, 
+ist in dem Abschnitt "Hilfe fÃ¼r at89prog" beschrieben.
 
 Status
 ^^^^^^
 Die Firmware ist mit dem AT89S8252 auf Windows und Linux erfolgreich getestet worden. 
-Da es noch wenig Feedback von Benutzern gibt, würde ich sagen sie befindet sich noch im Beta-Status. 
-Aktuell kann man mit der Firmware eine .Bin Datein in den Flashspeicher übertragen, den Flash löschen 
+Da es noch wenig Feedback von Benutzern gibt, wÃ¼rde ich sagen sie befindet sich noch im Beta-Status. 
+Aktuell kann man mit der Firmware eine .Bin Datein in den Flashspeicher Ã¼bertragen, den Flash lÃ¶schen 
 und den AT89 reseten. Bei Bedarf an weiteren Funktionen einfach melden (sauter@ixbat.de). Die Struktur 
 steht, ja d.h. alles andere sollte schnell programmiert sein.
 
 
 *GNU/Linux*
 
-* Programm löschen _./at89prog -e_
+* Programm lÃ¶schen _./at89prog -e_
 * Programm heraufladen _./at89prog -u /home/bene/test1.BIN_
 * CPU Reset _./at89prog -r_
 
 
 *Windows*
-* Programm löschen _at89prog.exe -e_
+* Programm lÃ¶schen _at89prog.exe -e_
 * Programm heraufladen _at89prog.exe -u c:\test1.BIN_
 * CPU Reset _at89prog.exe -r_
 
@@ -913,10 +985,10 @@ TDB
 XSVF Player (Xilinx CPLDs und FPGAs programmieren)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-XSVF-Dateien stellen ein standardisiertes Format dar, um prinzipiell beliebige JTAG-Operationen zu beschreiben. Mit dieser Firmware für usbprog ist es möglich solche XSVF-Dateien "abzuspielen", das heißt die enthaltenen JTAG-Operationen über den usbprog-Adapter auszuführen. Damit kann man beispielsweise CPLDs, FPGAs oder Mikrocontroller mit JTAG-Schnittstelle programmieren, löschen, testen usw. Voraussetzung dafür ist, dass man eine Software hat, die entsprechende XSVF-Dateien für das Target-Device erstellen kann.
+XSVF-Dateien stellen ein standardisiertes Format dar, um prinzipiell beliebige JTAG-Operationen zu beschreiben. Mit dieser Firmware fÃ¼r usbprog ist es mÃ¶glich solche XSVF-Dateien "abzuspielen", das heiÃŸt die enthaltenen JTAG-Operationen Ã¼ber den usbprog-Adapter auszufÃ¼hren. Damit kann man beispielsweise CPLDs, FPGAs oder Mikrocontroller mit JTAG-Schnittstelle programmieren, lÃ¶schen, testen usw. Voraussetzung dafÃ¼r ist, dass man eine Software hat, die entsprechende XSVF-Dateien fÃ¼r das Target-Device erstellen kann.
 Status
 
-Der XSVF Player funktioniert für den Fall, dass keine einzelne XSVF-Instruktion länger als 64 Bytes ist. Getestet wurde unter Linux (openSUSE 10.3 x86_64, Debian/Sarge) mit einem Xilinx XC9572 CPLD sowie mit einem XC9572XL CPLD.
+Der XSVF Player funktioniert fÃ¼r den Fall, dass keine einzelne XSVF-Instruktion lÃ¤nger als 64 Bytes ist. Getestet wurde unter Linux (openSUSE 10.3 x86_64, Debian/Sarge) mit einem Xilinx XC9572 CPLD sowie mit einem XC9572XL CPLD.
 
  
 Anschlussbelegung 
@@ -948,11 +1020,11 @@ XSVF-Dateien erstellen mit Xilinx ISE 9.2i WebPack
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-Um XSVF-Dateien zu erstellen, mit denen ein Xilinx CPLD oder FPGA konfiguriert werden kann, kann man folgendermaßen vorgehen:
+Um XSVF-Dateien zu erstellen, mit denen ein Xilinx CPLD oder FPGA konfiguriert werden kann, kann man folgendermaÃŸen vorgehen:
 
-In der ISE-Projektansicht die Top-Entity auswählen und dann "Implement Design" -> "Optional Implementation Tools" -> "Generate SVF/XSVF/STAPL File" ausführen. Es öffnet sich ein neues Fenster, dort "Prepare a Boundary-Scan File" aktivieren und als Format "XSVF" auswählen. Auf "Finish" klicken. Dann der zu erzeugenden XSVF-Datei einen Namen geben und im nächsten Fenster "Ok" klicken. In dem sich danach öffnenden Fenster ("Add Device") die Datei mit gleichem Namen wie die Top-Entity und Endung .jed im Projektordner auswählen. Anschließend im Hauptfenster Rechtsklick auf das CPLD- oder FPGA-Symbol in der JTAG-Chain und auf "Program" klicken, mit "Ok" bestätigen. Zum Schluss auf "Output" -> "XSVF File" -> "Stop Writing to XSVF File" und fertig ist das XSVF.
+In der ISE-Projektansicht die Top-Entity auswÃ¤hlen und dann "Implement Design" -> "Optional Implementation Tools" -> "Generate SVF/XSVF/STAPL File" ausfÃ¼hren. Es Ã¶ffnet sich ein neues Fenster, dort "Prepare a Boundary-Scan File" aktivieren und als Format "XSVF" auswÃ¤hlen. Auf "Finish" klicken. Dann der zu erzeugenden XSVF-Datei einen Namen geben und im nÃ¤chsten Fenster "Ok" klicken. In dem sich danach Ã¶ffnenden Fenster ("Add Device") die Datei mit gleichem Namen wie die Top-Entity und Endung .jed im Projektordner auswÃ¤hlen. AnschlieÃŸend im Hauptfenster Rechtsklick auf das CPLD- oder FPGA-Symbol in der JTAG-Chain und auf "Program" klicken, mit "Ok" bestÃ¤tigen. Zum Schluss auf "Output" -> "XSVF File" -> "Stop Writing to XSVF File" und fertig ist das XSVF.
 
-Alternativ zum "Program"-Schritt kann man natürlich auch beliebige andere JTAG-Operationen ausführen und in der XSVF-Datei aufzeichnen.
+Alternativ zum "Program"-Schritt kann man natÃ¼rlich auch beliebige andere JTAG-Operationen ausfÃ¼hren und in der XSVF-Datei aufzeichnen.
 
  
 Interessante und hilfreiche Linkadressen  
@@ -967,21 +1039,21 @@ http://www.xilinx.com/bvdocs/publications/ds300.pdf
 Logik Analsator (250 kHz, 8 Signale, Trigger)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    * 8 Kanäle
-    * Online Modus ( Daten werden direkt während der Messung abtransportiert)
+    * 8 KanÃ¤le
+    * Online Modus ( Daten werden direkt wÃ¤hrend der Messung abtransportiert)
     * Speicher Modus (es werden intern bis zu 1000 Messungen aufgezeichnet)
-    * Snapshot Modus (für langsame gezielte Aufzeichnungen z.B. Counter, Logiktests ... )
+    * Snapshot Modus (fÃ¼r langsame gezielte Aufzeichnungen z.B. Counter, Logiktests ... )
     * einstellbare Abtastrate von 5us bis 100 ms (max 250kHz)
     * einstellbare Trigger (Flanke an einer Leitung, Muster auf allen Leitungen)
-    * einfache Konsolenanwendung zum Aufzeichnen für Linux und Windows
+    * einfache Konsolenanwendung zum Aufzeichnen fÃ¼r Linux und Windows
     * als Ausgabeformat werden vcd-Dateien erzeugt. Diese kann man mit vielen Tools bearbeiten. (Bsp. GTKWave)
 
-Das Gerät wurde nicht als Profi-Logikanalyser, sondern für einfache und relativ langsame Messungen (bis 250kHz) geplant. Interessant ist dieses Gerät für Bastler, die gerne mit kleinen Mikrocontrollern arbeiten und ab und an gerne in eine UART, SPI oder I2C Verbindung schauen möchte, oder einfach nur für Versuche oder den Schulunterricht.
+Das GerÃ¤t wurde nicht als Profi-Logikanalyser, sondern fÃ¼r einfache und relativ langsame Messungen (bis 250kHz) geplant. Interessant ist dieses GerÃ¤t fÃ¼r Bastler, die gerne mit kleinen Mikrocontrollern arbeiten und ab und an gerne in eine UART, SPI oder I2C Verbindung schauen mÃ¶chte, oder einfach nur fÃ¼r Versuche oder den Schulunterricht.
 
-Das Projekt besteht aus drei Teilen. Der Hardware, die Bestandteil dieses Projektes ist (die Pläne dazu stehen im Downloadbereich zur Verfügung). Dann gibt es das Programm logic2vcd, um Messungen auf dem Gerät zu starten und zu steuern (gehört ebenfalls zu diesem Projekt). Dieses Programm erzeugt sogenannte .vcd-Dateinen, die mit dem dritten Programm GTKWave analysiert werden können. GTKWave ist nicht Bestandteil dieses Projektes aber ebenfalls ein Open Source Projekt. Beide Programme gibt es für Linux und Windows.
+Das Projekt besteht aus drei Teilen. Der Hardware, die Bestandteil dieses Projektes ist (die PlÃ¤ne dazu stehen im Downloadbereich zur VerfÃ¼gung). Dann gibt es das Programm logic2vcd, um Messungen auf dem GerÃ¤t zu starten und zu steuern (gehÃ¶rt ebenfalls zu diesem Projekt). Dieses Programm erzeugt sogenannte .vcd-Dateinen, die mit dem dritten Programm GTKWave analysiert werden kÃ¶nnen. GTKWave ist nicht Bestandteil dieses Projektes aber ebenfalls ein Open Source Projekt. Beide Programme gibt es fÃ¼r Linux und Windows.
 Status
 
-Der Logikadapter wurde ausgiebig mit allem getestet was ich hier so gefunden hab. Bis jetzt ist mir noch kein Fehler bekannt. Da ihn aber noch einfach zu wenige getestet haben würde ich ihn als Beta einstufen
+Der Logikadapter wurde ausgiebig mit allem getestet was ich hier so gefunden hab. Bis jetzt ist mir noch kein Fehler bekannt. Da ihn aber noch einfach zu wenige getestet haben wÃ¼rde ich ihn als Beta einstufen
 
 Anschlussbelegung
 ^^^^^^^^^^^^^^^^^
@@ -1000,7 +1072,7 @@ Download: http://www.dspia.com/gtkwave.html
 Aufzeichnung von Messungen mit logic2vcd
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Das Programm logic2vcd dient der Steuerung der Messung mit Hilfe der Hardware. Man startet das Programm mit den entsprechenden Kommandozeilenargumenten, und bekommt als Resultat eine .vcd Datei. Dieses Format kommt aus der Hardware Entwicklung. Es dient normalerweise dazu um Logikschaltungen nach einer Simmulation analysieren zu können. Der Vorteil dieses Datei Formates ist, dass es bereits einige Programme zum be- und verarbeiten gibt (unteranderem GTKWave).
+Das Programm logic2vcd dient der Steuerung der Messung mit Hilfe der Hardware. Man startet das Programm mit den entsprechenden Kommandozeilenargumenten, und bekommt als Resultat eine .vcd Datei. Dieses Format kommt aus der Hardware Entwicklung. Es dient normalerweise dazu um Logikschaltungen nach einer Simmulation analysieren zu kÃ¶nnen. Der Vorteil dieses Datei Formates ist, dass es bereits einige Programme zum be- und verarbeiten gibt (unteranderem GTKWave).
 
 Einfache Online Messung:
 
@@ -1013,11 +1085,11 @@ Im Detail bedeutet dies:
     -s Abtastrate (jede Millisekunde wird ein neuer Wert gelesen )
     -n Anzahl der Messungen
 
-Bei der Online Messung werden so schnell wie möglich die Daten von der Hardware abgeholt, so dass es im Analysator zu keinem Stau kommt. Kommt es jedoch zwischenzeitlich zu kurzen Unterbrechungen gehen Messdaten verloren. Dieses passiert bei hohen Abtastraten häufiger. Wenn es um hundertprozentige Genauigkeit geht, muss man auf den sogenannten internen Modus wechseln (siehe unten).
+Bei der Online Messung werden so schnell wie mÃ¶glich die Daten von der Hardware abgeholt, so dass es im Analysator zu keinem Stau kommt. Kommt es jedoch zwischenzeitlich zu kurzen Unterbrechungen gehen Messdaten verloren. Dieses passiert bei hohen Abtastraten hÃ¤ufiger. Wenn es um hundertprozentige Genauigkeit geht, muss man auf den sogenannten internen Modus wechseln (siehe unten).
 
 Online Messung mit Start-Trigger:
 
-Bei der einfachen Messung beginnt die Aufzeichnung mit dem Starten des Kommandos. Da man so jedoch schwer den Bereich erwischt, den man wirklich aufzeichnen möchte, kann man einen Start-Trigger definieren. Erst wenn das Signal - wie im Trigger definiert erkannt wird, beginnt die Aufzeichnung mit den entsprechenden Parametern.
+Bei der einfachen Messung beginnt die Aufzeichnung mit dem Starten des Kommandos. Da man so jedoch schwer den Bereich erwischt, den man wirklich aufzeichnen mÃ¶chte, kann man einen Start-Trigger definieren. Erst wenn das Signal - wie im Trigger definiert erkannt wird, beginnt die Aufzeichnung mit den entsprechenden Parametern.
 
   ./logic2vcd -f messung.vcd -R online -s 1ms -n 1000 -T edge -c 1 -t 1
 
@@ -1027,12 +1099,12 @@ Im Detail bedeutet dies:
         oder man kann den ganzen Port mit einem Muster vergleichen (pattern)
     -c Kanalnummer (1-8) funktioniert nur beim Edge-Trigger
     -t Der zu vergleichende Wert
-        * bei Edge=1 für einen Übergang von low - high und eine 0 für high - low
-        * bei Pattern das Hexmuster für den Port, wenn port 1,2 und 8 high sein sollen,
-          dann muss als Wert 193 (Hex: C1, Binär: 1100 0001) angegeben werden
-    -i  Wenn man bestimmte Kanäle beim Pattern Trigger ignorieren will, kann man
+        * bei Edge=1 fÃ¼r einen Ãœbergang von low - high und eine 0 fÃ¼r high - low
+        * bei Pattern das Hexmuster fÃ¼r den Port, wenn port 1,2 und 8 high sein sollen,
+          dann muss als Wert 193 (Hex: C1, BinÃ¤r: 1100 0001) angegeben werden
+    -i  Wenn man bestimmte KanÃ¤le beim Pattern Trigger ignorieren will, kann man
         diese hier angeben, genau gleich wie bei -t. Wenn man Kanal 1-4
-        ignorieren möchte, muss man entsprechend 240 (Hex: 0xf0 und Binär 11110000) angeben.
+        ignorieren mÃ¶chte, muss man entsprechend 240 (Hex: 0xf0 und BinÃ¤r 11110000) angeben.
 
 Die restlichen Parameter steuern wie auch bei der einfachen Messung die Aufzeichnung, die ab der erkannten Triggerbedingung startet.
 
@@ -1055,7 +1127,7 @@ Mit GTKWave kann man einfach Messungen analysieren. Gestartet wird das Program d
 _gtkwave messung.vcd_
 
  
-Als erstes muss auf vscope geklickt werden, um die Kanäle im Feld Signals einzublenden. Anschliessend kann man alle Kanäle makieren, und muss sie dann nur noch einfügen. Wenn man oben auf die Lupe klickt wird die komplette Messung in dem Fenster angezeigt. Jetzt kann man sich mit den restlichen Knöpfen an die entsprechende Stelle hinarbeiten. 
+Als erstes muss auf vscope geklickt werden, um die KanÃ¤le im Feld Signals einzublenden. Anschliessend kann man alle KanÃ¤le makieren, und muss sie dann nur noch einfÃ¼gen. Wenn man oben auf die Lupe klickt wird die komplette Messung in dem Fenster angezeigt. Jetzt kann man sich mit den restlichen KnÃ¶pfen an die entsprechende Stelle hinarbeiten. 
 
 
 Eigene Firmware entwickeln
