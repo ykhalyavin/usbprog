@@ -50,7 +50,16 @@ void Debug::setLevel(Debug::Level level)
 /* -------------------------------------------------------------------------- */
 void Debug::setFileHandle(FILE *handle)
 {
-    m_handle = handle;
+    if (!handle)
+        m_handle = stderr;
+    else
+        m_handle = handle;
+}
+
+/* -------------------------------------------------------------------------- */
+FILE *Debug::getFileHandle() const
+{
+    return m_handle;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -133,5 +142,18 @@ void Debug::vmsg(Debug::Level level, const char *msg, va_list list)
 
     delete[] newmsg;
 }
+
+/* -------------------------------------------------------------------------- */
+Debug::Level Debug::getLevel() const
+{
+    return m_debuglevel;
+}
+
+/* -------------------------------------------------------------------------- */
+bool Debug::isDebugEnabled() const
+{
+    return m_debuglevel < DL_NONE;
+}
+
 
 // vim: set sw=4 ts=4 fdm=marker et:

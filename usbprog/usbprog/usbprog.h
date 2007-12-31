@@ -104,7 +104,10 @@ class Debug {
         void vmsg(Debug::Level level, const char *msg, std::va_list args);
 
         void setLevel(Debug::Level level);
+        Debug::Level getLevel() const;
+        bool isDebugEnabled() const;
         void setFileHandle(FILE *handle);
+        FILE *getFileHandle() const;
 
     protected:
         Debug();

@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <cstdio>
 
 #include <wx/arrstr.h>
 #include <wx/gbsizer.h>
@@ -41,6 +42,9 @@ using std::vector;
 using std::stringstream;
 using std::ifstream;
 using std::ios;
+using std::fopen;
+using std::fclose;
+using std::setvbuf;
 
 #define BUFFERSIZE       2048
 
@@ -57,6 +61,7 @@ BEGIN_EVENT_TABLE(usbprogFrm,wxFrame)
     EVT_MENU(ID_CACHE_DELETE,           usbprogFrm::deleteCache)
     EVT_MENU(ID_CACHE_CLEAN,            usbprogFrm::cleanCache)
     EVT_MENU(ID_CACHE_DOWNLOAD_ALL,     usbprogFrm::downloadAll)
+    EVT_MENU(ID_DEBUG_ENABLE_DISABLE,   usbprogFrm::enableDisableDebug)
     EVT_COMBOBOX(ID_DEVICECOMBO,        usbprogFrm::deviceComboHandler)
     EVT_BUTTON(ID_REFRESH_DEV_BUTTON,   usbprogFrm::deviceRefreshHandler)
     EVT_BUTTON(ID_REFRESH_POOL_BUTTON,  usbprogFrm::firmwareRefreshHandler)
@@ -140,16 +145,18 @@ usbprogFrm::~usbprogFrm()
 void usbprogFrm::CreateGUIControls()
 {
 	SetIcon(usbprog_icon_xpm);
-
-    // status messages
     CreateStatusBar();
 
-    // menu
-    wxMenu *fileMenu = new wxMenu;
-    wxMenu *helpMenu = new wxMenu;
-    wxMenu *cacheMenu = new wxMenu;
-    fileMenu->Append(ID_EXIT_MENU, wxT("E&xit\tCtrl-q"),
+    // Program
+    wxMenu *programMenu = new wxMenu;
+    programMenu->AppendCheckItem(ID_DEBUG_ENABLE_DISABLE, wxT("&Loging"),
+            wxT("Enable/disable debugging output to file"));
+    programMenu->AppendSeparator();
+    programMenu->Append(ID_EXIT_MENU, wxT("E&xit\tCtrl-q"),
             wxT("Quit this program"));
+
+    // Cache
+    wxMenu *cacheMenu = new wxMenu;
     cacheMenu->Append(ID_CACHE_DELETE, wxT("&Delete cache"),
             wxT("Deletes the whole cache from disk"));
     cacheMenu->Append(ID_CACHE_CLEAN, wxT("C&lean"),
@@ -157,11 +164,14 @@ void usbprogFrm::CreateGUIControls()
     cacheMenu->AppendSeparator();
     cacheMenu->Append(ID_CACHE_DOWNLOAD_ALL, wxT("Download &all"),
             wxT("Deletes old firmware versions from the cache"));
+
+    // Help
+    wxMenu *helpMenu = new wxMenu;
     helpMenu->Append(ID_ABOUT_MENU, wxT("&About\tF1"),
             wxT("Show version information"));
 
     wxMenuBar *menuBar = new wxMenuBar();
-    menuBar->Append(fileMenu, wxT("&Program"));
+    menuBar->Append(programMenu, wxT("&Program"));
     menuBar->Append(cacheMenu, wxT("&Cache"));
     menuBar->Append(helpMenu, wxT("&Help"));
 
@@ -591,6 +601,34 @@ void usbprogFrm::uploadHandler(wxCommandEvent &evt)
     wxCommandEvent dummy;
     deviceRefreshHandler(evt);
     status("");
+}
+
+/* -------------------------------------------------------------------------- */
+void usbprogFrm::enableDisableDebug(wxCommandEvent &evt)
+{
+    Debug *dbg = Debug::debug();
+
+    if (dbg->isDebugEnabled()) {
+        dbg->setLevel(Debug::DL_NONE);
+        fclose(dbg->getFileHandle());
+        dbg->setFileHandle(NULL);
+    } else {
+        wxFileDialog fdg(m_panel, wxT("Choose a file"),
+            wxT(""), wxT(""), wxT("*.log"), wxSAVE);
+        if (fdg.ShowModal() != wxID_OK)
+            dbg->setFileHandle(stderr);
+        else {
+            FILE *fp = fopen(fdg.GetPath().mb_str(), "a");
+            if (fp) {
+                setvbuf(fp, NULL, _IONBF, 0);
+                dbg->setFileHandle(fp);
+            } else {
+                status("Could not create specified file, using standard error");
+                dbg->setFileHandle(stderr);
+            }
+        }
+        dbg->setLevel(Debug::DL_TRACE);
+    }
 }
 
 // vim: set sw=4 ts=4 fdm=marker et:

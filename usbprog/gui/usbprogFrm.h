@@ -47,7 +47,13 @@ class usbprogFrm : public wxFrame {
                 const wxSize& size = wxDefaultSize);
         virtual ~usbprogFrm();
 
-    public:
+    protected:
+        Firmware *getSelectedFirmware();
+        Device *getSelectedDevice();
+        void enableDisableDebug(wxCommandEvent &evt);
+        void cleanCache(wxCommandEvent &evt);
+        void downloadAll(wxCommandEvent &evt);
+        void deleteCache(wxCommandEvent &evt);
         void exitMenuHandler(wxCommandEvent &evt);
         void aboutMenuHandler(wxCommandEvent &evt);
         void deviceComboHandler(wxCommandEvent &evt);
@@ -59,15 +65,6 @@ class usbprogFrm : public wxFrame {
         void onlineRadioHandler(wxCommandEvent &evt);
         void poolRadioHandler(wxCommandEvent &evt);
         void uploadHandler(wxCommandEvent &evt);
-        void cleanCache(wxCommandEvent &evt);
-        void deleteCache(wxCommandEvent &evt);
-        void downloadAll(wxCommandEvent &evt);
-
-    protected:
-        Firmware *getSelectedFirmware();
-        Device *getSelectedDevice();
-
-
 
     private:
         void OnClose(wxCloseEvent& event);
@@ -114,7 +111,8 @@ class usbprogFrm : public wxFrame {
             ID_ABOUT_MENU,
             ID_CACHE_DELETE,
             ID_CACHE_CLEAN,
-            ID_CACHE_DOWNLOAD_ALL
+            ID_CACHE_DOWNLOAD_ALL,
+            ID_DEBUG_ENABLE_DISABLE
         };
 };
 

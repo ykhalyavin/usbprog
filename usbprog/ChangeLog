@@ -4,6 +4,7 @@
 	* CLI: re-discover update devices after upload, and reset the current
 	  update device in that case
 	* bump version to 0.1.1
+	* GUI: implement logfile option
 
 2007-12-30  Bernhard Walle <bernhard.walle@gmx.de>
 
