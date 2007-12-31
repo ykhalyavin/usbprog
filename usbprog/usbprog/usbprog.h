@@ -24,7 +24,8 @@
 
 /* Preprocessor definitions {{{1 */
 
-#define USBPROG_VERSION_STRING "0.1.0"
+/* also update configure.in and win32/installer.nsi */
+#define USBPROG_VERSION_STRING "0.1.1"
 
 #define DEFAULT_INDEX_URL       "http://www.ixbat.de/usbprog/versions.xml"
 #define AUTO_NOT_UPDATE_TIME    10
