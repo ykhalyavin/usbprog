@@ -16,7 +16,7 @@ man_MANS		= usbprog.1
 
 
 usbprog.1: usbprog.pod
-	$(POD2MAN) usbprog.pod          \
+	pod2man usbprog.pod             \
 		--center="USBprog" 	\
 		--release=$(VERSION)	\
-		> $(srcdir)/src/usbprog.1
+		> usbprog.1

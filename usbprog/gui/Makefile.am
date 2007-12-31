@@ -11,7 +11,7 @@ usbprog_gui_LDADD	= ../usbprog/libusbprog.la \
 man_MANS		= usbprog-gui.1
 
 usbprog-gui.1: usbprog-gui.pod 
-	$(POD2MAN) usbprog-gui.pod      \
+	pod2man usbprog-gui.pod         \
 		--center="USBprog GUI" 	\
 		--release=$(VERSION)	\
 		> usbprog-gui.1
