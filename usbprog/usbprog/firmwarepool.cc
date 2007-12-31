@@ -23,6 +23,7 @@
 #include <iterator>
 #include <cstring>
 #include <vector>
+#include <cerrno>
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -365,6 +366,16 @@ void Firmwarepool::readIndex()
             parsePool(doc, cur);
 
     xmlFreeDoc(doc);
+}
+
+/* -------------------------------------------------------------------------- */
+void Firmwarepool::deleteIndex()
+    throw (IOError)
+{
+    string file = pathconcat(m_cacheDir, INDEX_FILE_NAME);
+    int ret = remove(file.c_str());
+    if (ret < 0)
+        throw IOError("Deleting index file failed: " + string(strerror(errno)));
 }
 
 /* -------------------------------------------------------------------------- */

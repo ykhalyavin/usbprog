@@ -1,3 +1,14 @@
+2007-12-31  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* GUI: report downloading in status bar
+	* CLI: re-discover update devices after upload, and reset the current
+	  update device in that case
+
+2007-12-30  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* CLI: enable USB debugging in debugging mode (-D)
+	* improve debugging functions (Debug class to print debug messages)
+
 2007-12-27  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fix compilation with gcc 4.3

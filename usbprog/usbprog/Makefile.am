@@ -15,5 +15,6 @@ libusbprog_la_SOURCES  = inifile.cc \
 			 downloader.cc \
 			 date.cc \
 			 firmwarepool.cc \
-			 devices.cc
-libusbprog_la_LDFLAGS  = -version-info 0:0:0
+			 devices.cc \
+			 usbprog.cc
+libusbprog_la_LDFLAGS  = -version-info 1:0:1

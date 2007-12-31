@@ -732,7 +732,8 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
         throw ApplicationError("Unable to find update device (2).");
     UsbprogUpdater updater(dev);
 
-    if (!Configuration::config()->getBatchMode())
+    if (!Configuration::config()->getBatchMode() &&
+            !Configuration::config()->getDebug())
         updater.setProgress(&hn);
 
     try {
@@ -746,6 +747,10 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
     } catch (const IOError &err) {
         throw ApplicationError(string("I/O Error: ") + err.what());
     }
+
+    os << "Detecting new USB devices ..." << endl;
+    usbprog_sleep(2);
+    m_devicemanager->discoverUpdateDevices();
 
     return true;
 }

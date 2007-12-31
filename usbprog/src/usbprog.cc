@@ -21,6 +21,7 @@
 #include <usbprog/util.h>
 #include <usbprog/firmwarepool.h>
 #include <usbprog/devices.h>
+#include <usbprog/usbprog.h>
 
 #include "optionparser.h"
 #include "usbprog.h"
@@ -128,8 +129,10 @@ void Usbprog::parseCommandLine(int argc, char *argv[])
     if (!ret)
         throw ApplicationError("Parsing command line failed");
 
-    if (op.getValue("debug").getFlag())
+    if (op.getValue("debug").getFlag()) {
         conf->setDebug(true);
+        Debug::debug()->setLevel(Debug::DL_TRACE);
+    }
 
     if (op.getValue("help").getFlag()) {
         op.printHelp(cerr, "usbprog " USBPROG_VERSION_STRING);
@@ -172,7 +175,8 @@ void Usbprog::initFirmwarePool()
         m_firmwarepool->setIndexUpdatetime(AUTO_NOT_UPDATE_TIME);
         if (!conf->isOffline())
             m_firmwarepool->downloadIndex(conf->getIndexUrl());
-        m_firmwarepool->setProgress(m_progressNotifier);
+        if (!conf->getDebug())
+            m_firmwarepool->setProgress(m_progressNotifier);
         m_firmwarepool->readIndex();
     } catch (const IOError &ioe) {
         throw ApplicationError(ioe.what());
@@ -183,7 +187,8 @@ void Usbprog::initFirmwarePool()
 void Usbprog::initDeviceManager()
     throw (ApplicationError)
 {
-    m_devicemanager = new DeviceManager;
+    bool debug = Configuration::config()->getDebug();
+    m_devicemanager = new DeviceManager(debug ? 1 : 0);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -20,6 +20,7 @@
 #include <vector>
 #include <map>
 #include <stdexcept>
+#include <cstdarg>
 
 /* Preprocessor definitions {{{1 */
 
@@ -81,7 +82,40 @@ class OutputHandler {
         virtual void message(MessageType type, const std::string &message) = 0;
 };
 
-/* }}} */
+/* Debugging {{{1 */
+
+class Debug {
+    public:
+        enum Level {
+            DL_TRACE    = 0,
+            DL_DEBUG    = 10,
+            DL_INFO     = 20,
+            DL_NONE     = 100
+        };
+
+    public:
+        static Debug *debug();
+
+        void dbg(const char *msg, ...);
+        void info(const char *msg, ...);
+        void trace(const char *msg, ...);
+        void msg(Debug::Level level, const char *msg, ...);
+        void vmsg(Debug::Level level, const char *msg, std::va_list args);
+
+        void setLevel(Debug::Level level);
+        void setFileHandle(FILE *handle);
+
+    protected:
+        Debug();
+
+    private:
+        static Debug *m_instance;
+
+    private:
+        Level m_debuglevel;
+        FILE *m_handle;
+};
+
 
 #endif /* USBPROG_USBPROG_H */
 

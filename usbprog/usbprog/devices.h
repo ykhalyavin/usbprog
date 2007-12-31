@@ -72,9 +72,11 @@ bool operator!=(const Device &a, const Device &b);
 class DeviceManager {
     public:
         DeviceManager();
+        DeviceManager(int debuglevel);
         virtual ~DeviceManager() {}
 
     public:
+        void init(int debuglevel = 0);
         void setUsbDebugging(int debuglevel);
         void discoverUpdateDevices(Firmwarepool *firmwarepool = NULL);
         void printDevices(std::ostream &os) const;

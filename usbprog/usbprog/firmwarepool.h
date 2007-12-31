@@ -122,6 +122,8 @@ class Firmwarepool {
             throw (DownloadError);
         void readIndex()
             throw (IOError, ParseError);
+        void deleteIndex()
+            throw (IOError);
 
         StringList getFirmwareNameList() const;
         Firmware *getFirmware(const std::string &name) const;

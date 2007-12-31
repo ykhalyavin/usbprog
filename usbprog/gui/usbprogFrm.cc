@@ -506,7 +506,10 @@ void usbprogFrm::uploadHandler(wxCommandEvent &evt)
         }
 
         try {
-            m_firmwarepool->downloadFirmware(fw->getName());
+            if (!m_firmwarepool->isFirmwareOnDisk(fw->getName())) {
+                status("Downloading firmware ...");
+                m_firmwarepool->downloadFirmware(fw->getName());
+            }
             m_firmwarepool->fillFirmware(fw->getName());
         } catch (const std::exception &e) {
             status(string("Downloading firmware failed: ") + e.what());

@@ -1,7 +1,7 @@
 [Project]
 FileName=libusbprog.dev
 Name=libusbprog
-UnitCount=13
+UnitCount=14
 Type=2
 Ver=1
 ObjFiles=
@@ -158,6 +158,17 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+
+[Unit14]
+FileName=../usbprog/usbprog.cc
+CompileCpp=1
+Folder=libusbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 
 [VersionInfo]
 Major=0

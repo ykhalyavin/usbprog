@@ -215,15 +215,25 @@ string wordwrap(const string &text, size_t margins)
 }
 
 /* -------------------------------------------------------------------------- */
-#ifdef _WIN32
 unsigned int usbprog_sleep(unsigned int seconds)
 {
-    Sleep(seconds * 1000);
+    usbprog_msleep(seconds * 1000);
+}
+
+/* -------------------------------------------------------------------------- */
+#ifdef _WIN32
+unsigned int usbprog_msleep(unsigned int msec)
+{
+    Sleep(msec);
 }
 #else
-unsigned int usbprog_sleep(unsigned int seconds)
+unsigned int usbprog_msleep(unsigned int msec)
 {
-    sleep(seconds);
+    struct timespec ts;
+
+    ts.tv_sec = msec / 1000;
+    ts.tv_nsec = (msec % 1000) * 1000 * 1000;
+    nanosleep(&ts, NULL);
 }
 #endif
 

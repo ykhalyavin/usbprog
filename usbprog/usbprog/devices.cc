@@ -26,6 +26,7 @@
 #include <usb.h>
 #include <usbprog/devices.h>
 #include <usbprog/util.h>
+#include <usbprog/usbprog.h>
 
 using std::vector;
 using std::string;
@@ -157,40 +158,64 @@ string Device::toShortString() const
 DeviceManager::DeviceManager()
     : m_currentUpdateDevice(-1)
 {
+    init();
+}
+
+/* -------------------------------------------------------------------------- */
+DeviceManager::DeviceManager(int debuglevel)
+    : m_currentUpdateDevice(-1)
+{
+    init(debuglevel);
+}
+
+/* -------------------------------------------------------------------------- */
+void DeviceManager::init(int debuglevel)
+{
+    if (debuglevel != 0)
+        setUsbDebugging(debuglevel);
+    Debug::debug()->trace("usb_init()");
     usb_init();
 }
 
 /* -------------------------------------------------------------------------- */
 void DeviceManager::setUsbDebugging(int debuglevel)
 {
+    Debug::debug()->trace("usb_set_debug(%d)", debuglevel);
     usb_set_debug(debuglevel);
 }
 
 /* -------------------------------------------------------------------------- */
 void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
 {
+    Debug::debug()->trace("usb_find_busses()");
     usb_find_busses();
+    Debug::debug()->trace("usb_find_devices()");
     usb_find_devices();
 
     m_updateDevices.clear();
+    m_currentUpdateDevice = -1;
 
     vector<Firmware *> firmwares;
     if (firmwarepool)
         firmwares = firmwarepool->getFirmwareList();
 
-    for (struct usb_bus *bus = usb_get_busses(); bus; bus = bus->next)
+    for (struct usb_bus *bus = usb_get_busses(); bus; bus = bus->next) {
         for (struct usb_device *dev = bus->devices; dev; dev = dev->next) {
             uint16_t vendorid = dev->descriptor.idVendor;
             uint16_t productid = dev->descriptor.idProduct;
             uint16_t bcddevice = dev->descriptor.bcdDevice;
+            Device *d = NULL;
+
+            Debug::debug()->dbg("Found USB device [%04x:%04x:%04x]",
+                    int(vendorid), int(productid), int(bcddevice));
+
             if (vendorid == VENDOR_ID_USBPROG &&
                     productid == PRODUCT_ID_USBPROG &&
                     bcddevice == BCDDEVICE_UPDATE) {
-                Device *d = new Device(dev);
+                d = new Device(dev);
                 d->setUpdateMode(true);
                 d->setName("USBprog in update mode");
                 d->setShortName("usbprog");
-                m_updateDevices.push_back(d);
             } else if (firmwarepool)
                 for (vector<Firmware *>::const_iterator it = firmwares.begin();
                         it != firmwares.end(); ++it)
@@ -198,13 +223,16 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
                             (*it)->getVendorId() == vendorid &&
                             (*it)->getProductId() == productid &&
                             (*it)->getBcdDevice() == bcddevice) {
-                        Device *d = new Device(dev);
+                        d = new Device(dev);
                         d->setName("USBprog with \"" + (*it)->getLabel() + 
                                 "\" firmware");
                         d->setShortName((*it)->getName());
-                        m_updateDevices.push_back(d);
                     }
+
+            if (d)
+                m_updateDevices.push_back(d);
         }
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,13 +273,20 @@ void DeviceManager::switchUpdateMode()
     if (dev->isUpdateMode())
         return;
 
+    Debug::debug()->dbg("DeviceManager::switchUpdateMode()");
+    Debug::debug()->trace("usb_open(%p)", dev->getHandle());
     struct usb_dev_handle *usb_handle = usb_open(dev->getHandle());
     if (!usb_handle)
         throw IOError("Could not open USB device: " + string(usb_strerror()));
 
+    Debug::debug()->trace("usb_set_configuration(%p, %d)",
+            usb_handle, dev->getHandle()->config[0].bConfigurationValue);
     usb_set_configuration(usb_handle, dev->getHandle()->config[0].bConfigurationValue);
+
     int usb_interface = dev->getHandle()->config[0].interface[0].
         altsetting[0].bInterfaceNumber;
+    Debug::debug()->trace("usb_claim_interface(%p, %d)",
+            usb_handle, usb_interface);
     int ret = usb_claim_interface(usb_handle, usb_interface);
     if (ret < 0) {
         usb_close(usb_handle);
@@ -260,6 +295,7 @@ void DeviceManager::switchUpdateMode()
 
     /* needed ?*/
     usb_set_altinterface(usb_handle, 0);
+    Debug::debug()->trace("usb_set_altinterface(%p, 0)", usb_handle);
     if (ret < 0) {
         usb_release_interface(usb_handle, usb_interface);
         usb_close(usb_handle);
@@ -268,19 +304,25 @@ void DeviceManager::switchUpdateMode()
 
     int timeout = 6;
 
+    Debug::debug()->trace("usb_control_msg (multiple times)");
     while (usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL, 8, 1000) < 0){
         if (--timeout == 0)
             break;
         usbprog_sleep(1);
     }
 
+    Debug::debug()->trace("usb_release_interface(%p, %d)", usb_handle, usb_interface);
     usb_release_interface(usb_handle, usb_interface);
+
+    Debug::debug()->trace("usb_close(%p)", usb_handle);
     usb_close(usb_handle);
 
     // set again the update device
+    int updatedev = m_currentUpdateDevice;
     discoverUpdateDevices();
 
     // TODO: Verify that the m_currentUpdateDevice is still valid!
+    setCurrentUpdateDevice(updatedev);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -321,6 +363,8 @@ Device *DeviceManager::getDevice(size_t number) const
 /* -------------------------------------------------------------------------- */
 void DeviceManager::setCurrentUpdateDevice(ssize_t number)
 {
+    if (number < 0 || number >= m_updateDevices.size())
+        return;
     m_currentUpdateDevice = number;
 }
 
@@ -374,6 +418,8 @@ void UsbprogUpdater::writeFirmware(const ByteVector &bv)
     char cmd[USB_PAGESIZE];
     int ret;
 
+    Debug::debug()->dbg("UsbprogUpdater::writeFirmware, size=%d", bv.size());
+
     if (!m_devHandle)
         throw IOError("Device not opened");
 
@@ -388,6 +434,8 @@ void UsbprogUpdater::writeFirmware(const ByteVector &bv)
         cmd[0] = WRITEPAGE;
         cmd[1] = (char)page++;
 
+        Debug::debug()->trace("usb_bulk_write(%p, 2, %p, %d, 100)",
+                m_devHandle, 2, cmd, USB_PAGESIZE);
         ret = usb_bulk_write(m_devHandle,2,cmd,USB_PAGESIZE, 100);
         if (ret < 0) {
             updateClose();
@@ -398,6 +446,8 @@ void UsbprogUpdater::writeFirmware(const ByteVector &bv)
         }
 
         // data message
+        Debug::debug()->trace("usb_bulk_write(%p, 2, %p, %d, 100)",
+                m_devHandle, buf, USB_PAGESIZE);
         ret = usb_bulk_write(m_devHandle,2,buf,USB_PAGESIZE, 100);
         if (ret < 0) {
             updateClose();
@@ -422,17 +472,22 @@ void UsbprogUpdater::updateOpen()
     struct usb_device *dev = m_dev->getHandle();
 
     int ret;
+    Debug::debug()->dbg("UsbprogUpdater::updateOpen()");
 
     if (m_devHandle)
         throw IOError("Device still opened. Close first.");
 
+    Debug::debug()->trace("usb_open(%p)", dev);
     m_devHandle = usb_open(dev);
     if (!m_devHandle)
         throw IOError("usb_open failed " + string(usb_strerror()));
 
+    Debug::debug()->trace("usb_set_configuration(handle, %d)",
+            dev->config[0].bConfigurationValue);
     usb_set_configuration(m_devHandle, dev->config[0].bConfigurationValue);
 
     int usb_interface = dev->config[0].interface[0].altsetting[0].bInterfaceNumber;
+    Debug::debug()->trace("usb_claim_interface(handle, %d)", usb_interface);
     ret = usb_claim_interface(m_devHandle, usb_interface);
     if (ret < 0) {
         updateClose();
@@ -444,12 +499,19 @@ void UsbprogUpdater::updateOpen()
 void UsbprogUpdater::updateClose()
     throw (IOError)
 {
+    Debug::debug()->dbg("UsbprogUpdater::updateClose()");
+
     if (!m_devHandle)
         throw IOError("Device already closed");
 
     int usb_interface = m_dev->getHandle()->config[0].interface[0]
         .altsetting[0].bInterfaceNumber;
+
+    Debug::debug()->trace("usb_release_interface(%p, %d)",
+            m_devHandle, usb_interface);
     usb_release_interface(m_devHandle, usb_interface);
+
+    Debug::debug()->trace("usb_close(%p)", m_devHandle);
     usb_close(m_devHandle);
     m_devHandle = NULL;
 }
@@ -461,7 +523,11 @@ void UsbprogUpdater::startDevice()
     char buf[USB_PAGESIZE];
     memset(buf, 0, USB_PAGESIZE);
 
+    Debug::debug()->dbg("Starting device");
+
     buf[0] = STARTAPP;
+    Debug::debug()->trace("usb_bulk_write(%p, 2, %p, %d, 100)",
+            m_devHandle, buf, USB_PAGESIZE);
     int ret = usb_bulk_write(m_devHandle, 2, buf, USB_PAGESIZE, 100);
     if (ret < 0)
         throw IOError("Error in bulk write: " + string(usb_strerror()));
