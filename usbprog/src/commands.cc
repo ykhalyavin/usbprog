@@ -135,6 +135,8 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
     os << "Version      : " << fw->getVersion() << " ["
                             << fw->getDate().getDateTimeString(DTF_ISO_DATE)
                             << "]" << endl;
+    if (fw->getMD5Sum().size() > 0)
+        os << "MD5sum       : " << fw->getMD5Sum() << endl;
 
     // vendor ID and/or Product ID
     bool hasDeviceInfo = fw->getVendorId() != 0 || fw->getProductId() != 0 ||

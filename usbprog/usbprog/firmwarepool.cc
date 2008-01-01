@@ -33,6 +33,7 @@
 
 #include <usbprog/firmwarepool.h>
 #include <usbprog/util.h>
+#include <usbprog/digest.h>
 
 using std::vector;
 using std::string;
@@ -134,6 +135,18 @@ void Firmware::setDate(const DateTime &date)
 const DateTime Firmware::getDate() const
 {
     return m_date;
+}
+
+/* -------------------------------------------------------------------------- */
+void Firmware::setMD5Sum(const std::string &md5)
+{
+    m_md5sum = md5;
+}
+
+/* -------------------------------------------------------------------------- */
+std::string Firmware::getMD5Sum() const
+{
+    return m_md5sum;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -256,6 +269,7 @@ string Firmware::toString() const
     ss << "Version         : " << m_version << endl;
     ss << "Author          : " << m_author << endl;
     ss << "Date            : " << m_date.getDateTimeString(DTF_ISO_DATETIME) << endl;
+    ss << "MD5sum          : " << m_md5sum << endl;
     ss << "Description     : " << m_description << endl;
     ss << "Pins      P1    : " << getPin("P1") << endl;
     ss << "          P2    : " << getPin("P2") << endl;
@@ -429,6 +443,12 @@ void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
                 fw->setDate(DateTime(reinterpret_cast<char *>(attrib), DTF_ISO_DATE));
                 xmlFree(attrib);
             }
+
+            attrib = xmlGetProp(cur, XMLCHAR("md5sum"));
+            if (attrib) {
+                fw->setMD5Sum(string(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
         } else if (xmlStrcmp(cur->name, XMLCHAR("description")) == 0) {
             attrib = xmlGetProp(cur, XMLCHAR("vendorid"));
             if (attrib) {
@@ -515,6 +535,18 @@ void Firmwarepool::downloadFirmware(const string &name)
     }
 
     fout.close();
+
+    // check md5 if available
+    if (fw->getMD5Sum().size() > 0) {
+        try {
+            if (!check_digest(file, fw->getMD5Sum(), Digest::DA_MD5)) {
+                remove(file.c_str());
+                throw DownloadError("Bad checksum");
+            }
+        } catch (const IOError &ioe) {
+            throw;
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------- */

@@ -4,6 +4,8 @@
  * CLI: improve debugging messages
  * GUI: new "logfile" option for debugging
  * Windows: fix problem that download is corrupted
+ * add support for checksum testing after download to ensure that the download
+   was correct
 
 0.1.0 (2007-12-27, r877)
 -----

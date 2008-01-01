@@ -61,6 +61,9 @@ class Firmware {
         int getVersion() const;
         std::string getVersionString() const;
 
+        void setMD5Sum(const std::string &md5);
+        std::string getMD5Sum() const;
+
         void setDate(const DateTime &date);
         const DateTime getDate() const;
 
@@ -104,6 +107,7 @@ class Firmware {
         uint16_t              m_vendorId;
         uint16_t              m_productId;
         uint16_t              m_bcdDevice;
+        std::string           m_md5sum;
 };
 
 /* Firmwarepool {{{1 */

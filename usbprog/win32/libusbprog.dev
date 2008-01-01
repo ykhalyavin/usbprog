@@ -1,7 +1,7 @@
 [Project]
 FileName=libusbprog.dev
 Name=libusbprog
-UnitCount=14
+UnitCount=16
 Type=2
 Ver=1
 ObjFiles=
@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=
-Linker=libusb-win32/lib/gcc/libusb.a_@@_
+Linker=libusb-win32/lib/gcc/libusb.a_@@_libmd5.a_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -30,7 +30,7 @@ CompilerSet=0
 CompilerSettings=0000000000000000000000
 
 [Unit1]
-FileName=../usbprog/date.cc
+FileName=..\usbprog\date.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -40,7 +40,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=../usbprog/date.h
+FileName=..\usbprog\date.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -50,7 +50,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=../usbprog/devices.cc
+FileName=..\usbprog\devices.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -60,7 +60,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=../usbprog/devices.h
+FileName=..\usbprog\devices.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -70,7 +70,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=../usbprog/downloader.cc
+FileName=..\usbprog\downloader.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -80,7 +80,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=../usbprog/downloader.h
+FileName=..\usbprog\downloader.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -90,7 +90,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=../usbprog/firmwarepool.cc
+FileName=..\usbprog\firmwarepool.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -100,7 +100,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=../usbprog/firmwarepool.h
+FileName=..\usbprog\firmwarepool.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -110,7 +110,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=../usbprog/inifile.cc
+FileName=..\usbprog\inifile.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -120,7 +120,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=../usbprog/inifile.h
+FileName=..\usbprog\inifile.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -130,7 +130,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=../usbprog/usbprog.h
+FileName=..\usbprog\usbprog.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -140,7 +140,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=../usbprog/util.cc
+FileName=..\usbprog\util.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -150,7 +150,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=../usbprog/util.h
+FileName=..\usbprog\util.h
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -160,7 +160,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=../usbprog/usbprog.cc
+FileName=..\usbprog\usbprog.cc
 CompileCpp=1
 Folder=libusbprog
 Compile=1
@@ -168,7 +168,6 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
-
 
 [VersionInfo]
 Major=0
@@ -187,4 +186,24 @@ OriginalFilename=
 ProductName=
 ProductVersion=
 AutoIncBuildNr=0
+
+[Unit15]
+FileName=..\usbprog\digest.cc
+CompileCpp=1
+Folder=libusbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit16]
+FileName=..\usbprog\digest.h
+CompileCpp=1
+Folder=libusbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 

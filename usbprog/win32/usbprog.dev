@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=_@@_
 CppCompiler=-DHAVE_LIBREADLINE=1_@@_
-Linker=libusbprog.a_@@_C:/Dev-Cpp/lib/libxml2.lib_@@_../win32/libusb-win32/lib/gcc/libusb.a_@@_C:/Dev-Cpp/lib/libcurl.a_@@_C:/Dev-Cpp/lib/libcurldll.a_@@_C:/Dev-Cpp/lib/libiconv.a_@@_C:/Dev-Cpp/lib/iconv.lib_@@_C:/Dev-Cpp/lib/libz.a_@@_C:/Dev-Cpp/lib/libreadline.a_@@_
+Linker=libusbprog.a_@@_libmd5.a_@@_C:/Dev-Cpp/lib/libxml2.lib_@@_../win32/libusb-win32/lib/gcc/libusb.a_@@_C:/Dev-Cpp/lib/libcurl.a_@@_C:/Dev-Cpp/lib/libcurldll.a_@@_C:/Dev-Cpp/lib/libiconv.a_@@_C:/Dev-Cpp/lib/iconv.lib_@@_C:/Dev-Cpp/lib/libz.a_@@_C:/Dev-Cpp/lib/libreadline.a_@@_
 IsCpp=1
 Icon=
 ExeOutput=

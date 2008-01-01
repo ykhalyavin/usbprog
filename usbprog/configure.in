@@ -92,6 +92,7 @@ AC_C_CONST
 
 
 AC_CONFIG_FILES([Makefile
+                 md5/Makefile
                  usbprog/Makefile
                  gui/Makefile
                  src/Makefile])
