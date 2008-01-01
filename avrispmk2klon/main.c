@@ -523,6 +523,9 @@ void USBFlash(char *buf)
   char result = 0;
   int numbytes;
 
+  UARTWrite("cmd ");
+  SendHex(buf[0]);
+  UARTWrite("cmd\r\n");
   USBNWrite(TXC1, FLUSH);
 
   // first see if this packet is expected by Flash or EEPROM programming
@@ -678,6 +681,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_ENTER_PROGMODE_ISP:
+      UARTWrite("enter\r\n");
       pgmmode.address = 0;
       spi_active();
       LED_on;
@@ -744,6 +748,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_LEAVE_PROGMODE_ISP:
+      //UARTWrite("leave\r\n");
       LED_off;
       RESET_high;
       spi_idle();
@@ -761,6 +766,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_CHIP_ERASE_ISP:
+      //UARTWrite("erase\r\n");
       spi_out(buf[3]);
       spi_out(buf[4]);
       spi_out(0x00);
@@ -773,6 +779,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_FLASH_ISP:
+      //UARTWrite("pflash\r\n");
       pgmmode.numbytes = (buf[1] << 8) | (buf[2]);
 
       // buf[3] = mode
@@ -793,7 +800,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_READ_FLASH_ISP:
-
+      //UARTWrite("rflash\r\n");
       pgmmode.numbytes = ((buf[1] << 8) | (buf[2])) + 1; // number of bytes
       pgmmode.cmd3 = buf[3];  // read command
       numbytes = pgmmode.numbytes - 1;
@@ -834,6 +841,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_READ_LOCK_ISP:
+      //UARTWrite("rlock\r\n");
       spi_out(buf[2]);
       spi_out(buf[3]);
       spi_out(buf[4]);
@@ -848,6 +856,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_LOCK_ISP:
+      //UARTWrite("plock\r\n");
       spi_out(buf[1]);
       spi_out(buf[2]);
       spi_out(buf[3]);
@@ -861,6 +870,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_EEPROM_ISP:
+      //UARTWrite("peerpom\r\n");
       // buf[1..2] = number of bytes to program
       pgmmode.numbytes = (buf[1] << 8) | (buf[2]);
       // buf[3] = mode
@@ -911,6 +921,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_FUSE_ISP:
+      //UARTWrite("pfuse\r\n");
       spi_out(buf[1]);
       spi_out(buf[2]);
       spi_out(buf[3]);
@@ -925,6 +936,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_READ_FUSE_ISP:
+      //UARTWrite("rfuse\r\n");
       spi_out(buf[2]);
       spi_out(buf[3]);
       spi_out(buf[4]);
@@ -953,43 +965,79 @@ void USBFlash(char *buf)
     break;
 
     case CMD_SPI_MULTI:
-      usbprog.avrstudio=1;  // only avrdude use this command
-      spi_out(buf[4]);
-      spi_out(buf[5]);
-      spi_out(buf[6]);
+      UARTWrite("multi\r\n");
+      usbprog.avrstudio=1;  // only avrdude use this command // this is not true! also at89 @ avr studio 
+           
+      SendHex(buf[4]);
+      SendHex(buf[5]);
+      SendHex(buf[6]);
+      SendHex(buf[7]);
 
-      // instruction
-      switch(buf[4]) {
-        // read low flash byte
-        case 0x20:
-        // read high flash byte
-        case 0x28:
-        // read signature
-        case 0x30:
-        // read lfuse
-        case 0x50:
-            // read lock
-        case 0x38:
-        // read hfuse and lock
-        case 0x58:
-        // read eeprom memory
-        case 0xa0:
-          result = spi_in();
-        break;
+      if(usbprog.reset_pol==1){
 
-        //write fuse and lock bit
-        case 0xac:
-        //write eeprom
-        case 0xc0:
-          spi_out(buf[7]);
-          result = 0x00;
-        break;
+	UARTWrite("avr\r\n");
+
+	spi_out(buf[4]);
+	spi_out(buf[5]);
+	spi_out(buf[6]);
+
+	// instruction
+	switch(buf[4]) {
+	  // read low flash byte
+	  case 0x20:
+	  // read high flash byte
+	  case 0x28:
+	  // read signature
+	  case 0x30:
+	  // read lfuse
+	  case 0x50:
+          // read lock
+	  case 0x38:
+	  // read hfuse and lock
+	  case 0x58:
+	  // read eeprom memory
+	  case 0xa0:
+	    result = spi_in();
+	  break;
+
+	  //write fuse and lock bit
+	  case 0xac:
+	  //write eeprom
+	  case 0xc0:
+	    spi_out(buf[7]);
+	    result = 0x00;
+	  break;
+	}
+	answer[2] = 0x00;
+	answer[3] = 0x00;
+	answer[4] = 0x00;
+	answer[5] = result; // why result in position 5 ???
+
+      } else {
+	UARTWrite("at89\r\n");
+
+	char page[256];
+	switch(buf[4]) {
+	  // read program memory
+	  case 0x30:
+	    spi_out(buf[4]);
+	    spi_out(buf[5]);
+	    int i;
+	    for(i=0;i<256;i++){
+	      page[i]=spi_in();
+	    }
+
+	  break;
+	  
+	  // write program memory
+	  case 0x40:
+	    spi_out(buf[4]);
+	    spi_out(buf[5]);
+	    spi_out(buf[6]);
+	    spi_out(buf[7]);
+	}
+
       }
-
-      answer[2] = 0x00;
-      answer[3] = 0x00;
-      answer[4] = 0x00;
-      answer[5] = result; // why result in position 5 ???
 
       answer[0] = CMD_SPI_MULTI;
       answer[1] = STATUS_CMD_OK;
@@ -1008,7 +1056,8 @@ int main(void)
 
  int conf, interf;
 
-  //UARTInit();
+  UARTInit();
+
 
   spi_init();
   spi_idle();

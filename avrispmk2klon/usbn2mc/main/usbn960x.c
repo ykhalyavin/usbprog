@@ -96,7 +96,7 @@ void _USBNReceiveEvent(void)
   event = USBNRead(RXEV);
   int i=0;
   
-  USBNDebug("rx event\r\n");
+//  USBNDebug("rx event\r\n");
   if(event & RX_FIFO0) _USBNReceiveFIFO0();
   
   // dynamic function call
