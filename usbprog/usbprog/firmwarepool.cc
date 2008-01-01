@@ -499,7 +499,7 @@ void Firmwarepool::downloadFirmware(const string &name)
     if (Fileutil::isFile(file))
         return;
 
-    ofstream fout(file.c_str());
+    ofstream fout(file.c_str(), ios::binary);
     if (!fout)
         throw IOError("Opening " + file + " failed");
 

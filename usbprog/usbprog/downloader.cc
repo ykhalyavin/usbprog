@@ -20,6 +20,7 @@
 #include <curl/curl.h>
 
 #include <usbprog/downloader.h>
+#include <usbprog/usbprog.h>
 
 using std::string;
 using std::ostream;
@@ -39,6 +40,8 @@ size_t Downloader::curl_write_callback(void *buffer, size_t size,
     Downloader *downloader = reinterpret_cast<Downloader *>(userp);
 
     downloader->m_output.write((char *)buffer, size * nmemb);
+    Debug::debug()->dbg("Writing %d*%d=%d bytes (%d)", size, nmemb, size*nmemb,
+            int(downloader->m_output.good()));
 
     if (downloader->m_output.good())
         return size * nmemb;
@@ -110,6 +113,7 @@ void Downloader::setUrl(const string &url) throw (DownloadError)
 
     m_url = url;
 
+    Debug::debug()->dbg("Setting URL to %s", m_url.c_str());
     err = curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
     if (err != CURLE_OK)
         throw DownloadError(string("CURL error ") + m_curl_errorstring);
@@ -147,6 +151,7 @@ void Downloader::download() throw (DownloadError)
 {
     CURLcode err;
 
+    Debug::debug()->dbg("Performing download");
     err = curl_easy_perform(m_curl);
     if (m_notifier)
         m_notifier->finished();

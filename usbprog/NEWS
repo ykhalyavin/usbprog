@@ -3,6 +3,7 @@
  * compilation and build fixes
  * CLI: improve debugging messages
  * GUI: new "logfile" option for debugging
+ * Windows: fix problem that download is corrupted
 
 0.1.0 (2007-12-27, r877)
 -----
