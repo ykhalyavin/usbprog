@@ -70,9 +70,9 @@ void _USBNNackEvent(void)
 {
   unsigned char event;
   event = USBNRead(NAKEV);
-  //USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
-  //USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
-  USBNDebug("nack event\r\n");
+  USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
+  USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
+  //USBNDebug("nack event\r\n");
  /* 
   if (EP0tx.Size > EP0tx.usbnfifo)	  //multi-pkt status stage? 
   {
