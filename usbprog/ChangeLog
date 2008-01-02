@@ -2,6 +2,10 @@
 
 	* add support for checksum testing after download to ensure
 	  that the download was correct
+	* don't include XML stuff in usbprog headers to fix compilation
+	  with some old wxWidgets stuff
+	* before reporting that a file is already on disk, check the
+	  checksum, if it's wrong, try to download the file again
 
 2008-01-01  Bernhard Walle <bernhard.walle@gmx.de>
 

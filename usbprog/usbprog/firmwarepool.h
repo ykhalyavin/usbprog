@@ -22,9 +22,6 @@
 #include <map>
 #include <list>
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-
 #include <usbprog/date.h>
 #include <usbprog/inifile.h>
 #include <usbprog/downloader.h>
@@ -89,10 +86,6 @@ class Firmware {
 
         std::string toString() const;
 
-    public:
-        static Firmware *fromXml(xmlDocPtr doc, xmlNodePtr cur)
-            throw (ParseError);
-
     private:
         const std::string     m_name;
         std::string           m_label;
@@ -112,7 +105,11 @@ class Firmware {
 
 /* Firmwarepool {{{1 */
 
+class FirmwareXMLParser;
+
 class Firmwarepool {
+    friend class FirmwareXMLParser;
+
     public:
         Firmwarepool(const std::string &cacheDir)
             throw (IOError);
@@ -149,11 +146,8 @@ class Firmwarepool {
             throw (IOError);
 
     protected:
-        void parsePool(xmlDocPtr doc, xmlNodePtr pool)
-            throw (ParseError);
-        void parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
-            throw (ParseError);
         std::string getFirmwareFilename(Firmware *fw) const;
+        void addFirmware(Firmware *fw);
 
     private:
         const std::string m_cacheDir;

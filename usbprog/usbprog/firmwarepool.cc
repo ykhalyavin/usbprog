@@ -52,6 +52,153 @@ using std::hex;
 #define INDEX_FILE_NAME  "versions.xml"
 #define BUFFERSIZE       2048
 
+/* Class declaration: FirmwareXMLParser {{{1 */
+
+class FirmwareXMLParser {
+    public:
+        FirmwareXMLParser(Firmwarepool *pool);
+
+    public:
+        void parsePool(xmlDocPtr doc, xmlNodePtr pool)
+            throw (ParseError);
+
+    protected:
+        void parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
+            throw (ParseError);
+        Firmware *newFirmwareFromXml(xmlDocPtr doc, xmlNodePtr cur)
+            throw (ParseError);
+
+    private:
+        Firmwarepool *m_firmwarepool;
+};
+
+/* Implementation: FirmwareXMLParser {{{1 */
+
+#define XMLCHAR(a) \
+    reinterpret_cast<const xmlChar *>(a)
+
+/* -------------------------------------------------------------------------- */
+FirmwareXMLParser::FirmwareXMLParser(Firmwarepool *pool)
+    : m_firmwarepool(pool)
+{}
+
+/* -------------------------------------------------------------------------- */
+void FirmwareXMLParser::parsePool(xmlDocPtr doc, xmlNodePtr pool)
+    throw (ParseError)
+{
+    for (xmlNodePtr cur = pool->xmlChildrenNode; cur != NULL; cur = cur->next)
+		if (xmlStrcmp(cur->name, XMLCHAR("firmware")) == 0)
+            parseFirmware(doc, cur);
+}
+
+/* -------------------------------------------------------------------------- */
+void FirmwareXMLParser::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
+    throw (ParseError)
+{
+    Firmware *fw;
+
+    // set name
+    xmlChar *attrib = xmlGetProp(firmware, XMLCHAR("name"));
+    if (!attrib)
+        throw ParseError("Firmware has no name");
+    fw = new Firmware(string(reinterpret_cast<char *>(attrib)));
+    xmlFree(attrib);
+
+    // set label
+    attrib = xmlGetProp(firmware, XMLCHAR("label"));
+    if (attrib) {
+        fw->setLabel(string(reinterpret_cast<char *>(attrib)));
+        xmlFree(attrib);
+    }
+
+    for (xmlNodePtr cur = firmware->xmlChildrenNode; cur != NULL; cur = cur->next)
+		if (xmlStrcmp(cur->name, XMLCHAR("binary")) == 0) {
+            attrib = xmlGetProp(cur, XMLCHAR("url"));
+            if (attrib) {
+                fw->setUrl(string(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("file"));
+            if (attrib) {
+                fw->setFilename(string(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+        } else if (xmlStrcmp(cur->name, XMLCHAR("info")) == 0) {
+            attrib = xmlGetProp(cur, XMLCHAR("version"));
+            if (attrib) {
+                fw->setVersion(atoi(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("author"));
+            if (attrib) {
+                fw->setAuthor(string(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("date"));
+            if (attrib) {
+                fw->setDate(DateTime(reinterpret_cast<char *>(attrib), DTF_ISO_DATE));
+                xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("md5sum"));
+            if (attrib) {
+                fw->setMD5Sum(string(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+        } else if (xmlStrcmp(cur->name, XMLCHAR("description")) == 0) {
+            attrib = xmlGetProp(cur, XMLCHAR("vendorid"));
+            if (attrib) {
+                fw->setVendorId(parse_long(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("productid"));
+            if (attrib) {
+                fw->setProductId(parse_long(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+
+            attrib = xmlGetProp(cur, XMLCHAR("bcddevice"));
+            if (attrib) {
+                fw->setBcdDevice(parse_long(reinterpret_cast<char *>(attrib)));
+                xmlFree(attrib);
+            }
+
+            xmlChar *key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+            if (key) {
+                fw->setDescription(strip(string(reinterpret_cast<char *>(key))));
+                xmlFree(key);
+            }
+        } else if (xmlStrcmp(cur->name, XMLCHAR("pins")) == 0) {
+            for (xmlNodePtr pin = cur->xmlChildrenNode; pin != NULL;
+                    pin = pin->next) {
+
+                string number, desc;
+                xmlChar *key;
+
+                attrib = xmlGetProp(pin, XMLCHAR("number"));
+                if (attrib) {
+                    number = string(reinterpret_cast<char *>(attrib));
+                    xmlFree(attrib);
+                }
+
+                key = xmlNodeListGetString(doc, pin->xmlChildrenNode, 1);
+                if (key) {
+                    desc = string(reinterpret_cast<char *>(key));
+                    xmlFree(key);
+                }
+
+                if (desc.length() > 0 && number.length() > 0)
+                    fw->setPin(number, desc);
+            }
+        }
+
+    m_firmwarepool->addFirmware(fw);
+}
+
 /* Firmware {{{1 */
 
 /* -------------------------------------------------------------------------- */
@@ -291,9 +438,6 @@ string Firmware::toString() const
 
 /* Firmwarepool {{{1 */
 
-#define XMLCHAR(a) \
-    reinterpret_cast<const xmlChar *>(a)
-
 /* -------------------------------------------------------------------------- */
 Firmwarepool::Firmwarepool(const string &cacheDir)
       throw (IOError)
@@ -375,9 +519,10 @@ void Firmwarepool::readIndex()
         throw ParseError("Root element is not \"usbprog\"");
 	}
 	
+    FirmwareXMLParser parser(this);
     for (cur = cur->xmlChildrenNode; cur != NULL; cur = cur->next)
 		if (xmlStrcmp(cur->name, XMLCHAR("pool")) == 0)
-            parsePool(doc, cur);
+            parser.parsePool(doc, cur);
 
     xmlFreeDoc(doc);
 }
@@ -390,114 +535,6 @@ void Firmwarepool::deleteIndex()
     int ret = remove(file.c_str());
     if (ret < 0)
         throw IOError("Deleting index file failed: " + string(strerror(errno)));
-}
-
-/* -------------------------------------------------------------------------- */
-void Firmwarepool::parseFirmware(xmlDocPtr doc, xmlNodePtr firmware)
-    throw (ParseError)
-{
-    Firmware *fw;
-
-    // set name
-    xmlChar *attrib = xmlGetProp(firmware, XMLCHAR("name"));
-    if (!attrib)
-        throw ParseError("Firmware has no name");
-    fw = new Firmware(string(reinterpret_cast<char *>(attrib)));
-    xmlFree(attrib);
-
-    // set label
-    attrib = xmlGetProp(firmware, XMLCHAR("label"));
-    if (attrib) {
-        fw->setLabel(string(reinterpret_cast<char *>(attrib)));
-        xmlFree(attrib);
-    }
-
-    for (xmlNodePtr cur = firmware->xmlChildrenNode; cur != NULL; cur = cur->next)
-		if (xmlStrcmp(cur->name, XMLCHAR("binary")) == 0) {
-            attrib = xmlGetProp(cur, XMLCHAR("url"));
-            if (attrib) {
-                fw->setUrl(string(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-
-            attrib = xmlGetProp(cur, XMLCHAR("file"));
-            if (attrib) {
-                fw->setFilename(string(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-        } else if (xmlStrcmp(cur->name, XMLCHAR("info")) == 0) {
-            attrib = xmlGetProp(cur, XMLCHAR("version"));
-            if (attrib) {
-                fw->setVersion(atoi(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-
-            attrib = xmlGetProp(cur, XMLCHAR("author"));
-            if (attrib) {
-                fw->setAuthor(string(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-
-            attrib = xmlGetProp(cur, XMLCHAR("date"));
-            if (attrib) {
-                fw->setDate(DateTime(reinterpret_cast<char *>(attrib), DTF_ISO_DATE));
-                xmlFree(attrib);
-            }
-
-            attrib = xmlGetProp(cur, XMLCHAR("md5sum"));
-            if (attrib) {
-                fw->setMD5Sum(string(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-        } else if (xmlStrcmp(cur->name, XMLCHAR("description")) == 0) {
-            attrib = xmlGetProp(cur, XMLCHAR("vendorid"));
-            if (attrib) {
-                fw->setVendorId(parse_long(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-
-            attrib = xmlGetProp(cur, XMLCHAR("productid"));
-            if (attrib) {
-                fw->setProductId(parse_long(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-
-            attrib = xmlGetProp(cur, XMLCHAR("bcddevice"));
-            if (attrib) {
-                fw->setBcdDevice(parse_long(reinterpret_cast<char *>(attrib)));
-                xmlFree(attrib);
-            }
-
-            xmlChar *key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-            if (key) {
-                fw->setDescription(strip(string(reinterpret_cast<char *>(key))));
-                xmlFree(key);
-            }
-        } else if (xmlStrcmp(cur->name, XMLCHAR("pins")) == 0) {
-            for (xmlNodePtr pin = cur->xmlChildrenNode; pin != NULL;
-                    pin = pin->next) {
-
-                string number, desc;
-                xmlChar *key;
-
-                attrib = xmlGetProp(pin, XMLCHAR("number"));
-                if (attrib) {
-                    number = string(reinterpret_cast<char *>(attrib));
-                    xmlFree(attrib);
-                }
-
-                key = xmlNodeListGetString(doc, pin->xmlChildrenNode, 1);
-                if (key) {
-                    desc = string(reinterpret_cast<char *>(key));
-                    xmlFree(key);
-                }
-
-                if (desc.length() > 0 && number.length() > 0)
-                    fw->setPin(number, desc);
-            }
-        }
-
-    m_firmware[fw->getName()] = fw;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -516,8 +553,18 @@ void Firmwarepool::downloadFirmware(const string &name)
 
     string url = fw->getUrl() + "/" + fw->getFilename();
     string file(pathconcat(m_cacheDir, fw->getVerFilename()));
-    if (Fileutil::isFile(file))
-        return;
+    if (Fileutil::isFile(file)) {
+        // check md5 if available, if the checksum is wrong, then delete
+        // the file and download again. Check the checksum after that
+        // download again to verify that it's now correct.
+        if (fw->getMD5Sum().size() > 0) {
+            if (check_digest(file, fw->getMD5Sum(), Digest::DA_MD5))
+                return;
+            else
+                remove(file.c_str());
+        } else
+            return;
+    }
 
     ofstream fout(file.c_str(), ios::binary);
     if (!fout)
@@ -538,13 +585,9 @@ void Firmwarepool::downloadFirmware(const string &name)
 
     // check md5 if available
     if (fw->getMD5Sum().size() > 0) {
-        try {
-            if (!check_digest(file, fw->getMD5Sum(), Digest::DA_MD5)) {
-                remove(file.c_str());
-                throw DownloadError("Bad checksum");
-            }
-        } catch (const IOError &ioe) {
-            throw;
+        if (!check_digest(file, fw->getMD5Sum(), Digest::DA_MD5)) {
+            remove(file.c_str());
+            throw DownloadError("Bad checksum");
         }
     }
 }
@@ -580,15 +623,6 @@ void Firmwarepool::fillFirmware(const string &name)
 string Firmwarepool::getFirmwareFilename(Firmware *fw) const
 {
     return pathconcat(m_cacheDir, fw->getVerFilename());
-}
-
-/* -------------------------------------------------------------------------- */
-void Firmwarepool::parsePool(xmlDocPtr doc, xmlNodePtr pool)
-    throw (ParseError)
-{
-    for (xmlNodePtr cur = pool->xmlChildrenNode; cur != NULL; cur = cur->next)
-		if (xmlStrcmp(cur->name, XMLCHAR("firmware")) == 0)
-            parseFirmware(doc, cur);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -707,5 +741,10 @@ void Firmwarepool::cleanCache()
     closedir(dir);
 }
 
+/* -------------------------------------------------------------------------- */
+void Firmwarepool::addFirmware(Firmware *fw)
+{
+    m_firmware[fw->getName()] = fw;
+}
 
 // vim: set sw=4 ts=4 fdm=marker et:
