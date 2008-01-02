@@ -498,7 +498,7 @@ void _USBNTransmit(EPInfo* ep)
 	  //ep->DataPid =1;
 	  //return;
 	  }
-	  */
+*/
       }
     }
     else
