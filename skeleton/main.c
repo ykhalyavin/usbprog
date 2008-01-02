@@ -16,6 +16,11 @@
 #define LED_on     (LED_PORT   |=  (1 << LED_PIN))   // red led
 #define LED_off    (LED_PORT   &= ~(1 << LED_PIN))
 
+volatile char answer[64];
+volatile struct usbprog_t
+{
+  int datatogl;
+} usbprog;
 
 SIGNAL(SIG_INTERRUPT0)
 {
@@ -28,20 +33,25 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
       avrupdate_start();
 }
 
-volatile int togl;
 
-SIGNAL(SIG_OUTPUT_COMPARE1A)
+void CommandAnswer(int length)
 {
-  if(togl==1)
-  {
-    PORTA = 0xFF;
-    togl=0;
-  }
-  else {
-    PORTA = 0x00;
-    togl=1;
+  int i;
+
+  USBNWrite(TXC1, FLUSH);
+  for(i = 0; i < length; i++)
+    USBNWrite(TXD1, answer[i]);
+
+  /* control togl bit */
+  if(usbprog.datatogl == 1) {
+    USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
+    usbprog.datatogl = 0;
+  } else {
+    USBNWrite(TXC1, TX_LAST+TX_EN);
+    usbprog.datatogl = 1;
   }
 }
+
 
 void Commands(char * buf)
 {
@@ -89,11 +99,7 @@ int main(void)
   sei();
   USBNStart();
 
-  DDRA=0xff; // testing
   //LED_on;
-
-
-  //int datatogl=0;
 
   while(1);
 }
