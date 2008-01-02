@@ -414,7 +414,7 @@ void usbprogFrm::deviceRefreshHandler(wxCommandEvent &evt)
     m_deviceCombo->Clear();
     m_deviceCombo->SetValue(wxT(""));
 
-    for (int i = 0; i < m_deviceManager->getNumberUpdateDevices(); i++) {
+    for (int i = 0; i < int(m_deviceManager->getNumberUpdateDevices()); i++) {
         Device *dev = m_deviceManager->getDevice(i);
 
         stringstream ss;
@@ -439,7 +439,7 @@ Device *usbprogFrm::getSelectedDevice()
     ss << m_deviceCombo->GetValue();
     ss >> number;
 
-    if (number < 0 || number >= m_deviceManager->getNumberUpdateDevices())
+    if (number < 0 || number >= int(m_deviceManager->getNumberUpdateDevices()))
         return NULL;
 
     m_deviceManager->setCurrentUpdateDevice(number);

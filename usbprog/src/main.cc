@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <cstdlib>
 
 #include <usbprog/usbprog.h>
 #include <usbprog/downloader.h>
