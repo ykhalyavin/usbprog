@@ -4,7 +4,7 @@
 AC_PREREQ(2.57)
 # also update USBPROG_VERSION_STRING in usbprog/usbprog.h (for Win32)
 # and win32/installer.nsi if you change the version number here
-AC_INIT(usbprog, 0.1.1, bernhard.walle@gmx.de)
+AC_INIT(usbprog, 0.1.2, bernhard.walle@gmx.de)
 AC_CONFIG_SRCDIR([usbprog/usbprog.h])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADERS([config.h])
@@ -76,15 +76,38 @@ else
 fi
 
 #
+# GUI?
+#
+AC_ARG_ENABLE([gui],
+     [  --enable-gui		Enables the wxGtk UI (default)],
+     [case "${enableval}" in
+       yes) gui=true ;;
+       no)  gui=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-gui]) ;;
+     esac],[gui=true])
+
+#
 # wxGtk
 #
-AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG(2.6.0, wxWin=1)
-CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
-CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
-CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
-AC_SUBST(WX_LIBS)
-#LIBS="$LIBS $WX_LIBS"
+if test x$gui = xtrue ; then
+    AM_OPTIONS_WXCONFIG
+    AM_PATH_WXCONFIG(2.6.0, wxWin=1)
+    CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+    CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
+    CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
+    AC_SUBST(WX_LIBS)
+    #LIBS="$LIBS $WX_LIBS"
+    if test x"${wx_ver_ok}" = xyes ; then
+        gui=true
+    else
+        gui=false
+    fi
+fi
+
+#
+# GUI for Automake?
+#
+AM_CONDITIONAL([GUI], [test x$gui = xtrue])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -116,7 +139,7 @@ else
 fi
 
 echo -n "GUI (wxWidgets)  : "
-if test x"${wx_ver_ok}" = xyes ; then
+if test x"${gui}" = xtrue ; then
     echo "enabled"
 else
     echo "disabled"

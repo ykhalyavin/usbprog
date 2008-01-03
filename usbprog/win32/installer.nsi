@@ -4,7 +4,7 @@
 !define PRODUCT_NAME "USBprog"
 ; also update configure.in and usbprog/usbprog.h if you change the version
 ; number herre
-!define PRODUCT_VERSION "0.1.1"
+!define PRODUCT_VERSION "0.1.2"
 !define PRODUCT_PUBLISHER "Bernhard Walle, Benedikt Sauter"
 !define PRODUCT_WEB_SITE "http://www.embedded-projects.net/usbprog"
 !define PRODUCT_EXE_FILE "usbprog-gui.exe"

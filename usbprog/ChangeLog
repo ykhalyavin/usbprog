@@ -1,3 +1,9 @@
+2008-01-03  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* new option --disable-gui in the configure script
+	* if wxGTK is not detected in the configure script, don't build and
+	  install the GUI instead of failing to build
+
 2008-01-02  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* add support for checksum testing after download to ensure
