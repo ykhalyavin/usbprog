@@ -1,3 +1,7 @@
+2008-01-04  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* delete the versions.xml file if parsing was not possible
+
 2008-01-03  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* new option --disable-gui in the configure script

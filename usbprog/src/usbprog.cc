@@ -38,6 +38,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using std::exit;
+using std::runtime_error;
 
 /* HashNotifier {{{1 */
 
@@ -178,8 +179,8 @@ void Usbprog::initFirmwarePool()
         if (!conf->getDebug())
             m_firmwarepool->setProgress(m_progressNotifier);
         m_firmwarepool->readIndex();
-    } catch (const IOError &ioe) {
-        throw ApplicationError(ioe.what());
+    } catch (const runtime_error &re) {
+        throw ApplicationError(re.what());
     }
 }
 

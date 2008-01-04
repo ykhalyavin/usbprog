@@ -505,8 +505,10 @@ void Firmwarepool::readIndex()
 
     string file = pathconcat(m_cacheDir, INDEX_FILE_NAME);
 	doc = xmlParseFile(file.c_str());
-	if (!doc)
-        throw IOError("Couldn't open " + file);
+	if (!doc) {
+        remove(file.c_str());
+        throw ParseError("Couldn't open " + file);
+    }
 
     cur = xmlDocGetRootElement(doc);
 	if (!cur) {
