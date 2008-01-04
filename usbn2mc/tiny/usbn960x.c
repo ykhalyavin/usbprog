@@ -54,17 +54,17 @@ void _USBNNackEvent(void)
 {
   unsigned char event;
   event = USBNRead(NAKEV);
-  //USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
-  //USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
- /* 
+  USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
+  USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
+ 
   if (EP0tx.Size > EP0tx.usbnfifo)	  //multi-pkt status stage? 
   {
     //USBNDebug("flush");
     USBNWrite(TXC0,FLUSH);	    //flush TX0 and disable   
-    //USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
+    USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
     EP0tx.DataPid	      = 1;
   }
-  */
+  
 }
 
 
