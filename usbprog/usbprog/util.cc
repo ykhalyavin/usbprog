@@ -152,69 +152,6 @@ string pathconcat(const string &a, const string &b)
 #endif
 
 /* -------------------------------------------------------------------------- */
-string strip(string a)
-{
-    a.erase(0, a.find_first_not_of("\n \t", 0));
-    a.erase(a.find_last_not_of("\n \t"));
-
-    if (a.length() == 0)
-        return a;
-
-    char last = a[0];
-    for (string::iterator it = a.begin()+1; it != a.end(); ++it) {
-        if (*it == '\n')
-            a.erase(it);
-        if (*it == '\t')
-            *it = ' ';
-        else if ((*it == ' ' || *it == '\t') && (last == ' ' || last == '\t'))
-            a.erase(it);
-        else
-            last = *it;
-    }
-
-    return a;
-}
-
-/* -------------------------------------------------------------------------- */
-unsigned long parse_long(const char *string)
-{
-    stringstream ss;
-    if (strncmp(string, "0x", 2) == 0)
-        ss << hex << static_cast<const char *>(string + 2);
-    else
-        ss << string;
-    unsigned long ret;
-    ss >> ret;
-
-    return ret;
-}
-
-/* -------------------------------------------------------------------------- */
-string wordwrap(const string &text, size_t margins)
-{
-    string ret, s;
-    stringstream ss;
-    ss << text;
-    int curline = 0;
-
-    while (ss >> s) {
-        if (curline + s.size() + 1 < margins) {
-            if (curline != 0) {
-                ret += " ";
-                curline++;
-            }
-            ret += s;
-            curline += s.size();
-        } else {
-            ret += "\n" + s;
-            curline = s.size();
-        }
-    }
-
-    return ret;
-}
-
-/* -------------------------------------------------------------------------- */
 void usbprog_sleep(unsigned int seconds)
 {
     usbprog_msleep(seconds * 1000);

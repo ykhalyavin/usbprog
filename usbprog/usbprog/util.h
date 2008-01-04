@@ -31,9 +31,6 @@ class Fileutil {
 };
 
 std::string pathconcat(const std::string &a, const std::string &b);
-std::string strip(std::string a);
-unsigned long parse_long(const char *string);
-std::string wordwrap(const std::string &text, size_t margins);
 void usbprog_sleep(unsigned int seconds);
 void usbprog_msleep(unsigned int msec);
 

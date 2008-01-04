@@ -1,6 +1,8 @@
 2008-01-04  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* delete the versions.xml file if parsing was not possible
+	* moved strip(), parse_long() and wordwrap() from util.cc to
+	  stringutil.cc
 
 2008-01-03  Bernhard Walle <bernhard.walle@gmx.de>
 

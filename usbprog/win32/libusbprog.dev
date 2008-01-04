@@ -1,7 +1,7 @@
 [Project]
 FileName=libusbprog.dev
 Name=libusbprog
-UnitCount=16
+UnitCount=18
 Type=2
 Ver=1
 ObjFiles=
@@ -207,3 +207,22 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit17]
+FileName=..\usbprog\stringutil.h
+CompileCpp=1
+Folder=libusbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit18]
+FileName=..\usbprog\stringutil.cc
+CompileCpp=1
+Folder=libusbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=

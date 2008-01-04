@@ -34,6 +34,7 @@
 #include <usbprog/firmwarepool.h>
 #include <usbprog/util.h>
 #include <usbprog/digest.h>
+#include <usbprog/stringutil.h>
 
 using std::vector;
 using std::string;
