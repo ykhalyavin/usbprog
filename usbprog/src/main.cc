@@ -22,6 +22,7 @@
 #include <usbprog/usbprog.h>
 #include <usbprog/downloader.h>
 #include <usbprog/date.h>
+#include <usbprog/stringutil.h>
 
 #include "usbprog.h"
 #include "io.h"
@@ -60,18 +61,6 @@ int main(int argc, char *argv[])
     string s = r->readLine();
     cout << s << endl;
     delete r;
-
-#if 0
-    OptionParser op;
-    op.addOption("test", 't', OT_FLAG);
-    op.parse(argc, argv);
-    std::cout << "value " << (bool)op.getValue("test").getFlag() << std::endl;
-
-    std::vector<std::string> args = op.getArgs();
-    for (std::vector<std::string>::iterator it = args.begin();
-            it != args.end(); ++it)
-        std::cout << "arg" << *it << std::endl;
-#endif
 
     return EXIT_SUCCESS;
 }

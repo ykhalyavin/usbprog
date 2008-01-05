@@ -2,6 +2,8 @@
 -----
  * improved error handling
  * autoconf fixes (building without GUI is now possible)
+ * CLI: new string tokenizer to be able to deal with spaces
+   (use "string with spaces" or string\ with\ spaces like in bash)
 
 0.1.1 (2007-01-02, r914)
 -----

@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <usbprog/usbprog.h>
+#include <usbprog/stringutil.h>
 
 #include "shell.h"
 #include "io.h"
@@ -249,12 +250,8 @@ void Shell::run()
     bool result = true;
 
     while (!m_lineReader->eof() && result) {
-        stringstream strstr;
-        strstr << m_lineReader->readLine();
-        StringVector vec;
-        string s;
-        while (strstr >> s)
-            vec.push_back(s);
+        ShellStringTokenizer tok(m_lineReader->readLine());
+        StringVector vec = tok.tokenize();
 
         if (vec.size() == 0)
             continue;
