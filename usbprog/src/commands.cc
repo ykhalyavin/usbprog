@@ -680,8 +680,10 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
 
     ByteVector data;
 
-    if (firmware.find("/") != string::npos || Fileutil::isFile(firmware)) {
+    if (Fileutil::isPathName(firmware)) {
         /* read from file */
+
+        firmware = Fileutil::resolvePath(firmware);
         ifstream fin(firmware.c_str(), ios::binary);
         if (!fin)
             throw ApplicationError("Firmware file invalid");

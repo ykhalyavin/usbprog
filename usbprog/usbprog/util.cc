@@ -17,6 +17,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+#include <cstdlib>
 
 #include <usbprog/util.h>
 #include <usbprog/date.h>
@@ -28,6 +29,7 @@
 #  include <pwd.h>
 #  include <sys/types.h>
 #  include <unistd.h>
+#  include <pwd.h>
 #endif
 
 #include <sys/stat.h>
@@ -36,6 +38,7 @@ using std::hex;
 using std::stringstream;
 using std::strncmp;
 using std::string;
+using std::getenv;
 
 /* Fileutil {{{1 */
 
@@ -135,6 +138,52 @@ DateTime Fileutil::getMTime(const std::string &file)
 
     return DateTime(my_stat.st_mtime);
 }
+
+/* -------------------------------------------------------------------------- */
+#if _WIN32
+bool Fileutil::isPathName(const string &file)
+{
+    return file.find("/") != string::npos || isFile(file);
+}
+#else
+bool Fileutil::isPathName(const string &file)
+{
+    return file.find("/") != string::npos ||
+        isFile(file) || file[0] == '~';
+}
+#endif
+
+/* -------------------------------------------------------------------------- */
+#ifdef _WIN32
+string Fileutil::resolvePath(const string &path)
+{
+    return path;
+}
+#else
+string Fileutil::resolvePath(const string &path)
+{
+    if (path[0] != '~')
+        return path;
+    else if (path[1] == '/') {
+        const char *home = getpwuid(getuid())->pw_dir;
+        if (!home || strlen(home) <= 0)
+            return path;
+
+        return pathconcat(home, path.substr(1));
+    } else {
+        size_t end_user = path.find('/');
+        if (end_user == string::npos)
+            return path;
+
+        string username = path.substr(1, end_user-1);
+        struct passwd *pw = getpwnam(username.c_str());
+        if (!pw)
+            return path;
+
+        return pathconcat(pw->pw_dir, path.substr(end_user));
+    }
+}
+#endif
 
 /* global {{{1 */
 

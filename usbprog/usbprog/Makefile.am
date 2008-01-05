@@ -22,4 +22,4 @@ libusbprog_la_SOURCES  = inifile.cc \
 			 digest.cc \
 			 stringutil.cc
 libusbprog_la_LIBADD   = ../md5/libmd5.a
-libusbprog_la_LDFLAGS  = -version-info 1:0:1
+libusbprog_la_LDFLAGS  = -version-info 2:0:2

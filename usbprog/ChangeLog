@@ -1,6 +1,7 @@
 2008-01-05  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* new string tokenizer that can deal with spaces by using quoting
+	* Unix: local paths can contain "~" and "~user" now
 
 2008-01-04  Bernhard Walle <bernhard.walle@gmx.de>
 

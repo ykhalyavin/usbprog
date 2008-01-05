@@ -26,6 +26,8 @@ class Fileutil {
         static bool mkdir(const std::string &dir);
         static bool isDir(const std::string &dir);
         static bool isFile(const std::string &dir);
+        static bool isPathName(const std::string &dir);
+        static std::string resolvePath(const std::string &path);
         static DateTime getMTime(const std::string &file)
             throw (IOError);
 };
