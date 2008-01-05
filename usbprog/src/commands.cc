@@ -47,10 +47,6 @@ using std::setfill;
 using std::max;
 using std::find;
 using std::hex;
-using std::ifstream;
-using std::ios;
-
-#define BUFFERSIZE       2048
 
 /* ListCommand {{{1 */
 
