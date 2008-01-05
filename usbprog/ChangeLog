@@ -2,6 +2,8 @@
 
 	* new string tokenizer that can deal with spaces by using quoting
 	* Unix: local paths can contain "~" and "~user" now
+	* new function Firmwarepool::readFromFile() to unify reading a
+	  firmware file into a ByteVector
 
 2008-01-04  Bernhard Walle <bernhard.walle@gmx.de>
 

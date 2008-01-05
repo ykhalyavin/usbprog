@@ -684,22 +684,12 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
         /* read from file */
 
         firmware = Fileutil::resolvePath(firmware);
-        ifstream fin(firmware.c_str(), ios::binary);
-        if (!fin)
-            throw ApplicationError("Firmware file invalid");
-
-        char buffer[BUFFERSIZE];
-        while (!fin.eof()) {
-            fin.read(buffer, BUFFERSIZE);
-            if (fin.bad()) {
-                fin.close();
-                throw ApplicationError("Error while reading data from file.");
-            }
-
-            copy(buffer, buffer + fin.gcount(), back_inserter(data));
+        try {
+            Firmwarepool::readFromFile(firmware, data);
+        } catch (const IOError &ioe) {
+            throw ApplicationError(string("Error while reading data from file: ")+
+                    ioe.what());
         }
-
-        fin.close();
     } else {
         /* use pool */
 

@@ -440,6 +440,28 @@ string Firmware::toString() const
 /* Firmwarepool {{{1 */
 
 /* -------------------------------------------------------------------------- */
+void Firmwarepool::readFromFile(const string &file,
+        ByteVector &bv) throw (IOError)
+{
+    char buffer[BUFFERSIZE];
+
+    ifstream fin(file.c_str(), ios::binary);
+    if (!fin)
+        throw IOError("Opening " + file + " failed");
+
+    bv.clear();
+    while (!fin.eof()) {
+        fin.read(buffer, BUFFERSIZE);
+        if (fin.bad())
+            throw IOError("Error while reading data from " + file);
+
+        copy(buffer, buffer + fin.gcount(), back_inserter(bv));
+    }
+
+    fin.close();
+}
+
+/* -------------------------------------------------------------------------- */
 Firmwarepool::Firmwarepool(const string &cacheDir)
       throw (IOError)
     : m_cacheDir(cacheDir), m_progressNotifier(NULL),
@@ -599,27 +621,12 @@ void Firmwarepool::downloadFirmware(const string &name)
 void Firmwarepool::fillFirmware(const string &name)
     throw (IOError, GeneralError)
 {
-    char buffer[BUFFERSIZE];
     Firmware *fw = getFirmware(name);
     if (!fw)
         throw GeneralError("Firmware doesn't exist");
 
     string file = getFirmwareFilename(fw);
-    ifstream fin(file.c_str(), ios::binary);
-    if (!fin)
-        throw IOError("Opening " + file + " failed");
-
-    ByteVector &data = fw->getData();
-    data.clear();
-    while (!fin.eof()) {
-        fin.read(buffer, BUFFERSIZE);
-        if (fin.bad())
-            throw("Error while reading data from " + file);
-
-        copy(buffer, buffer + fin.gcount(), back_inserter(data));
-    }
-
-    fin.close();
+    readFromFile(file, fw->getData());
 }
 
 /* -------------------------------------------------------------------------- */

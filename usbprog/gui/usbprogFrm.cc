@@ -46,8 +46,6 @@ using std::fopen;
 using std::fclose;
 using std::setvbuf;
 
-#define BUFFERSIZE       2048
-
 // Global Variables:
 bool internetConnection = true;
 
@@ -534,25 +532,13 @@ void usbprogFrm::uploadHandler(wxCommandEvent &evt)
             return;
         }
 
-        ifstream fin(m_pathText->GetValue().mb_str(), ios::binary);
-        if (!fin) {
-            status("Firmware file invalid");
+        try {
+            const char *filename_cstr = m_pathText->GetValue().mb_str();
+            Firmwarepool::readFromFile(string(filename_cstr), data);
+        } catch (const IOError &ioe) {
+            status(string("Error while reading firmware file: ") + ioe.what());
             return;
         }
-
-        char buffer[BUFFERSIZE];
-        while (!fin.eof()) {
-            fin.read(buffer, BUFFERSIZE);
-            if (fin.bad()) {
-                fin.close();
-                status("Error while reading data from file.");
-                return;
-            }
-
-            copy(buffer, buffer + fin.gcount(), back_inserter(data));
-        }
-
-        fin.close();
     }
 
     Device *dev = getSelectedDevice();
