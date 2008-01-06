@@ -149,7 +149,7 @@ void usbprogFrm::CreateGUIControls()
 
     // Program
     wxMenu *programMenu = new wxMenu;
-    programMenu->AppendCheckItem(ID_DEBUG_ENABLE_DISABLE, wxT("&Loging"),
+    programMenu->AppendCheckItem(ID_DEBUG_ENABLE_DISABLE, wxT("&Logging"),
             wxT("Enable/disable debugging output to file"));
     programMenu->AppendSeparator();
     programMenu->Append(ID_EXIT_MENU, wxT("E&xit\tCtrl-q"),
