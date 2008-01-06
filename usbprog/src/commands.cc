@@ -129,30 +129,13 @@ bool InfoCommand::execute(CommandArgVector args, ostream &os)
     os << "URL          : " << fw->getUrl() << endl;
     os << "File name    : " << fw->getFilename() << endl;
     os << "Author       : " << fw->getAuthor() << endl;
-    os << "Version      : " << fw->getVersion() << " ["
-                            << fw->getDate().getDateTimeString(DTF_ISO_DATE)
-                            << "]" << endl;
+    os << "Version      : " << fw->formatDateVersion() << endl;
     if (fw->getMD5Sum().size() > 0)
         os << "MD5sum       : " << fw->getMD5Sum() << endl;
 
     // vendor ID and/or Product ID
-    bool hasDeviceInfo = fw->getVendorId() != 0 || fw->getProductId() != 0 ||
-            fw->getBcdDevice() != 0;
-    if (hasDeviceInfo)
-        os << "Device ID(s) : ";
-    if (fw->getVendorId() != 0)
-        os << "Vendor: 0x" << setw(4) << hex << setfill('0') << fw->getVendorId();
-    if (fw->getVendorId() != 0 && fw->getProductId() != 0)
-        os << ", ";
-    if (fw->getProductId() != 0)
-        os << "Product: 0x" << setw(4) << hex << fw->getProductId();
-    if (fw->getBcdDevice() != 0 && (fw->getProductId() != 0 
-                || fw->getVendorId() != 0))
-        os << ", ";
-    if (fw->getBcdDevice() != 0)
-        os << "BCDDevice: 0x" << setw(4) << hex << fw->getBcdDevice();
-    if (hasDeviceInfo)
-        os << endl;
+    if (fw->hasDeviceId())
+        os << "Device ID(s) : " << fw->formatDeviceId() << endl;
 
     os << endl;
     os << "Description" << endl;

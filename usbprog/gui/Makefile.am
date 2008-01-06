@@ -6,7 +6,9 @@ EXTRA_DIST              = usbprog.xpm usbprog_icon.xpm \
 if GUI
 bin_PROGRAMS            = usbprog-gui
 usbprog_gui_SOURCES  	= usbprogFrm.h usbprogFrm.cc \
-			  usbprogApp.h usbprogApp.cc
+			  usbprogApp.h usbprogApp.cc \
+			  infodialog.cc infodialog.h \
+			  pindialog.cc pindialog.h
 usbprog_gui_LDADD	= ../usbprog/libusbprog.la \
 			  @WX_LIBS@
 man_MANS		= usbprog-gui.1

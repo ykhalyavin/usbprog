@@ -84,7 +84,11 @@ class Firmware {
         void setBcdDevice(uint16_t bcdDevice);
         uint16_t getBcdDevice() const;
 
+        bool hasDeviceId() const;
+
         std::string toString() const;
+        std::string formatDateVersion() const;
+        std::string formatDeviceId() const;
 
     private:
         const std::string     m_name;

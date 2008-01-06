@@ -20,6 +20,9 @@
 
 #include <wx/wx.h>
 
+#define WXSTRING(s) \
+        wxString((s).c_str(), wxConvUTF8)
+
 class usbprogFrmApp : public wxApp
 {
     public:
@@ -28,6 +31,7 @@ class usbprogFrmApp : public wxApp
 };
 
 DECLARE_APP(usbprogFrmApp);
+
 
 #endif /* USBPROG_APP_H */
 

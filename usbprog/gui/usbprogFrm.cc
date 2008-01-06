@@ -28,9 +28,12 @@
 #include <wx/gbsizer.h>
 #include <wx/sizer.h>
 
+#include <usbprog/util.h>
 #include "usbprogFrm.h"
 #include "usbprogApp.h"
-#include <usbprog/util.h>
+#include "infodialog.h"
+#include "pindialog.h"
+#include "usbprogApp.h"
 
 #include "usbprog.xpm"
 #include "usbprog_icon.xpm"
@@ -60,6 +63,8 @@ BEGIN_EVENT_TABLE(usbprogFrm,wxFrame)
     EVT_MENU(ID_CACHE_CLEAN,            usbprogFrm::cleanCache)
     EVT_MENU(ID_CACHE_DOWNLOAD_ALL,     usbprogFrm::downloadAll)
     EVT_MENU(ID_DEBUG_ENABLE_DISABLE,   usbprogFrm::enableDisableDebug)
+    EVT_MENU(ID_FIRMWARE_INFO,          usbprogFrm::showFirmwareInfo)
+    EVT_MENU(ID_PIN_INFO,               usbprogFrm::showPinInfo)
     EVT_COMBOBOX(ID_DEVICECOMBO,        usbprogFrm::deviceComboHandler)
     EVT_BUTTON(ID_REFRESH_DEV_BUTTON,   usbprogFrm::deviceRefreshHandler)
     EVT_BUTTON(ID_REFRESH_POOL_BUTTON,  usbprogFrm::firmwareRefreshHandler)
@@ -107,9 +112,6 @@ void GUIProgressNotifier::finished()
 /* usbprogFrm {{{1 */
 
 
-#define WXSTRING(s) \
-        wxString((s).c_str(), wxConvUTF8)
-
 /* -------------------------------------------------------------------------- */
 usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title,
 		const wxPoint &position, const wxSize& size)
@@ -153,6 +155,13 @@ void usbprogFrm::CreateGUIControls()
     programMenu->Append(ID_EXIT_MENU, wxT("E&xit\tCtrl-q"),
             wxT("Quit this program"));
 
+    // Firmware
+    wxMenu *firmwareMenu = new wxMenu;
+    firmwareMenu->Append(ID_FIRMWARE_INFO, wxT("&Info\tF2"),
+            wxT("Shows information about currently selected firmware"));
+    firmwareMenu->Append(ID_PIN_INFO, wxT("&Pins\tF3"),
+            wxT("Shows pin assignment of currently selected firmware"));
+
     // Cache
     wxMenu *cacheMenu = new wxMenu;
     cacheMenu->Append(ID_CACHE_DELETE, wxT("&Delete cache"),
@@ -170,6 +179,7 @@ void usbprogFrm::CreateGUIControls()
 
     wxMenuBar *menuBar = new wxMenuBar();
     menuBar->Append(programMenu, wxT("&Program"));
+    menuBar->Append(firmwareMenu, wxT("&Firmware"));
     menuBar->Append(cacheMenu, wxT("&Cache"));
     menuBar->Append(helpMenu, wxT("&Help"));
 
@@ -616,5 +626,32 @@ void usbprogFrm::enableDisableDebug(wxCommandEvent &evt)
         dbg->setLevel(Debug::DL_TRACE);
     }
 }
+
+/* -------------------------------------------------------------------------- */
+void usbprogFrm::showFirmwareInfo(wxCommandEvent &evt)
+{
+    Firmware *fw = getSelectedFirmware();
+    if (!fw) {
+        status("No firmware selected");
+        return;
+    }
+
+    InfoDialog dialog(fw, this);
+    dialog.ShowModal();
+}
+
+/* -------------------------------------------------------------------------- */
+void usbprogFrm::showPinInfo(wxCommandEvent &evt)
+{
+    Firmware *fw = getSelectedFirmware();
+    if (!fw) {
+        status("No firmware selected");
+        return;
+    }
+
+    PinDialog dialog(fw, this);
+    dialog.ShowModal();
+}
+
 
 // vim: set sw=4 ts=4 fdm=marker et:

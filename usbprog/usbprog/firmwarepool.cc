@@ -16,6 +16,7 @@
  */
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <cstdlib>
 #include <sstream>
 #include <cstdio>
@@ -49,6 +50,8 @@ using std::remove;
 using std::back_inserter;
 using std::strncmp;
 using std::hex;
+using std::setw;
+using std::setfill;
 
 #define INDEX_FILE_NAME  "versions.xml"
 #define BUFFERSIZE       2048
@@ -433,6 +436,43 @@ string Firmware::toString() const
     ss << "          TX    : " << getPin("TX") << endl;
     ss << "          LED   : " << getPin("LED") << endl;
     ss << "          JP    : " << getPin("JP") << endl;
+
+    return ss.str();
+}
+
+/* -------------------------------------------------------------------------- */
+string Firmware::formatDateVersion() const
+{
+    stringstream ss;
+
+    ss << getVersion();
+    ss << " [" << getDate().getDateTimeString(DTF_ISO_DATE) << "]";
+
+    return ss.str();
+}
+
+/* -------------------------------------------------------------------------- */
+bool Firmware::hasDeviceId() const
+{
+    return getVendorId() != 0 || getProductId() != 0 || getBcdDevice() != 0;
+}
+
+/* -------------------------------------------------------------------------- */
+string Firmware::formatDeviceId() const
+{
+    stringstream ss;
+
+    if (getVendorId() != 0)
+        ss << "Vendor: 0x" << setw(4) << hex << setfill('0') << getVendorId();
+    if (getVendorId() != 0 && getProductId() != 0)
+        ss << ", ";
+    if (getProductId() != 0)
+        ss << "Product: 0x" << setw(4) << hex << getProductId();
+    if (getBcdDevice() != 0 && (getProductId() != 0 
+                || getVendorId() != 0))
+        ss << ", ";
+    if (getBcdDevice() != 0)
+        ss << "BCDDevice: 0x" << setw(4) << hex << getBcdDevice();
 
     return ss.str();
 }

@@ -65,6 +65,8 @@ class usbprogFrm : public wxFrame {
         void onlineRadioHandler(wxCommandEvent &evt);
         void poolRadioHandler(wxCommandEvent &evt);
         void uploadHandler(wxCommandEvent &evt);
+        void showFirmwareInfo(wxCommandEvent &evt);
+        void showPinInfo(wxCommandEvent &evt);
 
     private:
         void OnClose(wxCloseEvent& event);
@@ -109,6 +111,8 @@ class usbprogFrm : public wxFrame {
             ID_COPYRIGHT_LABEL,
             ID_EXIT_MENU,
             ID_ABOUT_MENU,
+            ID_FIRMWARE_INFO,
+            ID_PIN_INFO,
             ID_CACHE_DELETE,
             ID_CACHE_CLEAN,
             ID_CACHE_DOWNLOAD_ALL,

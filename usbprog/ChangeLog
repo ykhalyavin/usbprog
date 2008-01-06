@@ -1,3 +1,7 @@
+2008-01-06  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* GUI: implement firmware information dialog (and pin information)
+
 2008-01-05  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* new string tokenizer that can deal with spaces by using quoting
