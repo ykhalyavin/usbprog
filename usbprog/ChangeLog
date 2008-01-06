@@ -1,6 +1,7 @@
 2008-01-06  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* GUI: implement firmware information dialog (and pin information)
+	* GUI: Add http://www.embedded-projects.net/usbprog in the main window
 
 2008-01-05  Bernhard Walle <bernhard.walle@gmx.de>
 

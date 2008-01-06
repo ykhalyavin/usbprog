@@ -89,6 +89,7 @@ class usbprogFrm : public wxFrame {
         wxFileDialog   *m_fileDialog;
         wxBoxSizer     *m_topBox;
         wxPanel        *m_panel;
+        wxStaticText   *m_urlInfo;
 
         DeviceManager  *m_deviceManager;
         Firmwarepool   *m_firmwarepool;
@@ -116,7 +117,8 @@ class usbprogFrm : public wxFrame {
             ID_CACHE_DELETE,
             ID_CACHE_CLEAN,
             ID_CACHE_DOWNLOAD_ALL,
-            ID_DEBUG_ENABLE_DISABLE
+            ID_DEBUG_ENABLE_DISABLE,
+            ID_URL_INFO
         };
 };
 

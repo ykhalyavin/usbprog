@@ -280,6 +280,12 @@ void usbprogFrm::CreateGUIControls()
             wxTOP|wxBOTTOM|wxLEFT| wxALIGN_CENTER_VERTICAL |
             wxEXPAND, 5);
 
+    m_urlInfo = new wxStaticText(m_panel, ID_URL_INFO,
+            wxT("Read more: http://www.embedded-projects.net/usbprog/"));
+    topSizer->Add(m_urlInfo, wxGBPosition(6, 1), wxGBSpan(1, 3),
+            wxTOP|wxBOTTOM|wxLEFT| wxALIGN_CENTER_VERTICAL |
+            wxEXPAND, 5);
+
     // file dialog
 	m_fileDialog = new wxFileDialog(m_panel, wxT("Choose a file"),
             wxT(""), wxT(""), wxT("*.bin"), wxOPEN);

@@ -29,14 +29,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.5561538"
-     inkscape:cx="349.43236"
-     inkscape:cy="600.34297"
+     inkscape:cx="378.14439"
+     inkscape:cy="457.58494"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     inkscape:window-width="1112"
-     inkscape:window-height="912"
-     inkscape:window-x="143"
-     inkscape:window-y="61" />
+     inkscape:window-width="1274"
+     inkscape:window-height="966"
+     inkscape:window-x="111"
+     inkscape:window-y="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -52,13 +52,11 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <rect
-       style="fill:#666666;fill-opacity:1;stroke:#666666;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+    <path
+       style="fill:#666666;fill-opacity:1;stroke:#666666;stroke-width:1.99999976;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 152.1875,385.03125 L 152.1875,534.3125 L 163.85566,534.3125 L 163.85566,594.71875 L 152.1875,594.71875 L 152.1875,744 L 320.46875,744 L 320.46875,385.03125 L 152.1875,385.03125 z "
        id="rect2160"
-       width="141.61011"
-       height="343.54184"
-       x="168.69548"
-       y="392.73257" />
+       sodipodi:nodetypes="ccccccccc" />
     <g
        id="g2179"
        transform="translate(3.49603e-2,-6.68769e-2)">
