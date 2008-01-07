@@ -2,6 +2,8 @@
 
 	* GUI: Fix local upload function (error in conversion from wxString
 	  to std::string)
+	* GUI: Fix alignment of the device information label (below the
+	  combo box) if the string is long, especially on Windows
 
 2008-01-06  Bernhard Walle <bernhard.walle@gmx.de>
 

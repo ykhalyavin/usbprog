@@ -212,7 +212,6 @@ void usbprogFrm::CreateGUIControls()
     m_deviceCombo->SetMinSize(sz);
     topSizer->Add(m_deviceCombo, wxGBPosition(0, 2), wxGBSpan(),
             wxLEFT|wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
-    // topSizer->SetItemMinSize(m_deviceCombo, 50, 0);
 
     // refresh devices button
     m_refreshDevButton = new wxButton(m_panel, ID_REFRESH_DEV_BUTTON,
@@ -222,7 +221,7 @@ void usbprogFrm::CreateGUIControls()
 
     // device info text
     m_devInfo = new wxStaticText(m_panel, ID_DEV_INFO, wxT("No device selected"));
-    topSizer->Add(m_devInfo, wxGBPosition(1, 2), wxGBSpan(),
+    topSizer->Add(m_devInfo, wxGBPosition(1, 2), wxGBSpan(1, 2),
             wxLEFT|wxRIGHT | wxALIGN_TOP, 5);
 
     // online radio button
@@ -239,7 +238,6 @@ void usbprogFrm::CreateGUIControls()
     m_poolCombo->SetMinSize(sz);
     topSizer->Add(m_poolCombo, wxGBPosition(2, 2), wxGBSpan(),
             wxTOP|wxBOTTOM|wxLEFT|wxRIGHT | wxALIGN_CENTER_VERTICAL, 5);
-    // topSizer->SetItemMinSize(m_poolCombo, 50, 0);
 
     // pool refresh
     m_refreshPoolButton = new wxButton(m_panel, ID_REFRESH_POOL_BUTTON,
