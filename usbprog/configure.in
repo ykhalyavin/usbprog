@@ -4,7 +4,7 @@
 AC_PREREQ(2.57)
 # also update USBPROG_VERSION_STRING in usbprog/usbprog.h (for Win32)
 # and win32/installer.nsi if you change the version number here
-AC_INIT(usbprog, 0.1.2, bernhard.walle@gmx.de)
+AC_INIT(usbprog, 0.1.3, bernhard.walle@gmx.de)
 AC_CONFIG_SRCDIR([usbprog/usbprog.h])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADERS([config.h])
