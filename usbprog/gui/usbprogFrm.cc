@@ -549,8 +549,7 @@ void usbprogFrm::uploadHandler(wxCommandEvent &evt)
         }
 
         try {
-            const char *filename_cstr = m_pathText->GetValue().mb_str();
-            Firmwarepool::readFromFile(string(filename_cstr), data);
+            Firmwarepool::readFromFile(string(m_pathText->GetValue().mb_str()), data);
         } catch (const IOError &ioe) {
             status(string("Error while reading firmware file: ") + ioe.what());
             return;
