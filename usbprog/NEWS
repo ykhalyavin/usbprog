@@ -1,6 +1,9 @@
 0.1.3
 -----
  * GUI: fix local upload
+ * GUI: make offline mode working, show only firmwares that are
+   available offline
+
 
 0.1.2 (2007-01-06, r931)
 -----

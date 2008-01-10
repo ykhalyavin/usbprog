@@ -91,12 +91,12 @@ Downloader::Downloader(ostream &output) throw (DownloadError)
     err = curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION,
             Downloader::curl_write_callback);
     if (err != CURLE_OK)
-        throw DownloadError(string("CURL error ") + m_curl_errorstring);
+        throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 
     // write data
     err = curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, this);
     if (err != CURLE_OK)
-        throw DownloadError(string("CURL error ") + m_curl_errorstring);
+        throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -116,7 +116,7 @@ void Downloader::setUrl(const string &url) throw (DownloadError)
     Debug::debug()->dbg("Setting URL to %s", m_url.c_str());
     err = curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
     if (err != CURLE_OK)
-        throw DownloadError(string("CURL error ") + m_curl_errorstring);
+        throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -135,11 +135,11 @@ void Downloader::setProgress(ProgressNotifier *notifier)
         err = curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION,
                 Downloader::curl_progress_callback);
         if (err != CURLE_OK)
-            throw DownloadError(string("CURL error ") + m_curl_errorstring);
+            throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 
         err = curl_easy_setopt(m_curl, CURLOPT_PROGRESSDATA, this);
         if (err != CURLE_OK)
-            throw DownloadError(string("CURL error ") + m_curl_errorstring);
+            throw DownloadError(string("CURL error: ") + m_curl_errorstring);
     } else {
         curl_easy_setopt(m_curl, CURLOPT_PROGRESSDATA, NULL);
         curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION, NULL);
@@ -156,7 +156,7 @@ void Downloader::download() throw (DownloadError)
     if (m_notifier)
         m_notifier->finished();
     if (err != CURLE_OK)
-        throw DownloadError(string("CURL error ") + m_curl_errorstring);
+        throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 }
 
 

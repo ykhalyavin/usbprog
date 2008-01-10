@@ -25,6 +25,7 @@
 #include <cstring>
 #include <vector>
 #include <cerrno>
+#include <unistd.h>
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -536,7 +537,9 @@ void Firmwarepool::setIndexUpdatetime(int minutes)
 void Firmwarepool::downloadIndex(const string &url)
     throw (DownloadError)
 {
-    string file(pathconcat(m_cacheDir, INDEX_FILE_NAME));
+    string newPath(pathconcat(m_cacheDir, string(INDEX_FILE_NAME) + ".new"));
+    string oldPath(pathconcat(m_cacheDir, INDEX_FILE_NAME));
+    string file(newPath);
 
     // don't download index if the modification time is less than 10 min
     if (m_indexAutoUpdatetime != 0) {
@@ -557,6 +560,11 @@ void Firmwarepool::downloadIndex(const string &url)
     dl.setUrl(url);
     dl.download();
     fout.close();
+
+    // after the download is successful, rename new file to old file
+    Debug::debug()->dbg("Renaming '%s' to '%s'\n",
+            newPath.c_str(), oldPath.c_str());
+    rename(newPath.c_str(), oldPath.c_str());
 }
 
 /* -------------------------------------------------------------------------- */

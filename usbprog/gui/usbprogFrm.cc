@@ -482,12 +482,18 @@ void usbprogFrm::firmwareRefreshHandler(wxCommandEvent &evt)
 {
     try {
         m_firmwarepool->downloadIndex(DEFAULT_INDEX_URL);
-        m_firmwarepool->readIndex();
     } catch (const DownloadError &e) {
         internetConnection = false;
         status((string("Error downloading index file: ") + e.what()));
     } catch (const exception &e) {
         status(e.what());
+    }
+    try {
+        m_firmwarepool->readIndex();
+    } catch (const ParseError &e) {
+        status(string("Unable to parse the firmware file: ") + e.what());
+    } catch (const IOError &e) {
+        status(string("I/O error when reading firmware file: ") + e.what());
     }
 
     m_poolCombo->Clear();
@@ -497,7 +503,9 @@ void usbprogFrm::firmwareRefreshHandler(wxCommandEvent &evt)
     for (vector<Firmware *>::const_iterator it = fws.begin();
             it != fws.end(); ++it) {
         Firmware *fw = *it;
-        m_poolCombo->Append(WXSTRING(fw->getLabel()));
+        if (internetConnection ||
+                m_firmwarepool->isFirmwareOnDisk(fw->getName()))
+            m_poolCombo->Append(WXSTRING(fw->getLabel()));
     }
 }
 
