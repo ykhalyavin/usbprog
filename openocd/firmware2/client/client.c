@@ -84,7 +84,7 @@ int usbprog_close(usb_dev_handle * usbprog_handle) {
 }
 
 /* transmit and receive command buffer */
-int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char * buffer, int length){
+int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char *read_buffer, int read_length, char *write_buffer, int write_length){
 
 	return -1;
 }
@@ -103,6 +103,10 @@ int usbprog_srst(usb_dev_handle * usbprog_handle, int value){
 
 /* control led 0:off, 1:on */
 int usbprog_led(usb_dev_handle * usbprog_handle, int value){
+
+
+  usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL, 8, 1000)
+
 	return -1;
 }
 
