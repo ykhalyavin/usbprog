@@ -298,7 +298,6 @@ finished:
 end:
 	@echo $(MSG_END)
 	@echo
-	hex2bin main.hex
 
 
 # Display size of file.

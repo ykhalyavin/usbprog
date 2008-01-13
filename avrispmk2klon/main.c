@@ -834,7 +834,7 @@ void USBFlash(char *buf)
         usbprog.fragmentnumber = 1;
       }
       else {CommandAnswer(pgmmode.numbytes + 2);
-      usbprog.datatogl=0;
+	usbprog.datatogl=0;
       }
 
       return;
