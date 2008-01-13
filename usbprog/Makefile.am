@@ -5,7 +5,7 @@ AUX_DIST_EXTRA        = $(auxdir)/readline.m4 $(auxdir)/sys_errlist.m4 \
                         $(auxdir)/sys_siglist.m4
 EXTRA_DIST            = bootstrap win32/libusbprog.dev win32/usbprog.dev \
 			win32/usbprog-gui.dev win32/libmd5.dev \
-			win32/README \
+			win32/README RELEASEPLAN \
 			src/usbprog.pod gui/usbprog-gui.pod
 
 AUTOMAKE_OPTIONS      = foreign
