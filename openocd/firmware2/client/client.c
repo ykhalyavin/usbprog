@@ -1,4 +1,4 @@
-/* Speedtest functions for USBprog */
+/* Speedtest functions for USBprog GNU/GPL 2 (C) Benedikt Sauter 2008 */
 
 #include <stdio.h>
 #include <usb.h>
@@ -79,40 +79,80 @@ usb_dev_handle *usbprog_locate(void)
   else return (device_handle);  	
 }
 
-int usbprog_close(usb_dev_handle * usbprog_handle) {
-	return -1;
+int usbprog_close(usb_dev_handle * usbprog_handle) 
+{
+	if( usb_close(usbprog_handle) )
+		return 1;
+	else
+		return -1;
 }
 
 /* transmit and receive command buffer */
-int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char *read_buffer, int read_length, char *write_buffer, int write_length){
-
+int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char *read_buffer, int read_length, char *write_buffer, int write_length)
+{
+	// usb_bulk_write
+	// usb_bulk_read
 	return -1;
-}
-
-/* control trst signal 0:low, 1:high */
-int usbprog_trst(usb_dev_handle * usbprog_handle, int value){
-
 }
 
 
 /* control trst signal 0:low, 1:high */
-int usbprog_srst(usb_dev_handle * usbprog_handle, int value){
-	return -1;
+int usbprog_trst(usb_dev_handle * usbprog_handle, int value) 
+{
+	if (value == 1) {
+		BUFFER_ADD = SET_TRST(1);
+		return 1;
+	} else if (value == 0) {
+		BUFFER_ADD = SET_TRST(0);
+		return 1;
+	} else {
+		return -1;
+	}
 }
+
+
+/* control trst signal 0:low, 1:high */
+int usbprog_srst(usb_dev_handle * usbprog_handle, int value) 
+{
+	if (value == 1) {
+		BUFFER_ADD = SET_SRST(1);
+		return 1;
+	} else if (value == 0) {
+		BUFFER_ADD = SET_SRST(0);
+		return 1;
+	} else {
+		return -1;
+	}
+}
+
 
 
 /* control led 0:off, 1:on */
-int usbprog_led(usb_dev_handle * usbprog_handle, int value){
-
-
-  usb_control_msg(usb_handle, 0xC0, 0x01, 0, 0, NULL, 8, 1000)
-
-	return -1;
+int usbprog_led(usb_dev_handle * usbprog_handle, int value) 
+{
+	if (value == 1) {
+		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, LED_ON, 0, NULL, 8, 1000);
+		return 1;
+	} else if (value == 0) {
+		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, LED_OFF, 0, NULL, 8, 1000);
+		return 1;
+	} else {
+		/* unkown value */
+		return -1;
+	}
 }
 
+
 /* value = kHz (6 = kHz, 5000 = 5 MHz) */
-int usbprog_speed(usb_dev_handle * usbprog_handle, int value){
-	return -1;	    
+int usbprog_speed(usb_dev_handle * usbprog_handle, short value) 
+{
+	if( value > 0 && value < 0x1388 ) {
+		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, SET_SPEED, value, 0, NULL, 8, 1000);
+		return 1;
+	} else {
+		/* speed to slow or to large */
+		return -1;	    
+	}
 }
 
 

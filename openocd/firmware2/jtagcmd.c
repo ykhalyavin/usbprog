@@ -23,8 +23,49 @@ void gpio(){
 
 }
 
-void scan(){
+void scan_gpio_command(){
 
+  if (CLOCK_DATA_BYTES_OUT==jtagcmd.actual_cmd) {
+  
+  } else if (CLOCK_DATA_BITS_OUT==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BYTES_IN==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BITS_IN==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BYTES_OUT_IN==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BITS_OUT_IN==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BIT_TMS_TDI_1==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BIT_TMS_TDI_0==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BIT_TMS_TDI_1_WIDTH_READ==jtagcmd.actual_cmd) {
+
+  } else if (CLOCK_DATA_BIT_TMS_TDI_0_WIDTH_READ==jtagcmd.actual_cmd) {
+
+  } else {
+
+  }
+
+}
+
+
+void clock_data_bytes_out();
+void clock_data_bits_out();
+
+void clock_data_bytes_in();
+void clock_data_bits_in();
+
+void clock_data_bytes_out_in();
+void clock_data_bits_out_in();
+
+void clock_data_bit_tms_tdi_1();
+void clock_data_bit_tms_tdi_0();
+
+void clock_data_bit_tms_tdi_1_read();
+void clock_data_bit_tms_tdi_0_read();
 
 }
 
@@ -36,6 +77,59 @@ void led(int signal){
 
 void speed(){
 
+
+}
+
+
+void clock_data_bytes_out()
+{
+
+}
+
+
+void clock_data_bits_out()
+{
+
+}
+
+void clock_data_bytes_in()
+{
+
+}
+
+void clock_data_bits_in()
+{
+
+}
+
+void clock_data_bytes_out_in()
+{
+
+}
+
+void clock_data_bits_out_in()
+{
+
+}
+
+void clock_data_bit_tms_tdi_1()
+{
+
+}
+
+void clock_data_bit_tms_tdi_0()
+{
+
+}
+
+
+void clock_data_bit_tms_tdi_1_read()
+{
+
+}
+
+void clock_data_bit_tms_tdi_0_read()
+{
 
 }
 

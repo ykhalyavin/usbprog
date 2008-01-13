@@ -27,7 +27,7 @@ USB Interface
 * Endpoint Number 0x82 for incomung packets (from USBprog to pc)
 * Vendor Requests at Endpoint Number 0 for configuration
 
-Send- or receice packets should be max. 320 Bytes large. With
+Send- or receive packets should be max. 320 Bytes large. With
 this limit USBprog reaches the best performance.
 
 Hardware Interface
@@ -61,7 +61,7 @@ packet structure is
 `40`10`10`10`30`30`30`30`30~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Command,b7,b6,b5,b4,b3,b2,b1,b0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SCAN ,0,0,1,TMS(1),Byte(1),Read(1),Write(1),Value
+SCAN ,0,0,1,TDI(1),Byte(1),Read(1),Write(1),Value
 SCAN ,0,0,1,TMS(0),Bit(0), No Read(0),No Write(0),Value
 GPIO ,0,1,0,set(1),Number2,Number1,Number0,Value
 GPIO ,0,1,0,get(0),Number2,Number1,Number0,Value
@@ -97,16 +97,16 @@ But for all packets (in send buffer)  [CMD] and [LEN]  must be exists.
 `----`-------------------------`-----------------------------------------`--------
 CMD   Function                  Description                               RESPONSE
 ---------------------------------------------------------------------------------
-0x00  Clock Data Bytes Out      Falling Clock Edge, LSB First (no Read)   -
-0x00  Clock Data Bits Out       Falling Clock Edge, LSB First (no Read)   -
-0x00  Clock Data Bytes In       Rising Clock Edge, LSB First (no Write)   Scan
-0x00  Clock Data Bits In        Rising Clock Edge, LSB First (no Write)   Scan
-0x00  Clock Data Bytes Out In   Out at Falling, In at Rising, LSB First   Scan
-0x00  Clock Data Bits Out In    Out at Falling, In at Rising, LSB First   Scan
-0x00  Clock Data to TMS (TDI 1) Falling Clock, LSB First (no Read)        -
-0x00  Clock Data to TMS (TDI 0) Falling Clock, LSB First (no Read)        -
-0x00  Clock Data to TMS (TDI 1) Out at Falling, In at Rising LSB First    Scan
-0x00  Clock Data to TMS (TDI 0) Out at Falling, In at Rising LSB First    Scan
+0x3A  Clock Data Bytes Out      Falling Clock Edge, LSB First (no Read)   -
+0x32  Clock Data Bits Out       Falling Clock Edge, LSB First (no Read)   -
+0x3C  Clock Data Bytes In       Rising Clock Edge, LSB First (no Write)   Scan
+0x34  Clock Data Bits In        Rising Clock Edge, LSB First (no Write)   Scan
+0x3E  Clock Data Bytes Out In   Out at Falling, In at Rising, LSB First   Scan
+0x36  Clock Data Bits Out In    Out at Falling, In at Rising, LSB First   Scan
+0x23  Clock Data to TMS (TDI 1) Falling Clock, LSB First (no Read)        -
+0x22  Clock Data to TMS (TDI 0) Falling Clock, LSB First (no Read)        -
+0x27  Clock Data to TMS (TDI 1) Out at Falling, In at Rising LSB First    Scan
+0x26  Clock Data to TMS (TDI 0) Out at Falling, In at Rising LSB First    Scan
 -------------------------------------------------------------------------------
 
 
@@ -150,7 +150,7 @@ Number     Pin     Dir
 Example: 
 
 * Set TDI [0x53] (no LEN, no DATA and no RESPONSE_DATA)
-* Get TDO [0x4A] (LEN=1, no DATA but RESPONSE_DATA -> if high: [0x01] else low: [0x00]
+* Get TDO [0x4C] (LEN=1, no DATA but RESPONSE_DATA -> if high: [0x01] else low: [0x00]
 
 
 
@@ -161,13 +161,23 @@ Every USB device can be configured with vendor requests. Therefore
 USBprogs offers vendor requests for JTAG speed configuration
 and operate the signal led and configuration's jumper position.
 
+FIRMWARE UPDATE: Change Firmware of USBprog
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* bmRequestType
+* bRequest 0x01 (FIRMWARE UPDATE)
+* wValue
+* wIndex
+* wLength
+
+
 SPEED: Setup JTAG speed
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Configure JTAG speed. (6 kHz - 5 MHz)
 
 * bmRequestType
-* bRequest 0x01 (set SPEED), 0x02 (get SPEED)
+* bRequest 0x02 (set SPEED), 0x03 (get SPEED)
 * wValue 0x0000 - 0xffff
 * wIndex
 * wLength
@@ -199,7 +209,7 @@ USER: User Interface (LED and Jumper as switch)
 * Get Jumper position
 
 * bmRequestType
-* bRequest 0x02 (USER)
+* bRequest 0x04 (USER)
 * wValue 0x01 (set LED), 0x02 (clear LED), 0x03 (get Jumper position)
 * wIndex
 * wLength
@@ -212,7 +222,7 @@ VERSION: Get actual Firmware Version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * bmRequestType
-* bRequest 0x03 (VERSION)
+* bRequest 0x05 (VERSION)
 * wValue 
 * wIndex
 * wLength
@@ -250,9 +260,10 @@ Send JTAG commands (described in this datasheet) and receive them results.
 In _buffer_ all commands are in an array. With _lenght_ the lenght of all
 commands in _buffer_ is mean.
 
----------------------------------------------------------------------------------------
-int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char * buffer, int length);
----------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char * write_buffer, int write_length, 
+  char * read_buffer, int read_length);
+---------------------------------------------------------------------------------------------------
 
 
 Control Reset Signals 

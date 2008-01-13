@@ -1,3 +1,23 @@
+/***************************************************************************
+ *   Copyright (C) 2008 by Benedikt Sauter                                 *
+ *   sauter@ixbat.de                                                       *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include <usb.h>
 
 /* vendor requests */
@@ -15,13 +35,13 @@
 #define GET_JUMPER  0x03
 
 
-/* SPEED wValues */
-#define 6_KHZ	  0x0006
-#define 100_KHZ	  0x0064
-#define 250_KHZ	  0x00FA
-#define 500_KHZ	  0x01F4
-#define 1_MHZ	  0x03EB
-#define 5 MHZ	  0x1388
+/* SPEED wValues  */
+#define SPEED_6KHZ	  0x0006
+#define SPEED_100KHZ	  0x0064
+#define SPEED_250KHZ	  0x00FA
+#define SPEED_500KHZ	  0x01F4
+#define SPEED_1MHZ	  0x03EB
+#define SPEED_5MHZ	  0x1388
 
 
 /* JTAG COMMANDS for command buffer */
@@ -48,6 +68,18 @@
 
 #define GET_TDO() (0x04 | (6<<1))
 
+#define USB_VENDOR_REQUEST  0xC0
+
+
+static char *usbprog_buffer = NULL;
+static int usbprog_buffer_size = 0;
+static int usbprog_read_pointer = 0;
+static int usbprog_expect_read = 0;
+
+#define USBPROG_BUFFER_SIZE  320
+#define BUFFER_ADD usbprog_buffer[usbprog_buffer_size++]
+#define BUFFER_READ usbprog_buffer[usbprog_read_pointer++]
+
 
 /* open connection */
 usb_dev_handle *usbprog_locate(void);
@@ -68,5 +100,5 @@ int usbprog_srst(usb_dev_handle * usbprog_handle, int value);
 int usbprog_led(usb_dev_handle * usbprog_handle, int value);
 
 /* value = kHz (6 = kHz, 5000 = 5 MHz) */
-int usbprog_speed(usb_dev_handle * usbprog_handle, int value);
+int usbprog_speed(usb_dev_handle * usbprog_handle, short value);
 

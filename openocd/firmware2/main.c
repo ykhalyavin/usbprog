@@ -20,8 +20,28 @@ SIGNAL(SIG_INTERRUPT0)
 
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
-  if(req->bRequest == STARTAVRUPDATE)
+  switch(req->bRequest) {
+    case STARTAVRUPDATE:
       avrupdate_start();
+    break;
+    case SET_SPEED:
+
+    break;
+    case SET_SPEED:
+
+    break;
+    case GET_SPEED:
+
+    break;
+    case USER_INTERFACE:
+
+    break;
+    case GET_VERSION:
+
+    break;
+    default:
+      ;
+  }
 }
 
 void CommandAnswer(length)
@@ -76,6 +96,9 @@ void CommandAnswerRest()
 
 void Commands(char * buf)
 {
+  /* collect complete packet */
+
+  /* start packet if first part of packet is here */
   PORTA ^= (1<<PA7);
   if(buf[0]==0x77 && buf[1]==0x88)
     CommandAnswer(320);
