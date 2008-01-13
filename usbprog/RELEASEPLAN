@@ -1,0 +1,55 @@
+USBprog Release Plan
+====================
+
+
+Following actions should be performed before doing any USBprog releases:
+
+
+Checks
+------
+
+  - NEWS up to date?
+  - 'make distcheck' without errors?
+  - builds in the openSUSE Build Service for all distributions?
+  - builds on Windows?
+
+
+Testing
+-------
+
+  - delete complete usbprog directory
+    Linux: ~/.usbprog
+    Windows: c:\Dokumente und Einstellungen\%USERNAME%\Anwendungsdaten\usbprog
+
+  - CLI test (Windows and Linux)
+    (usbprog) list
+    (usbprog) download all
+    (usbprog) devices
+    (usbprog) device 0
+    (usbprog) upload blinkdemo
+    (usbprog) upload ~/.usbprog/blinkdemo.bin.1
+    ⇒ LED must blink, check if it's not the “update mode” blinking
+
+  - GUI test (Windows and Linux)
+    o display device and pin information for one firmware
+    o upload 'LEDBLINK' firmware (remote)
+    o upload same firmware (from
+      c:\Dokumente und Einstellungen\%USERNAME%\Anwendungsdaten\usbprog)
+      with the local update function
+
+
+Releasing
+---------
+
+  - build tarball ('make dist-bzip2')
+  - build Windows installer
+  - upload both files
+  - update LATEST file on FTP
+  - send announcement to mailing list
+  - post announcement in the USBprog forum
+
+
+After release
+-------------
+
+  - watch out in the USBprog forum for bug reports! :-)
