@@ -15,7 +15,7 @@ int main (int argc,char **argv)
 	unsigned char receive_data[64];
 
 	usb_init();
-	usb_set_debug(2);
+	//usb_set_debug(0);
 
  	if ((usbprog_handle = usbprog_locate())==0) 
 	{
@@ -33,6 +33,19 @@ int main (int argc,char **argv)
 	printf("alt_stat=%d\n",open_status);
 
 
+	char version[4];
+	usbprog_get_version(usbprog_handle, version);
+	printf("Version: %02x %02x %02x %02x\n",version[0],version[1],version[2],version[3]);
+
+	char buf[1];	
+	usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, GET_JUMPER, 0, buf, 1, 1000);
+	printf("Jumper: %02x\n",buf[0]);
+
+	usbprog_led(usbprog_handle, 1);
+	sleep(1);
+	usbprog_led(usbprog_handle, 0);
+
+/*
 	int k;
 	for(k=0;k<10000;k++)
 		send_data[k]=(unsigned char)k;
@@ -43,7 +56,7 @@ int main (int argc,char **argv)
 
 	usb_bulk_write(usbprog_handle,2,send_data,320,500);
 	usb_bulk_read(usbprog_handle,2,receive_data,320,500);	
-
+*/
 	usb_close(usbprog_handle);
 }	
 
@@ -71,7 +84,7 @@ usb_dev_handle *usbprog_locate(void)
 				printf("USBprog Vendor ID 0x0%x\n",dev->descriptor.idVendor);
 				printf("USBprog Product ID 0x0%x\n",dev->descriptor.idProduct);
 			}
-			else printf("** usb device %s found **\n", dev->filename);			
+			//else printf("** usb device %s found **\n", dev->filename);			
 		}	
   }
 
@@ -131,10 +144,10 @@ int usbprog_srst(usb_dev_handle * usbprog_handle, int value)
 int usbprog_led(usb_dev_handle * usbprog_handle, int value) 
 {
 	if (value == 1) {
-		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, LED_ON, 0, NULL, 8, 1000);
+		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, LED_ON, 0, NULL, 1, 1000);
 		return 1;
 	} else if (value == 0) {
-		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, LED_OFF, 0, NULL, 8, 1000);
+		usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, LED_OFF, 0, NULL, 1, 1000);
 		return 1;
 	} else {
 		/* unkown value */
@@ -153,6 +166,13 @@ int usbprog_speed(usb_dev_handle * usbprog_handle, short value)
 		/* speed to slow or to large */
 		return -1;	    
 	}
+}
+
+
+/* get actual firmware version */
+int usbprog_get_version(usb_dev_handle * usbprog_handle, char * buf)
+{
+	return usb_control_msg(usbprog_handle, 0xC0,GET_VERSION, 0, 0, buf, 4, 1000);
 }
 
 

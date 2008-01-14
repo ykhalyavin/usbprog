@@ -27,21 +27,40 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
     case SET_SPEED:
 
     break;
-    case SET_SPEED:
-
-    break;
     case GET_SPEED:
 
     break;
     case USER_INTERFACE:
-
+      vendorrequest[0] = 0;
+      if(req->wValue==LED_ON)
+	LED_on;
+      else if (req->wValue==LED_OFF)
+	LED_off;
+      else if (req->wValue==GET_JUMPER)
+	if ( !(PINA & (1<<PINA7)) ) 
+	  vendorrequest[0] = 1;
+      else
+	;
+      VendorRequestAnswer(1);
     break;
     case GET_VERSION:
-
+      vendorrequest[0] = 0x11;
+      vendorrequest[1] = 0x22;
+      vendorrequest[2] = 0x33;
+      vendorrequest[3] = 0x44;
+      VendorRequestAnswer(4);
     break;
     default:
       ;
   }
+}
+
+void VendorRequestAnswer(int size){
+  int i;
+  for(i=0;i<size;i++)
+    USBNWrite(TXD0,vendorrequest[i]);
+
+  USBNWrite(TXC0,TX_TOGL+TX_EN);
 }
 
 void CommandAnswer(length)
@@ -114,10 +133,7 @@ int main(void)
   USBNInit();   
   usbprog.long_running=0;
 
-  DDRA = (1 << PA4); // status led
-  DDRA = (1 << PA7); // switch pin
-
-
+ 
   // setup your usbn device
 
   USBNDeviceVendorID(0x1786);
@@ -145,15 +161,18 @@ int main(void)
   USBNInitMC();
   sei();
   USBNStart();
+ 
+  DDRA |= (1 << PA4); // status led
+  PORTA |= (1<<PA7); //switch on internal pullup
 
-  //LED_on;
+
+  LED_on;
   
-  PORTA &= ~(1<<PA7);
+  //PORTA &= ~(1<<PA7);
   //CommandAnswer(320);
+  //PORTA |= (1<<PA7);
+  //PORTA &= ~(1<<PA7);
 
-  while(1){
-    //PORTA |= (1<<PA7);
-    //PORTA &= ~(1<<PA7);
-  }
+  while(1);
 }
 
