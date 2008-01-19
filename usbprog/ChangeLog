@@ -1,3 +1,8 @@
+2008-01-19  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* Windows: honor IE proxy settings
+	* CLI: make (Internet) download progress working
+
 2008-01-10  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* GUI: make offline mode working, show only firmwares that are

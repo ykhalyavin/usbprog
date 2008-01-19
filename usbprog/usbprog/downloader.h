@@ -31,6 +31,15 @@ class DownloadError : public std::runtime_error {
             : std::runtime_error(string) {}
 };
 
+/* ProxySettings {{{1 */
+
+struct ProxySettings {
+    std::string host;
+    std::string username;
+    std::string password;
+};
+
+
 /* Downloader {{{1 */
 
 class Downloader {
@@ -51,14 +60,16 @@ class Downloader {
                 double dlnow, double ultotal, double ulnow);
         static size_t curl_write_callback(void *buffer, size_t size,
                 size_t nmemb, void *userp);
+        static void readProxySettings(void);
 
     private:
-        ProgressNotifier  *m_notifier;
-        std::string       m_url;
-        CURL              *m_curl;
-        char              m_curl_errorstring[CURL_ERROR_SIZE];
-        std::ostream      &m_output;
-        static bool       m_firstCalled;
+        ProgressNotifier        *m_notifier;
+        std::string             m_url;
+        CURL                    *m_curl;
+        char                    m_curl_errorstring[CURL_ERROR_SIZE];
+        std::ostream            &m_output;
+        static bool             m_firstCalled;
+        static ProxySettings    m_proxySettings;
 };
 
 

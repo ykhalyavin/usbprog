@@ -1,3 +1,8 @@
+0.1.4
+-----
+ * Windows: honor IE proxy settings
+ * CLI: make (Internet) download progress working
+
 0.1.3 (2007-01-13, r948)
 -----
  * GUI: fix local upload

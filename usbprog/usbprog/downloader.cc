@@ -17,6 +17,10 @@
 #include <stdexcept>
 #include <ostream>
 
+#ifdef _WIN32
+#  include <wininet.h>
+#endif
+
 #include <curl/curl.h>
 
 #include <usbprog/downloader.h>
@@ -26,12 +30,71 @@ using std::string;
 using std::ostream;
 
 bool Downloader::m_firstCalled = true;
+ProxySettings Downloader::m_proxySettings;
 
 #ifdef _WIN32
 #  define CURL_GLOBAL_FLAGS   CURL_GLOBAL_WIN32
 #else
 #  define CURL_GLOBAL_FLAGS   0
 #endif
+
+/* Static functions {{{1 */
+
+/* -------------------------------------------------------------------------- */
+#ifdef _WIN32
+#define INFOBUFFER_SIZE 1000
+void Downloader::readProxySettings()
+{
+    // if one of the standard environment variables is set, CURL automatically
+    // uses this -- don't overwrite anything here!
+    if (getenv("http_proxy") || getenv("ftp_proxy") || getenv("all_proxy"))
+        return;
+
+    // read IE settings otherwise
+    char buffer[INFOBUFFER_SIZE];
+    DWORD buflen = INFOBUFFER_SIZE;
+
+    if (!InternetQueryOption(NULL, INTERNET_OPTION_PROXY, buffer, &buflen))
+        return;
+
+	// if a proxy is set
+	if (((INTERNET_PROXY_INFO *)buffer)->dwAccessType == INTERNET_OPEN_TYPE_PROXY) {
+
+        m_proxySettings.host = (char *)(((INTERNET_PROXY_INFO *)buffer)->lpszProxy);
+        Debug::debug()->dbg("IE proxy is set, hostname = %s",
+                m_proxySettings.host.c_str());
+
+		buflen = INFOBUFFER_SIZE;
+		// try and get a proxy username - ignore a blank result
+		if (InternetQueryOption(NULL, INTERNET_OPTION_PROXY_USERNAME,
+                    buffer, &buflen)) {
+
+            m_proxySettings.username = (char *)buffer;
+            Debug::debug()->dbg("IE proxy username = %s",
+                    m_proxySettings.username.c_str());
+	
+            buflen = INFOBUFFER_SIZE;
+			if (m_proxySettings.username.size() > 0) {
+				if (InternetQueryOption(NULL, INTERNET_OPTION_PROXY_PASSWORD,
+                            buffer, &buflen)) {
+
+                    m_proxySettings.password = (char *)buffer;
+                    Debug::debug()->dbg("IE proxy password = %s",
+                            m_proxySettings.password.c_str());
+				}
+			}
+		}
+	}
+}
+#undef INFOBUFFER_SIZE
+#else
+void Downloader::readProxySettings()
+{
+    // since CURL uses the environment variables, nothing to do on Unix
+    // here
+}
+#endif
+
 
 /* -------------------------------------------------------------------------- */
 size_t Downloader::curl_write_callback(void *buffer, size_t size,
@@ -65,6 +128,8 @@ int Downloader::curl_progress_callback(void *clientp, double dltotal, double
     return 0;
 }
 
+/* Members {{{1 */
+
 
 /* -------------------------------------------------------------------------- */
 Downloader::Downloader(ostream &output) throw (DownloadError)
@@ -74,7 +139,9 @@ Downloader::Downloader(ostream &output) throw (DownloadError)
 
     // perform CURL initialisation only once
     if (m_firstCalled) {
+        Debug::debug()->dbg("Initialize CURL");
         curl_global_init(CURL_GLOBAL_FLAGS);
+        readProxySettings();
         m_firstCalled = false;
     }
 
@@ -97,6 +164,27 @@ Downloader::Downloader(ostream &output) throw (DownloadError)
     err = curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, this);
     if (err != CURLE_OK)
         throw DownloadError(string("CURL error: ") + m_curl_errorstring);
+
+    // set proxy settings
+    if (m_proxySettings.host.size() > 0) {
+		err = curl_easy_setopt(m_curl, CURLOPT_PROXY, m_proxySettings.host.c_str());
+        Debug::debug()->dbg("Setting CURL proxy to %s",
+                m_proxySettings.host.c_str());
+        if (err != CURLE_OK)
+            throw DownloadError(string("CURL error: ") + m_curl_errorstring);
+
+        if (m_proxySettings.username.size() > 0) {
+            string str = m_proxySettings.username;
+            if (m_proxySettings.password.size() > 0)
+                str += ":" + m_proxySettings.password;
+
+            err = curl_easy_setopt(m_curl,  CURLOPT_PROXYUSERPWD, str.c_str());
+            Debug::debug()->dbg("Setting CURL username/password for proxy to %s",
+                    str.c_str());
+            if (err != CURLE_OK)
+                throw DownloadError(string("CURL error: ") + m_curl_errorstring);
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -140,9 +228,14 @@ void Downloader::setProgress(ProgressNotifier *notifier)
         err = curl_easy_setopt(m_curl, CURLOPT_PROGRESSDATA, this);
         if (err != CURLE_OK)
             throw DownloadError(string("CURL error: ") + m_curl_errorstring);
+
+        err = curl_easy_setopt(m_curl, CURLOPT_NOPROGRESS, false);
+        if (err != CURLE_OK)
+            throw DownloadError(string("CURL error: ") + m_curl_errorstring);
     } else {
         curl_easy_setopt(m_curl, CURLOPT_PROGRESSDATA, NULL);
         curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION, NULL);
+        curl_easy_setopt(m_curl, CURLOPT_NOPROGRESS, true);
     }
 }
 
@@ -160,4 +253,4 @@ void Downloader::download() throw (DownloadError)
 }
 
 
-// vim: set sw=4 ts=4 et:
+// vim: set sw=4 ts=4 fdm=marker et:

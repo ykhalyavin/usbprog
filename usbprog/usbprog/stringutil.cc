@@ -152,11 +152,11 @@ string wordwrap(const string &text, ssize_t margins)
 /* -------------------------------------------------------------------------- */
 string strip(string a)
 {
-    a.erase(0, a.find_first_not_of("\n \t", 0));
-    a.erase(a.find_last_not_of("\n \t"));
-
     if (a.length() == 0)
         return a;
+
+    a.erase(0, a.find_first_not_of("\n \t", 0));
+    a.erase(a.find_last_not_of("\n \t")+1);
 
     char last = a[0];
     for (string::iterator it = a.begin()+1; it != a.end(); ++it) {
