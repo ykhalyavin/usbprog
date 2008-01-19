@@ -11,6 +11,13 @@
 
 #include "jtagcmd.h"
 #include "usbprog.h"
+#include "fifo.h"
+
+#define DEBUG 1
+
+#define BUF_SIZE 400
+uint8_t buffer[BUF_SIZE];
+fifo_t fifo;
 
 
 SIGNAL(SIG_INTERRUPT0)
@@ -115,12 +122,16 @@ void CommandAnswerRest()
 
 void Commands(char * buf)
 {
-  /* collect complete packet */
+  int i; 
+  /* collect all data */
+  for(i=0;i<64;i++) {
+    fifo_put (&fifo, buf[i]);
+    //SendHex(buf[i]);
+  }
+  //UARTWrite("RX\r\n");
+  //SendHex(fifo.count);
 
-  /* start packet if first part of packet is here */
-  PORTA ^= (1<<PA7);
-  if(buf[0]==0x77 && buf[1]==0x88)
-    CommandAnswer(320);
+  //PORTA ^= (1<<PA7);
 }
 
 
@@ -128,10 +139,12 @@ int main(void)
 {
   int conf, interf;
   
-  //UARTInit();
+  UARTInit();
   
   USBNInit();   
   usbprog.long_running=0;
+
+  fifo_init (&fifo, buffer, BUF_SIZE);       
 
  
   // setup your usbn device
@@ -166,13 +179,88 @@ int main(void)
   PORTA |= (1<<PA7); //switch on internal pullup
 
 
-  LED_on;
+  LED_off;
   
   //PORTA &= ~(1<<PA7);
   //CommandAnswer(320);
   //PORTA |= (1<<PA7);
   //PORTA &= ~(1<<PA7);
+  
+  uint8_t cmd, cs;
+  uint8_t length;
+  uint8_t bit_length;
 
-  while(1);
+  //fifo_t *f = &fifo;
+
+  while(1){
+    
+    //SendHex(fifo.count);
+    cmd = fifo_get_wait (&fifo);
+
+    cs = cmd >> 5;
+    switch(cs){
+      case 0x01: // SCAN
+	
+	length = fifo_get_wait (&fifo);
+		
+	#if DEBUG
+	UARTWrite("scan ");
+	#endif
+
+	if(SCAN_BYTE) {bit_length=8;} else  { bit_length=length; length=1;}
+
+	for(length;length>0;length--) {
+	  
+	  if(SCAN_READ && SCAN_WRITE) {
+	    
+	    #if DEBUG 
+	    if(SCAN_TDI) UARTWrite("TDI rw ");
+	    else UARTWrite("TMS rw ");
+	    #endif
+
+	    if(SCAN_TDI) bit_out_in( fifo_get_wait (&fifo), bit_length,NULL);
+	    else bit_out_in_tms(fifo_get_wait (&fifo), bit_length, NULL, SCAN_VALUE?1:0);
+
+	  } else if (SCAN_READ) {
+	    
+	    #if DEBUG 
+	    if(SCAN_TDI) UARTWrite("TDI r ");
+	    else UARTWrite("TMS r ");
+	    #endif
+
+	    if(SCAN_TDI) bit_in( fifo_get_wait (&fifo), bit_length);
+	    else bit_in_tms(fifo_get_wait (&fifo), bit_length, SCAN_VALUE?1:0);
+
+	  } else if (SCAN_WRITE) {
+  
+	    #if DEBUG 
+	    if(SCAN_TDI) UARTWrite("TDI w ");
+	    else UARTWrite("TMS w ");
+	    #endif
+
+	    if(SCAN_TDI) bit_out( fifo_get_wait (&fifo), bit_length, NULL);
+	    else bit_out_tms(fifo_get_wait (&fifo), bit_length, NULL, SCAN_VALUE?1:0);
+
+	  } else {
+	    // unkown
+	  }
+
+	}
+	#if DEBUG
+	UARTWrite("scan end\r\n");
+	#endif
+      break;
+      case 0x02: // GPIO
+	#if DEBUG
+	UARTWrite("scan\r\n");
+	#endif
+      break;
+      default:
+	#if DEBUG
+	//UARTWrite("unkown\r\n");
+	#endif
+	;
+    }
+  }
 }
 

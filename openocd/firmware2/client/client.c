@@ -37,15 +37,62 @@ int main (int argc,char **argv)
 	usbprog_get_version(usbprog_handle, version);
 	printf("Version: %02x %02x %02x %02x\n",version[0],version[1],version[2],version[3]);
 
-	char buf[1];	
-	usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, GET_JUMPER, 0, buf, 1, 1000);
-	printf("Jumper: %02x\n",buf[0]);
+	printf("Jumper: %i\n",usbprog_jumper(usbprog_handle));
 
+	printf("LED demo (1 second on)\n");
 	usbprog_led(usbprog_handle, 1);
-	sleep(1);
+	//sleep(1);
 	usbprog_led(usbprog_handle, 0);
 
-/*
+
+	printf("trst and srst demo (running)\n");
+
+	/*
+	BUFFER_ADD = SET_TRST(0);
+	BUFFER_ADD = SET_TRST(1);
+	BUFFER_ADD = SET_SRST(0);
+	BUFFER_ADD = SET_SRST(1);
+	usbprog_command_buffer(usbprog_handle, NULL, 0, usbprog_buffer, usbprog_buffer_size);
+	*/
+
+	/*
+	usbprog_trst(usbprog_handle, 0);
+	usbprog_trst(usbprog_handle, 1);
+	usbprog_srst(usbprog_handle, 1);
+	usbprog_srst(usbprog_handle, 0);
+	*/
+	
+	usbprog_buffer = (char*) malloc(sizeof(char)+USBPROG_BUFFER_SIZE);
+	
+	
+	BUFFER_ADD = CLOCK_DATA_BYTES_OUT;
+	BUFFER_ADD = 4;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	
+	BUFFER_ADD = CLOCK_DATA_BYTES_OUT_IN;
+	BUFFER_ADD = 4;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	
+	BUFFER_ADD = CLOCK_DATA_BIT_TMS_TDI_1;
+	BUFFER_ADD = 8;
+	BUFFER_ADD = 0x77;
+	
+	char receive_buf[4];
+	usbprog_command_buffer(usbprog_handle, receive_buf, 4, usbprog_buffer, usbprog_buffer_size);
+
+	usbprog_command_buffer(usbprog_handle, receive_buf, 4, usbprog_buffer, usbprog_buffer_size);
+
+
+	
+
+
+	/*
 	int k;
 	for(k=0;k<10000;k++)
 		send_data[k]=(unsigned char)k;
@@ -56,7 +103,9 @@ int main (int argc,char **argv)
 
 	usb_bulk_write(usbprog_handle,2,send_data,320,500);
 	usb_bulk_read(usbprog_handle,2,receive_data,320,500);	
-*/
+	*/
+
+
 	usb_close(usbprog_handle);
 }	
 
@@ -103,6 +152,7 @@ int usbprog_close(usb_dev_handle * usbprog_handle)
 /* transmit and receive command buffer */
 int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char *read_buffer, int read_length, char *write_buffer, int write_length)
 {
+	usb_bulk_write(usbprog_handle, 2, write_buffer, write_length, 1000);	
 	// usb_bulk_write
 	// usb_bulk_read
 	return -1;
@@ -155,6 +205,13 @@ int usbprog_led(usb_dev_handle * usbprog_handle, int value)
 	}
 }
 
+/* get jumper postion, return 1 = close, 0 = open */
+int usbprog_jumper(usb_dev_handle * usbprog_handle)
+{
+	char buf[1];
+	usb_control_msg(usbprog_handle, USB_VENDOR_REQUEST, USER_INTERFACE, GET_JUMPER, 0, buf, 1, 1000);
+	return (int)buf[0];
+}
 
 /* value = kHz (6 = kHz, 5000 = 5 MHz) */
 int usbprog_speed(usb_dev_handle * usbprog_handle, short value) 

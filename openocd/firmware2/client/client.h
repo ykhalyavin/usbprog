@@ -99,6 +99,9 @@ int usbprog_srst(usb_dev_handle * usbprog_handle, int value);
 /* control led 0:off, 1:on */
 int usbprog_led(usb_dev_handle * usbprog_handle, int value);
 
+/* get jumper postion, return 1=close,0=open */
+int usbprog_jumper(usb_dev_handle * usbprog_handle);
+
 /* value = kHz (6 = kHz, 5000 = 5 MHz) */
 int usbprog_speed(usb_dev_handle * usbprog_handle, short value);
 

@@ -3,7 +3,7 @@
 
 #include "uart.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 
 void UARTInit(void)
@@ -15,7 +15,8 @@ void UARTInit(void)
 	//UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
  	
 	UCSRA = (1 << RXC) | (1 << TXC);
-  	UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
+  	//UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
+  	UCSRB = (1 << RXEN) | (1 << TXEN) ;
   	UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
 	
 	//ATmega32 bei 16MHz und für 19200 Baud

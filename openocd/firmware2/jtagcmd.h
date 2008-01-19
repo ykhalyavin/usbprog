@@ -17,14 +17,19 @@ volatile unsigned char vendorrequest[8];
 #define LED_OFF     0x02
 #define GET_JUMPER  0x03
 
+#define SCAN_BYTE (cmd & (1<<3))
+#define SCAN_TDI (cmd & (1<<4))
+#define SCAN_READ (cmd & (1<<2))
+#define SCAN_WRITE (cmd & (1<<1))
+#define SCAN_VALUE (cmd & 1)
 
 volatile struct jtagcmd_t {
-  char jtagcmdbuf_rx[320];  // receive buffer
+  //char jtagcmdbuf_rx[320];  // receive buffer
   char jtagcmdbuf_tx[320];  // transmit buffer
   short tx_length;	    // transmit length
-  short rx_length;	    // receive length
+  //short rx_length;	    // receive length
   short tx_index;	    // transmit index
-  short rx_index;	    // receive index
+  //short rx_index;	    // receive index
   unsigned char actual_cmd; // actual cmd
   short speed;		    // actual speed
 } jtagcmd;
@@ -49,17 +54,10 @@ void led(int signal);
 
 void speed();
 
-void clock_data_bytes_out();
-void clock_data_bits_out();
+void bit_in(uint8_t byte, int length);
+void bit_out(uint8_t byte, int length, char * out);
+void bit_out_in(uint8_t byte, int length, char * out);
 
-void clock_data_bytes_in();
-void clock_data_bits_in();
-
-void clock_data_bytes_out_in();
-void clock_data_bits_out_in();
-
-void clock_data_bit_tms_tdi_1();
-void clock_data_bit_tms_tdi_0();
-
-void clock_data_bit_tms_tdi_1_read();
-void clock_data_bit_tms_tdi_0_read();
+void bit_in_tms(uint8_t byte, int length, int tdi);
+void bit_out_tms(uint8_t byte, int length, char * out, int tdi);
+void bit_out_in_tms(uint8_t byte, int length, char * out, int tdi);

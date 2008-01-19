@@ -78,56 +78,36 @@ void speed(){
 
 }
 
-
-void clock_data_bytes_out()
+void bit_in(uint8_t byte, int length)
 {
 
 }
 
-
-void clock_data_bits_out()
+void bit_out(uint8_t byte, int length, char * out)
 {
 
 }
 
-void clock_data_bytes_in()
+void bit_out_in(uint8_t byte, int length, char * out)
 {
 
 }
 
-void clock_data_bits_in()
+void bit_in_tms(uint8_t byte, int length, int tdi)
 {
 
 }
 
-void clock_data_bytes_out_in()
+void bit_out_tms(uint8_t byte, int length, char * out, int tdi)
 {
 
 }
 
-void clock_data_bits_out_in()
+void bit_out_in_tms(uint8_t byte, int length, char * out, int tdi)
 {
 
-}
-
-void clock_data_bit_tms_tdi_1()
-{
-
-}
-
-void clock_data_bit_tms_tdi_0()
-{
 
 }
 
 
-void clock_data_bit_tms_tdi_1_read()
-{
-
-}
-
-void clock_data_bit_tms_tdi_0_read()
-{
-
-}
 
