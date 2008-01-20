@@ -64,16 +64,24 @@ int main (int argc,char **argv)
 	
 	usbprog_buffer = (char*) malloc(sizeof(char)+USBPROG_BUFFER_SIZE);
 	
-	
+	#define NUMBERS 300
+
 	BUFFER_ADD = CLOCK_DATA_BYTES_OUT;
-	BUFFER_ADD = 4;
+	BUFFER_ADD = NUMBERS;
+	int b;
+	for(b=0;b<NUMBERS;b++)
+	  BUFFER_ADD = 0xAA;
+/*	
 	BUFFER_ADD = 0xAA;
 	BUFFER_ADD = 0xAA;
 	BUFFER_ADD = 0xAA;
-	BUFFER_ADD = 0xAA;
-	
+	*/
+/*	
 	BUFFER_ADD = CLOCK_DATA_BYTES_OUT_IN;
-	BUFFER_ADD = 4;
+	BUFFER_ADD = 7;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
+	BUFFER_ADD = 0xAA;
 	BUFFER_ADD = 0xAA;
 	BUFFER_ADD = 0xAA;
 	BUFFER_ADD = 0xAA;
@@ -82,11 +90,13 @@ int main (int argc,char **argv)
 	BUFFER_ADD = CLOCK_DATA_BIT_TMS_TDI_1;
 	BUFFER_ADD = 8;
 	BUFFER_ADD = 0x77;
-	
-	char receive_buf[4];
-	usbprog_command_buffer(usbprog_handle, receive_buf, 4, usbprog_buffer, usbprog_buffer_size);
+*/	
+	char receive_buf[NUMBERS];
 
-	usbprog_command_buffer(usbprog_handle, receive_buf, 4, usbprog_buffer, usbprog_buffer_size);
+	usbprog_command_buffer(usbprog_handle, receive_buf, 0, usbprog_buffer, usbprog_buffer_size);
+	//usbprog_command_buffer(usbprog_handle, receive_buf, 7, usbprog_buffer, usbprog_buffer_size);
+	//usbprog_command_buffer(usbprog_handle, receive_buf, 7, usbprog_buffer, usbprog_buffer_size);
+	//usbprog_command_buffer(usbprog_handle, receive_buf, 7, usbprog_buffer, usbprog_buffer_size);
 
 
 	
@@ -152,10 +162,13 @@ int usbprog_close(usb_dev_handle * usbprog_handle)
 /* transmit and receive command buffer */
 int usbprog_command_buffer(usb_dev_handle * usbprog_handle, char *read_buffer, int read_length, char *write_buffer, int write_length)
 {
-	usb_bulk_write(usbprog_handle, 2, write_buffer, write_length, 1000);	
-	// usb_bulk_write
-	// usb_bulk_read
-	return -1;
+	int result;
+	result = usb_bulk_write(usbprog_handle, 0x02, write_buffer, write_length, 100);	
+	
+	if(read_length > 0 && result > 0)
+		return usb_bulk_read(usbprog_handle, 0x82, read_buffer, read_length, 1000);	
+	else 
+		return -1;
 }
 
 

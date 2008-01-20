@@ -13,7 +13,7 @@
 #include "usbprog.h"
 #include "fifo.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define BUF_SIZE 400
 uint8_t buffer[BUF_SIZE];
@@ -73,6 +73,8 @@ void VendorRequestAnswer(int size){
 void CommandAnswer(length)
 {
   int i;
+  jtagcmd.tx_index=0;
+  PORTA ^= (1<<PA7);
 
   // if first packet of a lang message
   if(length>64 && usbprog.long_running==0){
@@ -101,8 +103,9 @@ void CommandAnswer(length)
 void CommandAnswerRest()
 {
 
+  PORTA ^= (1<<PA7);
   if(usbprog.long_running==1){
-    PORTA ^= (1<<PA7);
+    //PORTA ^= (1<<PA7);
     if(usbprog.long_index < usbprog.long_bytes){
       int dif = usbprog.long_bytes-usbprog.long_index; 
       usbprog.long_index=usbprog.long_index+64;
@@ -131,7 +134,7 @@ void Commands(char * buf)
   //UARTWrite("RX\r\n");
   //SendHex(fifo.count);
 
-  //PORTA ^= (1<<PA7);
+  PORTA ^= (1<<PA7);
 }
 
 
@@ -176,7 +179,8 @@ int main(void)
   USBNStart();
  
   DDRA |= (1 << PA4); // status led
-  PORTA |= (1<<PA7); //switch on internal pullup
+  DDRA |= (1 << PA7); // debug
+  // PORTA |= (1<<PA7); //switch on internal pullup
 
 
   LED_off;
@@ -196,6 +200,7 @@ int main(void)
     
     //SendHex(fifo.count);
     cmd = fifo_get_wait (&fifo);
+    //PORTA ^= (1<<PA7);
 
     cs = cmd >> 5;
     switch(cs){
@@ -218,8 +223,10 @@ int main(void)
 	    else UARTWrite("TMS rw ");
 	    #endif
 
-	    if(SCAN_TDI) bit_out_in( fifo_get_wait (&fifo), bit_length,NULL);
-	    else bit_out_in_tms(fifo_get_wait (&fifo), bit_length, NULL, SCAN_VALUE?1:0);
+	    if(SCAN_TDI) bit_out_in( fifo_get_wait (&fifo), bit_length,NEXT_ANSWER_ADDR);
+	    else bit_out_in_tms(fifo_get_wait (&fifo), bit_length, NEXT_ANSWER_ADDR, SCAN_VALUE?1:0);
+
+	    //ANSWER_ADD = 0x66; /* also possible solutiion for results */
 
 	  } else if (SCAN_READ) {
 	    
@@ -228,8 +235,8 @@ int main(void)
 	    else UARTWrite("TMS r ");
 	    #endif
 
-	    if(SCAN_TDI) bit_in( fifo_get_wait (&fifo), bit_length);
-	    else bit_in_tms(fifo_get_wait (&fifo), bit_length, SCAN_VALUE?1:0);
+	    if(SCAN_TDI) bit_in( fifo_get_wait (&fifo), bit_length, NEXT_ANSWER_ADDR);
+	    else bit_in_tms(fifo_get_wait (&fifo), bit_length,NEXT_ANSWER_ADDR, SCAN_VALUE?1:0);
 
 	  } else if (SCAN_WRITE) {
   
@@ -238,8 +245,8 @@ int main(void)
 	    else UARTWrite("TMS w ");
 	    #endif
 
-	    if(SCAN_TDI) bit_out( fifo_get_wait (&fifo), bit_length, NULL);
-	    else bit_out_tms(fifo_get_wait (&fifo), bit_length, NULL, SCAN_VALUE?1:0);
+	    if(SCAN_TDI) bit_out( fifo_get_wait (&fifo), bit_length);
+	    else bit_out_tms(fifo_get_wait (&fifo), bit_length, SCAN_VALUE?1:0);
 
 	  } else {
 	    // unkown
@@ -256,10 +263,17 @@ int main(void)
 	#endif
       break;
       default:
+
 	#if DEBUG
 	//UARTWrite("unkown\r\n");
 	#endif
 	;
+
+	/* send answer if some bytes are available */	
+	if(jtagcmd.tx_index>0) {
+	  usbprog.datatogl = 0;
+	  CommandAnswer(jtagcmd.tx_index+1);
+	}
     }
   }
 }

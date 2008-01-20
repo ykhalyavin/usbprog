@@ -78,32 +78,32 @@ void speed(){
 
 }
 
-void bit_in(uint8_t byte, int length)
+void bit_in(uint8_t byte, int length, char * in)
 {
 
 }
 
-void bit_out(uint8_t byte, int length, char * out)
+void bit_out(uint8_t byte, int length)
 {
 
 }
 
-void bit_out_in(uint8_t byte, int length, char * out)
+void bit_out_in(uint8_t byte, int length, char * in)
+{
+  in[0] = 0x88;  // for result of actual byte
+}
+
+void bit_in_tms(uint8_t byte, int length, char * in,  int tdi)
 {
 
 }
 
-void bit_in_tms(uint8_t byte, int length, int tdi)
+void bit_out_tms(uint8_t byte, int length, int tdi)
 {
 
 }
 
-void bit_out_tms(uint8_t byte, int length, char * out, int tdi)
-{
-
-}
-
-void bit_out_in_tms(uint8_t byte, int length, char * out, int tdi)
+void bit_out_in_tms(uint8_t byte, int length, char * in, int tdi)
 {
 
 

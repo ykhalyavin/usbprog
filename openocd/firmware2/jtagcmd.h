@@ -34,6 +34,11 @@ volatile struct jtagcmd_t {
   short speed;		    // actual speed
 } jtagcmd;
 
+#define ANSWER_ADD jtagcmd.jtagcmdbuf_tx[jtagcmd.tx_index++]
+#define NEXT_ANSWER_ADDR (char*)(&jtagcmd.jtagcmdbuf_tx[jtagcmd.tx_index++])
+
+
+
 #define CLOCK_DATA_BYTES_OUT            0x3A  /* 0 0 1 1 1 0 1 0 */
 #define CLOCK_DATA_BITS_OUT             0x32  /* 0 0 1 1 0 0 1 0 */
 #define CLOCK_DATA_BYTES_IN             0x3C  /* 0 0 1 1 1 1 0 0 */
@@ -54,10 +59,10 @@ void led(int signal);
 
 void speed();
 
-void bit_in(uint8_t byte, int length);
-void bit_out(uint8_t byte, int length, char * out);
-void bit_out_in(uint8_t byte, int length, char * out);
+void bit_in(uint8_t byte, int length, char * in);
+void bit_out(uint8_t byte, int length);
+void bit_out_in(uint8_t byte, int length, char * in);
 
-void bit_in_tms(uint8_t byte, int length, int tdi);
-void bit_out_tms(uint8_t byte, int length, char * out, int tdi);
-void bit_out_in_tms(uint8_t byte, int length, char * out, int tdi);
+void bit_in_tms(uint8_t byte, int length, char * in, int tdi);
+void bit_out_tms(uint8_t byte, int length, int tdi);
+void bit_out_in_tms(uint8_t byte, int length, char * in, int tdi);
