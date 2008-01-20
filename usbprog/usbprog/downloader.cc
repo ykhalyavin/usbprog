@@ -16,6 +16,7 @@
  */
 #include <stdexcept>
 #include <ostream>
+#include <cstring>
 
 #ifdef _WIN32
 #  include <wininet.h>
@@ -28,6 +29,7 @@
 
 using std::string;
 using std::ostream;
+using std::strlen;
 
 bool Downloader::m_firstCalled = true;
 ProxySettings Downloader::m_proxySettings;
@@ -60,7 +62,23 @@ void Downloader::readProxySettings()
 	// if a proxy is set
 	if (((INTERNET_PROXY_INFO *)buffer)->dwAccessType == INTERNET_OPEN_TYPE_PROXY) {
 
-        m_proxySettings.host = (char *)(((INTERNET_PROXY_INFO *)buffer)->lpszProxy);
+        string settings = (char *)(((INTERNET_PROXY_INFO *)buffer)->lpszProxy);
+
+        // different proxys for different protocols
+        if (settings.find(" ") != string::npos) {
+            string::size_type http_proxy = settings.find("http=");
+            if (http_proxy == string::npos) {
+                Debug::debug()->dbg("No http proxy specified");
+                return;
+            }
+
+            settings = settings.substr(http_proxy + strlen("http="));
+            string::size_type space = settings.find(" ");
+            if (space != string::npos)
+                settings = settings.substr(0, space);
+        }
+
+        m_proxySettings.host = settings;
         Debug::debug()->dbg("IE proxy is set, hostname = %s",
                 m_proxySettings.host.c_str());
 

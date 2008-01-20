@@ -1,3 +1,8 @@
+2008-01-20  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* Windows: fix proxy settings when different proxys for different
+	  protocols are specified
+
 2008-01-19  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Windows: honor IE proxy settings
