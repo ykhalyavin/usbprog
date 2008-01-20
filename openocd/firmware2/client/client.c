@@ -63,10 +63,10 @@ int main (int argc,char **argv)
 	*/
 	
 	usbprog_buffer = (char*) malloc(sizeof(char)+USBPROG_BUFFER_SIZE);
-	
-	#define NUMBERS 300
 
-	BUFFER_ADD = CLOCK_DATA_BYTES_OUT;
+	#define NUMBERS 220
+
+	BUFFER_ADD = CLOCK_DATA_BYTES_OUT_IN;
 	BUFFER_ADD = NUMBERS;
 	int b;
 	for(b=0;b<NUMBERS;b++)
@@ -93,7 +93,7 @@ int main (int argc,char **argv)
 */	
 	char receive_buf[NUMBERS];
 
-	usbprog_command_buffer(usbprog_handle, receive_buf, 0, usbprog_buffer, usbprog_buffer_size);
+	usbprog_command_buffer(usbprog_handle, receive_buf, NUMBERS, usbprog_buffer, usbprog_buffer_size);
 	//usbprog_command_buffer(usbprog_handle, receive_buf, 7, usbprog_buffer, usbprog_buffer_size);
 	//usbprog_command_buffer(usbprog_handle, receive_buf, 7, usbprog_buffer, usbprog_buffer_size);
 	//usbprog_command_buffer(usbprog_handle, receive_buf, 7, usbprog_buffer, usbprog_buffer_size);
