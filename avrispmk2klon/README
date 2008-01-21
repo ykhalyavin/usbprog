@@ -1,10 +1,9 @@
+This is an free and open source AVR Programmer. Its based
+on the official documents AVR069 and AVR067 from Atmel.
 
-Use it as avrispv2 Klone
+All source are available under GNU/GPL 2 and later.
 
-./configure --avrispv2
+For questions contact sauter@ixbat.de or use the official
+USBprog forum: http://forum.embedded-projects.net
 
-
-Use it as usbprog
-
-./configure
 
