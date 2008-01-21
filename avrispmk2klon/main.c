@@ -105,7 +105,7 @@ unsigned short sck_lookup[]PROGMEM =
 	2854,2986,3142,3285,3453,3622,3801,3981,4185,4390,4606,4834,5062,5577,5852,6128,
 	6441,6754,7089,7435,7797,8180,8574,8994,9440,9907,10396,10899,11445,12003,12589,13201,
 	13853,14532,15253,16000,16789,17602,18476,19370,20330,21333,22378,23460,24615,25848,27119,29851,
-    31311,32854,34409,36117,37915,39801,41667,43716,45845,48193,50473,52980,55556,58394,61303,64257
+	31311,32854,34409,36117,37915,39801,41667,43716,45845,48193,50473,52980,55556,58394,61303,64257
 };
 
 
@@ -175,13 +175,13 @@ void spi_init(void)
         SPSR = 0x00;
         break;
 
-	  default:
+      default:
         PORTB   &=  ~(1 << SCK);
         DDR_SPI &=~(1 << MISO);
         DDR_SPI = (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
         // TC1 initialisation
         temp_OCR1A = pgm_read_word(&(sck_lookup[usbprog.sck_duration]));
-		TCNT1 = 0;
+	TCNT1 = 0;
         TCNT1 = 0;
         TCCR1A = 0;
         TCCR1B = ((1<<WGM12)|(1<<CS10));  //CTCmode, f=16MHz
@@ -204,26 +204,25 @@ void spi_active(void)
   PORTB   &=  ~((1<<MISO)|(1 << MOSI)|(1 << SCK)|(1 << RESET_PIN));  // switch off unused Pullup resistors
   DDR_SPI &=~(1 << MISO);
   DDR_SPI = (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
-//  DDR_SPI = 0xa1;
 }
 
 
 void wait_OCF1A(void)
 {
-    if(TIFR & (1<<OCF1A))
-      TIFR |= (1<<OCF1A);
-    while(!(TIFR & (1<<OCF1A)))
-	  __asm__ __volatile__ ("nop");
+  if(TIFR & (1<<OCF1A))
+    TIFR |= (1<<OCF1A);
+  while(!(TIFR & (1<<OCF1A)))
+    __asm__ __volatile__ ("nop");
 
   OCR1B = (temp_OCR1A>>2);
 }
 
 void wait_OCF1B(void)
 {
-    if(TIFR & (1<<OCF1B))
-      TIFR |= (1<<OCF1B);
-    while(!(TIFR & (1<<OCF1B)))
-	  __asm__ __volatile__ ("nop");
+  if(TIFR & (1<<OCF1B))
+    TIFR |= (1<<OCF1B);
+  while(!(TIFR & (1<<OCF1B)))
+    __asm__ __volatile__ ("nop");
 
   OCR1B += (temp_OCR1A>>2);
 }
