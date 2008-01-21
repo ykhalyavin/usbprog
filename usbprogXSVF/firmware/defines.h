@@ -27,6 +27,7 @@
 /* in non-XSVF packets the most significant bit of first buffer byte is set */
 /* initialize XSVF player and attached JTAG device(s) */
 #define XSVF_INIT		0x81
+#define XSVF_PRGEND		0x82
 
 /* non-XSVF return codes */
 #define SUCCESS				0x80

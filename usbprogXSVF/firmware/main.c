@@ -30,9 +30,14 @@
 #include "defines.h"
 #include "wait.h"
 #include "xsvfexec/xsvfexec.h"
+#include "xsvfexec/host.h"
 
 #include "../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
+
+#define PE_PORT_INIT	DDRB
+#define PE_PORT_WRITE	PORTB
+#define PE				4
 
 char answer[64];
 struct usbprog_t 
@@ -86,7 +91,15 @@ void Commands(char *buf)
 		
 		case XSVF_INIT:
 			usbprog.datatogl = 0;
+			PE_PORT_WRITE |= (1 << PE);
+			wait_ms(1);
 			XsvfInit();
+			answer[0] = SUCCESS;
+			CommandAnswer(2);
+			break;
+		
+		case XSVF_PRGEND:
+			PE_PORT_WRITE &= ~(1 << PE);
 			answer[0] = SUCCESS;
 			CommandAnswer(2);
 			break;
@@ -110,6 +123,11 @@ void Commands(char *buf)
 int main(void)
 {
     int conf, interf;
+    
+    XsvfInitHost();
+    /* set PE as output and to low */
+    PE_PORT_INIT |= (1 << PE);
+    PE_PORT_WRITE &= ~(1 << PE);
 
     USBNInit();
 
@@ -123,7 +141,7 @@ int main(void)
     char lang[]={0x09,0x04};
     _USBNAddStringDescriptor(lang); // language descriptor
 
-    USBNDeviceManufacture ("EmbeddedProjects");
+    USBNDeviceManufacture ("USBprog EmbeddedProjects");
     USBNDeviceProduct("usbprogXSVF     ");
     //USBNDeviceSerialNumber("GNU/GPL2");
 
@@ -138,10 +156,10 @@ int main(void)
     USBNAddOutEndpoint(conf,interf,1,0x03,BULK,64,0,&Commands);
 
     USBNInitMC();
-    sei();
 
     // start usb chip
     USBNStart();
+    sei();
 	
 
 
