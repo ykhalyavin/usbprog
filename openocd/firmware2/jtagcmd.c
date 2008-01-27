@@ -52,60 +52,88 @@ void scan_gpio_command(){
 }
 
 
-void clock_data_bytes_out();
-void clock_data_bits_out();
-
-void clock_data_bytes_in();
-void clock_data_bits_in();
-
-void clock_data_bytes_out_in();
-void clock_data_bits_out_in();
-
-void clock_data_bit_tms_tdi_1();
-void clock_data_bit_tms_tdi_0();
-
-void clock_data_bit_tms_tdi_1_read();
-void clock_data_bit_tms_tdi_0_read();
-
-
-void led(int signal){
-
-
-}
-
-void speed(){
-
-
-}
 
 void bit_in(uint8_t byte, int length, char * in)
 {
+  for(length;length>0;length--){
 
+   if(SET_TDO())
+      in[0]|= 1;
+    
+    in[0] = in[0] << 1;
+
+  }
 }
+
+
 
 void bit_out(uint8_t byte, int length)
 {
+  for(length;length>0;length--){
+    
+    JTAG_SET_CLOCK();
+    
+    if(byte&1)
+      SET_TDI();
+    else
+      CLEAR_TDI();
+    byte = byte >> 1;
 
+    JTAG_SPEED();
+
+    JTAG_CLEAR_CLOCK();
+    
+    JTAG_SPEED();
+  }
 }
+
+
 
 void bit_out_in(uint8_t byte, int length, char * in)
 {
-  in[0] = 0x88;  // for result of actual byte
+  for(length;length>0;length--){
+    if(byte&1)
+      SET_TDI();
+    else
+      CLEAR_TDI();
+    byte = byte >> 1;
+
+    if(SET_TDO())
+      in[0]|= 1;
+    
+    in[0] = in[0] << 1;
+
+    JTAG_SPEED();
+  }
+ //in[0] = 0x88;  // for result of actual byte
 }
+
 
 void bit_in_tms(uint8_t byte, int length, char * in,  int tdi)
 {
+  if(tdi==1) SET_TDI(); else CLEAR_TDI();
 
 }
 
 void bit_out_tms(uint8_t byte, int length, int tdi)
 {
+  if(tdi==1) SET_TDI(); else CLEAR_TDI();
+
+  for(length;length>0;length--){
+    if(byte&1)
+      SET_TMS();
+    else
+      CLEAR_TMS();
+    byte = byte >> 1;
+    JTAG_SPEED();
+  }
 
 }
 
+
 void bit_out_in_tms(uint8_t byte, int length, char * in, int tdi)
 {
-
+  if(tdi==1) SET_TDI(); else CLEAR_TDI();
 
 }
 

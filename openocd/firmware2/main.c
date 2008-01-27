@@ -271,8 +271,9 @@ int main(void)
 
 	/* send answer if some bytes are available */	
 	if(jtagcmd.tx_index>0) {
-	  usbprog.datatogl = 0;
+	  //usbprog.datatogl = 0;
 	  CommandAnswer(jtagcmd.tx_index+1);
+	  if(usbprog.datatogl==1)  usbprog.datatogl=0; else  usbprog.datatogl=1;
 	}
     }
   }

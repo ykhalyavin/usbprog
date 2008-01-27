@@ -21,7 +21,7 @@
 
 #include "usbn960x.h"
 #include "../usbn960xreg.h"
-//#include "../fifo.h"
+#include "../fifo.h"
 
 void _USBNAddToList( void* data, uint8_t len, 
   uint8_t type,uint8_t conf,uint8_t interf,uint8_t index);

@@ -55,9 +55,6 @@ void gpio();
 
 void scan_gpio_command();
 
-void led(int signal);
-
-void speed();
 
 void bit_in(uint8_t byte, int length, char * in);
 void bit_out(uint8_t byte, int length);

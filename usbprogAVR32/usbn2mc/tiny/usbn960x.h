@@ -19,65 +19,15 @@
 #ifndef _USBN960X_H
 #define _USBN960X_H
 
-#define DEBUG 0
+#define DEBUG 0 
 
 #include "../usbn960xreg.h"
 #include "../usb11spec.h"
-//#include "../fifo.h"
 
-struct usb_device_descriptor DeviceDescriptor;
+unsigned char *DeviceDescriptor;
+unsigned char *ConfigurationDescriptor;
 
-struct list_entry*    DescriptorList;
-struct string_entry*  StringList;
-
-char** FinalConfigurationArray;
-char** FinalStringArray;
-
-struct RxFIFOCaller rxfifos;
-
-struct RxFIFOCaller
-{
-  uint8_t rx1;
-  uint8_t rx2;
-  uint8_t rx3;
-
-  void* func1;
-  void* func2;
-  void* func3;
-};
-
-
-struct TxFIFOCaller txfifos;
-
-struct TxFIFOCaller
-{
-  uint8_t tx1;
-  uint8_t tx2;
-  uint8_t tx3;
-
-  void* func1;
-  void* func2;
-  void* func3;
-};
-
-struct list_entry
-{
-  void *data;
-  uint8_t type;
-  uint8_t len;
-  uint8_t conf;
-  uint8_t interf;
-  uint8_t index;
-  struct list_entry *next;
-};
-
-struct string_entry
-{
-  void *data;
-  uint8_t index;
-  struct string_entry *next;
-};
-
+void *RX1Callback;
 
 /*-------------------------------------------
  * global data structs
@@ -107,7 +57,6 @@ struct epinfo {
   unsigned char	  usbnControl;
   unsigned char	  DataPid; // 0 = data0, 1 = data1
   int		  usbnfifo;
-  //fifo_t*	  fifo; 
   int		  Index;
   int		  Size;
   unsigned char*  Buf;
@@ -115,9 +64,6 @@ struct epinfo {
 
 unsigned char EP0RXBuf[8];
 
-
-
-//void _USBNMemFIFO(fifo_t *fifo,char* data,int size);
 
 // system functions
 
@@ -128,11 +74,8 @@ void _USBNAlternateEvent(void);
 
 
 /// usb default requests set address
-void _USBNSetAddress(DeviceRequest *req);
 void _USBNGetDescriptor(DeviceRequest *req);
 void _USBNSetConfiguration(DeviceRequest *req);
-void _USBNGetConfiguration(DeviceRequest *req);
-void _USBNGetStatus(DeviceRequest *req);
 void _USBNClearFeature(void);
 
 void _USBNToggle(EPInfo* ep);

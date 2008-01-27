@@ -42,17 +42,24 @@ MCU = atmega32
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
-F_OSC = 16000000 
+F_OSC = 16000000
+
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex 
+FORMAT = ihex
 
 # Target file name (without extension).
 TARGET = main
 
+# Source directory
+SRCDIR = src
+
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../usbn2mc/main/usbn960x.c usbn2mc.c ../usbn2mc/main/usbnapi.c uart.c ../usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c 
+SRC  = $(SRCDIR)/$(TARGET).c $(SRCDIR)/wait.c
+SRC += $(SRCDIR)/usbn2mc.c usbn2mc/main/usbn960x.c usbn2mc/main/usbnapi.c usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c
+SRC += $(SRCDIR)/cmd.c $(SRCDIR)/cmd_tap.c $(SRCDIR)/cmd_jtag.c $(SRCDIR)/cmd_avr32_jtag.c $(SRCDIR)/cmd_avr32_bsr.c $(SRCDIR)/cmd_avr32_ebi.c $(SRCDIR)/cmd_flash.c
+SRC += $(SRCDIR)/jtag_bus.c $(SRCDIR)/jtag_tap.c $(SRCDIR)/avr32.c $(SRCDIR)/avr32_bsr.c $(SRCDIR)/avr32_ebi.c $(SRCDIR)/flash.c
 
 
 # List Assembler source files here.
@@ -69,7 +76,7 @@ ASRC =
 # Optimization level, can be [0, 1, 2, 3, s]. 
 # 0 = turn off optimization. s = optimize for size.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = s 
+OPT = 2 
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
@@ -103,8 +110,8 @@ CINCS =
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-CFLAGS = -g$(DEBUG)
-CFLAGS += $(CDEFS) $(CINCS)
+CFLAGS = $(CDEFS) $(CINCS)
+#CFLAGS += -g$(DEBUG)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS += -Wall -Wstrict-prototypes
@@ -168,8 +175,6 @@ LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 
 
-
-
 # Programming support using avrdude. Settings and variables.
 
 # Programming hardware: alf avr910 avrisp bascom bsd 
@@ -211,7 +216,7 @@ AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 # ---------------------------------------------------------------------------
 
 # Define directories, if needed.
-DIRAVR = c:/winavr
+DIRAVR = c:/eda/WinAVR-20070525
 DIRAVRBIN = $(DIRAVR)/bin
 DIRAVRUTILS = $(DIRAVR)/utils/bin
 DIRINC = .
@@ -276,13 +281,16 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter finished end
 
-build: elf hex eep lss sym
+build: elf bin hex eep lss sym
 
 elf: $(TARGET).elf
+bin: $(TARGET).bin
 hex: $(TARGET).hex
 eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
+hex2bin:
+	hex2bin main.hex
 
 
 # Eye candy.
@@ -298,7 +306,6 @@ finished:
 end:
 	@echo $(MSG_END)
 	@echo
-	#hex2bin main.hex
 
 
 # Display size of file.
@@ -346,13 +353,16 @@ extcoff: $(TARGET).elf
 
 
 
-# Create final output files (.hex, .eep) from ELF output file.
+# Create final output files (.hex, .hex, .eep) from ELF output file.
+%.bin: %.elf
+	@echo
+	@echo $(MSG_FLASH) $@
+	$(OBJCOPY) -O binary -R .eeprom $< $@
+	
 %.hex: %.elf
 	@echo
 	@echo $(MSG_FLASH) $@
-	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
-	hex2bin main.hex
-	#mv main.hex main.bin
+	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
 %.eep: %.elf
 	@echo
@@ -405,11 +415,12 @@ extcoff: $(TARGET).elf
 
 # Target: clean project.
 clean: begin clean_list finished end
-	rm main.bin
+#	rm main.bin
 
 clean_list :
 	@echo
 	@echo $(MSG_CLEANING)
+	$(REMOVE) $(TARGET).bin
 	$(REMOVE) $(TARGET).hex
 	$(REMOVE) $(TARGET).eep
 	$(REMOVE) $(TARGET).obj
@@ -439,18 +450,14 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex
-
-loader:
-	usbprog device 0 upload main.bin
+	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex 
 
 reset:
 	avrdude -p m32 -c bsd -E noreset
 
 ready:
-	mv main.hex avrispmk2.hex
-	hex2bin avrispmk2.hex
+	hex2bin main.hex
 
 upgrade:
-	hex2bin main.hex
-	usbprog main.bin
+	hex2bin main.hex 
+	usbprog main.bin 

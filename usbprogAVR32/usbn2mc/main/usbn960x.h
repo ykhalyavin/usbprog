@@ -19,11 +19,13 @@
 #ifndef _USBN960X_H
 #define _USBN960X_H
 
-#define DEBUG 0
+#define DEBUG 0 
 
 #include "../usbn960xreg.h"
 #include "../usb11spec.h"
-//#include "../fifo.h"
+#include "../fifo.h"
+
+extern unsigned char USBNBurstRead(void);
 
 struct usb_device_descriptor DeviceDescriptor;
 
@@ -107,7 +109,7 @@ struct epinfo {
   unsigned char	  usbnControl;
   unsigned char	  DataPid; // 0 = data0, 1 = data1
   int		  usbnfifo;
-  //fifo_t*	  fifo; 
+  fifo_t*	  fifo; 
   int		  Index;
   int		  Size;
   unsigned char*  Buf;
@@ -117,7 +119,7 @@ unsigned char EP0RXBuf[8];
 
 
 
-//void _USBNMemFIFO(fifo_t *fifo,char* data,int size);
+void _USBNMemFIFO(fifo_t *fifo,char* data,int size);
 
 // system functions
 
@@ -155,7 +157,6 @@ void USBNDebug(char *msg);
 //only for compiler
 void USBNDecodeVendorRequest(DeviceRequest *req);
 void USBNDecodeClassRequest(DeviceRequest *req);
-
 
 
 #endif /* __USBN960X_H__ */

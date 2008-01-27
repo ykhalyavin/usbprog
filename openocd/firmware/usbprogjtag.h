@@ -22,10 +22,10 @@
 #define SETBIT(addr,x)    (addr |= BIT(x))
 #define CLEARBIT(addr,x)  (addr &= ~BIT(x))
 
-#define BIT0	    PB5
+#define BIT0	    PB6
 #define BIT1  	    PB0
 #define BIT2	    PB7
-#define BIT3	    PB6
+#define BIT3	    PB5
 
 #define BIT4	    PD0
 #define BIT5	    PD1

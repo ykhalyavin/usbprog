@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+sed -i 's/List of Tables/Tabellenverzeichnis/g' usbprog_handbuch.fo
+sed -i 's/List of Figures/Abbildungsverzeichnis/g' usbprog_handbuch.fo
+sed -i 's/Table of Contents/Inhaltsverzeichnis/g' usbprog_handbuch.fo
+sed -i 's/Table/Tabelle/g' usbprog_handbuch.fo
+sed -i 's/Figure/Abbildung/g' usbprog_handbuch.fo
+sed -i 's/Preface/Vorwort/g' usbprog_handbuch.fo
+sed -i 's/Chapter/Kapitel/g' usbprog_handbuch.fo
+sed -i 's/Appendix/Anhang/g' usbprog_handbuch.fo
+#sed -i 's//g' usbprog_handbuch.fo
+
+

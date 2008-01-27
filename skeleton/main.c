@@ -136,6 +136,9 @@ int main(void)
   USBNStart();
 
   //LED_on;
+  int i;
+  for(i=0;i<320;i++)
+    answer[i]=i+2;
   
   PORTA &= ~(1<<PA7);
   //CommandAnswer(320);
