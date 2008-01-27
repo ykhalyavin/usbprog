@@ -52,8 +52,8 @@ int main(void)
     _USBNAddStringDescriptor(lang); // language descriptor
 
     USBNDeviceManufacture("EmbeddedProjects");
-    USBNDeviceProduct("USB AVR32 programmer");
-	USBNDeviceSerialNumber("ZhuYun");
+    USBNDeviceProduct("usbprogAVR32 programmer ");
+    USBNDeviceSerialNumber("ZhuYun");
 
     conf = USBNAddConfiguration();
 

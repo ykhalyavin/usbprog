@@ -11,15 +11,15 @@
 #define LED_PORT_DDR						DDRA
 #define LED_PORT_SET						PORTA
 #define LED_PORT_BIT						BIT(4)
-#define LED_ON()							(LED_PORT_SET |= LED_PORT_BIT)
-#define LED_OFF()							(LED_PORT_SET &= ~LED_PORT_BIT)
+#define LED_ON()						(LED_PORT_SET |= LED_PORT_BIT)
+#define LED_OFF()						(LED_PORT_SET &= ~LED_PORT_BIT)
 #define LED_TOGGLE()						(LED_PORT_SET ^= LED_PORT_BIT)
 
-#define CMD_CHECK_SIZE(cmd, expectation, ans)	{						\
-	if ((cmd)->size != (expectation)) {									\
+#define CMD_CHECK_SIZE(cmd, expectation, ans)	{		\
+	if ((cmd)->size != (expectation)) {			\
 		cmd_answer_error((cmd)->command, CMD_STATUS_SIZE_ERROR, (ans));	\
-		break;															\
-	}																	\
+		break;						\
+	}								\
 }
 
 void cmd_init(void);

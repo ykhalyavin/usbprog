@@ -35,7 +35,8 @@ int cmd_execute(CMD_STR *cmd, int max_receive_size, int sleep_ms, int timeout)
 
 	/* Sleep */
 	if (sleep_ms > 0)
-		sleep(sleep_ms);
+		sleep(sleep_ms/1000); //linux
+		// windows Sleep(sleep_ms)
 
 	/* Get result */
 	r = usbprog_receive((char*)cmd, max_receive_size, timeout);

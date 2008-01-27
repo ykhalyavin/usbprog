@@ -11,8 +11,9 @@
 #define JTAG_PORT_SET		PORTB
 
 /* JTAG port signals' bit mask */
+/*
 #define JTAG_TDI	(1<<PB5)	// SV2-1, IC1-1,  output
-#define JTAG_VT					// SV2-2, JP2-2,  *must be connected to JP2-1 or JP2-3*
+#define JTAG_VT				// SV2-2, JP2-2,  *must be connected to JP2-1 or JP2-3*
 #define JTAG_NSRST	(1<<PB4)	// SV2-3, IC1-44, output
 #define JTAG_NTRST	(1<<PB3) 	// SV2-4, IC1-43, output
 #define JTAG_TMS	(1<<PB0) 	// SV2-5, IC1-40, output
@@ -20,7 +21,21 @@
 #define JTAG_TCK	(1<<PB7) 	// SV2-7, IC1-3,  output
 #define JTAG_GPIO1	(1<<PB2) 	// SV2-8, IC1-42,
 #define JTAG_TDO	(1<<PB6) 	// SV2-9, IC1-2,  input
-#define JTAG_GND				// SV2-10, GND
+#define JTAG_GND			// SV2-10, GND
+*/
+
+/* 1:1 connection for usbprog - 10 pole cable - levelshifter - 1- pole cable - ngw100 (red = 1) */
+#define JTAG_TDI	(1<<PB5)	// SV2-1, IC1-1,  output
+#define JTAG_VT				// SV2-2, JP2-2,  *must be connected to JP2-1 or JP2-3*
+#define JTAG_NSRST	(1<<PB4)	// SV2-3, IC1-44, output
+#define JTAG_NTRST	(1<<PB3) 	// SV2-4, IC1-43, output
+#define JTAG_TMS	(1<<PB0) 	// SV2-5, IC1-40, output
+#define JTAG_GPIO0	(1<<PB1) 	// SV2-6, IC1-41,
+#define JTAG_TCK	(1<<PB7) 	// SV2-7, IC1-3,  output
+#define JTAG_GPIO1	(1<<PB2) 	// SV2-8, IC1-42,
+#define JTAG_TDO	(1<<PB6) 	// SV2-9, IC1-2,  input
+#define JTAG_GND			// SV2-10, GND
+
 /* 直连方式下的管脚定义(注意JP2-2不能与其它脚相连)
 #define JTAG_TCK	PB5	// SV2-1, IC1-1,  output
 #define JTAG_GND		// SV2-2, JP2-2,  *must be unconnected*
