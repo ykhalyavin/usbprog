@@ -54,7 +54,8 @@ ___________________usbprogPIC pinouts_________________
 
 #define BUF_SIZE        64			// USB buffers
 
-#define SCRIPTBUF_SIZE	768			// Script buffer size
+//#define SCRIPTBUF_SIZE	768			// Script buffer size
+#define SCRIPTBUF_SIZE	128			// Script buffer size
 #define SCRIPT_ENTRIES	32			// Script Table entries
 #define SCRIPT_MAXLEN	61			// maximum length of script
 #define SCRIPTRSV_SIZE	0			// size of reserved memory at end of script buffer (may be used for canned scripts)

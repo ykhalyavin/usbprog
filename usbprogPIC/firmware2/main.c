@@ -32,10 +32,10 @@ volatile struct usbprog_t {
 volatile int tx1togl=0; 		// inital value of togl bit
 
 //char toUSBBuf[100];	defined inbuf[64] in usbprogPIC.c
-char toRS232Buf[100];
+//char toRS232Buf[100];
 
-fifo_t* toRS232FIFO;
-fifo_t* toUSBFIFO;
+//fifo_t* toRS232FIFO;
+//fifo_t* toUSBFIFO;
 
 int togl3=0;
 int togl1=0;
@@ -461,8 +461,8 @@ void rs232_send(void)
 int main(void)
 {
 	// init fifos
-	fifo_init (toRS232FIFO, toRS232Buf, 100);
-	fifo_init (toUSBFIFO, inbuf, 64);
+	//fifo_init (toRS232FIFO, toRS232Buf, 100);
+	//fifo_init (toUSBFIFO, inbuf, 64);
 	
 	USBNCallbackFIFORX1(&FromPC);
 	//USBNCallbackFIFOTX2Ready(&USBtoRS232);
