@@ -576,4 +576,13 @@ void XsvfInit(void)
 	TapStateInit();
 }
 
+/*!
+ * \brief Close XSVF Execution
+ *
+ * To be called after the last XSVF instruction is executed.
+ */
+void XsvfClose(void) {
+	XsvfCloseHost();
+}
+
 /*@}*/

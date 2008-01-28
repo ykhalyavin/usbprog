@@ -35,10 +35,6 @@
 #include "../../usbprog_base/firmwarelib/avrupdate.h"
 #include "usbn2mc.h"
 
-#define PE_PORT_INIT	DDRB
-#define PE_PORT_WRITE	PORTB
-#define PE				4
-
 char answer[64];
 struct usbprog_t 
 {
@@ -91,15 +87,13 @@ void Commands(char *buf)
 		
 		case XSVF_INIT:
 			usbprog.datatogl = 0;
-			PE_PORT_WRITE |= (1 << PE);
-			wait_ms(1);
 			XsvfInit();
 			answer[0] = SUCCESS;
 			CommandAnswer(2);
 			break;
 		
 		case XSVF_PRGEND:
-			PE_PORT_WRITE &= ~(1 << PE);
+			XsvfClose();
 			answer[0] = SUCCESS;
 			CommandAnswer(2);
 			break;
@@ -124,10 +118,9 @@ int main(void)
 {
     int conf, interf;
     
-    XsvfInitHost();
-    /* set PE as output and to low */
-    PE_PORT_INIT |= (1 << PE);
-    PE_PORT_WRITE &= ~(1 << PE);
+    /* set PE as output and to low, other pins to high-Z */
+    JTAG_PORT_INIT = (1 << PE);
+    JTAG_PORT_WRITE = 0;
 
     USBNInit();
 

@@ -11,6 +11,8 @@
  */
 
 extern void XsvfInit(void);
+extern void XsvfClose(void);
 extern int XsvfExec(char *buf, int size);
+
 
 #endif

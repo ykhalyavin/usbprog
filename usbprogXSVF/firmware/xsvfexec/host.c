@@ -151,16 +151,30 @@ static const char *bufEnd;
  * here as well.
  */
 void XsvfInitHost(void) {
+	// set Program Enable and wait for JTAG interface to become ready
+	SET_PE();
+	XsvfDelay(10);
+	// clear pin states
+	CLR_TCK();
+	CLR_TDI();
+	CLR_TMS();
 	// use as output
 	JTAG_PORT_INIT |= (1<<TCK)|(1<<TMS)|(1<<TDI);
 	// use as input
 	JTAG_PORT_INIT &=~(1<<TDO);
 	// pullup
 	JTAG_PORT_WRITE |= (1<<TDO);
-	// clear pin states
-	CLR_TCK();
-	CLR_TDI();
-	CLR_TMS();
+}
+
+/*!
+ * \brief Close platform dependant interface.
+ */
+void XsvfCloseHost(void) {
+	/* switch all JTAG pins to high-Z */
+	JTAG_PORT_INIT &= ~((1<<TCK)|(1<<TMS)|(1<<TDI));
+	JTAG_PORT_WRITE &= ~((1<<TCK)|(1<<TMS)|(1<<TDI)|(1<<TDO));
+	// clear Program Enable to disable JTAG interface
+	CLR_PE();
 }
 
 /*!

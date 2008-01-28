@@ -71,6 +71,7 @@
 #define TMS			0
 #define TDI			5
 #define TDO			6
+#define PE			4
 
 #define SET_TMS()		SETPIN(JTAG_PORT_WRITE, TMS)
 #define CLR_TMS()		CLEARPIN(JTAG_PORT_WRITE, TMS)
@@ -78,6 +79,8 @@
 #define CLR_TDI()		CLEARPIN(JTAG_PORT_WRITE, TDI)
 #define SET_TCK()		SETPIN(JTAG_PORT_WRITE, TCK)
 #define CLR_TCK()		CLEARPIN(JTAG_PORT_WRITE, TCK)
+#define SET_PE()		SETPIN(JTAG_PORT_WRITE, PE)
+#define CLR_PE()		CLEARPIN(JTAG_PORT_WRITE, PE)
 
 #define GET_TDO()   (JTAG_PORT_READ & PIN(TDO))
 
@@ -88,6 +91,7 @@
 #define CLR_TMS_TCK()   { CLR_TMS(); CLR_TCK(); SET_TCK(); }
 
 extern void XsvfInitHost(void);
+extern void XsvfCloseHost(void);
 extern void XsvfSetBuf(char *newBuf, int size);
 extern int XsvfGetError(void);
 extern unsigned char XsvfGetCmd(void);
