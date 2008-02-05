@@ -1,3 +1,9 @@
+2008-02-05  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix order and add missing checks in configure.in so that the
+	  automatic reconfiguration with make works when something has
+	  changed in configure.in (thanks to Raymund Will for the patch)
+
 2008-01-20  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Windows: fix proxy settings when different proxys for different

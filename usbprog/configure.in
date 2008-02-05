@@ -9,14 +9,17 @@ AC_CONFIG_SRCDIR([usbprog/usbprog.h])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE
 
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_LIBTOOL
+AC_PROG_RANLIB
 
 # Checks for libraries.
+
+AM_INIT_AUTOMAKE
 
 #
 # CURL
