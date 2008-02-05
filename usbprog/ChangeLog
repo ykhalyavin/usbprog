@@ -3,6 +3,8 @@
 	* fix order and add missing checks in configure.in so that the
 	  automatic reconfiguration with make works when something has
 	  changed in configure.in (thanks to Raymund Will for the patch)
+	* use autoconf to detect endianess of the system (instead of macros
+	  that contain a whitelist of architectures) to increase portability
 
 2008-01-20  Bernhard Walle <bernhard.walle@gmx.de>
 

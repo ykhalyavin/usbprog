@@ -79,6 +79,12 @@ else
 fi
 
 #
+# Big or little endian?
+#
+AC_C_BIGENDIAN
+AC_SUBST(WORDS_BIGENDIAN)
+
+#
 # GUI?
 #
 AC_ARG_ENABLE([gui],

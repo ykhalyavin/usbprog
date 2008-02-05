@@ -30,6 +30,10 @@
 #ifndef __MD5_LOC_H__
 #define __MD5_LOC_H__
 
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+
 #define HEX_STRING	"0123456789abcdef"	/* to convert to hex */
 #define BLOCK_SIZE_MASK	(MD5_BLOCK_SIZE - 1)
 
@@ -37,19 +41,11 @@
  * Define my endian-ness.  Could not do in a portable manner using the
  * include files -- grumble.
  */
-#if defined(__alpha) || defined(WIN32) || defined(__i386__) || defined(__x86_64__)
-/*
- * little endian
- */
-#define SWAP(n)	(n)
-#endif
-
-#if defined(__sparc) || defined(__powerpc__)
-/*
- * big endian - big is better
- */
-#define SWAP(n)	\
+#if defined(WORDS_BIGENDIAN)
+#  define SWAP(n)	\
     (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
+#else
+#  define SWAP(n)	(n)
 #endif
 
 /*
