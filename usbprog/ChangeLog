@@ -1,3 +1,10 @@
+2008-02-09  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* always re-discover devices with the "devices" command
+	* new "start" command to only start the firmware without uploading
+	  anything
+	* added "-nostart" option to "upload" command
+
 2008-02-05  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fix order and add missing checks in configure.in so that the

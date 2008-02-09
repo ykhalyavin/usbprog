@@ -56,7 +56,9 @@ ListCommand::ListCommand(Firmwarepool *firmwarepool)
 {}
 
 /* -------------------------------------------------------------------------- */
-bool ListCommand::execute(CommandArgVector args, ostream &os)
+bool ListCommand::execute(CommandArgVector  args,
+                          StringVector      options,
+                          ostream           &os)
     throw (ApplicationError)
 {
     StringList firmwarelist = m_firmwarepool->getFirmwareNameList();
@@ -116,7 +118,9 @@ InfoCommand::InfoCommand(Firmwarepool *firmwarepool)
 {}
 
 /* -------------------------------------------------------------------------- */
-bool InfoCommand::execute(CommandArgVector args, ostream &os)
+bool InfoCommand::execute(CommandArgVector   args,
+                          StringVector       options,
+                          ostream            &os)
     throw (ApplicationError)
 {
     string fwstr = args[0]->getString();
@@ -209,7 +213,9 @@ PinCommand::PinCommand(Firmwarepool *firmwarepool)
 {}
 
 /* -------------------------------------------------------------------------- */
-bool PinCommand::execute(CommandArgVector args, ostream &os)
+bool PinCommand::execute(CommandArgVector   args, 
+                         StringVector       options,
+                         ostream            &os)
     throw (ApplicationError)
 {
     string fwstr = args[0]->getString();
@@ -347,7 +353,9 @@ bool DownloadCommand::downloadAll(ostream &os)
 }
 
 /* -------------------------------------------------------------------------- */
-bool DownloadCommand::execute(CommandArgVector args, ostream &os)
+bool DownloadCommand::execute(CommandArgVector   args,
+                              StringVector       options,
+                              ostream            &os)
     throw (ApplicationError)
 {
     string fwstr = args[0]->getString();
@@ -433,7 +441,9 @@ CacheCommand::CacheCommand(Firmwarepool *firmwarepool)
 {}
 
 /* -------------------------------------------------------------------------- */
-bool CacheCommand::execute(CommandArgVector args, ostream &os)
+bool CacheCommand::execute(CommandArgVector   args,
+                           StringVector       options,
+                           ostream            &os)
     throw (ApplicationError)
 {
     string cmd = args[0]->getString();
@@ -505,11 +515,12 @@ DevicesCommand::DevicesCommand(DeviceManager *devicemanager,
 {}
 
 /* -------------------------------------------------------------------------- */
-bool DevicesCommand::execute(CommandArgVector args, ostream &os)
+bool DevicesCommand::execute(CommandArgVector   args,
+                             StringVector       options,
+                             ostream            &os)
     throw (ApplicationError)
 {
-    if (m_devicemanager->getNumberUpdateDevices() == 0)
-        m_devicemanager->discoverUpdateDevices(m_firmwarepool);
+    m_devicemanager->discoverUpdateDevices(m_firmwarepool);
 
     if (m_devicemanager->getNumberUpdateDevices() == 0)
         os << "No devices found." << endl;
@@ -539,7 +550,6 @@ void DevicesCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-
 /* DeviceCommand {{{1 */
 
 /* -------------------------------------------------------------------------- */
@@ -550,7 +560,9 @@ DeviceCommand::DeviceCommand(DeviceManager *devicemanager,
 {}
 
 /* -------------------------------------------------------------------------- */
-bool DeviceCommand::execute(CommandArgVector args, ostream &os)
+bool DeviceCommand::execute(CommandArgVector   args,
+                            StringVector       options,
+                            ostream            &os)
     throw (ApplicationError)
 {
     string device = args[0]->getString();
@@ -648,7 +660,9 @@ UploadCommand::UploadCommand(DeviceManager *devicemanager,
 {}
 
 /* -------------------------------------------------------------------------- */
-bool UploadCommand::execute(CommandArgVector args, ostream &os)
+bool UploadCommand::execute(CommandArgVector   args,
+                            StringVector       options,
+                            ostream            &os)
     throw (ApplicationError)
 {
     string firmware = args[0]->getString();
@@ -715,8 +729,10 @@ bool UploadCommand::execute(CommandArgVector args, ostream &os)
         updater.updateOpen();
         os << "Writing firmware ..." << endl;
         updater.writeFirmware(data);
-        os << "Starting device ..." << endl;
-        updater.startDevice();
+        if (options.size() == 0) {
+            os << "Starting device ..." << endl;
+            updater.startDevice();
+        }
         updater.updateClose();
     } catch (const IOError &err) {
         throw ApplicationError(string("I/O Error: ") + err.what());
@@ -763,6 +779,7 @@ string UploadCommand::help() const
 void UploadCommand::printLongHelp(ostream &os) const
 {
     os << "Name:            upload\n"
+       << "Option:          -nostart\n"
        << "Argument:        firmware|filename\n\n"
        << "Description:\n"
        << "Uploads a new firmware. The firmware identifier can be found with\n"
@@ -770,6 +787,63 @@ void UploadCommand::printLongHelp(ostream &os) const
        << "If you have more than one USBprog device connected, use the \"devices\"\n"
        << "command to obtain a list of available update devices and select one\n"
        << "with the \"device\" command."
+       << endl;
+}
+
+/* -------------------------------------------------------------------------- */
+StringVector UploadCommand::getSupportedOptions() const
+{
+    StringVector sv;
+    sv.push_back("-nostart");
+    return sv;
+}
+
+/* StartCommand {{{1 */
+
+/* -------------------------------------------------------------------------- */
+StartCommand::StartCommand(DeviceManager *devicemanager)
+    : AbstractCommand("start"), m_devicemanager(devicemanager)
+{}
+
+/* -------------------------------------------------------------------------- */
+bool StartCommand::execute(CommandArgVector args,
+                           StringVector     options,
+                           ostream          &os)
+    throw (ApplicationError)
+{
+    Device *dev = m_devicemanager->getUpdateDevice();
+    if (!dev)
+        throw ApplicationError("Unable to find update device.");
+    UsbprogUpdater updater(dev);
+    HashNotifier hn(DEFAULT_TERMINAL_WIDTH);
+
+    if (!Configuration::config()->getBatchMode() &&
+            !Configuration::config()->getDebug())
+        updater.setProgress(&hn);
+
+    try {
+        updater.updateOpen();
+        updater.startDevice();
+        os << "Device successfully started." << endl;
+    } catch (const IOError &err) {
+        throw ApplicationError(string("I/O Error: ") + err.what());
+    }
+
+    return true;
+}
+
+/* -------------------------------------------------------------------------- */
+string StartCommand::help() const
+{
+    return "Starts the firmware.";
+}
+
+/* -------------------------------------------------------------------------- */
+void StartCommand::printLongHelp(ostream &os) const
+{
+    os << "Name:            start\n\n"
+       << "Description:\n"
+       << "Starts the currently uploaded firmware on the current update device."
        << endl;
 }
 
@@ -781,7 +855,9 @@ CopyingCommand::CopyingCommand()
 {}
 
 /* -------------------------------------------------------------------------- */
-bool CopyingCommand::execute(CommandArgVector args, ostream &os)
+bool CopyingCommand::execute(CommandArgVector   args,
+                             StringVector       options,
+                             ostream            &os)
     throw (ApplicationError)
 {
     os << "USBprog " << USBPROG_VERSION_STRING << endl;

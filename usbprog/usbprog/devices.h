@@ -66,6 +66,7 @@ class Device {
 
 bool operator==(const Device &a, const Device &b);
 bool operator!=(const Device &a, const Device &b);
+bool operator==(const DeviceVector &a, const DeviceVector &b);
 
 /* DeviceManager {{{1 */
 
@@ -73,7 +74,7 @@ class DeviceManager {
     public:
         DeviceManager();
         DeviceManager(int debuglevel);
-        virtual ~DeviceManager() {}
+        virtual ~DeviceManager();
 
     public:
         void init(int debuglevel = 0);

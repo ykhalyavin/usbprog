@@ -75,6 +75,12 @@ StringVector AbstractCommand::aliases() const
     return StringVector();
 }
 
+/* -------------------------------------------------------------------------- */
+StringVector AbstractCommand::getSupportedOptions() const
+{
+    return StringVector();
+}
+
 /* CommandArg ------------------------------------------------------ {{{1 --- */
 
 /* -------------------------------------------------------------------------- */
@@ -288,6 +294,31 @@ bool Shell::run(StringVector input, bool multiple)
             throw ApplicationError("Invalid command");
         Command *cmd = it->second;
 
+        // separate options from arguments
+        StringVector options;
+        for (StringVector::iterator it = input.begin(); it != input.end(); ++it) {
+            string option = *it;
+
+            if (option == "--") {
+                // treat "--" like with GNU getopt
+                input.erase(it);
+                break;
+            } else if (option[0] != '-') {
+                // the first non-option argument ends the possible options
+                break;
+            } else {
+                options.push_back(option);
+                execstr += " " + option;
+
+                StringVector supported = cmd->getSupportedOptions();
+                if (find(supported.begin(), supported.end(), option) == supported.end())
+                    throw ApplicationError("Option '" + option + "' not supported.");
+
+                input.erase(it);
+            }
+        }
+
+        // check number of arguments
         if (multiple && cmd->getArgNumber() > input.size())
             throw ApplicationError(cmdstr + ": Not enough arguments provided");
         if (!multiple && cmd->getArgNumber() < input.size())
@@ -314,7 +345,7 @@ bool Shell::run(StringVector input, bool multiple)
             if (multiple && (input.size() > 0 || loop != 0))
                 cout << "===> " << execstr << endl;
             loop++;
-            result = cmd->execute(vec, cout);
+            result = cmd->execute(vec, StringVector(), cout);
             if (multiple && result && input.size() > 0)
                 cout << endl;
 
@@ -340,7 +371,9 @@ ExitCommand::ExitCommand()
 {}
 
 /* -------------------------------------------------------------------------- */
-bool ExitCommand::execute(CommandArgVector args, ostream &os)
+bool ExitCommand::execute(CommandArgVector  args,
+                          StringVector      options,
+                          ostream           &os)
     throw (ApplicationError)
 {
     return false;
@@ -382,7 +415,9 @@ HelpCommand::HelpCommand(Shell *sh)
 }
 
 /* -------------------------------------------------------------------------- */
-bool HelpCommand::execute(CommandArgVector args, ostream &os)
+bool HelpCommand::execute(CommandArgVector args,
+                          StringVector     options,
+                          ostream          &os)
     throw (ApplicationError)
 {
     for (StringCommandMap::const_iterator it = m_sh->m_commands.begin();
@@ -420,12 +455,15 @@ void HelpCommand::printLongHelp(ostream &os) const
 
 /* -------------------------------------------------------------------------- */
 HelpCmdCommand::HelpCmdCommand(Shell *sh)
+    : AbstractCommand("helpcmd")
 {
     m_sh = sh;
 }
 
 /* -------------------------------------------------------------------------- */
-bool HelpCmdCommand::execute(CommandArgVector args, ostream &os)
+bool HelpCmdCommand::execute(CommandArgVector args, 
+                             StringVector     options,
+                             ostream          &os)
     throw (ApplicationError)
 {
     string cmd = args[0]->getString();
@@ -462,12 +500,6 @@ string HelpCmdCommand::getArgTitle(size_t pos) const
         case 0:     return "command";
         default:    return "";
     }
-}
-
-/* -------------------------------------------------------------------------- */
-string HelpCmdCommand::name() const
-{
-    return "helpcmd";
 }
 
 /* -------------------------------------------------------------------------- */

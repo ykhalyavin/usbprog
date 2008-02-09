@@ -2,6 +2,10 @@
 -----
  * Windows: honor IE proxy settings
  * CLI: make (Internet) download progress working
+ * CLI: always re-discover devices with the "devices" command
+ * CLI: new "start" command to only start the firmware without uploading
+   anything and added "-nostart" option to "upload" command
+ * Unix: build system fixes
 
 0.1.3 (2007-01-13, r948)
 -----

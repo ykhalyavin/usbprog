@@ -152,6 +152,19 @@ string Device::toShortString() const
     return ss.str();
 }
 
+/* -------------------------------------------------------------------------- */
+bool operator==(const DeviceVector &a, const DeviceVector &b)
+{
+    if (a.size() != b.size())
+        return false;
+
+    for (int i = 0; i < a.size(); ++i)
+        if (*(a[i]) != *(b[i]))
+            return false;
+
+    return true;
+}
+
 /* DeviceManager {{{1 */
 
 /* -------------------------------------------------------------------------- */
@@ -159,6 +172,14 @@ DeviceManager::DeviceManager()
     : m_currentUpdateDevice(-1)
 {
     init();
+}
+
+/* -------------------------------------------------------------------------- */
+DeviceManager::~DeviceManager()
+{
+    for (DeviceVector::const_iterator it = m_updateDevices.begin();
+            it != m_updateDevices.end(); ++it)
+        delete *it;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -191,9 +212,9 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
     usb_find_busses();
     Debug::debug()->trace("usb_find_devices()");
     usb_find_devices();
-
+    
+    DeviceVector oldDevices = m_updateDevices;
     m_updateDevices.clear();
-    m_currentUpdateDevice = -1;
 
     vector<Firmware *> firmwares;
     if (firmwarepool)
@@ -233,6 +254,15 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
                 m_updateDevices.push_back(d);
         }
     }
+
+    // reset update device only when something has changed
+    if (oldDevices != m_updateDevices)
+        m_currentUpdateDevice = -1;
+
+    // free memory
+    for (DeviceVector::const_iterator it = oldDevices.begin();
+            it != oldDevices.end(); ++it)
+        delete *it;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -520,6 +550,9 @@ void UsbprogUpdater::updateClose()
 void UsbprogUpdater::startDevice()
     throw (IOError)
 {
+    if (!m_devHandle)
+        throw IOError("Device not opened");
+
     char buf[USB_PAGESIZE];
     memset(buf, 0, USB_PAGESIZE);
 

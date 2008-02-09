@@ -85,12 +85,14 @@ class Command {
 
     public:
         /* return false => end */
-        virtual bool execute(CommandArgVector args, std::ostream &os)
-            throw (ApplicationError) = 0;
+        virtual bool execute(CommandArgVector args, StringVector options,
+                std::ostream &os) throw (ApplicationError) = 0;
 
         virtual size_t getArgNumber() const = 0;
         virtual CommandArg::Type getArgType(size_t pos) const = 0;
         virtual std::string getArgTitle(size_t pos) const = 0;
+
+        virtual StringVector getSupportedOptions() const = 0;
 
         virtual std::string name() const = 0;
         virtual StringVector aliases() const = 0;
@@ -111,6 +113,7 @@ class AbstractCommand : public Command {
         std::string getArgTitle(size_t pos) const;
         std::string name() const;
         StringVector aliases() const;
+        StringVector getSupportedOptions() const;
 
     private:
         std::string m_name;
@@ -144,8 +147,8 @@ class ExitCommand : public AbstractCommand {
         ExitCommand();
 
     public:
-        bool execute(CommandArgVector args, std::ostream &os)
-            throw (ApplicationError);
+        bool execute(CommandArgVector args, StringVector vector,
+                std::ostream &os) throw (ApplicationError);
 
         StringVector aliases() const;
 
@@ -160,8 +163,8 @@ class HelpCommand : public AbstractCommand {
         HelpCommand(Shell *sh);
 
     public:
-        bool execute(CommandArgVector args, std::ostream &os)
-            throw (ApplicationError);
+        bool execute(CommandArgVector args, StringVector sv,
+                std::ostream &os) throw (ApplicationError);
 
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
@@ -172,18 +175,17 @@ class HelpCommand : public AbstractCommand {
 
 /* HelpCmd command {{{1 */
 
-class HelpCmdCommand : public Command {
+class HelpCmdCommand : public AbstractCommand {
     public:
         HelpCmdCommand(Shell *sh);
 
     public:
-        bool execute(CommandArgVector args, std::ostream &os)
-            throw (ApplicationError);
+        bool execute(CommandArgVector args, StringVector sv,
+                std::ostream &os) throw (ApplicationError);
         size_t getArgNumber() const;
         CommandArg::Type getArgType(size_t pos) const;
         std::string getArgTitle(size_t pos) const;
 
-        std::string name() const;
         virtual StringVector aliases() const;
 
         std::string help() const;
