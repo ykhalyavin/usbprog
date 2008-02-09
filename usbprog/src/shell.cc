@@ -345,7 +345,7 @@ bool Shell::run(StringVector input, bool multiple)
             if (multiple && (input.size() > 0 || loop != 0))
                 cout << "===> " << execstr << endl;
             loop++;
-            result = cmd->execute(vec, StringVector(), cout);
+            result = cmd->execute(vec, options, cout);
             if (multiple && result && input.size() > 0)
                 cout << endl;
 
