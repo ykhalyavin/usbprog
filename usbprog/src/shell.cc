@@ -325,7 +325,7 @@ bool Shell::run(StringVector input, bool multiple)
             throw ApplicationError(cmdstr + ": Too much arguments provided.");
 
         CommandArgVector vec;
-        for (int argNo = 0; argNo < cmd->getArgNumber(); argNo++) {
+        for (unsigned int argNo = 0; argNo < cmd->getArgNumber(); argNo++) {
             string argstr;
             if (input.size() > 0) {
                 argstr = input[0];
