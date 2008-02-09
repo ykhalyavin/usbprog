@@ -436,5 +436,8 @@ clean_list :
 build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
+loader:
+	usbprog device 0 upload main.bin
+
 download:
 	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex -E noreset
