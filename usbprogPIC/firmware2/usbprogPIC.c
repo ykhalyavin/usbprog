@@ -243,8 +243,8 @@ GetStatus(void)
     //if (Vdd_TGT_N_pin)      // active high
         usbprogPICstatus.VddGNDOn = 1;
 		
-	inbuf[0] = usbprogPICstatus.StatusLow;
-	inbuf[1] = usbprogPICstatus.StatusHigh;
+	outbuf[0] = usbprogPICstatus.StatusLow;
+	outbuf[1] = usbprogPICstatus.StatusHigh;
 
     // Now that it's in the USB buffer, clear errors & flags
     usbprogPICstatus.StatusLow &= 0x8F;
@@ -261,9 +261,9 @@ GetStatus(void)
 extern void 
 GetFWVersion(void)
 {
-	inbuf[0] = MAJORVERSION;
-	inbuf[1] = MINORVERSION;
-	inbuf[2] = DOTVERSION;
+	outbuf[0] = MAJORVERSION;
+	outbuf[1] = MINORVERSION;
+	outbuf[2] = DOTVERSION;
 } 
 
 

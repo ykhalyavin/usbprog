@@ -426,7 +426,7 @@ void store_in_buf(char * buf)
 // used
 void FromPC(char * buf)
 {
-      usbprog.datatogl=0;
+//      usbprog.datatogl=0;
 	  store_in_buf(buf);
 	  Commands(buf);
 }
