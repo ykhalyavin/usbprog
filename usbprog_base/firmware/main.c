@@ -216,6 +216,9 @@ int main(void)
 
 	DDRA |= (1 << PA4); //Led Output
 
+	//bootloader request by update-tool
+	if(bit_is_set(PINA,PA4))
+	  goto next;
 
 	// check for first test after bootloader is installed
 	uint8_t i, check;

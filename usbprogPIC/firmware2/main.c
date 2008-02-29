@@ -426,9 +426,9 @@ void store_in_buf(char * buf)
 // used
 void FromPC(char * buf)
 {
-//      usbprog.datatogl=0;
 	  store_in_buf(buf);
 	  Commands(buf);
+      //usbprog.datatogl=0;
 }
 
 // togl pid for in endpoint

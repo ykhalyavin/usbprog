@@ -58,14 +58,17 @@ void _USBNNackEvent(void)
   event = USBNRead(NAKEV);
 
 //UARTWrite("n");
-/* 
-USBNWrite(RXC0,FLUSH);	//re-enable the receiver  
-USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
-
+ 
+//USBNWrite(RXC0,FLUSH);	//re-enable the receiver  
+//USBNWrite(RXC0,RX_EN);	//re-enable the receiver  
+/*
 USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
 USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
 */
+
+//USBNWrite(TXC1,FLUSH);	//re-enable the receiver  
 //USBNWrite(TXC0,TX_EN);	//re-enable the receiver  
+//USBNWrite(TXC1,TX_EN);  //enable the TX (DATA1)
 /*                                                       
   if(EP0tx.DataPid==1){
     //EP0tx.DataPid=0;
