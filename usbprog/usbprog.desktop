@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=USBprog
+Comment=USBprog firmware programmer
+TryExec=usbprog
+Exec=usbprog
+Icon=usbprog_icon

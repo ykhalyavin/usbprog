@@ -1,3 +1,7 @@
+0.1.5
+-----
+ * Linux: add desktop file and install icon
+
 0.1.4
 -----
  * Windows: honor IE proxy settings

@@ -6,7 +6,8 @@ AUX_DIST_EXTRA        = $(auxdir)/readline.m4 $(auxdir)/sys_errlist.m4 \
 EXTRA_DIST            = bootstrap win32/libusbprog.dev win32/usbprog.dev \
 			win32/usbprog-gui.dev win32/libmd5.dev \
 			win32/README RELEASEPLAN \
-			src/usbprog.pod gui/usbprog-gui.pod
+			src/usbprog.pod gui/usbprog-gui.pod \
+			usbprog.desktop
 
 AUTOMAKE_OPTIONS      = foreign
 SUBDIRS               = md5 usbprog src gui
@@ -16,5 +17,9 @@ MAINTAINERCLEANFILES  = Makefile.in aclocal.m4 configure config.h.in \
                         $(AUX_DIST)
 
 ACLOCAL               = aclocal -I $(auxdir)
+
+
+desktopdir = $(datadir)/applications
+desktop_DATA = usbprog.desktop
 
 

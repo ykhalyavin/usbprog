@@ -1,3 +1,7 @@
+2008-03-02  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* add .desktop file and install icon
+
 2008-02-09  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* always re-discover devices with the "devices" command

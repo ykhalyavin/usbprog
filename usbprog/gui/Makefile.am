@@ -15,6 +15,9 @@ usbprog_gui_LDADD	= ../usbprog/libusbprog.la \
 man_MANS		= usbprog-gui.1
 endif
 
+icondir = $(datadir)/pixmaps
+icon_DATA = usbprog_icon.xpm
+
 usbprog-gui.1: usbprog-gui.pod 
 	pod2man usbprog-gui.pod         \
 		--center="USBprog GUI" 	\
