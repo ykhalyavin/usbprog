@@ -1,6 +1,7 @@
 0.1.5
 -----
  * Linux: add desktop file and install icon
+ * GUI: implemented -h / -v / -D command line options for GUI
 
 0.1.4
 -----

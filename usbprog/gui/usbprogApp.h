@@ -18,6 +18,7 @@
 #ifndef USBPROG_APP_H
 #define USBPROG_APP_H
 
+#include <stdexcept>
 #include <wx/wx.h>
 
 #define WXSTRING(s) \

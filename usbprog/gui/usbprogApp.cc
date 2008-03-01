@@ -15,10 +15,54 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <cstdio>
+#include <usbprog/optionparser.h>
+
 #include "usbprogApp.h"
 #include "usbprogFrm.h"
 
+using std::cerr;
+using std::endl;
+
 IMPLEMENT_APP(usbprogFrmApp)
+
+/* -------------------------------------------------------------------------- */
+int wxEntry(int &argc, wxChar **argv)
+{
+    char **nargv = new char*[argc];
+        
+    for (int i = 0; i < argc; i++)
+        nargv[i] = strdup(wxString(argv[i]).mb_str());
+
+    OptionParser op;
+    op.addOption("help", 'h', OT_FLAG, "Prints a help message");
+    op.addOption("version", 'v', OT_FLAG, "Shows version information");
+    op.addOption("debug", 'D', OT_FLAG, "Enables debug output");
+
+    bool ret;
+    ret = op.parse(argc, nargv);
+    if (!ret) {
+        cerr << "Parsing command line failed" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (op.getValue("debug").getFlag())
+        Debug::debug()->setLevel(Debug::DL_TRACE);
+
+    if (op.getValue("help").getFlag()) {
+        op.printHelp(cerr, "usbprog " USBPROG_VERSION_STRING);
+        exit(EXIT_SUCCESS);
+    }
+
+    if (op.getValue("version").getFlag()) {
+        cerr << "usbprog-gui " << USBPROG_VERSION_STRING << endl;
+        exit(EXIT_SUCCESS);
+    }
+
+    for (int i = 0; i < argc; i++)
+        free(nargv[i]);
+    delete[] nargv;
+}
 
 /* -------------------------------------------------------------------------- */
 bool usbprogFrmApp::OnInit()

@@ -1,6 +1,8 @@
 2008-03-02  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* add .desktop file and install icon
+	* moved OptionParser from usbprog to libusbprog
+	* implemented -h / -v / -D command line options for GUI
 
 2008-02-09  Bernhard Walle <bernhard.walle@gmx.de>
 

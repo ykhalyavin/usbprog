@@ -22,8 +22,8 @@
 #include <usbprog/firmwarepool.h>
 #include <usbprog/devices.h>
 #include <usbprog/usbprog.h>
+#include <usbprog/optionparser.h>
 
-#include "optionparser.h"
 #include "usbprog.h"
 #include "configuration.h"
 #include "shell.h"
