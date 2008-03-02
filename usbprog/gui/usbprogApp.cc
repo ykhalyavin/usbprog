@@ -27,7 +27,7 @@ using std::endl;
 IMPLEMENT_APP(usbprogFrmApp)
 
 /* -------------------------------------------------------------------------- */
-int wxEntry(int &argc, wxChar **argv)
+void parse_command_line(int argc, wxChar **argv)
 {
     char **nargv = new char*[argc];
         
@@ -67,6 +67,8 @@ int wxEntry(int &argc, wxChar **argv)
 /* -------------------------------------------------------------------------- */
 bool usbprogFrmApp::OnInit()
 {
+    parse_command_line(argc, argv);
+
     usbprogFrm* frame = new usbprogFrm(NULL);
     frame->Show(true);
     SetTopWindow(frame);
