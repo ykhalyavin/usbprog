@@ -19,6 +19,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include <algorithm>
 
 #include <usbprog/usbprog.h>
 #include <usbprog/stringutil.h>
