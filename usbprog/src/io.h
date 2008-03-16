@@ -19,6 +19,17 @@
 
 #include <usbprog/usbprog.h>
 
+/* Interface for completors {{{1 */
+class Completor {
+    public:
+        virtual ~Completor() {}
+
+    public:
+        virtual std::vector<std::string> complete(const std::string &text,
+                const std::string &full_text, size_t start_idx, ssize_t end_idx) = 0;
+};
+
+/* Interface for a linereader {{{1 */
 class LineReader {
     public:
         virtual ~LineReader() {}
@@ -30,12 +41,18 @@ class LineReader {
         virtual std::string readLine(const char *prompt = NULL) = 0;
         virtual std::string getPrompt() const = 0;
         virtual bool eof() const = 0;
+
         virtual void readHistory(const std::string &file)
             throw (IOError) = 0;
         virtual void writeHistory(const std::string &file)
             throw (IOError) = 0;
         virtual bool haveHistory() const = 0;
+
+        virtual bool haveCompletion() const = 0;
+        virtual void setCompletor(Completor *comp) = 0;
 };
+
+/* Abstract base class for line readers {{{1 */
 
 class AbstractLineReader : public LineReader {
     public:
@@ -48,7 +65,10 @@ class AbstractLineReader : public LineReader {
             throw (IOError);
         void writeHistory(const std::string &file)
             throw (IOError);
-        virtual bool haveHistory() const;
+        bool haveHistory() const;
+
+        bool haveCompletion() const;
+        void setCompletor(Completor *comp);
 
     protected:
         void setEof(bool elf);
@@ -60,4 +80,4 @@ class AbstractLineReader : public LineReader {
 
 #endif /* IO_H */
 
-// vim: set sw=4 ts=4 et:
+// vim: set sw=4 ts=4 fdm=marker et:

@@ -48,6 +48,25 @@ using std::max;
 using std::find;
 using std::hex;
 
+/* functions {{{1 */
+
+/* -------------------------------------------------------------------------- */
+StringVector complete_firmware(const string &start, Firmwarepool *pool)
+{
+    StringVector result;
+    StringList firmwarelist = pool->getFirmwareNameList();
+
+    for (StringList::const_iterator it = firmwarelist.begin();
+            it != firmwarelist.end(); ++it) {
+        string fwname = *it;
+        if (str_starts_with(fwname, start))
+            result.push_back(fwname);
+    }
+    
+    return result;
+}
+
+
 /* ListCommand {{{1 */
 
 /* -------------------------------------------------------------------------- */
@@ -190,6 +209,17 @@ StringVector InfoCommand::aliases() const
 }
 
 /* -------------------------------------------------------------------------- */
+StringVector InfoCommand::getCompletions(
+        const string &start, size_t pos, bool option,
+        bool *filecompletion) const
+{
+    if (pos != 0 || option)
+        return StringVector();
+
+    return complete_firmware(start, m_firmwarepool);
+}
+
+/* -------------------------------------------------------------------------- */
 string InfoCommand::help() const
 {
     return "Prints information about a specific firmware.";
@@ -300,6 +330,17 @@ StringVector PinCommand::aliases() const
     StringVector ret;
     ret.push_back("pins");
     return ret;
+}
+
+/* -------------------------------------------------------------------------- */
+StringVector PinCommand::getCompletions(
+        const string &start, size_t pos, bool option,
+        bool *filecompletion) const
+{
+    if (pos != 0 || option)
+        return StringVector();
+
+    return complete_firmware(start, m_firmwarepool);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -416,6 +457,19 @@ StringVector DownloadCommand::aliases() const
 }
 
 /* -------------------------------------------------------------------------- */
+StringVector DownloadCommand::getCompletions(
+        const string &start, size_t pos, bool option, bool *filecompletion) const
+{
+    if (pos != 0 || option)
+        return StringVector();
+
+    StringVector comp =  complete_firmware(start, m_firmwarepool);
+    if (str_starts_with("all", start))
+        comp.push_back("all");
+    return comp;
+}
+
+/* -------------------------------------------------------------------------- */
 string DownloadCommand::help() const
 {
     return "Downloads a firmware file.";
@@ -484,6 +538,22 @@ string CacheCommand::getArgTitle(size_t pos) const
         case 0:         return "operation [clean/delete]";
         default:        return "";
     }
+}
+
+/* -------------------------------------------------------------------------- */
+StringVector CacheCommand::getCompletions(
+        const string &start, size_t pos, bool option, bool *filecompletion) const
+{
+    if (pos != 0 || option)
+        return StringVector();
+
+    StringVector result;
+    if (str_starts_with("clean", start))
+        result.push_back("clean");
+    if (str_starts_with("delete", start))
+        result.push_back("delete");
+
+    return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -632,6 +702,24 @@ string DeviceCommand::getArgTitle(size_t pos) const
 }
 
 /* -------------------------------------------------------------------------- */
+StringVector DeviceCommand::getCompletions(
+        const string &start, size_t pos, bool option, bool *filecompletion) const
+{
+    if (pos != 0 || option)
+        return StringVector();
+
+    StringVector result;
+    for (int i = 0; i < m_devicemanager->getNumberUpdateDevices(); i++) {
+        stringstream ss;
+        ss << i;
+        result.push_back(ss.str());
+    }
+
+    return result;
+}
+
+
+/* -------------------------------------------------------------------------- */
 string DeviceCommand::help() const
 {
     return "Sets the update device.";
@@ -768,6 +856,23 @@ string UploadCommand::getArgTitle(size_t pos) const
         default:        return "";
     }
 }
+
+/* -------------------------------------------------------------------------- */
+StringVector UploadCommand::getCompletions(
+        const string &start, size_t pos, bool option,
+        bool *filecompletion) const
+{
+    if (pos != 0 || option)
+        return StringVector();
+
+    if (start.size() > 0 && Fileutil::isPathName(start)) {
+        if (filecompletion)
+            *filecompletion = true;
+        return StringVector();
+    } else
+        return complete_firmware(start, m_firmwarepool);
+}
+
 
 /* -------------------------------------------------------------------------- */
 string UploadCommand::help() const

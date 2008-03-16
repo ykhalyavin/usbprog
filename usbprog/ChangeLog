@@ -1,3 +1,8 @@
+2008-03-16  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* implement command completion
+	* increase library version due to added string functions
+
 2008-03-02  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* add .desktop file and install icon

@@ -59,6 +59,9 @@ class InfoCommand : public AbstractCommand {
         std::string getArgTitle(size_t pos) const;
 
         StringVector aliases() const;
+        std::vector<std::string> getCompletions(
+            const std::string &start, size_t pos, bool option,
+            bool *filecompletion) const;
 
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
@@ -87,6 +90,10 @@ class PinCommand : public AbstractCommand {
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
 
+        std::vector<std::string> getCompletions(
+            const std::string &start, size_t pos, bool option,
+            bool *filecompletion) const;
+
     private:
         Firmwarepool *m_firmwarepool;
 };
@@ -110,6 +117,10 @@ class DownloadCommand : public AbstractCommand {
 
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
+
+        std::vector<std::string> getCompletions(
+            const std::string &start, size_t pos, bool option,
+            bool *filecompletion) const;
 
     protected:
         bool downloadAll(std::ostream &os)
@@ -136,6 +147,10 @@ class CacheCommand : public AbstractCommand {
 
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
+
+        std::vector<std::string> getCompletions(
+            const std::string &start, size_t pos, bool option,
+            bool *filecompletion) const;
 
     private:
         Firmwarepool *m_firmwarepool;
@@ -179,6 +194,10 @@ class DeviceCommand : public AbstractCommand {
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
 
+        std::vector<std::string> getCompletions(
+            const std::string &start, size_t pos, bool option,
+            bool *filecompletion) const;
+
     private:
         DeviceManager *m_devicemanager;
         Firmwarepool *m_firmwarepool;
@@ -203,6 +222,10 @@ class UploadCommand : public AbstractCommand {
 
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
+
+        std::vector<std::string> getCompletions(
+            const std::string &start, size_t pos, bool option,
+            bool *filecompletion) const;
 
     private:
         DeviceManager *m_devicemanager;

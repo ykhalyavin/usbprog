@@ -187,4 +187,35 @@ unsigned long parse_long(const char *string)
     return ret;
 }
 
+/* -------------------------------------------------------------------------- */
+char **stringvector_to_array(const StringVector &vec)
+{
+    if (vec.size() == 0)
+        return NULL;
+
+    /* use malloc to be able to free the result with C free() */
+    char **ret = (char **)malloc(sizeof(char *) * (vec.size()+1) );
+
+    char **cur = ret;
+    for (StringVector::const_iterator it = vec.begin(); it != vec.end(); ++it)
+        *cur++ = strdup((*it).c_str());
+    *cur = NULL;
+
+    return ret;
+}
+
+/* -------------------------------------------------------------------------- */
+bool str_starts_with(const std::string &string, const std::string &start)
+{
+    return start.size() == 0 || string.find(start, 0) == 0;
+}
+
+/* -------------------------------------------------------------------------- */
+std::vector<std::string> empty_element_sv()
+{
+    StringVector sv;
+    sv.push_back("");
+    return sv;
+}
+
 // vim: set sw=4 ts=4 fdm=marker et:

@@ -55,6 +55,9 @@ class ShellStringTokenizer : public StringTokenizer {
 std::string strip(std::string a);
 unsigned long parse_long(const char *string);
 std::string wordwrap(const std::string &text, ssize_t margins);
+char **stringvector_to_array(const StringVector &vec);
+bool str_starts_with(const std::string &string, const std::string &start);
+std::vector<std::string> empty_element_sv();
 
 #endif /* USBPROG_STRINGUTIL_H */
 

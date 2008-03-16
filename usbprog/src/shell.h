@@ -77,6 +77,7 @@ class CommandArg {
         Type m_type;
 };
 
+
 /* Interface for commands {{{1 */
 
 class Command {
@@ -99,6 +100,9 @@ class Command {
 
         virtual std::string help() const = 0;
         virtual void printLongHelp(std::ostream &os) const = 0;
+
+        virtual std::vector<std::string> getCompletions(const std::string &start,
+                size_t pos, bool option, bool *filecompletion) const = 0;
 };
 
 /* AbstractCommand {{{1 */
@@ -114,6 +118,8 @@ class AbstractCommand : public Command {
         std::string name() const;
         StringVector aliases() const;
         StringVector getSupportedOptions() const;
+        std::vector<std::string> getCompletions(const std::string &start,
+                size_t pos, bool option, bool *filecompletion) const;
 
     private:
         std::string m_name;
@@ -121,7 +127,7 @@ class AbstractCommand : public Command {
 
 /* The shell itself {{{1 */
 
-class Shell {
+class Shell : public Completor {
     friend class HelpCommand;
     friend class HelpCmdCommand;
 
@@ -134,6 +140,9 @@ class Shell {
         void run();
         bool run(StringVector input, bool multiple = true)
             throw (ApplicationError);
+
+        std::vector<std::string> complete(const std::string &text,
+                const std::string &full_text, size_t start_idx, ssize_t end_idx);
 
     private:
         StringCommandMap m_commands;
@@ -190,6 +199,9 @@ class HelpCmdCommand : public AbstractCommand {
 
         std::string help() const;
         void printLongHelp(std::ostream &os) const;
+
+        std::vector<std::string> getCompletions(const std::string &start,
+                size_t pos, bool option, bool *filecompletion) const;
 
     private:
         Shell *m_sh;

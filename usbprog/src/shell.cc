@@ -37,6 +37,7 @@ using std::cerr;
 using std::endl;
 using std::setw;
 using std::vector;
+using std::find;
 
 /* AbstractCommand {{{1 */
 
@@ -79,6 +80,13 @@ StringVector AbstractCommand::aliases() const
 StringVector AbstractCommand::getSupportedOptions() const
 {
     return StringVector();
+}
+
+/* -------------------------------------------------------------------------- */
+std::vector<std::string> AbstractCommand::getCompletions(
+        const std::string &start, size_t pos, bool option, bool *filecompletion) const
+{
+    return empty_element_sv();
 }
 
 /* CommandArg ------------------------------------------------------ {{{1 --- */
@@ -205,6 +213,10 @@ Shell::Shell(const string &prompt)
         m_lineReader->readHistory(Configuration::config()->getHistoryFile());
     } catch (const IOError &ioe)
     {}
+
+    if (m_lineReader->haveCompletion())
+        m_lineReader->setCompletor(this);
+
     addCommand(new ExitCommand);
     addCommand(new HelpCommand(this));
     addCommand(new HelpCmdCommand(this));
@@ -248,6 +260,62 @@ void Shell::addCommand(Command *cmd)
     for (StringVector::const_iterator it = aliases.begin();
             it != aliases.end(); ++it)
         m_commands[*it] = cmd;
+}
+
+/* -------------------------------------------------------------------------- */
+StringVector Shell::complete(const string &text, const string &full_text, 
+        size_t start_idx, ssize_t end_idx)
+{
+    //
+    // command completion
+    //
+    if (start_idx == 0) {
+        StringVector result;
+        for (StringCommandMap::const_iterator it = m_commands.begin();
+                it != m_commands.end(); ++it) {
+            string cmd = it->first;
+            if (str_starts_with(cmd, text))
+                result.push_back(cmd);
+        }
+        return result;
+    }
+
+    //
+    // argument completion
+    //
+    ShellStringTokenizer tok(full_text);
+    StringVector vec = tok.tokenize();
+
+    if (vec.size() <= 0)
+        return empty_element_sv();
+
+    // get command for now
+    Command *cmd = m_commands[vec[0]];
+    if (!cmd)
+        return empty_element_sv();
+
+    // options
+    if (text.size() > 0 && text[0] == '-') {
+        if (cmd->getSupportedOptions().size() == 0)
+            return empty_element_sv();
+        else
+            return cmd->getCompletions(text, 0, true, NULL);
+    } else {
+        size_t pos = vec.size() - 1;
+        if (text.size() > 0)
+            pos--;
+        if (cmd->getArgNumber() <= pos)
+            return empty_element_sv();
+        else {
+            bool filecompletion = false;
+            StringVector completions = cmd->getCompletions(
+                    text, pos, false, &filecompletion);
+            if (completions.size() == 0 && !filecompletion)
+                return empty_element_sv();
+            else
+                return completions;
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -509,6 +577,24 @@ StringVector HelpCmdCommand::aliases() const
     sv.push_back("?");
     return sv;
 }
+
+/* -------------------------------------------------------------------------- */
+std::vector<std::string> HelpCmdCommand::getCompletions(
+        const string &start, size_t pos, bool option, bool *filecompletion) const
+{
+    if (pos != 0)
+        return StringVector();
+
+    StringVector result;
+    for (StringCommandMap::const_iterator it = m_sh->m_commands.begin();
+            it != m_sh->m_commands.end(); ++it) {
+        string cmd = it->first;
+        if (str_starts_with(cmd, start))
+            result.push_back(cmd);
+    }
+    return result;
+}
+
 
 /* -------------------------------------------------------------------------- */
 string HelpCmdCommand::help() const

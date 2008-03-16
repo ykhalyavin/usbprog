@@ -30,6 +30,7 @@
 #endif
 
 #include <usbprog/usbprog.h>
+#include <usbprog/stringutil.h>
 #include "io.h"
 
 using std::string;
@@ -54,6 +55,12 @@ class ReadlineLineReader : public AbstractLineReader {
         void writeHistory(const std::string &file)
             throw (IOError);
         bool haveHistory() const;
+
+        bool haveCompletion() const;
+        void setCompletor(Completor *comp);
+
+    private:
+        Completor *m_completor;
 };
 #endif
 
@@ -118,6 +125,16 @@ bool AbstractLineReader::haveHistory() const
     return false;
 }
 
+/* -------------------------------------------------------------------------- */
+bool AbstractLineReader::haveCompletion() const
+{
+    return false;
+}
+
+/* -------------------------------------------------------------------------- */
+void AbstractLineReader::setCompletor(Completor *comp)
+{}
+
 /* SimpleLineReader {{{1 */
 
 /* -------------------------------------------------------------------------- */
@@ -142,6 +159,26 @@ string SimpleLineReader::readLine(const char *prompt)
 /* ReadlineLineReader {{{1 */
 
 #ifdef HAVE_LIBREADLINE
+
+/* completion stuff, not really object oriented :-( */
+
+/* -------------------------------------------------------------------------- */
+Completor *g_current_completor;
+
+/* -------------------------------------------------------------------------- */
+char **readline_line_reader_complete(const char *text, int start, int end)
+{
+    StringVector completions = g_current_completor->complete(
+            text, string(rl_line_buffer), start, end);
+
+    if (completions.size() == 0)
+        return NULL;
+
+    if (completions.size() > 1)
+        completions.insert(completions.begin(), text);
+    return stringvector_to_array(completions);
+}
+
 /* -------------------------------------------------------------------------- */
 ReadlineLineReader::ReadlineLineReader(const string &prompt)
     : AbstractLineReader(prompt)
@@ -149,9 +186,7 @@ ReadlineLineReader::ReadlineLineReader(const string &prompt)
 
 /* -------------------------------------------------------------------------- */
 string ReadlineLineReader::readLine(const char *prompt)
-{
-    char *line_read;
-    string ret;
+{ char *line_read; string ret;
 
     line_read = readline(prompt ? prompt : getPrompt().c_str());
     if (!line_read)
@@ -192,7 +227,24 @@ bool ReadlineLineReader::haveHistory() const
     return true;
 }
 
-#endif
+/* -------------------------------------------------------------------------- */
+bool ReadlineLineReader::haveCompletion() const
+{
+    return true;
+}
 
+/* -------------------------------------------------------------------------- */
+void ReadlineLineReader::setCompletor(Completor *comp)
+{
+    m_completor = comp;
+    g_current_completor = m_completor;
+
+    if (m_completor)
+        rl_attempted_completion_function = readline_line_reader_complete;
+    else
+        rl_attempted_completion_function = NULL;
+}
+
+#endif
 
 // vim: set sw=4 ts=4 fdm=marker et:

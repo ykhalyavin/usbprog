@@ -2,6 +2,7 @@
 -----
  * Linux: add desktop file and install icon
  * GUI: implemented -h / -v / -D command line options for GUI
+ * CLI: implement command completion
 
 0.1.4
 -----
