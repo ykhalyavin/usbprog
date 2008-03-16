@@ -151,7 +151,7 @@ int Downloader::curl_progress_callback(void *clientp, double dltotal, double
 
 /* -------------------------------------------------------------------------- */
 Downloader::Downloader(ostream &output) throw (DownloadError)
-    : m_output(output), m_notifier(NULL)
+    : m_notifier(NULL), m_output(output)
 {
     CURLcode err;
 
