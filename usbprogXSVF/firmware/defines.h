@@ -30,7 +30,7 @@
 #define XSVF_PRGEND		0x82
 
 /* non-XSVF return codes */
-#define SUCCESS				0x80
+#define SUCCESS			0x80
 #define UNKNOWN_COMMAND		0x81
 
 #endif

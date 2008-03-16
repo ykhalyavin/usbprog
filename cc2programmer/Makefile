@@ -1,6 +1,6 @@
 # Hey Emacs, this is a -*- makefile -*-
 #
-# WinAVR makefile written by Eric B. Weddington, Jï¿½rg Wunsch, et al.
+# WinAVR makefile written by Eric B. Weddington, Jörg Wunsch, et al.
 # Released to the Public Domain
 # Please read the make user manual!
 #
@@ -38,21 +38,21 @@
 
 
 # MCU name
-MCU = atmega32
+MCU = atmega16
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex
+FORMAT = ihex 
 
 # Target file name (without extension).
 TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c usbn2mc/main/usbn960x.c usbn2mc.c usbn2mc/main/usbnapi.c uart.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c wait.c xsvfexec/host.c xsvfexec/tapsm.c xsvfexec/xsvfexec.c
+SRC = $(TARGET).c ../usbn2mc/main/usbn960x.c usbn2mc.c ../usbn2mc/main/usbnapi.c uart.c ../usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c wait.c
 
 
 # List Assembler source files here.
@@ -69,7 +69,7 @@ ASRC =
 # Optimization level, can be [0, 1, 2, 3, s]. 
 # 0 = turn off optimization. s = optimize for size.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = s 
+OPT = s
 
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
@@ -274,7 +274,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: begin gccversion sizebefore build sizeafter finished hex2bin end
+all: begin gccversion sizebefore build sizeafter finished end
 
 build: elf hex eep lss sym
 
@@ -283,8 +283,6 @@ hex: $(TARGET).hex
 eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
-hex2bin:
-	hex2bin main.hex
 
 
 # Eye candy.
@@ -352,6 +350,8 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
+	hex2bin main.hex
+	#mv main.hex main.bin
 
 %.eep: %.elf
 	@echo
@@ -404,7 +404,7 @@ extcoff: $(TARGET).elf
 
 # Target: clean project.
 clean: begin clean_list finished end
-	rm -f main.bin
+	rm main.bin
 
 clean_list :
 	@echo
@@ -438,16 +438,17 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex 
-loader:
-	usbprog device 0 upload main.bin
+	avrdude -p m16 -c avrispv2 -P usb -U flash:w:main.hex
+
 reset:
 	avrdude -p m32 -c bsd -E noreset
+loader:
+	usbprog device 0 upload main.bin
 
 ready:
-	mv main.hex simpleport.hex
-	hex2bin simpleport.hex
+	mv main.hex avrispmk2.hex
+	hex2bin avrispmk2.hex
 
 upgrade:
-	hex2bin simpleport.hex 
-	usbprog simpleport.bin 
+	hex2bin main.hex
+	usbprog main.bin

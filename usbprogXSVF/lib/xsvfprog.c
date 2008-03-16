@@ -60,7 +60,8 @@ struct xsvfprog* xsvfprog_open()
 
 void xsvfprog_close(struct xsvfprog *xsvfprog)
 {
-	usb_close(xsvfprog->usb_handle);
+	usb_reset(xsvfprog->usb_handle);
+	//usb_close(xsvfprog->usb_handle);
 	free(xsvfprog);
 }
 

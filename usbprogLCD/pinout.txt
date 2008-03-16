@@ -1,0 +1,35 @@
+usbprog_lcd
+===========
+
+- connect an alphanumeric LCD with HD44780 controller to USBprog
+- usbprog 3.0 required!
+
+
+LCD signal    usbprog pin
+-------------------------
+GND           10
+VCC           2
+RS            8 (PB2)
+R/W           6 (PB1)
+E             4 (PB3)
+DB4           3 (PB4)
+DB5           1 (PB5)
+DB6           9 (PB6)
+DB7           7 (PB7)
+
+
+LCD contrast voltage pin V0:
+
+         VCC
+          |
+          |
+         ---
+         | |_
+         | /
+ V0 _____|/| 10k
+         | |
+         | |
+         ---
+          |
+          |
+         GND

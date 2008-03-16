@@ -1,0 +1,169 @@
+ID=
+//ScreenDef
+Title=20x4
+SpecCharFile=
+#Header
+ %CC.Load('spec.cd')
+#EndHeader
+
+#TextMode
+
+ %CC.Store(0, 0)
+ %CC.Store(1, 1) 
+ %CC.Store(2, 2) 
+ %CC.Store(3, 3) 
+ %CC.Store(4, 4) 
+ %CC.Store(5, 5) 
+ %CC.Store(6, 6) 
+ %CC.Store(7, 7)
+ 
+%WinAmp.Artist()
+%Common.CreateNewLine()
+%WinAmp.Title()
+%Common.CreateNewLine()
+
+%WinAmp.SpecAnalyzer(FFT,20,2,50,4,8,
+%LCD.CustomChar(0),
+%LCD.CustomChar(1),
+%LCD.CustomChar(2),
+%LCD.CustomChar(3),
+%LCD.CustomChar(4),
+%LCD.CustomChar(5),
+%LCD.CustomChar(6)
+%LCD.CustomChar(7)
+)
+
+#EndTextMode
+
+#GfxMode
+ /insert gfxmode script code here/
+#EndGfxMode
+//EndDef
+//ScreenDef
+Title=24x1
+SpecCharFile=
+#Header
+ %DefVar(xx,Local=1)
+ %CC.Load('spec.cd')
+#EndHeader
+
+#TextMode
+ %CC.Store(0, 0)
+ %CC.Store(1, 1) 
+ %CC.Store(2, 2) 
+ %CC.Store(3, 3) 
+ %CC.Store(4, 4) 
+ %CC.Store(5, 5) 
+ %CC.Store(6, 6) 
+ %CC.Store(7, 7)
+
+
+%Assign(xx,0) /0=Text, sonst SpecAnalyzer/
+
+%If(%xx() = 0)Then
+{ 
+%Param.EnableScrolling(Horizontal,Ticker,0.5,24,0)
+%WinAmp.Artist()
+' *** '
+%WinAmp.Title()
+' *** '
+}
+Else
+{
+%WinAmp.SpecAnalyzer(FFT,24,1,50,4,8,
+%LCD.CustomChar(0),
+%LCD.CustomChar(1),
+%LCD.CustomChar(2),
+%LCD.CustomChar(3),
+%LCD.CustomChar(4),
+%LCD.CustomChar(5),
+%LCD.CustomChar(6)
+%LCD.CustomChar(7)
+)
+}
+#EndTextMode
+
+#GfxMode
+ /insert gfxmode script code here/
+#EndGfxMode
+//EndDef
+//ScreenDef
+Title=16x2
+SpecCharFile=
+#Header
+ %CC.Load('spec.cd')
+#EndHeader
+
+#TextMode
+ %CC.Store(0, 0)
+ %CC.Store(1, 1) 
+ %CC.Store(2, 2) 
+ %CC.Store(3, 3) 
+ %CC.Store(4, 4) 
+ %CC.Store(5, 5) 
+ %CC.Store(6, 6) 
+ %CC.Store(7, 7)
+ 
+%Param.EnableScrolling(Horizontal,Ticker,0.5,16,0)
+%WinAmp.Artist()
+' *** '
+%WinAmp.Title()
+' *** '
+%Common.CreateNewLine()
+%WinAmp.SpecAnalyzer(FFT,16,1,50,4,8,
+%LCD.CustomChar(0),
+%LCD.CustomChar(1),
+%LCD.CustomChar(2),
+%LCD.CustomChar(3),
+%LCD.CustomChar(4),
+%LCD.CustomChar(5),
+%LCD.CustomChar(6)
+%LCD.CustomChar(7)
+)
+#EndTextMode
+
+#GfxMode
+ /insert gfxmode script code here/
+#EndGfxMode
+//EndDef
+//ScreenDef
+Title=Test
+SpecCharFile=
+#Header
+%DefFunc(Items=%UsePlugin('RSSFeed\rss_feed.dll', count))
+#EndHeader
+
+#TextMode
+
+%Param.EnableScrolling(Horizontal,Ticker,0.5,20,0)
+%UsePlugin('RSSFeed\rss_feed.dll', GetFeed(35,http:||www.tagesschau.de|newsticker.rdf))
+%Loop.For(Count,1,%Items()) {
+%UsePlugin('RSSFeed\rss_feed.dll', title%Count())
+" +++ "
+} 
+%UsePlugin('RSSFeed\rss_feed.dll', update_check)
+%Common.CreateNewLine() 
+%WinAmp.Artist()
+%Common.CreateNewLine()
+%WinAmp.Title()
+%Common.CreateNewLine()
+
+
+%WinAmp.SpecAnalyzer(FFT,20,1,50,4,8,
+%LCD.CustomChar(0),
+%LCD.CustomChar(1),
+%LCD.CustomChar(2),
+%LCD.CustomChar(3),
+%LCD.CustomChar(4),
+%LCD.CustomChar(5),
+%LCD.CustomChar(6)
+%LCD.CustomChar(7)
+)
+
+#EndTextMode
+
+#GfxMode
+ /insert gfxmode script code here/
+#EndGfxMode
+
+//EndDef

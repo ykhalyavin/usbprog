@@ -233,7 +233,7 @@ int main(int argc, char *argv[]) {
 		
 		ret = xsvfprog_exec(xsvfprog, buf, bufsize);
 #ifdef DEBUG
-		printf("%d\n", ret);
+		//printf("%d\n", ret);
 #endif
 
 		switch(ret) {

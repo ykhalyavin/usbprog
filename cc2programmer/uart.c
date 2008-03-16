@@ -3,7 +3,7 @@
 
 #include "uart.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 
 void UARTInit(void)
@@ -38,11 +38,11 @@ void UARTInit(void)
 
 void UARTPutChar(unsigned char sign)
 {
-	//#if DEBUG
+	#if DEBUG
   	// bei neueren AVRs steht der Status in UCSRA/UCSR0A/UCSR1A, hier z.B. fuer ATmega16:
   	while (!(UCSRA & (1<<UDRE))); /* warten bis Senden moeglich                   */
   		UDR = sign;                    /* schreibt das Zeichen x auf die Schnittstelle */
-	//#endif
+	#endif
 }
 
 

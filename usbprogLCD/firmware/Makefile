@@ -52,7 +52,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c usbn2mc/main/usbn960x.c usbn2mc.c usbn2mc/main/usbnapi.c uart.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c wait.c xsvfexec/host.c xsvfexec/tapsm.c xsvfexec/xsvfexec.c
+SRC = $(TARGET).c lcd.c uart.c usbn2mc/tiny/usbn960x.c usbn2mc.c usbn2mc/tiny/usbnapi.c usbn2mc/fifo.c ../../usbprog_base/firmwarelib/avrupdate.c simpleport.c
 
 
 # List Assembler source files here.
@@ -211,7 +211,7 @@ AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 # ---------------------------------------------------------------------------
 
 # Define directories, if needed.
-DIRAVR = c:/winavr
+DIRAVR = c:/WinAVR-20070525
 DIRAVRBIN = $(DIRAVR)/bin
 DIRAVRUTILS = $(DIRAVR)/utils/bin
 DIRINC = .
@@ -274,7 +274,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: begin gccversion sizebefore build sizeafter finished hex2bin end
+all: begin gccversion sizebefore build sizeafter finished end hex2bin
 
 build: elf hex eep lss sym
 
@@ -404,7 +404,6 @@ extcoff: $(TARGET).elf
 
 # Target: clean project.
 clean: begin clean_list finished end
-	rm -f main.bin
 
 clean_list :
 	@echo
@@ -438,16 +437,4 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex 
-loader:
-	usbprog device 0 upload main.bin
-reset:
-	avrdude -p m32 -c bsd -E noreset
-
-ready:
-	mv main.hex simpleport.hex
-	hex2bin simpleport.hex
-
-upgrade:
-	hex2bin simpleport.hex 
-	usbprog simpleport.bin 
+	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex -E noreset

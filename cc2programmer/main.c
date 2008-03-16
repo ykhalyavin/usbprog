@@ -27,12 +27,10 @@
 #define F_CPU 16000000
 #include <util/delay.h>
 
-#define DEBUG_ON 0
-
 #include "wait.h"
 
 #include "../usbprog_base/firmwarelib/avrupdate.h"
-#include "uart.h"
+//#include "uart.h"
 #include "usbn2mc.h"
 
 /* command descriptions for mk2 */
@@ -48,33 +46,8 @@
 #endif
 
 uint8_t ee_sck_duration EEMEM = 1;
-uint16_t sck_delay_value;
+static uint16_t temp_OCR1A;
 
-/**Structures to parse incoming packets more clearly
- */
-
-struct cmd_enter_progmode_s {
-  unsigned char id;
-  unsigned char timeout;
-  unsigned char stabdelay;
-  unsigned char cmdexedelay;
-  unsigned char synchloops;
-  unsigned char bytedelay;
-  unsigned char pollvalue;
-  unsigned char pollindex;
-  unsigned char cmd1;
-  unsigned char cmd2;
-  unsigned char cmd3;
-  unsigned char cmd4;
-};
-
-struct cmd_spi_multi_s {
-  unsigned char id;
-  unsigned char numTx;
-  unsigned char numRx;
-  unsigned char rxStart;
-  unsigned char txData[256]; //This can only be used if multiple-packet commands are supported
-};
 
 #define DDR_SPI     DDRB
 #define SS PB4
@@ -120,27 +93,20 @@ struct pgmmode_t {
   uint8_t poll1;
   uint8_t poll2;
   uint32_t address;
-  uint32_t pageaddress;
 } pgmmode;
 
 
 unsigned short sck_lookup[]PROGMEM =
 {
-    0, 0, 0, 0, 2, 6, 14, 18, 20, 21, 23, 24, 26, 27, 29, 30, 32, 33, 36, 38,
-    39, 41, 44, 45, 48, 50, 53, 56, 59, 62, 65, 68, 71, 75, 78, 83, 87, 92, 96,
-    101, 105, 111, 116, 122, 128, 135, 141, 149, 156, 164, 171, 180, 189, 198,
-    209, 218, 230, 240, 252, 264, 278, 291, 306, 321, 338, 354, 371, 390, 408,
-    429, 450, 473, 495, 521, 546, 573, 602, 630, 662, 695, 729, 763, 803, 842,
-    884, 927, 972, 1020, 1069, 1122, 1177, 1236, 1297, 1360, 1428, 1498, 1571,
-    1648, 1729, 1814, 1904, 1998, 2096, 2198, 2307, 2419, 2539, 2664, 2795,
-    2930, 3074, 3229, 3387, 3550, 3729, 3911, 4104, 4299, 4512, 4737, 4973,
-    5206, 5462, 5728, 6022, 6307, 6620, 6942, 7297, 7660, 8030, 8401, 8847,
-    9257, 9706, 10202, 10693, 11233, 11762, 12343, 12985, 13603, 14283, 14923,
-    15623, 16391, 17239, 18016, 19045, 19998, 20962, 22000, 23092, 24211, 25410,
-    26664, 27970, 29323, 30767, 32308, 33896, 35521, 37311, 39136
+	2,4,8,16,32,64,128,166,178,190,202,214,226,238,250,262,
+	274,286,310,322,346,370,382,406,418,442,466,490,514,538,562,586,
+	622,646,682,718,754,790,826,862,910,946,994,1042,1102,1150,1210,1270,
+	1330,1390,1463,1534,1606,1690,1762,1665,1942,1808,2134,2242,2350,2470,2590,2722,
+	2854,2986,3142,3285,3453,3622,3801,3981,4185,4390,4606,4834,5062,5577,5852,6128,
+	6441,6754,7089,7435,7797,8180,8574,8994,9440,9907,10396,10899,11445,12003,12589,13201,
+	13853,14532,15253,16000,16789,17602,18476,19370,20330,21333,22378,23460,24615,25848,27119,29851,
+	31311,32854,34409,36117,37915,39801,41667,43716,45845,48193,50473,52980,55556,58394,61303,64257
 };
-
-#define MAX_SCK_DURATION ((sizeof(sck_lookup)/sizeof(unsigned short))-1)
 
 
 
@@ -161,20 +127,16 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 void spi_init(void)
 {
   usbprog.sck_duration = eeprom_read_byte(&ee_sck_duration);
-  if(usbprog.sck_duration > MAX_SCK_DURATION)  // prevent error when EEPROM is erased
+  if(usbprog.sck_duration > 0x82)  // prevent error when EEPROM is erased
     usbprog.sck_duration = 0x03;  //  1MHz as default
 
   PORTB   &=  ~((1 << SCK)|(1<<MISO)|(1<<MOSI)/*|(1<<RESET_PIN)*/);  // SCK have to be low in IDLE
   DDR_SPI &=~(1 << MISO);
   DDR_SPI = (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
-  // switches back to slave mode !
-  DDR_SPI |= (1<<SS); // make SS an output for SPI master.
 
   SPCR = 0;
   SPSR = 0;
-
-  //This delay value is also required in hardware SPI mode in spi_pulseclockonce
-  sck_delay_value=pgm_read_word(&(sck_lookup[usbprog.sck_duration]));
+  TCCR1B = 0;
 
     switch(usbprog.sck_duration)
     {
@@ -213,10 +175,19 @@ void spi_init(void)
         SPSR = 0x00;
         break;
 
-	  default:
+      default:
         PORTB   &=  ~(1 << SCK);
         DDR_SPI &=~(1 << MISO);
         DDR_SPI = (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
+        // TC1 initialisation
+        temp_OCR1A = pgm_read_word(&(sck_lookup[usbprog.sck_duration]));
+	TCNT1 = 0;
+        TCNT1 = 0;
+        TCCR1A = 0;
+        TCCR1B = ((1<<WGM12)|(1<<CS10));  //CTCmode, f=16MHz
+        TIMSK &= ~((1 <<TICIE1)|(1<<OCIE1A)|(1<<OCIE1B)|(1<<TOIE1));	// no Interrupts
+        OCR1A = temp_OCR1A;
+        OCR1B = (temp_OCR1A>>2);
 		break;
     }
 }
@@ -224,137 +195,117 @@ void spi_init(void)
 
 void spi_idle(void)
 {
-  //DDR_SPI = 0x00;
-  DDR_SPI &= ~( (1<<MOSI) | (1<<SCK) | (1<<RESET_PIN) ); // don't make SS an input !
-  //PORTB = 0xFF;	// only temp for jar
-  PORTB = 0x00; // holger klabunde: tri state without pullups
+  DDR_SPI = 0x00;
+  PORTB = 0xFF;	// only temp for jar
 }
 
 void spi_active(void)
 {
   PORTB   &=  ~((1<<MISO)|(1 << MOSI)|(1 << SCK)|(1 << RESET_PIN));  // switch off unused Pullup resistors
   DDR_SPI &=~(1 << MISO);
-  DDR_SPI |= (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
+  DDR_SPI = (1 << MOSI)|(1 << SCK)|(1 << RESET_PIN);
 }
 
-/** Full-duplex SPI communication. For sck_duration<=6, use hardware SPI. For
- * >=6, use software spi.
- * From AT90S2313 datasheet, timing is:
- * set data, wait for 1/2 period, clock high, wait another
- * 1/2 period, read data, clock low. In other words: AVR clocks in on rising
- * edge, AVRISP clocks in on falling edge
- *
- * However, for AT89xx (AT89S51, chapter 21), there is a setup period from data
- * to sck high and also a hold period from sck low to data change. Therefore,
- * sck and mosi run 90 degree out of phase:
- * -Setup data, wait
- * -SCK high, wait
- * -Read data, wait
- * -SCK low, wait
- *
- * This guarantees compatibility with both AVR and AT89 controllers, when
- * soft SPI mode is used.
- */
 
-unsigned char spi_inout(unsigned char data)
+void wait_OCF1A(void)
 {
-  unsigned char bitvalue,din=0;
+  if(TIFR & (1<<OCF1A))
+    TIFR |= (1<<OCF1A);
+  while(!(TIFR & (1<<OCF1A)))
+    __asm__ __volatile__ ("nop");
 
-  if(usbprog.sck_duration <= 6)
+  OCR1B = (temp_OCR1A>>2);
+}
+
+void wait_OCF1B(void)
+{
+  if(TIFR & (1<<OCF1B))
+    TIFR |= (1<<OCF1B);
+  while(!(TIFR & (1<<OCF1B)))
+    __asm__ __volatile__ ("nop");
+
+  OCR1B += (temp_OCR1A>>2);
+}
+
+
+void spi_out(char data)
+{
+
+  if((usbprog.sck_duration >= 0) && (usbprog.sck_duration <= 6))
   {
     SPDR = data;
     while ( !(SPSR & (1 << SPIF)) ) ;
-    return SPDR;
   }
-  else    // software SPI with delay
+
+  else    // software SPI with TC1
   {
-    for (bitvalue=128;bitvalue;bitvalue>>=1)
+    TCNT1 = 0;  // set Timer register to zero
+    OCR1B = (temp_OCR1A>>2);
+    for (int i = 0; i < 8; i++)
     {
-      //set new data
-      if(data & bitvalue)
+      if(data & 0x80)
         PORTB   |=  (1 << MOSI);
       else
         PORTB   &=  ~(1 << MOSI);
-
-      //wait 1/4 period
-      _delay_loop_2(sck_delay_value>>1);
-
-      //set clock high
+      data = data << 1;
+      wait_OCF1B();
       PORTB   |=  (1 << SCK);
-
-      //wait another 1/4 period
-      _delay_loop_2(sck_delay_value>>1);
-
-      //read in bit
-      if( PINB & (1<<MISO)) {
-        din|=bitvalue;
-      }
-
-      //wait another 1/4 period
-      _delay_loop_2(sck_delay_value>>1);
-
-      //clear clock
+      wait_OCF1B();
+      wait_OCF1B();
       PORTB   &=  ~(1 << SCK);
-
-      //wait another 1/4 period
-      _delay_loop_2(sck_delay_value>>1);
-
+      wait_OCF1A();
     }
-    return din;
+  }
+}
+
+
+char spi_in(void)
+{
+  if((usbprog.sck_duration >= 0) && (usbprog.sck_duration <= 6))
+  {
+    SPDR = 0;
+//    int timeout = 1000;
+    while(!(SPSR & (1 << SPIF))) ;
+//	{
+//      timeout--;
+//      if(timeout == 0)
+//	    break;
+//    }
+    return SPDR;
+  }
+
+  else  // software spi with TC1
+  {
+    char b = 0;
+    PORTB   &=  ~(1 << MOSI);
+    TCNT1 = 0;  // set Timer register to zero
+    OCR1B = (temp_OCR1A>>2);
+    for(int i = 0; i < 8; i++)
+    {
+      b = b << 1;
+      wait_OCF1B();
+      PORTB   |=  (1 << SCK);
+      wait_OCF1B();
+      if( PINB & (1<<MISO))
+      {
+         b |= 1;
+      }
+      wait_OCF1B();
+      PORTB   &=  ~(1 << SCK);
+      wait_OCF1A();
+    }
+    return b;
   }
 }
 
-/**According to the syncronisation protocol recommended by atmel, the SCLK must
- * be pulsed once every retry to try to get in sync. This can't be done in
- * hardware spi mode, so switch to software temporarily
- */
 
-void spi_pulseclockonce(void) {
-  unsigned char spcr_save,spsr_save;
-  spcr_save=SPCR;
-  spsr_save=SPSR;
-  SPCR = 0;
-  SPSR = 0;
-  //pulse
-  _delay_loop_2(sck_delay_value);
-  PORTB   |=  (1 << SCK);
-  _delay_loop_2(sck_delay_value);
-  PORTB   &=  ~(1 << SCK);
+void spi_write_program_memory(char data)
+{
 
-  SPCR=spcr_save;
-  SPSR=spsr_save;
-}
-
-void spi_out(char data) {
-  spi_inout(data);
-}
-char spi_in(void) {
-  return spi_inout(0);;
-}
-
-void word_mode_write_wait(unsigned char cmd,unsigned char addrh,
-    unsigned char addrl, unsigned char expect) {
-
-  uint8_t delay=pgmmode.delay;
-
-  if ((expect==pgmmode.poll1) | (pgmmode.mode & 1)) {
-    //If the value written equals the polling value, polling is not possible
-    //Also if timed delay is requested, do timed delay
-    wait_ms(pgmmode.delay);
-  } else {
-    //Read back the flash. If programming is completed, the read back should be
-    //the expected value. Time out as given by pgmmode.delay
-    while (delay--) {
-      wait_ms(1);
-      spi_out(cmd);
-      spi_out(addrh);
-      spi_out(addrl);
-      if (spi_in()==expect) return;
-    }
-  }
 
 }
-void spi_write_program_memory(unsigned short wordaddr,char wordl,char wordh)
+
+void spi_write_program_memory_page(unsigned short wordaddr,char wordl,char wordh)
 {
   char addrh,addrl;
 
@@ -362,23 +313,16 @@ void spi_write_program_memory(unsigned short wordaddr,char wordl,char wordh)
   addrl = (char)(wordaddr);
 
   // write low
-  spi_out(pgmmode.cmd1);
+  spi_out(0x40);
   spi_out(addrh);
   spi_out(addrl);
   spi_out(wordl);
 
-  //In word mode, wait for programming
-  if (!(pgmmode.mode & 1)) word_mode_write_wait(pgmmode.cmd3,addrh,addrl,wordl);
-
   // write high
-  spi_out(pgmmode.cmd1|8);
+  spi_out(0x48);
   spi_out(addrh);
   spi_out(addrl);
   spi_out(wordh);
-
-  //In word mode, wait for programming
-  if (!(pgmmode.mode & 1)) word_mode_write_wait(pgmmode.cmd3|8,addrh,addrl,wordh);
-
 }
 
 /* programm finite state machine
@@ -386,41 +330,72 @@ void spi_write_program_memory(unsigned short wordaddr,char wordl,char wordh)
 */
 void flash_program_fsm(char * buf)
 {
-  int i = 0, datastart=0, databytes = 0;
+  int bufindex = 0, bytes = 0;
+  int start_address;
 
-  datastart=usbprog.cmdpackage ? 10:0; //Number of command bytes in this packet
-  databytes=64-datastart;             //Max. number of data bytes in this packet
+  start_address = pgmmode.address;  // store the page address (which in fact are the first 5 bits) for page write command
+  // because we will increment pgmode.address during transfer
 
-  if (pgmmode.numbytes>databytes) {
-    pgmmode.numbytes-=databytes;
-    usbprog.longpackage=1;        //Expect more data
-  } else {
-    databytes=pgmmode.numbytes;   //The number of valid bytes in this packet
-    pgmmode.numbytes=0;           //No more data left
-    usbprog.longpackage=0;        //Expect no more data
-  }
+  // if page mode
+  if(pgmmode.mode && 0x01) {
+    if(usbprog.cmdpackage == 1) {
+      // first packet contains header and data
+      bufindex = 10;  // skip the packet header
+      if(pgmmode.numbytes > 54) {
+	usbprog.longpackage = 1; // we do expect more data
+	bytes = 64;
+	pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex; // max packet is 64 bytes w/ header and data (USB FIFO-size)
+	// so we have only 54 bytes space for data to program
+      }
+      else {
+	usbprog.longpackage = 0; // we do not expect more data
+	bytes = pgmmode.numbytes + bufindex;
+	pgmmode.numbytes = 0;
+      }
 
-  //Write the program memory bytes
-  for(i=0; i < databytes; i+=2){
-    spi_write_program_memory(pgmmode.address, buf[datastart+i], buf[datastart + i + 1]);
-    pgmmode.address++;
-  }
+      for(; bufindex < bytes; bufindex = bufindex + 2){
+	spi_write_program_memory_page(pgmmode.address, buf[bufindex], buf[bufindex + 1]);
+	pgmmode.address++;
+      }
+      usbprog.cmdpackage = 0;
+    }
+    else {
+      if(pgmmode.numbytes > 64) {
+	usbprog.longpackage = 1; // we do expect more data
+	bytes = 64;
+	pgmmode.numbytes = pgmmode.numbytes - 64;
+      }
+      else {
+	usbprog.longpackage = 0; // we do not expect more data
+	bytes = pgmmode.numbytes;
+	pgmmode.numbytes = 0;
+      }
 
-  if (pgmmode.numbytes==0) {
-    //If in page mode, and the write bit is set, perform page write
-    if ((pgmmode.mode & 0x1) && (pgmmode.mode & 0x80)) {
-      // write page to flash
-       spi_out(pgmmode.cmd2);
-       spi_out((char)(pgmmode.pageaddress >> 8));  //high-byte of page address
-       spi_out((char)(pgmmode.pageaddress));        //low-byte  of page address
-       spi_out(0x00);
-       wait_ms(20); //Timed delay, TODO: other modes
+      for(bufindex = 0; bufindex < bytes; bufindex = bufindex + 2){
+	spi_write_program_memory_page(pgmmode.address, buf[bufindex], buf[bufindex+1]);
+	pgmmode.address++;
+      }
     }
 
-    // acknowlegde to host
-    answer[0] = CMD_PROGRAM_FLASH_ISP;
-    answer[1] = STATUS_CMD_OK;
-    CommandAnswer(2);
+    // falls numbytes == 0
+    if(pgmmode.numbytes == 0) {
+      // write page to flash
+      spi_out(pgmmode.cmd2);
+      spi_out((char)(start_address >> 8));  //high-byte of page address
+      spi_out((char)(start_address));        //low-byte  of page address
+      spi_out(0x00);
+      wait_ms(20);
+
+      // acknowlegde to host
+      answer[0] = CMD_PROGRAM_FLASH_ISP;
+      answer[1] = STATUS_CMD_OK;
+      CommandAnswer(2);
+      usbprog.longpackage = 0; // we do not expect data anymore (for this page)
+    }
+  }
+  // else word mode
+  else {
+    // ToDo
   }
 }
 
@@ -541,129 +516,17 @@ void CommandAnswer(int length)
   USBToglAndSend();
 }
 
-/** Enter ISP programming mode
- */
-void cmd_enter_progmode(struct cmd_enter_progmode_s *cmd) {
-  #if DEBUG_ON
-  UARTWrite("enter\r\n");
-  #endif
-  #if DEBUG_ON
-  int i;
-  for (i=0;i<12;i++) {
-    SendHex(*((char *)cmd+i));
-    UARTPutChar(' ');
-  }
-  SendHex(cmd->cmd1);
-  #endif
-  pgmmode.address = 0;
-  spi_active();
-  LED_on;
-
-  PORTB &= ~(1<<SCK);
-
-  if(usbprog.reset_pol==1)
-  {
-    PORTB &= ~(1<<RESET_PIN);
-    wait_ms(10);
-    PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
-    wait_ms(10);
-    PORTB &= ~(1<<RESET_PIN);
-    wait_ms(10);
-  }
-  else
-  {
-    PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
-    wait_ms(10);
-    PORTB &= ~(1<<RESET_PIN);
-    wait_ms(10);
-    PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
-    wait_ms(10);
-  }
-
-  answer[0] = CMD_ENTER_PROGMODE_ISP;
-
-  wait_ms(cmd->cmdexedelay);
-
-  int syncloops = cmd->synchloops;
-  unsigned char result3,result4;
-  for (;syncloops > 0; syncloops--) {
-    spi_out(cmd->cmd1);
-    wait_ms(cmd->bytedelay);
-    spi_out(cmd->cmd2);
-    wait_ms(cmd->bytedelay);
-    result3 = spi_inout(cmd->cmd3);
-    wait_ms(cmd->bytedelay);
-    result4 = spi_inout(cmd->cmd4);
-    wait_ms(cmd->bytedelay);
-
-    if ((cmd->pollindex==0) ||
-        ((cmd->pollindex==3) && (result3==cmd->pollvalue)) ||
-        ((cmd->pollindex==4) && (result4==cmd->pollvalue))) {
-      answer[1] = STATUS_CMD_OK;
-      CommandAnswer(2);
-      return;
-    }
-
-    //Apparently, we're not in sync. Pulse SCK once to get in sync
-    #if DEBUG_ON
-    UARTPutChar('#');
-    #endif
-    spi_pulseclockonce();
-  };
-
-  answer[1] = STATUS_CMD_FAILED;
-  CommandAnswer(2);
-  return;
-
-}
-
-/** Send/receive multiple spi bytes
- */
-void cmd_spi_multi(struct cmd_spi_multi_s *cmd) {
-  char send,receive;
-  /*numsent *must* be int because char may overflow if numRx+rxStart
-    becomes too large to fit in char */
-
-  int numsent=0,numrecv=0;
-  if (cmd->numTx>60||cmd->numRx>60) {
-    //Not implemented
-    answer[0] = CMD_SPI_MULTI;
-    answer[1] = STATUS_CMD_UNKNOWN;
-    CommandAnswer(2);
-  } else {
-
-    for(numsent=0;(numsent<cmd->numTx)||(numrecv<cmd->numRx);numsent++) {
-      if (numsent<cmd->numTx) send=cmd->txData[numsent]; else send=0;
-      receive=spi_inout(send);
-      if (numsent>=cmd->rxStart) {
-        //past this point, the data received from the AVR must be
-        //sent to the USB
-        answer[numrecv+2]=receive;
-        numrecv++;
-      }
-    }
-    answer[0] = CMD_SPI_MULTI;
-    answer[1] = STATUS_CMD_OK;
-
-    answer[numrecv+2] = STATUS_CMD_OK;
-    CommandAnswer(numrecv+3);
-  }
-
-}
-
-
 /* central command parser */
 void USBFlash(char *buf)
 {
   char result = 0;
   int numbytes;
-  int i;
-  #if DEBUG_ON
+
   UARTWrite("cmd ");
   SendHex(buf[0]);
   UARTWrite("cmd\r\n");
-  #endif
   USBNWrite(TXC1, FLUSH);
+
   // first see if this packet is expected by Flash or EEPROM programming
   if(usbprog.longpackage) {
     if(usbprog.lastcmd == CMD_PROGRAM_FLASH_ISP) {// last operation was flash programming
@@ -683,7 +546,7 @@ void USBFlash(char *buf)
     switch(buf[0]) {
     case CMD_SIGN_ON:
 
-      usbprog.datatogl=0; 
+      usbprog.datatogl=0;
       answer[0] = CMD_SIGN_ON;
       answer[1] = STATUS_CMD_OK;
       answer[2] = 10; // fixed length
@@ -698,7 +561,7 @@ void USBFlash(char *buf)
       answer[11] = 'K';
       answer[12] = '2';
       CommandAnswer(13);
-
+          
       return;
     break;
     case CMD_SET_PARAMETER:
@@ -708,26 +571,24 @@ void USBFlash(char *buf)
 
       switch(buf[1]){
         case PARAM_RESET_POLARITY:
-          if(buf[2]==0x00)
-            usbprog.reset_pol=0;
-          else
-            usbprog.reset_pol=1;
+	  if(buf[2]==0x00)
+	    usbprog.reset_pol=0;
+	  else
+	    usbprog.reset_pol=1;
+
+	break;
+
+	case PARAM_SCK_DURATION:
+		if(buf[2] != usbprog.sck_duration)
+		{
+		  if(buf[2]>0x82)  // supports only frequencys down to 249Hz
+		    buf[2] = 0x82;
+		  usbprog.sck_duration = buf[2];
+		  eeprom_write_byte(&ee_sck_duration, usbprog.sck_duration);
+		}
+		spi_init();
 
         break;
-
-        case PARAM_SCK_DURATION:
-	  #if DEBUG_ON
-          UARTPutChar('S');
-          SendHex(buf[2]);
-	  #endif
-          if (buf[2]>MAX_SCK_DURATION) buf[2]=MAX_SCK_DURATION;
-          if (buf[2] != usbprog.sck_duration)
-          {
-            usbprog.sck_duration = buf[2];
-            eeprom_write_byte(&ee_sck_duration, usbprog.sck_duration);
-          }
-          spi_init();
-          break;
       }
 
       CommandAnswer(2);
@@ -819,14 +680,74 @@ void USBFlash(char *buf)
     break;
 
     case CMD_ENTER_PROGMODE_ISP:
-      cmd_enter_progmode((struct cmd_enter_progmode_s *)buf);
+      UARTWrite("enter\r\n");
+      pgmmode.address = 0;
+      spi_active();
+      LED_on;
+      //spi_out(0xFF);
 
-      break;
+      //cbi  portb,SCK  ; clear SCK
+      PORTB &= ~(1<<SCK);
+      //PORTB |=(1<<SCK);
+      //PORTB &= ~(1<<SCK);
+      //PORTB |=(1<<SCK);
+      //PORTB &= ~(1<<SCK);
+      // set_reset    ;  set RESET = 1
+      
+      if(usbprog.reset_pol==1)
+      {
+     	PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
+     	wait_ms(10);
+     	PORTB &= ~(1<<RESET_PIN);
+     	wait_ms(10);
+      }
+      else
+      {
+    	PORTB &= ~(1<<RESET_PIN);
+    	wait_ms(10);
+    	PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
+    	wait_ms(10);
+      }
+
+      answer[0] = CMD_ENTER_PROGMODE_ISP;
+      answer[1] = STATUS_CMD_FAILED;
+
+      cli();
+      spi_out(0xac);
+      spi_out(0x53);
+      sei();
+
+      //RESET_high;
+      //RESET_low;
+
+      //int syncloops = buf[4];
+      int syncloops = 5;
+      for (;syncloops > 0; syncloops--) {
+	wait_ms(10);
+        result = spi_in();
+        //SendHex(result);
+        //if (result == buf[6]) {  //0x53 for avr //69 AT89
+		spi_out(0x00);
+          answer[1] = STATUS_CMD_OK;
+          CommandAnswer(2);
+          return;
+          break;
+        //}
+        spi_out(0x00);
+        wait_ms(20);
+        spi_out(0xac);
+        spi_out(0x53);
+      };
+
+      spi_out(0x00);
+
+      answer[1] = STATUS_CMD_FAILED;
+      CommandAnswer(2);
+      return;
+    break;
 
     case CMD_LEAVE_PROGMODE_ISP:
-      #if DEBUG_ON
-      UARTWrite("leave\r\n");
-      #endif
+      //UARTWrite("leave\r\n");
       LED_off;
       RESET_high;
       spi_idle();
@@ -836,7 +757,7 @@ void USBFlash(char *buf)
 
       // wenn adapter vom avrdude aus angesteuert wird
       if(usbprog.avrstudio==0)
-       usbprog.datatogl=0;  // to be sure that togl is on next session clear 
+       usbprog.datatogl=0;  // to be sure that togl is on next session clear
       //usbprog.datatogl=1;  // to be sure that togl is on next session clear
       //USBNWrite(RXC1, RX_EN);
 
@@ -844,9 +765,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_CHIP_ERASE_ISP:
-      #if DEBUG_ON
-      UARTWrite("erase\r\n");
-      #endif
+      //UARTWrite("erase\r\n");
       spi_out(buf[3]);
       spi_out(buf[4]);
       spi_out(0x00);
@@ -859,13 +778,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_FLASH_ISP:
-      #if DEBUG_ON 
-      UARTWrite("pflash\r\n");
-      for(i=0;i<10;i++) {
-        SendHex(buf[i]);
-        UARTPutChar(' ');
-      }
-      #endif
+      //UARTWrite("pflash\r\n");
       pgmmode.numbytes = (buf[1] << 8) | (buf[2]);
 
       // buf[3] = mode
@@ -880,18 +793,13 @@ void USBFlash(char *buf)
       // buf[7] = spi command for read program memory
       pgmmode.cmd3 = buf[7];
 
-      // store the page address (which in fact are the first 5 bits) for page write command
-      // because we will increment pgmode.address during transfer
-      pgmmode.pageaddress = pgmmode.address;
       usbprog.cmdpackage = 1;
       flash_program_fsm(buf);
       usbprog.cmdpackage = 0;
     break;
 
     case CMD_READ_FLASH_ISP:
-      #if DEBUG_ON
-      UARTWrite("rflash\r\n");
-      #endif
+      //UARTWrite("rflash\r\n");
       pgmmode.numbytes = ((buf[1] << 8) | (buf[2])) + 1; // number of bytes
       pgmmode.cmd3 = buf[3];  // read command
       numbytes = pgmmode.numbytes - 1;
@@ -925,16 +833,14 @@ void USBFlash(char *buf)
         usbprog.fragmentnumber = 1;
       }
       else {CommandAnswer(pgmmode.numbytes + 2);
-      usbprog.datatogl=0; 
+	usbprog.datatogl=0;
       }
 
       return;
     break;
 
     case CMD_READ_LOCK_ISP:
-      #if DEBUG_ON
-      UARTWrite("rlock\r\n");
-      #endif
+      //UARTWrite("rlock\r\n");
       spi_out(buf[2]);
       spi_out(buf[3]);
       spi_out(buf[4]);
@@ -949,9 +855,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_LOCK_ISP:
-      #if DEBUG_ON
-      UARTWrite("plock\r\n");
-      #endif
+      //UARTWrite("plock\r\n");
       spi_out(buf[1]);
       spi_out(buf[2]);
       spi_out(buf[3]);
@@ -965,9 +869,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_PROGRAM_EEPROM_ISP:
-      #if DEBUG_ON
-      UARTWrite("peerpom\r\n");
-      #endif
+      //UARTWrite("peerpom\r\n");
       // buf[1..2] = number of bytes to program
       pgmmode.numbytes = (buf[1] << 8) | (buf[2]);
       // buf[3] = mode
@@ -1005,27 +907,20 @@ void USBFlash(char *buf)
 
       answer[0] = CMD_READ_EEPROM_ISP;
       answer[1] = STATUS_CMD_OK;
-      
       answer[pgmmode.numbytes + 1] = STATUS_CMD_OK;
 
-      
-      
-      
       if(pgmmode.numbytes > 62){
         CommandAnswer(64);
         pgmmode.numbytes = pgmmode.numbytes - 62;
         usbprog.fragmentnumber = 1;
       }
       else CommandAnswer(pgmmode.numbytes + 2);
-      
-      //USBToglAndSend();
+
 
     break;
 
     case CMD_PROGRAM_FUSE_ISP:
-      #if DEBUG_ON
-      UARTWrite("pfuse\r\n");
-      #endif
+      //UARTWrite("pfuse\r\n");
       spi_out(buf[1]);
       spi_out(buf[2]);
       spi_out(buf[3]);
@@ -1040,9 +935,7 @@ void USBFlash(char *buf)
     break;
 
     case CMD_READ_FUSE_ISP:
-      #if DEBUG_ON 
-      UARTWrite("rfuse\r\n");
-      #endif
+      //UARTWrite("rfuse\r\n");
       spi_out(buf[2]);
       spi_out(buf[3]);
       spi_out(buf[4]);
@@ -1071,13 +964,85 @@ void USBFlash(char *buf)
     break;
 
     case CMD_SPI_MULTI:
-
-      //usbprog.datatogl=0;
-      #if DEBUG_ON
       UARTWrite("multi\r\n");
-      #endif
-      usbprog.avrstudio=0;  // only avrdude use this command // this is not true! also at89 @ avr studio
-      cmd_spi_multi((struct cmd_spi_multi_s *)buf);
+      usbprog.avrstudio=1;  // only avrdude use this command // this is not true! also at89 @ avr studio 
+           
+      SendHex(buf[4]);
+      SendHex(buf[5]);
+      SendHex(buf[6]);
+      SendHex(buf[7]);
+
+      if(usbprog.reset_pol==1){
+
+	UARTWrite("avr\r\n");
+
+	spi_out(buf[4]);
+	spi_out(buf[5]);
+	spi_out(buf[6]);
+
+	// instruction
+	switch(buf[4]) {
+	  // read low flash byte
+	  case 0x20:
+	  // read high flash byte
+	  case 0x28:
+	  // read signature
+	  case 0x30:
+	  // read lfuse
+	  case 0x50:
+          // read lock
+	  case 0x38:
+	  // read hfuse and lock
+	  case 0x58:
+	  // read eeprom memory
+	  case 0xa0:
+	    result = spi_in();
+	  break;
+
+	  //write fuse and lock bit
+	  case 0xac:
+	  //write eeprom
+	  case 0xc0:
+	    spi_out(buf[7]);
+	    result = 0x00;
+	  break;
+	}
+	answer[2] = 0x00;
+	answer[3] = 0x00;
+	answer[4] = 0x00;
+	answer[5] = result; // why result in position 5 ???
+
+      } else {
+	UARTWrite("at89\r\n");
+
+	char page[256];
+	switch(buf[4]) {
+	  // read program memory
+	  case 0x30:
+	    spi_out(buf[4]);
+	    spi_out(buf[5]);
+	    int i;
+	    for(i=0;i<256;i++){
+	      page[i]=spi_in();
+	    }
+
+	  break;
+	  
+	  // write program memory
+	  case 0x40:
+	    spi_out(buf[4]);
+	    spi_out(buf[5]);
+	    spi_out(buf[6]);
+	    spi_out(buf[7]);
+	}
+
+      }
+
+      answer[0] = CMD_SPI_MULTI;
+      answer[1] = STATUS_CMD_OK;
+
+      answer[6] = STATUS_CMD_OK;
+      CommandAnswer(3 + buf[2]);
       return;
     break;
     }
@@ -1089,8 +1054,7 @@ int main(void)
 {
 
  int conf, interf;
-  #if DEBUG_ON
-  #endif
+
   UARTInit();
 
 
@@ -1115,8 +1079,11 @@ int main(void)
   char lang[]={0x09,0x04};
   _USBNAddStringDescriptor(lang); // language descriptor
 
-  USBNDeviceManufacture("B.Sauter");
-  USBNDeviceProduct("AVRISP mk2 Clone");
+  //USBNDeviceManufacture("B.Sauter");
+  USBNDeviceManufacture("Elektor ");
+  //USBNDeviceManufacture("Elektor/EmbeddedProjects");
+  USBNDeviceProduct("AVRISP mk2 (CC2)");
+  //USBNDeviceProduct("CC2 AVR Programmer USB  ");
   USBNDeviceSerialNumber("0000A00128255");
 
   conf = USBNAddConfiguration();
