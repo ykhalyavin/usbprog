@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>
 
 #include <usbprog/stringutil.h>
 
@@ -26,6 +27,7 @@ using std::string;
 using std::hex;
 using std::stringstream;
 using std::strncmp;
+using std::malloc;
 
 /* ShellStringTokenizer {{{1 */
 
