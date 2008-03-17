@@ -305,6 +305,10 @@ StringVector Shell::complete(const string &text, const string &full_text,
         size_t pos = vec.size() - 1;
         if (text.size() > 0)
             pos--;
+        for (StringVector::const_iterator it = vec.begin(); it != vec.end(); ++it)
+            // don't count a position for an option
+            if ((*it).size() > 0 && (*it)[0] == '-')
+                pos--;
         if (cmd->getArgNumber() <= pos)
             return empty_element_sv();
         else {

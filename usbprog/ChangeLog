@@ -1,3 +1,7 @@
+2008-03-17  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix completion of "-nostart" for the "upload" command
+
 2008-03-16  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* implement command completion

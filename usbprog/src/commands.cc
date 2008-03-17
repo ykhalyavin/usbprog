@@ -862,15 +862,22 @@ StringVector UploadCommand::getCompletions(
         const string &start, size_t pos, bool option,
         bool *filecompletion) const
 {
-    if (pos != 0 || option)
+    if (pos != 0)
         return StringVector();
 
-    if (start.size() > 0 && Fileutil::isPathName(start)) {
-        if (filecompletion)
-            *filecompletion = true;
-        return StringVector();
-    } else
-        return complete_firmware(start, m_firmwarepool);
+    if (option) {
+        StringVector ret;
+        if (str_starts_with("-nostart", start))
+            ret.push_back("-nostart");
+        return ret;
+    } else {
+        if (start.size() > 0 && Fileutil::isPathName(start)) {
+            if (filecompletion)
+                *filecompletion = true;
+            return StringVector();
+        } else
+            return complete_firmware(start, m_firmwarepool);
+    }
 }
 
 
