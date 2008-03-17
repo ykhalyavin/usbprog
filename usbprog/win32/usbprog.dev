@@ -1,7 +1,7 @@
 [Project]
 FileName=usbprog.dev
 Name=usbprog
-UnitCount=14
+UnitCount=12
 Type=1
 Ver=1
 ObjFiles=
@@ -100,26 +100,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=..\src\optionparser.cc
-CompileCpp=1
-Folder=usbprog
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit9]
-FileName=..\src\optionparser.h
-CompileCpp=1
-Folder=usbprog
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit10]
 FileName=..\src\shell.cc
 CompileCpp=1
 Folder=usbprog
@@ -129,7 +109,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
+[Unit9]
 FileName=..\src\shell.h
 CompileCpp=1
 Folder=usbprog
@@ -139,10 +119,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit12]
+[Unit10]
 FileName=..\src\usbprog.cc
 CompileCpp=1
 Folder=usbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit11]
+FileName=..\src\usbprog.h
+CompileCpp=1
+Folder=usbprog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit12]
+FileName=..\src\usbprog.rc
+CompileCpp=1
+Folder=Resources
 Compile=1
 Link=1
 Priority=1000
