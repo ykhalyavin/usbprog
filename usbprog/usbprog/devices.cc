@@ -364,8 +364,6 @@ size_t DeviceManager::getNumberUpdateDevices() const
 /* -------------------------------------------------------------------------- */
 Device *DeviceManager::getUpdateDevice() const
 {
-    Device *dev = NULL;
-
     if (m_currentUpdateDevice < -1 ||
             m_currentUpdateDevice >= (ssize_t)m_updateDevices.size())
         return NULL;
