@@ -13,10 +13,10 @@ usbprog_gui_SOURCES  	= usbprogFrm.h usbprogFrm.cc \
 usbprog_gui_LDADD	= ../usbprog/libusbprog.la \
 			  @WX_LIBS@
 man_MANS		= usbprog-gui.1
-endif
 
 icondir = $(datadir)/pixmaps
 icon_DATA = usbprog_icon.xpm
+endif
 
 usbprog-gui.1: usbprog-gui.pod 
 	pod2man usbprog-gui.pod         \

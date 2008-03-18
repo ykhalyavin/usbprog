@@ -19,7 +19,9 @@ MAINTAINERCLEANFILES  = Makefile.in aclocal.m4 configure config.h.in \
 ACLOCAL               = aclocal -I $(auxdir)
 
 
+if GUI
 desktopdir = $(datadir)/applications
 desktop_DATA = usbprog.desktop
+endif
 
 
