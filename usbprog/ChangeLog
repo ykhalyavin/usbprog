@@ -1,3 +1,7 @@
+2008-03-21  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* add 'Categories' and 'X-SuSE-translate' to usbprog.desktop
+
 2008-03-18  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* only install the desktop file and icon when GUI is compiled
