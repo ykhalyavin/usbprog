@@ -341,6 +341,13 @@ void USBNAddInEndpoint(int configuration, int interface, int epnr,
   _USBNAddEndpoint(configuration,interface,epnr,epadr+0x80,attr,fifosize,intervall);
 }
 
+
+void USBNNackEvent(void *callback)
+{
+   rxfifos.nack_callback = callback;
+}
+
+
 void _USBNAddEndpoint(int configuration, int interface, int epnr, int epadr,char attr, int fifosize, int intervall)
 {
 

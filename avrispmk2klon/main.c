@@ -529,6 +529,27 @@ void SendCompleteAnswer(void)
   }
 }
 
+#if 0
+void NackEvent(unsigned int number)
+{
+  if(number & 0x20) 
+    USBNWrite(TXC1, FLUSH);
+
+  if(number & 0x02) 
+    USBNWrite(RXC1, FLUSH+RX_EN);
+    USBNWrite(TXC1, FLUSH);
+    if(usbprog.datatogl == 1) {
+      USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
+      usbprog.datatogl=0;
+    } else {
+      USBNWrite(TXC1, TX_LAST+TX_EN);
+      usbprog.datatogl=1;
+    }
+  }
+}
+#endif
+
+
 void CommandAnswer(int length)
 {
   int i;
@@ -614,7 +635,6 @@ void cmd_enter_progmode(struct cmd_enter_progmode_s *cmd) {
   answer[1] = STATUS_CMD_FAILED;
   CommandAnswer(2);
   return;
-
 }
 
 /** Send/receive multiple spi bytes
@@ -631,7 +651,6 @@ void cmd_spi_multi(struct cmd_spi_multi_s *cmd) {
     answer[1] = STATUS_CMD_UNKNOWN;
     CommandAnswer(2);
   } else {
-
     for(numsent=0;(numsent<cmd->numTx)||(numrecv<cmd->numRx);numsent++) {
       if (numsent<cmd->numTx) send=cmd->txData[numsent]; else send=0;
       receive=spi_inout(send);
@@ -658,6 +677,9 @@ void USBFlash(char *buf)
   char result = 0;
   int numbytes;
   int i;
+  
+  USBNWrite(TXC1, 0x00);
+  
   #if DEBUG_ON
   UARTWrite("cmd ");
   SendHex(buf[0]);
@@ -679,11 +701,11 @@ void USBFlash(char *buf)
   // if not, this is a command packet, we will decode here
   else {
     usbprog.lastcmd = buf[0]; // store current command for later use
-    //usbprog.datatogl=0;
     switch(buf[0]) {
+    
     case CMD_SIGN_ON:
 
-      usbprog.datatogl=0; 
+
       answer[0] = CMD_SIGN_ON;
       answer[1] = STATUS_CMD_OK;
       answer[2] = 10; // fixed length
@@ -820,6 +842,7 @@ void USBFlash(char *buf)
 
     case CMD_ENTER_PROGMODE_ISP:
       cmd_enter_progmode((struct cmd_enter_progmode_s *)buf);
+      return;
 
       break;
 
@@ -836,7 +859,7 @@ void USBFlash(char *buf)
 
       // wenn adapter vom avrdude aus angesteuert wird
       if(usbprog.avrstudio==0)
-       usbprog.datatogl=0;  // to be sure that togl is on next session clear 
+      usbprog.datatogl=0;  // to be sure that togl is on next session clear 
       //usbprog.datatogl=1;  // to be sure that togl is on next session clear
       //USBNWrite(RXC1, RX_EN);
 
@@ -1009,16 +1032,21 @@ void USBFlash(char *buf)
       answer[pgmmode.numbytes + 1] = STATUS_CMD_OK;
 
       
-      
-      
       if(pgmmode.numbytes > 62){
         CommandAnswer(64);
         pgmmode.numbytes = pgmmode.numbytes - 62;
         usbprog.fragmentnumber = 1;
+	return; 
       }
-      else CommandAnswer(pgmmode.numbytes + 2);
-      
-      //USBToglAndSend();
+      else {
+	CommandAnswer(pgmmode.numbytes + 2);
+	if(usbprog.datatogl ==1)
+	usbprog.datatogl = 0;
+	else
+	usbprog.datatogl = 1;
+	return; 
+      }
+
 
     break;
 
@@ -1102,6 +1130,7 @@ int main(void)
   usbprog.avrstudio = 1;   // 1 no
   usbprog.fragmentnumber = 0;  // read flash fragment
   usbprog.reset_pol = 1;  // 1= avr 0 = at89
+  usbprog.datatogl=0; 
 
   DDRA = (1 << PA4);
   LED_off;
@@ -1127,6 +1156,10 @@ int main(void)
   USBNAlternateSetting(conf,interf,0);
 
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,&SendCompleteAnswer);
+  
+  //USBNNackEvent(&NackEvent);
+
+
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&USBFlash);
 
   USBNInitMC();

@@ -71,8 +71,13 @@ void _USBNMemFIFO(fifo_t *fifo,char* data,int size)
 void _USBNNackEvent(void)
 {
   unsigned char event;
+  void (*ptr)();
+  
   event = USBNRead(NAKEV);
-  SendHex(event);
+  //SendHex(event);
+  
+  //ptr = rxfifos.nack_callback;
+  //(*ptr)((unsigned int)event);
 
   if(event & 0x01)
   {
@@ -83,13 +88,13 @@ void _USBNNackEvent(void)
   {
     //USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
     //USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
-    
+   /* 
     USBNWrite(TXC1,FLUSH);	//re-enable the receiver  
     USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
     
     USBNWrite(TXC1,FLUSH);	//re-enable the receiver  
     USBNWrite(TXC1,TX_LAST+TX_EN);
-    
+   */ 
     
     //USBNWrite(TXC1,RX_EN);	//re-enable the receiver  
 

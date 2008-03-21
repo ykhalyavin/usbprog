@@ -438,3 +438,5 @@ clean clean_list program
 
 download:
 	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex -E noreset
+loader:
+	usbprog device 0 upload main.bin

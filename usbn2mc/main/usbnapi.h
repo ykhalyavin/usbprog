@@ -94,6 +94,8 @@ void USBNAddInEndpoint(int configuration, int interface, int epnr,
 void _USBNAddEndpoint(int configuration, int interface, int epnr, 
 		int epadr,char attr, int fifosize, int intervall);
 
+/// call at nack event
+void USBNNackEvent(void *callback);
 
 /// transmit data to host
 void USBNSendData(int fifonumber, char *data);
