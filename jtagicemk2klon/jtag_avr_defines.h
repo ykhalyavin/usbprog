@@ -92,7 +92,7 @@
 /*
  * this is in high byte
  */
-#define AVR_EN_OCDR                     0x80
+#define AVR_EN_OCDR                     0x8000
 
 enum jtag_data_state {
     CHK_BRK = 1,

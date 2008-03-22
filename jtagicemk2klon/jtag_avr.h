@@ -28,6 +28,7 @@ void idcode(unsigned char *buf);
 void bypass(void);
 void avr_reset(int true);
 void avr_prog_enable(void);
+void avr_prog_disable(void);
 void avr_prog_cmd(void);
 int avr_jtag_instr(unsigned char instr, int delay);
 
@@ -36,11 +37,11 @@ void avr_sequence(char tdi2, char tdi1, unsigned char * tdo);
 
 /*
  * The debugger is communicating with the CPU core through the use of
- * the ocdr I/O register when the program is running. When the 
- * CPU is halted/reset (i.e. programming flash) then other means 
+ * the ocdr I/O register when the program is running. When the
+ * CPU is halted/reset (i.e. programming flash) then other means
  * is used
  *
- * Flash page size : total * bits per word == total * 16 
+ * Flash page size : total * bits per word == total * 16
  * Eeprom page size : total * bits per byte == total * 8
  *
  * The jtag id determines the AVR drivate
@@ -90,7 +91,7 @@ struct avr_reg {
     unsigned char r31;
     unsigned char sreg;
     unsigned short sp;
-    unsigned short pc; 
+    unsigned short pc;
 };
 
 union tgt_reg {

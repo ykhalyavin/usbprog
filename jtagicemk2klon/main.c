@@ -1,6 +1,6 @@
 /*
  * jtagice - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Benedikt Sauter 
+ * Copyright (C) 2006 Benedikt Sauter
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #define F_CPU 16000000
 #include <util/delay.h>
- 
+
 #include "wait.h"
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 #include "uart.h"
@@ -86,7 +86,7 @@ void USBToglAndSend(void)
 
 
 volatile unsigned char answer[300];
-
+/*
 void CommandAnswer(int length)
 {
   int i;
@@ -95,8 +95,30 @@ void CommandAnswer(int length)
   for(i = 0; i < length; i++)
     USBNWrite(TXD1, answer[i]);
 
-   /* control togl bit */
+   /* control togl bit
    USBToglAndSend();
+} */
+
+void CommandAnswer(int length)
+{
+	int i,pos;
+	unsigned char res;
+	pos = 0;
+	USBNWrite(TXC1, FLUSH);
+	// divide result in fifo sized packets
+	while (length)  {
+		// wait for tx complete
+		do {
+			res = USBNRead(TXC1);
+		} while (res & TX_EN);
+		// put data to FIFO
+		USBNWrite(TXD1,answer[pos++]);
+		for (i = 1; (i < 64) && (i < length); ++i) {
+			USBNBurstWrite(answer[pos++]);
+		}
+		USBToglAndSend();
+		length -= i; // substract data already sent
+	}
 }
 
 /* called after data where send to pc */
@@ -105,23 +127,121 @@ void USBSend(void)
 
 }
 
-unsigned char buf[320];	//Recievebuffer for long packages
+unsigned char buf[MESSAGE_BUFFER_SIZE];	//Recievebuffer for long packages
 static char recieveCounter = 0;
 
 /* is called when received data from pc */
-void USBReceive(char *buf)
+void USBReceive(char *inbuf)
 {
+	static JTAGICE_STATE current_state = START;
+	uint8_t read_pos = 0; // please note that this function get's everytime a 64 byte package out of USBN
+	static uint16_t write_pos = 0;
+	static uint16_t data_remain = 0;
+	uint16_t data_to_read;
 
-      if(buf[0]==MESSAGE_START){
-	jtagice.seq1=buf[1];		// save sequence number
-	jtagice.seq2=buf[2];		// save sequence number
-      }
-    
+	while (read_pos < 64) {
 
-	// check if package is a longpackage
-	//jtagice.size = buf[3]+(255*buf[4])+(512*buf[5])+(1024*buf[6]);
-	
-		int cmdlength=0;
+		switch (current_state) {
+			case START:
+				if (inbuf[read_pos++] == MESSAGE_START) {
+					current_state = GET_SEQUENCE_NUMBER;
+					buf[0] = MESSAGE_START;
+					write_pos = 1;
+#ifdef DEBUG_VERBOSE
+					UARTWrite("Start Token found\r\n");
+#endif
+				}
+				break;
+			case GET_SEQUENCE_NUMBER:
+				if (write_pos++ == 1) {
+					buf[1] = inbuf[read_pos++];
+					jtagice.seq1 = buf[1];
+				}
+				else {
+					buf[2] = inbuf[read_pos++];
+					jtagice.seq2 = buf[2];
+					current_state = GET_MESSAGE_SIZE;
+#ifdef DEBUG_VERBOSE
+					UARTWrite("Seq read:");
+					SendHex(jtagice.seq1);
+					SendHex(jtagice.seq2);
+					UARTWrite("\r\n");
+#endif
+				}
+				break;
+			case GET_MESSAGE_SIZE:
+#ifdef DEBUG_VERBOSE
+				UARTWrite("Read Size\r\n");
+#endif
+				if (write_pos < 6) {
+					buf[write_pos++] = inbuf[read_pos++];
+				}
+				else if (write_pos == 6) {
+					buf[write_pos++] = inbuf[read_pos++];
+					data_remain = *(uint16_t*)(buf + 3); // we ignore the upper 2 bytes of the package because our buffer would not be able to handle it
+					current_state = GET_TOKEN;
+#ifdef DEBUG_ON
+					UARTWrite("Data Size ");
+					SendHex((char)(data_remain >> 8));
+					SendHex((char)data_remain);
+					UARTWrite("\r\n");
+#endif
+				}
+				break;
+			case GET_TOKEN:
+				if (inbuf[read_pos++] != TOKEN) {
+					current_state = START;
+#ifdef DEBUG_ON
+					UARTWrite("Token error\r\n");
+#endif
+				}
+				else {
+					current_state = GET_DATA;
+					write_pos++; // dont copy the token - no use
+				}
+				break;
+			case GET_DATA:
+				// try to get all remaining data from buffer at once
+				data_to_read = ((64 - read_pos) < data_remain) ? 64 - read_pos : data_remain;
+				if ((write_pos + data_to_read) >= MESSAGE_BUFFER_SIZE) {
+#ifdef DEBUG_ON
+					UARTWrite("InBuf Overflow\r\n");
+#endif
+					current_state = START;
+				}
+				data_remain -= data_to_read;
+				while (data_to_read--) {
+#ifdef DEBUG_VERBOSE
+					UARTWrite("C:");
+					SendHex((char)(write_pos >> 8));
+					SendHex((char)write_pos);
+					UARTWrite(":");
+					SendHex(inbuf[read_pos]);
+					UARTWrite("\r\n");
+#endif
+						buf[write_pos++] = inbuf[read_pos++];
+				}
+				if (!data_remain)
+					current_state = GET_CRC;
+				break;
+			case GET_CRC:
+				// ignore rest of packet first
+				read_pos = 64;
+				current_state = START;
+#ifdef DEBUG_ON
+					UARTWrite("Complete -> Process\r\n");
+#endif
+				JTAGICE_ProcessCommand(buf);
+		}
+
+
+
+	}
+
+}
+
+void JTAGICE_ProcessCommand(char *buf) {
+	int cmdlength=0;
 UARTWrite("Com: ");
 SendHex(buf[8]);
 UARTWrite("\r\n");
@@ -138,11 +258,11 @@ UARTWrite("\r\n");
 			case CMND_SET_PARAMETER:
 				cmdlength = cmd_set_parameter((char*)buf,(char*)answer);
 			break;
-		
+
 			case CMND_READ_MEMORY:
 				cmdlength = cmd_read_memory((char*)buf,(char*)answer);
 			break;
-			
+
 			case CMND_GET_PARAMETER:
 				cmdlength = cmd_get_parameter((char*)buf,(char*)answer);
 			break;
@@ -157,11 +277,11 @@ UARTWrite("\r\n");
 			case CMND_SET_DEVICE_DESCRIPTOR:
 				cmdlength = cmd_set_device_descriptor((char*)buf, (char*)answer);
 			break;
-	
+
 			case CMND_GO:
 				cmdlength = cmd_go((char*)buf,(char*)answer);
 			break;
-			
+
 			case CMND_RESTORE_TARGET:
 				cmdlength = cmd_restore_target((char*)buf,(char*)answer);
 			break;
@@ -177,11 +297,11 @@ UARTWrite("\r\n");
 			case CMND_RESET:
 				cmdlength = cmd_reset((char*)buf,(char*)answer);
 			break;
-			
+
 			case CMND_READ_PC:
 				cmdlength = cmd_read_pc((char*)buf,(char*)answer);
 			break;
-	
+
 			case CMND_SET_BREAK:
 				cmdlength = cmd_set_break((char*)buf,(char*)answer);
 			break;
@@ -193,15 +313,15 @@ UARTWrite("\r\n");
 			case CMND_SINGLE_STEP:
 				cmdlength = cmd_single_step((char*)buf,(char*)answer);
 			break;
-			
+
 			case CMND_SELFTEST:
 				cmdlength = cmd_selftest((char*)buf, (char*)answer);
 			break;
-			
+
 			case CMND_WRITE_MEMORY:
 				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
 			break;
-			
+
 			case CMND_CHIP_ERASE:
 				cmdlength = cmd_chip_erase((char*)buf, (char*)answer);
 			break;
@@ -220,7 +340,7 @@ UARTWrite("\r\n");
 		}
 		// recalculate size
 //		jtagice.size = jtagice.size -54;
-	
+
 		if(forcedStop)
 		{
 			forcedStop = 0;
@@ -242,7 +362,6 @@ UARTWrite("\r\n");
 			crc16_append(answer,(unsigned long)14);
 			CommandAnswer(16);
 		}
-	
 }
 
 
@@ -255,8 +374,8 @@ int main(void)
 	UARTInit();
 	UARTWrite("Hallo\r\n");
 #endif
-  
-  USBNInit();   
+
+  USBNInit();
   jtagice.datatogl=1;
 
   jtag_init();
@@ -266,14 +385,14 @@ int main(void)
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
   USBNDeviceProductID(0x2103); // atmel ids
-  
+
   USBNDeviceBCDDevice(0x0200);
 
 
   char lang[]={0x09,0x04};
   _USBNAddStringDescriptor(lang); // language descriptor
 
-  
+
   USBNDeviceManufacture ("USBprog EmbeddedProjects");
   USBNDeviceProduct	("JTAGICE mk2 Clone");
   USBNDeviceSerialNumber("A000000D3F");
@@ -304,7 +423,7 @@ int main(void)
 	//char reg=0x09;	//9	10010	(0. bit = read)	BSR (ff07 12)
 	//char reg=0x1A;	//D	10010	(0. bit = read)	Control and status register (f7ef 1a)
 	//char reg=AVR_COMM_DATA_CTL;	//D	10010	(0. bit = read)	Control and status register (f7ef 1a)
-	
+
 
 	avr_reset(1);
 	avr_reset(0);
@@ -332,17 +451,17 @@ int main(void)
 	jtagbuf[1]=0xBF;
 	jtag_write(16,jtagbuf);	// avr befehl in das instr register schreiben
 
-	
+
 	// dann wieder AVR_OCD waehlen
 	jtag_reset();
 	avr_jtag_instr(AVR_OCD,0);
 
 	// Hier ist der inhalt aus dem OCDR Register erreichbar
 	// erstmal muss die adresse pre latched sein
-	jtagbuf[0]=0x0C; 
+	jtagbuf[0]=0x0C;
 	jtag_write(5,jtagbuf);
 
- 	// und dann sollte man das register abholen 
+ 	// und dann sollte man das register abholen
 	jtag_goto_state(SHIFT_DR);
 	jtagbuf[0]=0x00;
 	jtagbuf[1]=0x00;

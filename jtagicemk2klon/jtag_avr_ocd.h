@@ -22,6 +22,25 @@
 #ifndef JTAG_AVR_OCD_H
 #define JTAG_AVR_OCD_H
 
+struct AVR_Context_Type {
+	uint8_t r16;
+	uint8_t r30;
+	uint8_t r31;
+
+	uint8_t registerDirty;
+};
+
+unsigned char ocd_save_context();
+unsigned char ocd_restore_context();
+
+unsigned char ocd_execute_avr_instruction(uint16_t instr);
+uint8_t ocd_read_ocdr();
+
+uint16_t ocd_read_pc();
+
+uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
+uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
+
 unsigned char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,
                        short size, unsigned char delay);
 unsigned char rd_sram_ocd_avr (unsigned short addr, unsigned char *buf,
@@ -59,7 +78,7 @@ unsigned char activate_ocd (unsigned char delay);
 unsigned char
 exec_instr_avr (unsigned char *out, unsigned char *in, unsigned char flg,
                 unsigned char delay);
-				
+
 #define write_flash		0x01
 
 

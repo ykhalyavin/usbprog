@@ -1,6 +1,6 @@
 /*
  * jtagice - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006,2007 Benedikt Sauter 
+ * Copyright (C) 2006,2007 Benedikt Sauter
  *		 2007 Robert Schilling robert.schilling@gmx.at
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,10 +18,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "jtagice2.h" 
-#include "jtag_avr_prg.h" 
-#include "jtag_avr_ocd.h" 
-#include "jtag_avr.h" 
+#include "jtagice2.h"
+#include "jtag_avr_prg.h"
+#include "jtag_avr_ocd.h"
+#include "jtag_avr.h"
 #include "uart.h"
 #include "jtag.h"
 #include "crc.h"
@@ -38,6 +38,7 @@ struct deviceDescriptor_t deviceDescriptor;
 
 int cmd_get_sign_on(char *msg, char * answer)
 {
+	jtag_reset();
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -49,7 +50,7 @@ int cmd_get_sign_on(char *msg, char * answer)
 
 	answer[8]  = RSP_SIGN_ON;		// page 57 datasheet
 	answer[9]  = 0x01;	// communication protocoll version
-	answer[10] = 0xff;	
+	answer[10] = 0xff;
 	answer[11] = 0x21;  //07
 	answer[12] = 0x04;
 	answer[13] = 0x00;
@@ -102,6 +103,7 @@ int cmd_sign_off(char * msg, char * answer)
 
 int cmd_get_sync(char * msg, char * answer)
 {
+	jtag_reset();
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -139,14 +141,14 @@ int cmd_set_parameter(char *msg, char * answer)
 			jtagice.emulatormode = answer[10];
 			return 11;
 		break;
-		
+
 		case DAISY_CHAIN_INFO:
 			return 11;
 		break;
 		case OCD_JTAG_CLOCK:
 			return 11;
 		break;
-		case TIMERS_RUNNING:	
+		case TIMERS_RUNNING:
 			return 11;
 		break;
 		default:
@@ -159,39 +161,39 @@ int cmd_set_parameter(char *msg, char * answer)
 int cmd_get_parameter(char *msg, char * answer)
 {
 	char jtagbuf[4];
-	
+
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
 	answer[7] = TOKEN;
-	
+
 	answer[4] = 0;	//default length
 	answer[5] = 0;
 	answer[6] = 0;
-	
+
 	char signature[3];
 
 	switch(msg[9])
 	{
 	case OCD_VTARGET:
 		answer[3] = 0x03;	//length of Body
-		
+
 		answer[8] = RSP_PARAMETER;
 		answer[9] = 0x04;
 		answer[10] = 0x14;
-		
+
 		crc16_append(answer,(unsigned long)11);
 		return 13;
-		
+
 	break;
-	
-	case JTAG_ID_STRING:	
+
+	case JTAG_ID_STRING:
 		// get id from target controller over jtag connection
 		idcode(jtagbuf);
-		
+
 		answer[3] = 0x05;		// length of body
 		answer[8] = RSP_PARAMETER;		// (0x80 = ok)
-	
+
 		answer[9] = jtagbuf[0];	//JTAG ID
 		answer[10] = jtagbuf[1];
 		answer[11] = jtagbuf[2];
@@ -213,21 +215,13 @@ int cmd_get_parameter(char *msg, char * answer)
 	break;
 	}
 
-	return 0; 
+	return 0;
 }
 
 
 int cmd_read_pc(char *msg, char * answer)
 {
-	unsigned char jtagbuf[4],recvbuf[4];
-	jtag_reset();
-	avr_jtag_instr(AVR_INSTR,0);
-
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x00;
-	jtagbuf[2]=0xff;
-	jtagbuf[3]=0xff;
-	jtag_write_and_read(32,jtagbuf,recvbuf);
+	uint16_t pc = ocd_read_pc();
 
 
 	// TODO (program answer always with ok!)
@@ -241,9 +235,9 @@ int cmd_read_pc(char *msg, char * answer)
 	answer[7] = TOKEN;
 
 	answer[8]	= 0x84;		// (0x80 = ok)
-	
-	answer[9] = recvbuf[0]/2;
-	answer[10] = recvbuf[1]/2;
+
+	answer[9] = (char)(pc>>1);
+	answer[10] = (char)(pc>>9);
 	answer[11]= 0x00;
 	answer[12]= 0x00;
 
@@ -326,8 +320,26 @@ int cmd_single_step(char *msg, char * answer)
 
 int cmd_forced_stop(char * msg, char * answer)
 {
- 	jtag_reset();
+ 	//jtag_reset();
 	avr_jtag_instr(AVR_FORCE_BRK, 0);
+
+
+#ifdef DEBUG_ON
+	uint16_t brk;
+	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
+	UARTWrite("OCDCTL: ");
+	SendHex(brk>>8);
+	SendHex((char)brk);
+	UARTWrite("\r\n");
+	rd_dbg_ocd(AVR_BSR,&brk,0);
+	UARTWrite("BSR: ");
+	SendHex(brk>>8);
+	SendHex((char)brk);
+	UARTWrite("\r\n");
+#endif
+
+	ocd_save_context();
+
 
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
@@ -346,8 +358,26 @@ int cmd_forced_stop(char * msg, char * answer)
 
 int cmd_go(char * msg, char * answer)
 {
-  jtag_reset();
-  avr_jtag_instr(AVR_RUN, 0);
+//  jtag_reset();
+	avr_reset(0);
+	// restore possibly overridden registers
+	ocd_restore_context();
+
+	avr_jtag_instr(AVR_RUN, 0);
+
+#ifdef DEBUG_ON
+	uint16_t brk;
+	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
+	UARTWrite("OCDCTL: ");
+	SendHex(brk>>8);
+	SendHex((char)brk);
+	UARTWrite("\r\n");
+	rd_dbg_ocd(AVR_BSR,&brk,0);
+	UARTWrite("BSR: ");
+	SendHex(brk>>8);
+	SendHex((char)brk);
+	UARTWrite("\r\n");
+#endif
 
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
@@ -405,6 +435,8 @@ int cmd_enter_progmode(char * msg, char * answer)
 int cmd_leave_progmode(char * msg, char * answer)
 {
 	// TODO (program answer always with ok!)
+	avr_prog_disable();
+
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -445,12 +477,33 @@ int cmd_read_memory(char * msg, char * answer)
 	int length=8;
 	int msglen=0;
 	unsigned long len,startaddr;	// length
-	
+
 	// byte 2,3,4 of length = default value
 	answer[4] = 0;
 	answer[5] = 0;
 	answer[6] = 0;
 
+#ifdef DEBUG_ON
+	UARTWrite("R:"); // Display R:addr:len
+	SendHex(msg[9]);
+	UARTWrite(":");
+	SendHex(msg[16]);
+	SendHex(msg[15]);
+	SendHex(msg[14]);
+	UARTWrite(":");
+	SendHex(msg[12]);
+	SendHex(msg[11]);
+	SendHex(msg[10]);
+	UARTWrite("\r\n");
+#endif
+
+	// decode generic parameters
+	len = (msg[13] << 24) |  (msg[12] << 16) | (msg[11] << 8) | msg[10];
+	startaddr = (msg[17] << 24) |  (msg[16] << 16) | (msg[15] << 8) | msg[14];
+
+
+	//// !!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// Length Check for the len Parameters to prohibit Buffer overflow in answer!!!
 
 //	char jtagbuf[6];
 	//SendHex(msg[15]);
@@ -464,77 +517,59 @@ int cmd_read_memory(char * msg, char * answer)
 
 		case FUSE_BITS:
 			answer[9] = rd_lfuse_avr();
-			msglen = 2;
-			answer[3] = 2;
-		
 			switch(msg[10])
 				{
 				case 1:
-					if(msg[11] == 0)
+					if(msg[14] == 0) // read low fuse?
 					{
 						answer[9] = rd_lfuse_avr();
-						//msg[11]++;
 					}
-					else if(msg[11] == 1)
+					else if(msg[14] == 1) // read high fuse?
 					{
 						answer[9] = rd_hfuse_avr();
-						//msg[11]++;
 					}
-					else
+					else // otherwise return efuse
 					{
 						answer[9] = rd_efuse_avr();
-						//msg[11] = 0;
 					}
 					msglen = 2;
-					answer[3] = 2;			// length of body with ok
-				break; 
-				
+				break;
+
 				case 2:
 					answer[9] = rd_lfuse_avr();
 					answer[10] = rd_hfuse_avr();
 					msglen = 3;
-					answer[3] = 3;			// length of body with ok
 				break;
-				
+
 				case 3:
 					answer[9] = rd_lfuse_avr();
 					answer[10] = rd_hfuse_avr();
 					answer[11] = rd_efuse_avr();
 					msglen = 4;
-					answer[3] = 4;			// length of body with ok
 				break;
-			} 
-			
+			}
+
 			break;
 
 
 		case SRAM:
-			// flash lesen 
-			len = msg[16]+(255*msg[17])+(512*msg[18])+(1024*msg[19]);	// length
-			//startaddress
-			startaddr = msg[20]+(255*msg[21])+(512*msg[22])+(1024*msg[23]);	// length
-			answer[3] = (char)msg[16]+1;					// length of body with ok
-			msglen=(int)msg[16]+1;
-			//SendHex(msg[16]);
-		
-			answer[9]=0x00;
-			answer[10]=0x00;
-			answer[11]=0x00;
-			answer[12]=0x00;
-			//rd_sram_ocd_avr ((short)startaddr, &answer[9] ,(short)len ,0);
+			// read from registerspace, io/memory or sram
+			msglen = len+1;
+			// todo: range checks against the device parameters
+
+			ocd_rd_sram((uint16_t)startaddr,(uint16_t)len,&answer[9]);
 
 		break;
 
 		case SPM:
-			// flash lesen 
-			len = msg[16]+(255*msg[17])+(512*msg[18])+(1024*msg[19]);	// length
-			//startaddress
-			startaddr = msg[20]+(255*msg[21])+(512*msg[22])+(1024*msg[23]);	// length
-			
-			// read data from flash and send back
-			//answer[3] = (char)(startaddr+1);					// length of body with ok
-			answer[3] = (char)msg[16]+1;					// length of body with ok
-			msglen=(int)msg[16]+1;
+			// not yet really supported
+
+			// write message reply len
+			msglen = len+1;
+			answer[3] = (char)msglen;
+			answer[4] = (char)(msglen>>8);
+			answer[5] = 0;
+			answer[6] = 0;
 
 			//init_avr_jtag (&(reg.avr), 0);
 			char buf[20];
@@ -544,13 +579,13 @@ int cmd_read_memory(char * msg, char * answer)
 			answer[10]=buf[1];
 			//answer[9] - ...
 		break;
-		
+
 		case OSCCAL_BYTE:
 			answer[9] = rd_cal_byte(msg[14]);
 			msglen=2;
 			answer[3] = 2;					// length of body with ok
 		break;
-		
+
 		case SIGN_JTAG:
 			rd_signature_avr(&answer[9]);
 			//msglen = 4;
@@ -573,26 +608,26 @@ int cmd_read_memory(char * msg, char * answer)
 			  break;
 			  default:
 			    ;
-			} 
+			}
 
 		break;
-		
+
 		case FLASH_PAGE:
 		{
-			int len = (msg[11] << 8) | msg[10];
-			rd_flash_page(len, ((long) msg[16] << 16L) | (msg[15] << 8) | msg[14], &answer[9]);
+#ifdef DEBUG_ON
+			UARTWrite("flash");
+#endif
+			rd_flash_page(len, startaddr, &answer[9]);
 			msglen = len + 1;
-			answer[3] = msglen & 0xFF;			// length of body with ok
-			answer[4] = (msglen >> 8) & 0xFF;
 		}
 		break;
-		
+
 		case EEPROM_PAGE:
 			rd_eeprom_page(msg[10], (msg[15] << 8) | msg[14],  &answer[9]);
 			answer[3] = msg[10] + 1;
 			msglen = answer[3];
 		break;
-		
+
 
 		default:
 #ifdef DEBUG_ON
@@ -604,10 +639,15 @@ int cmd_read_memory(char * msg, char * answer)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
-	 
+	// write message len to answer packet
+	answer[3] = msglen & 0xFF;			// length of body with ok
+	answer[4] = (msglen >> 8) & 0xFF;
+	answer[5] = 0;
+	answer[6] = 0;
 	answer[7] = TOKEN;
-
 	answer[8]	= 0x82;		// (0x80 = ok)
+
+	// afterwards the handler above places its data
 
 	length = length+msglen;
 	crc16_append(answer,(unsigned long)length);
@@ -631,7 +671,19 @@ int cmd_selftest(char *msg, char *answer)
 
 int cmd_write_memory(char *msg, char *answer)
 {
-SendHex(msg[9]);
+#ifdef DEBUG_ON
+	UARTWrite("W:"); // Display W:addr:len
+	SendHex(msg[9]);
+	UARTWrite(":");
+	SendHex(msg[16]);
+	SendHex(msg[15]);
+	SendHex(msg[14]);
+	UARTWrite(":");
+	SendHex(msg[12]);
+	SendHex(msg[11]);
+	SendHex(msg[10]);;
+	UARTWrite("\r\n");
+#endif
 	switch(msg[9])
 	{
 		case LOCK_BITS:
@@ -641,17 +693,17 @@ SendHex(msg[9]);
 			//wr_hfuse_avr(msg[18]);
 		break;
 		case SRAM:
+			ocd_wr_sram((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
 		break;
-		
+
 		case SPM:
-			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 24) | ((unsigned long) msg[15] << 16) | msg[14], &msg[18]);
+			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], &msg[18]);
 		break;
-		
+
 		case FLASH_PAGE:
-		  UARTWrite("flash");
-			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 24) | ((unsigned long) msg[15] << 16) | msg[14], &msg[18]);
+			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], &msg[18]);
 		break;
-		
+
 		case EEPROM_PAGE:
 			wr_eeprom_page(msg[10], (msg[15] << 8) | msg[14], (unsigned char *) &msg[18]);
 		break;
@@ -659,7 +711,7 @@ SendHex(msg[9]);
 		default:
 		break;
 	}
-	
+
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -669,56 +721,68 @@ SendHex(msg[9]);
 	answer[6] = 0;
 	answer[7] = TOKEN;
 	answer[8] = RSP_OK;		// (0x80 = ok)
-	
+
 	crc16_append(answer,(unsigned long)9);
-	
+
 	return 11;
 }
 
 int cmd_set_device_descriptor(char *msg, char *answer)
 {
 	unsigned char i, j;
-	
+
 	for(i = 9, j = 7; i < 17; i++, j--)
 		deviceDescriptor.ucReadIO[j] = msg[i];
-	
+
 	for(i = 17, j = 7; i < 25; i++, j--)
 		deviceDescriptor.ucReadIOShadow[j] = msg[i];
-		
+
 	for(i = 25, j = 7; i < 33; i++, j--)
 		deviceDescriptor.ucWriteIO[j] = msg[i];
-		
+
 	for(i = 33, j = 7; i < 41; i++, j--)
 		deviceDescriptor.ucReadIOShadow[j] = msg[i];
-		
+
 	for(i = 41, j = 51; i < 93; i++, j--)
 		deviceDescriptor.ucReadExtIO[j] = msg[i];
-		
+
 	for(i = 93, j = 51; i < 145; i++, j--)
 		deviceDescriptor.ucReadIOExtShadow[j] = msg[i];
-		
+
 	for(i = 145, j = 51; i < 197; i++, j--)
 		deviceDescriptor.ucWriteExtIO[j] = msg[i];
-		
+
 	for(i = 197, j = 51; i < 249; i++, j--)
 		deviceDescriptor.ucWriteIOExtShadow[j] = msg[i];
-		
+
 	deviceDescriptor.ucIDRAddress = msg[249];
 	deviceDescriptor.ucSPMCRAddress = msg[250];
 	deviceDescriptor.ulBootAddress = ((long) msg[254] << 24) | ((long) msg[253] << 16) | (msg[252] << 8) | msg[25];
 	deviceDescriptor.ucRAMPZAddress = msg[255];
 	deviceDescriptor.uiFlashPageSize = (msg[256] << 8) | msg[257];
 	deviceDescriptor.ucEepromPageSize = msg[258];
-	deviceDescriptor.uiUpperExtIOLoc = (msg[259] << 8) | msg[260]; 
+	deviceDescriptor.uiUpperExtIOLoc = (msg[259] << 8) | msg[260];
 	deviceDescriptor.ulFlashSize = ((long) msg[264] << 24) | ((long) msg[263] << 16) | (msg[262] << 8) | msg[261];
-	
+#ifdef DEBUG_VERBOSE
+	UARTWrite("IDR Addr:");
+	SendHex(deviceDescriptor.ucIDRAddress);
+	UARTWrite("\r\nFlashPZ:");
+	SendHex((char)(deviceDescriptor.uiFlashPageSize >> 8));
+	SendHex((char)deviceDescriptor.uiFlashPageSize);
+	UARTWrite("\r\nFlashS:");
+	SendHex((char)(deviceDescriptor.ulFlashSize >> 16));
+	SendHex((char)(deviceDescriptor.ulFlashSize >> 8));
+	SendHex((char)deviceDescriptor.ulFlashSize);
+	UARTWrite("\r\n");
+#endif
+
 	for(uint16_t k = 265, i = 0; i < 285; i++, k++)		//da passt ev. noch was nicht !!
 		deviceDescriptor.ucEepromInst[i] = msg[k];
-	
+
 	deviceDescriptor.ucFlashInst[0] = msg[285];
 	deviceDescriptor.ucFlashInst[1]	= msg[286];
 	deviceDescriptor.ucFlashInst[2] = msg[287];
-	
+
 	deviceDescriptor.ucSPHaddr = msg[288];
 	deviceDescriptor.ucSPLaddr = msg[289];
 	deviceDescriptor.uiFlashpages = (msg[291] << 8) | msg[290];

@@ -33,10 +33,14 @@ void avr_reset(int true)
 	else
 		jtagbuf[0]=0x0;
 	jtag_write(1,jtagbuf);
+	jtag_goto_state(IDLE);
 }
 
 void avr_prog_enable(void)
 {
+#ifdef DEBUG_ON
+	UARTWrite("Emulator entered progmode\r\n");
+#endif
   // ENABLE PROG
 	unsigned char jtagbuf[2];
 	jtag_goto_state(SHIFT_IR);
@@ -45,6 +49,23 @@ void avr_prog_enable(void)
 	jtag_goto_state(SHIFT_DR);
 	jtagbuf[0]=0x70;
 	jtagbuf[1]=0xA3;
+	jtag_write(16,jtagbuf);
+}
+
+void avr_prog_disable(void)
+{
+#ifdef DEBUG_ON
+	UARTWrite("Emulator left progmode\r\n");
+#endif
+
+  // DISABLE PROG
+	unsigned char jtagbuf[2];
+	jtag_goto_state(SHIFT_IR);
+	jtagbuf[0]=AVR_PRG_ENABLE;
+	jtag_write(4,jtagbuf);
+	jtag_goto_state(SHIFT_DR);
+	jtagbuf[0]=0;
+	jtagbuf[1]=0;
 	jtag_write(16,jtagbuf);
 }
 

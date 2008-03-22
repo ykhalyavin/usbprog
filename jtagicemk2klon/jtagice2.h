@@ -1,6 +1,6 @@
 /*
  * usbprog - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006,2007 Benedikt Sauter 
+ * Copyright (C) 2006,2007 Benedikt Sauter
  *		 2007 Robert Schilling robert.schilling@gmx.at
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@
 #define EVT_BREAK			0xE0
 
 // memory types
-#define IO_SHADOW			0x30	
+#define IO_SHADOW			0x30
 #define SRAM				0x20
 #define EEPROM				0x22
 #define EVENT				0x60
@@ -112,6 +112,8 @@
 #define CAN_FLAG				0x22
 #define PAR_ENABLE_IDR_IN_RUN_MODE				0x23
 #define PAR_ALLOW_PAGEPROGRAMMING_IN_SCANCHAIN	0x24
+
+#define MESSAGE_BUFFER_SIZE 320
 
 
 //jtag cmds
@@ -174,7 +176,7 @@ typedef enum {
 void JTAGICE_init(void);
 //void JTAGICE_common_state_machine(void);
 
-struct deviceDescriptor_t 
+struct deviceDescriptor_t
 {
 	unsigned char ucReadIO[8];		//LSB = IOloc 0, MSB = IOloc63
 	unsigned char ucReadIOShadow[8];	//LSB = IOloc 0, MSB = IOloc63

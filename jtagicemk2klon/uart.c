@@ -12,19 +12,19 @@ void UARTInit(void)
 	//UCSRB |= ( 1 << RXEN ); // RX aktivieren
 	//UCSRB |= ( 1 << RXCIE ); // RX interrupt aktivieren
 	//UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
- 	
+
 	UCSRA = (1 << RXC) | (1 << TXC);
   	UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
   	UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
-	
+
 	//ATmega32 bei 16MHz und für 19200 Baud
-	// 4 mhz 9600 baud =25 
+	// 4 mhz 9600 baud =25
   	UBRRH  = 0;                                   // Highbyte ist 0
-  	UBRRL  = 51;                                  // Lowbyte ist 51 ( dezimal )
+  	UBRRL  = 103;                                  // Lowbyte ist 51 ( dezimal )
     // Flush Receive-Buffer
-  
+
   	do
-  	{	
+  	{
 		uint8_t dummy;
       	(void) (dummy = UDR);
   	}
@@ -69,17 +69,17 @@ unsigned char AsciiToHex(unsigned char high,unsigned char low)
 
   	high = high << 4;
   	high = high & 0xF0;
- 
+
   	// check if lower equal 9 ( assii 57 )
   	if(low <= 57) // high is a number
     	low = low -48;
   	else // high is a letter
     	low = low -87;
-  	
+
 	low = low & 0x0F;
- 
+
   	new = high | low;
- 
+
   	return new;
 }
 
@@ -89,16 +89,16 @@ void SendHex(unsigned char hex)
   	// get highnibble
   	high = hex & 0xF0;
   	high = high >> 4;
- 
+
   	// get lownibble
   	low = hex & 0x0F;
- 
+
   	if(high<=9)
     	UARTPutChar(high+48);
   	else
     	UARTPutChar(high+87);
- 
- 
+
+
   	if(low<=9)
     	UARTPutChar(low+48);
   	else
