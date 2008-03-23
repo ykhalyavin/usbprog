@@ -283,6 +283,7 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 void wr_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char *data)
 {
 	unsigned char tmp[2];
+	avr_prog_cmd();
 	avr_sequence(0x23, 0x11, tmp);
 
 	for(unsigned char i = 0; i < byteCount; i++, adress++)
@@ -308,13 +309,19 @@ void wr_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char 
 	while(!(tmp[1] & 0x02));
 }
 
-void rd_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char *data)
+void rd_eeprom_page(uint16_t byteCount, unsigned int adress, unsigned char *data)
 {
 	unsigned char tmp[2];
-
+	avr_prog_cmd();
 	avr_sequence(0x23, 0x03, tmp);
+#ifdef DEBUG_VERBOSE
+	UARTWrite("EEPROM_Page:");
+	SendHex((char)(adress>>8));
+	SendHex((char)(adress));
+	UARTWrite("\r\n");
+#endif
 
-	for(unsigned char i = 0; i < byteCount; i++)
+	for(uint16_t i = 0; i < byteCount; i++, adress++)
 	{
 		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
 		avr_sequence(0x03, adress & 0xFF, tmp);
@@ -322,7 +329,14 @@ void rd_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char 
 		avr_sequence(0x33, adress & 0xFF, tmp);
 		avr_sequence(0x32, 0x00, tmp);
 		avr_sequence(0x33, 0x00, &data[i]);
+#ifdef DEBUG_VERBOSE
+		UARTWrite(" ");
+		SendHex(data[i]);
+#endif
 	}
+#ifdef DEBUG_VERBOSE
+	UARTWrite("\r\n");
+#endif
 }
 
 void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data)

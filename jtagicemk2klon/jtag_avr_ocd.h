@@ -41,6 +41,14 @@ uint16_t ocd_read_pc();
 uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
 
+uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf);
+uint8_t ocd_wr_flash(uint16_t startaddr, uint16_t len, uint8_t *buf);
+
+uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
+uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
+
+
+
 unsigned char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,
                        short size, unsigned char delay);
 unsigned char rd_sram_ocd_avr (unsigned short addr, unsigned char *buf,

@@ -27,6 +27,8 @@
 #include "uart.h"
 
 static const uint8_t OCDR_Addr = 0x31;
+static const uint8_t SPMCR_Addr = 0x37;
+static const uint8_t EECR_Addr = 0x1C;
 
 
 /* This struct holds essential chip data for debugging.
@@ -79,8 +81,6 @@ unsigned char ocd_save_context() {
 	}
 	else
 		return 0;
-
-
 }
 
 #ifdef DEBUG_ON
@@ -272,7 +272,7 @@ uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 		UARTWrite("\r\n");
 		ocd_dump_debug_registers();
 #endif
-
+	return 1;
 }
 
 uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
@@ -332,6 +332,178 @@ uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 		UARTWrite("\r\n");
 		ocd_dump_debug_registers();
 #endif
+
+	return 1;
+}
+
+uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+	// initialize the ocd system
+	avrContext.registerDirty = 1;
+	ocd_enshure_ocdr_enable();
+
+#ifdef DEBUG_ON
+	uint16_t brk;
+	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
+	UARTWrite("OCDCTL: ");
+	SendHex(brk>>8);
+	SendHex((char)brk);
+	UARTWrite("\r\nMod..");
+	brk = 0xFFFF;
+	wr_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
+	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
+	UARTWrite("OCDCTL: ");
+	SendHex(brk>>8);
+	SendHex((char)brk);
+	UARTWrite("\r\n");
+#endif
+
+	// load the start adress to the Z register
+	ocd_execute_avr_instruction(AVR_LDI(30,startaddr & 0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(31,startaddr >> 8));
+
+#ifdef DEBUG_ON
+	ocd_dump_debug_registers();
+	UARTWrite("SPM Read ");
+#endif
+
+	// then clock out bytewise the data from program memory
+	while (len--) {
+		// read one program memory word
+		uint8_t databuf;
+
+		ocd_execute_avr_instruction(AVR_LPM_PostInc(16));
+		//ocd_execute_avr_instruction(0x95C8);
+		ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
+		ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
+
+		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
+
+		databuf = ocd_read_ocdr();
+
+#ifdef DEBUG_ON
+		SendHex(databuf);
+		UARTWrite("\r\n");
+		ocd_dump_debug_registers();
+#endif
+		*buf++ = databuf;
+	}
+
+#ifdef DEBUG_ON
+	UARTWrite("\r\n");
+#endif
+
+	return 1;
+}
+
+uint8_t ocd_wr_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+
+
+}
+
+uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+		// initialize the ocd system
+	avrContext.registerDirty = 1;
+	ocd_enshure_ocdr_enable();
+
+	// load the start adress to the Z register
+	ocd_execute_avr_instruction(AVR_LDI(30,startaddr & 0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(31,startaddr >> 8));
+
+
+	// then clock out bytewise the data from program memory
+	while (len--) {
+		uint8_t databuf;
+
+		// write the adress to the eeprom adressing registers
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr+2,30));
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr+3,31));
+		ocd_execute_avr_instruction(AVR_IN(16,EECR_Addr));
+		ocd_execute_avr_instruction(AVR_ORI(16,1));
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr,16));
+		ocd_execute_avr_instruction(AVR_NOP());
+		ocd_execute_avr_instruction(AVR_NOP());
+		ocd_execute_avr_instruction(AVR_NOP());
+		ocd_execute_avr_instruction(AVR_NOP());
+		ocd_execute_avr_instruction(AVR_NOP());
+		ocd_execute_avr_instruction(AVR_NOP()); // normally the cpu gets halted for 5 clock cycles when reading the eeprom. it seems that we should occupy this also
+		// read from eeprom data register
+		ocd_execute_avr_instruction(AVR_IN(16,EECR_Addr+1));
+		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
+
+		ocd_execute_avr_instruction(AVR_ADIW(3, 1));
+		ocd_execute_avr_instruction(AVR_NOP()); // the above is two cycle instruction
+
+		databuf = ocd_read_ocdr();
+
+#ifdef DEBUG_VERBOSE
+		SendHex(databuf);
+		UARTWrite("\r\n");
+		ocd_dump_debug_registers();
+#endif
+		*buf++ = databuf;
+	}
+
+#ifdef DEBUG_VERBOSE
+	UARTWrite("\r\n");
+#endif
+
+	return 1;
+}
+
+
+uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+			// initialize the ocd system
+	avrContext.registerDirty = 1;
+	ocd_enshure_ocdr_enable();
+
+	// load the start adress to the Z register
+	ocd_execute_avr_instruction(AVR_LDI(30,startaddr & 0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(31,startaddr >> 8));
+
+
+	// then clock out bytewise the data from program memory
+	while (len--) {
+
+		// write the adress to the eeprom adressing registers
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr+2,30));
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr+3,31));
+		// write data to eeprom data register
+		ocd_execute_avr_instruction(AVR_LDI(16,*buf));
+		buf++;
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr+1,16));
+
+		ocd_execute_avr_instruction(AVR_IN(16,EECR_Addr));
+		ocd_execute_avr_instruction(AVR_ORI(16,0x04)); // set EEMWE
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr,16));
+		ocd_execute_avr_instruction(AVR_ORI(16,0x02)); // set EEWE
+		ocd_execute_avr_instruction(AVR_OUT(EECR_Addr,16));
+		ocd_execute_avr_instruction(AVR_NOP());
+		ocd_execute_avr_instruction(AVR_NOP());// normally the cpu gets halted for 2 clock cycles when reading the eeprom. it seems that we should occupy this also
+
+		// wait for EEWE to become zero
+		do {
+				ocd_execute_avr_instruction(AVR_IN(16,EECR_Addr));
+				ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
+		} while (ocd_read_ocdr() & 0x2); // as long as EEWE is one
+
+		// read from eeprom data register
+		ocd_execute_avr_instruction(AVR_IN(16,EECR_Addr+1));
+		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
+
+		ocd_execute_avr_instruction(AVR_ADIW(3, 1));
+		ocd_execute_avr_instruction(AVR_NOP()); // the above is two cycle instruction
+
+#ifdef DEBUG_VERBOSE
+		UARTWrite("\r\n");
+		ocd_dump_debug_registers();
+#endif
+	}
+
+#ifdef DEBUG_VERBOSE
+	UARTWrite("\r\n");
+#endif
+
+	return 1;
 }
 
 /*----------------------------------------------------------------------*
@@ -630,98 +802,6 @@ rd_flash_ocd_avr (unsigned long addr, unsigned char *buf, short size,
 	return 1;
 }
 
-/*----------------------------------------------------------------------*
- * read data space bytes                                                *
- *                                                                      *
- * 0xe<lo_adr_hi_nib><e><lo_adr_lo_nib> ldi     r30,lo8(addr)           *
- * 0xe<hi_adr_hi_nib><f><hi_adr_lo_nib> ldi     r31,hi8(addr)           *
- * 0x9000                               ld      r0,z                    *
- * 0xbe01                               out     0x31,r0                 *
- *                                      read ocdr                       *
- *----------------------------------------------------------------------*/
-unsigned char
-rd_sram_ocd_avr (unsigned short addr, unsigned char *buf, short size,
-				 unsigned char delay) {
-	unsigned char stat, buf_in [4], buf_out [4], *p;
-	short         num;
-
-	num  = 0;
-	stat = activate_ocd (delay);
-	p    = (unsigned char *) &addr;
-	p   += 2;
-	/*
-	 * ldi      r31,hi8(addr)
-	 */
-	if (stat == JTAG_OK) {
-			buf_in [0] = (unsigned char) (*p & 0xF) + 0xF0;
-			buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-			stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-		}
-	/*
-	 * ldi      r30,lo8(addr)
-	 */
-	if (stat == JTAG_OK) {
-			buf_in [0] = (*++p & 0xF) + 0xE0;
-			buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-			stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-		}
-	while ((stat == JTAG_OK) && (num < size)) {
-			/*
-			 * ld   r0,z+
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 1;
-					buf_in [1] = 0x90;
-					stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			/*
-			 * out  ocdr,r0
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 1;
-					buf_in [1] = 0xBE;
-					stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			if (stat == JTAG_OK) stat   = rd_dbg_channel (buf_out, delay);
-			if (stat == JTAG_OK) *buf++ = buf_out [1];
-			num++;
-		}
-
-	return stat;
-}
-
-/*----------------------------------------------------------------------*
- *                                                                      *
- * 0xb<(addr & 0x30) >> 3)>0<addr & 0xF)        in      r0,<addr>       *
- * 0xbe01                                       out     0x31,r0         *
- *                                      read ocdr                       *
- *----------------------------------------------------------------------*/
-unsigned char
-rd_io_ocd_avr (unsigned char addr, unsigned char *buf, short size,
-			   unsigned char delay) {
-	unsigned char stat, buf_in [2], buf_out [2];
-	short         num;
-
-	num  = 0;
-	stat = activate_ocd (delay);
-	while ((stat == JTAG_OK) && (num < size)) {
-			buf_in [0] = addr & 0xF;
-			buf_in [1] = ((addr & 0x30) >> 3) + 0xB0;
-			stat = exec_instr_avr (buf_out, buf_in, 0, delay);
-
-			if (stat == JTAG_OK) {
-					buf_in [0] = 1;
-					buf_in [1] = 0xBE;
-					stat = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			if (stat == JTAG_OK) stat = rd_dbg_channel (buf_out, delay);
-			if (stat == JTAG_OK) *buf++ = buf_out [1];
-			addr++;
-			num++;
-		}
-
-	return stat;
-}
 
 /*----------------------------------------------------------------------*
  *                                                                      *
@@ -816,147 +896,4 @@ rd_e2_ocd_avr (unsigned short addr, unsigned char *buf, short size,
 		}
 
 	return stat;
-}
-
-/*----------------------------------------------------------------------*
- * to be checked AMtD 14-06-2004                                        *
- *----------------------------------------------------------------------*/
-unsigned char
-wr_avr_flash_ocd (unsigned long addr, unsigned char *buf, short size,
-				  unsigned char delay) {
-	unsigned char stat;
-	short         num;
-
-	num  = 0;
-	stat = activate_ocd (delay);
-	while ((stat == JTAG_OK) && (num < size)) {
-			addr++;
-			num++;
-		}
-
-	return stat;
-}
-
-/*----------------------------------------------------------------------*
- * to be checked AMtD 14-06-2004                                        *
- *----------------------------------------------------------------------*/
-unsigned char
-wr_sram_ocd_avr (unsigned short addr, unsigned char *buf, short size,
-				 unsigned char delay) {
-	unsigned char stat;
-	short         num;
-
-	num  = 0;
-	stat = activate_ocd (delay);
-	while ((stat == JTAG_OK) && (num < size)) {
-			addr++;
-			num++;
-		}
-	return stat;
-}
-
-/*----------------------------------------------------------------------*
- * to be checked AMtD 14-06-2004                                        *
- *----------------------------------------------------------------------*/
-unsigned char
-wr_io_ocd_avr (unsigned char addr, unsigned char *buf, short size,
-			   unsigned char delay) {
-	unsigned char stat;
-	short         num;
-
-	num  = 0;
-	stat = activate_ocd (delay);
-	while ((stat == JTAG_OK) && (num < size)) {
-			addr++;
-			num++;
-		}
-
-	return stat;
-}
-
-/*----------------------------------------------------------------------*
- * mode : 1 (run) or 0 (stop). Only one bit is necessary                *
- *----------------------------------------------------------------------*/
-unsigned char
-run_avr (unsigned char mode, unsigned char go_flg, unsigned long addr,
-		 unsigned char delay) {
-	unsigned char stat, tdo, tdi;
-
-	stat = avr_jtag_instr (AVR_FORCE_BRK, delay);
-	tdi  = mode;
-	stat = jtag_write_and_read (1,&tdi, &tdo);
-	return stat;
-}
-
-/*----------------------------------------------------------------------*
- * to be checked AMtD 14-06-2004                                        *
- *----------------------------------------------------------------------*/
-void
-step_avr (unsigned char delay) {
-	unsigned char stat;
-
-	stat = jtag_reset ();
-	if (stat == JTAG_OK) stat = activate_ocd (delay);
-}
-
-/*----------------------------------------------------------------------*
- *----------------------------------------------------------------------*/
-void
-init_all_regs_avr (void) {
-	unsigned char *p;
-	char          i;
-
-	p = (unsigned char *) &(reg.avr);
-	i = sizeof (struct avr_reg) - 1;
-	do {
-			*p++ = 0;
-		} while (!(--i & 0x80));
-}
-
-/*----------------------------------------------------------------------*
- *----------------------------------------------------------------------*/
-void
-get_all_regs_avr (unsigned char delay) {
-#if 0
-	unsigned char *p, xsum, byte_buf [2];
-	char          i;
-
-	xsum = 0;
-	i    = sizeof (struct avr_reg) - 1;
-	p    = (unsigned char *) &(reg.avr);
-	outch ('$');
-	do {
-			byte2ascii (byte_buf, *p);
-			xsum += byte_buf [0] + byte_buf [1];
-			outbyte (*p++);
-		} while (!(--i & 0x80));
-	outch ('#');
-	outbyte (xsum);
-#endif
-}
-
-
-/*----------------------------------------------------------------------*
- *----------------------------------------------------------------------*/
-void
-set_all_regs_avr (unsigned char *buf, unsigned char delay) {
-#if 0
-	unsigned char *p, ok, val;
-	char          i;
-
-	i  = 0;
-	p  = (unsigned char *) &(reg.avr);
-	ok = 1;
-	while (ok && (i < (sizeof (struct avr_reg)))) {
-			ok = in_byte (buf, &val);
-			if (ok) {
-					buf += 2;
-					*p++ = val;
-				}
-			i++;
-		}
-	//if (ok) pstring (ok_str);
-	//else pr_stat ('E', 19);
-	//else pr_stat ('E', NO_NUMBER);
-#endif
 }

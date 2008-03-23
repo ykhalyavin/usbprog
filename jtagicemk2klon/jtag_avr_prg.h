@@ -36,7 +36,7 @@ void chip_erase(void);
 void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data);
 void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *data);
 unsigned char rd_cal_byte(unsigned char adress);
-void rd_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char *data);
+void rd_eeprom_page(unsigned int byteCount, unsigned int adress, unsigned char *data);
 void wr_eeprom_page(unsigned char byteCount, unsigned int adress, unsigned char *data);
 void avr_sequence(char tdi2, char tdi1, unsigned char * tdo);
 

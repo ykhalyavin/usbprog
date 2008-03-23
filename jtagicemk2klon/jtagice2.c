@@ -236,8 +236,8 @@ int cmd_read_pc(char *msg, char * answer)
 
 	answer[8]	= 0x84;		// (0x80 = ok)
 
-	answer[9] = (char)(pc>>1);
-	answer[10] = (char)(pc>>9);
+	answer[9] = (char)(pc);
+	answer[10] = (char)(pc>>8);
 	answer[11]= 0x00;
 	answer[12]= 0x00;
 
@@ -551,7 +551,13 @@ int cmd_read_memory(char * msg, char * answer)
 
 			break;
 
+		case EEPROM:
+			// read from registerspace, io/memory or sram
+			msglen = len+1;
+			// todo: range checks against the device parameters
 
+			ocd_rd_eeprom((uint16_t)startaddr,(uint16_t)len,&answer[9]);
+			break;
 		case SRAM:
 			// read from registerspace, io/memory or sram
 			msglen = len+1;
@@ -562,22 +568,11 @@ int cmd_read_memory(char * msg, char * answer)
 		break;
 
 		case SPM:
-			// not yet really supported
-
-			// write message reply len
+			// read from registerspace, io/memory or sram
 			msglen = len+1;
-			answer[3] = (char)msglen;
-			answer[4] = (char)(msglen>>8);
-			answer[5] = 0;
-			answer[6] = 0;
+			// todo: range checks against the device parameters
 
-			//init_avr_jtag (&(reg.avr), 0);
-			char buf[20];
-			rd_flash_ocd_avr ((short)msg[20], (unsigned char*) buf ,(short)msg[16] ,0);
-			//rd_flash_ocd_avr ((short)startaddr, &buf ,(short)len ,0);
-			answer[9]=buf[0];
-			answer[10]=buf[1];
-			//answer[9] - ...
+			ocd_rd_flash((uint16_t)startaddr,(uint16_t)len,&answer[9]);
 		break;
 
 		case OSCCAL_BYTE:
@@ -623,7 +618,7 @@ int cmd_read_memory(char * msg, char * answer)
 		break;
 
 		case EEPROM_PAGE:
-			rd_eeprom_page(msg[10], (msg[15] << 8) | msg[14],  &answer[9]);
+			rd_eeprom_page((msg[11] << 8) | msg[10], (msg[15] << 8) | msg[14],  &answer[9]);
 			answer[3] = msg[10] + 1;
 			msglen = answer[3];
 		break;
@@ -692,6 +687,10 @@ int cmd_write_memory(char *msg, char *answer)
 		case FUSE_BITS:
 			//wr_hfuse_avr(msg[18]);
 		break;
+		case EEPROM:
+			ocd_wr_eeprom((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
+		break;
+
 		case SRAM:
 			ocd_wr_sram((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
 		break;
