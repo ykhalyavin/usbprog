@@ -1,0 +1,2131 @@
+Filename: Untitled
+Date: 23.03.2008 11:58:09
+______________________________________________________________________________
+ConsecutiveSof count<26>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<62>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 A2 C4 22 04 00 80 4C 00 0C 6D
+     EA 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xF2F2> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<40>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<38>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 A2 C4 22 04 00 80 4C 00 0C 6D
+     EA 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xF2F2> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<64>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<107>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<98>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<14>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 60 98 F2 48 00 80 4C 00 14 D0
+     E7 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0x1203> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<88>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<3>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<76 AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xA936> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<278> speed<FS>
+    Packet id<SOF> frame<278> crc5<0x0B> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<02 0A 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0x73B4> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<33>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<B2 F0 10 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x5071> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<312> speed<FS>
+    Packet id<SOF> frame<312> crc5<0x04> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xDBDB> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<30>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<B4 A7 A9 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xDE0F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<25>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<3>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A0 00 1D 8F AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x9278> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<6>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 07 02 00 F2 C2 01 87 00 40 10 00 08 60
+     D3 82 08 70 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D B0 E7 BC 41 FB 4D 3F 00
+     00 00> crc16<0x10BD> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<43>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A0 00 1D 8F AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x9278> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<35>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A1 40 3D 2A AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xB06B> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<22>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<44> data<00 02 02 00 9E 69 45 8A 01 80 18 00 00 00
+     00 00 06 00 00 00 06 00 01 00 03 00 01 00 03 00 01 00 03 00 01 00 03 00
+     01 00 C0 C1 00 82> crc16<0x5BD4> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<477> speed<FS>
+    Packet id<SOF> frame<477> crc5<0x10> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<70 07 02 00 DA 32 B2 CB 10 40 18 00 08 70
+     B5 82 01 00 07 07 03 03 02 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 07 FF 00 02 72 03 29 4D 00 02 00 7F 23 4D
+     70 F7> crc16<0xE912> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<28> data<04 E1 81 4F 48 11 00 00 00 02 72 03 29 4D
+     00 14 C1 17 34 11 00 02 72 03 29 4D 00 00> crc16<0x061B> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<478> speed<FS>
+    Packet id<SOF> frame<478> crc5<0x18> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<28> data<00 02 02 00 3B 34 60 4B 01 80 08 00 00 00
+     00 00 0D 00 00 00 03 00 3E 00 3F 00 14 00> crc16<0x12C7> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<479> speed<FS>
+    Packet id<SOF> frame<479> crc5<0x07> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 08 02 00 76 12 36 DC 00 40 10 00 08 70
+     9A 82 08 20 00 00 03 03 01 00 00 00 00 00 0B 00 00 00 80 00 00 00 FF FF
+     FF FF FF FF 00 02 72 03 29 4D 02 02 72 03 29 4D 40 D8 BC 01 7E 4C 3F 00
+     00 00> crc16<0x30B3> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 00 11 00 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xCA8C> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<480> speed<FS>
+    Packet id<SOF> frame<480> crc5<0x0B> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<28> data<00 02 02 00 33 94 C0 4B 01 80 08 00 00 00
+     00 00 0D 00 00 00 03 00 3E 00 3E 00 00 00> crc16<0x0976> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<481> speed<FS>
+    Packet id<SOF> frame<481> crc5<0x14> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<70 07 02 00 B8 64 49 35 00 40 2A 00 08 90
+     AE 82 0C 64 01 01 00 00 00 00 00 00 00 00 08 00 00 07 02 01 50 00 D0 C5
+     00 00 80 00 00 00 FF FF FF FF 01 FF 00 02 72 03 29 4D 00 02 72 03 29 4D
+     80 F7> crc16<0xCE1D> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<46> data<04 71 83 4F 40 00 00 00 FF FF FF FF FF FF
+     00 14 C1 17 34 11 FF FF FF FF FF FF 00 00 00 00 01 04 02 04 0B 16 32 08
+     0C 12 18 24 30 48 60 6C> crc16<0x352E> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<482> speed<FS>
+    Packet id<SOF> frame<482> crc5<0x1C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 42 5C D4 6F 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 99 09 00 00 03 00 FF 03 00 01 07 35 2E 2C 27 25 45 74
+     A6 9A> crc16<0xB78A> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<B5 BE CF 00 3A 2B 7A 6A 7C 90 A1 00 2E F5
+     5E 4F 61 72 86 00 23 D3 47 38 47 59 6B 00 17 BA 2F 21 31 41 53 00 0C AB
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2E 2C
+     27 25> crc16<0x35EC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<15>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 1F FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     EB FA F7 E7 2F F2 B2 F2 C2 F2 12 F2 8A F6 FB E8 09 EE 05 00 AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x50DB> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<29>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 C2 04 2E CA 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 9E 09 00 00 04 00 FF 03 00 01 07 36 2E 2C 27 26 45 74
+     A6 9A> crc16<0x9FDC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<B5 BE CF 00 3A 2B 7A 6A 7C 90 A1 00 2E F5
+     5E 4F 61 72 86 00 23 D3 47 38 47 59 6B 00 17 BA 2F 21 31 41 53 00 0C AB
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2E 2C
+     27 26> crc16<0x34AC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<3>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 2F D9 00 02 04 D9 00 02 04 D8 D8 D8
+     D9 00 02 04 D8 D9 F0 0F 20 D9 90 01 88 D9 06 00 20 D8 D8 D9 07 00 20 D9
+     B6 0B BA D8 D8 D9 20 3C 88 D8 D7 D8 AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x4701> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<41>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 27 6C 0A CB 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 A3 09 00 00 04 00 FF 03 00 01 07 36 2F 2D 27 26 45 74
+     A6 9A> crc16<0x4063> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<B5 BE CF 00 3A 2B 7A 6A 7C 90 A1 00 2E F5
+     5E 4F 61 72 86 00 23 D3 47 38 47 59 6B 00 17 BA 2F 21 31 41 53 00 0C AB
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2F 2D
+     27 26> crc16<0x08FC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<44>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 FE C9 54 48 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 A8 09 00 00 04 00 FF 03 FF 00 07 36 2F 2D 28 26 45 74
+     A6 9A> crc16<0x4C34> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<B5 BE CF 00 3A 2B 7A 6A 7C 90 A1 00 2E F5
+     5E 4F 61 72 86 00 23 D4 47 38 47 59 6B 00 17 BA 2F 21 31 41 53 00 0C AB
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2F 2D
+     28 26> crc16<0x7DB4> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<44>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 00 81 31 EC 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 6C 09 00 00 03 00 FF 03 FD 00 07 38 31 2F 29 28 48 77
+     B3 A8> crc16<0xE781> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<BF CC D7 00 3C 29 7E 6E 83 95 A6 00 30 F4
+     63 54 65 77 89 00 24 D0 49 3A 4B 5B 6D 00 18 B8 31 23 31 43 55 00 0C A8
+     1A 0B 1A 2C 3C 00 00 9D 05 00 02 14 24 00 00 00 00 00 00 00 00 00 31 2F
+     29 28> crc16<0xAE42> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<5>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<664> speed<FS>
+    Packet id<SOF> frame<664> crc5<0x0C> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<3>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<15>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 44 E1 EF 8D 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 71 09 00 00 03 00 FF 03 FE 00 07 38 30 2E 29 28 47 73
+     AE A3> crc16<0xE6AF> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<BF CC D7 00 3B 25 7C 6C 83 95 A6 00 30 F5
+     63 54 65 77 89 00 24 D1 49 3A 49 5B 6D 00 18 B9 31 23 31 43 55 00 0C A9
+     1A 0B 1A 2C 3C 00 00 9E 05 00 02 14 24 00 00 00 00 00 00 00 00 00 30 2E
+     29 28> crc16<0x887C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<8>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<23>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 94 10 72 50 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 76 09 01 00 03 00 FF 03 00 01 07 37 30 2E 29 27 47 76
+     AE A3> crc16<0x9120> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<BF C8 D7 00 3B 27 7C 6C 7E 92 A6 00 2F F2
+     60 51 63 74 89 00 23 CF 47 38 49 5B 6D 00 18 B9 31 23 31 43 55 00 0C A9
+     1A 0B 1A 2C 3C 00 00 9E 05 00 02 14 24 00 00 00 00 00 00 00 00 00 30 2E
+     29 27> crc16<0x0C9C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<10>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<21>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 84 ED 0A 53 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 7B 09 00 00 03 00 FF 03 FF 00 07 37 30 2E 29 27 47 77
+     AE A3> crc16<0x5018> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<BA C8 D3 00 3B 29 7C 6C 7E 92 A4 00 2F F4
+     60 51 63 74 89 00 23 D0 47 38 49 59 6D 00 18 BA 31 23 31 43 55 00 0C A9
+     1A 0B 1A 2C 3C 00 00 9E 05 00 02 14 24 00 00 00 00 00 00 00 00 00 30 2E
+     29 27> crc16<0xC0A8> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<745> speed<FS>
+    Packet id<SOF> frame<745> crc5<0x15> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<746> speed<FS>
+    Packet id<SOF> frame<746> crc5<0x1D> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A1 40 3D 2A AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xB06B> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<30>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<70 06 02 00 F8 96 B9 8D 00 80 4C 00 BC DA
+     DA 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xF8AC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<777> speed<FS>
+    Packet id<SOF> frame<777> crc5<0x1C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<9>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<70 06 02 00 80 B0 4F FB 00 40 10 00 00 22
+     7D 81 00 00 00 00 03 03 01 00 00 00 00 00 D0 C4 00 00 00 00 00 00 00 00
+     00 00 01 11 00 02 72 03 29 4D 02 02 00 7F 23 4D D0 CD 04 00 00 00 40 00
+     00 00> crc16<0x8233> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<20> data<04 FF FF FF A4 10 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0x1B9C> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<787> speed<FS>
+    Packet id<SOF> frame<787> crc5<0x19> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 76 21 E8 A1 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 80 09 00 00 03 00 FF 03 FF 00 07 37 2F 2D 28 27 46 73
+     AA 9E> crc16<0x5654> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<BA C8 D3 00 3B 2B 7C 6C 7E 92 A4 00 2F F5
+     60 51 63 74 86 00 23 D1 47 38 49 59 6D 00 17 B9 2F 21 31 43 55 00 0C AA
+     1A 0B 1A 2C 3C 00 00 9E 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2F 2D
+     28 27> crc16<0x877C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<16>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 1C FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     2F FA F7 E7 2F F2 B2 F2 C2 F2 12 F2 0A F6 FB E7 EB AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFD8D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 1E DA 00 00 DA 3F 0E DA F8 6E DA FF
+     0E DA F7 6E DA FE 0E DA F6 6E EE 04 09 F2 00 F0 E9 06 01 AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xD4CD> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<23>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 60 AF F4 BB 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 85 09 00 00 03 00 FF 03 FF 00 07 36 2F 2D 28 26 46 76
+     AA 9E> crc16<0x9393> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<BA C3 D3 00 3A 27 7A 6A 7E 92 A4 00 2F F6
+     60 51 63 74 86 00 23 D1 47 38 49 59 6B 00 17 B9 2F 21 31 41 55 00 0C AA
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2F 2D
+     28 26> crc16<0xC226> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<44>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 58 2F 78 C0 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 8A 09 00 00 04 00 FF 03 00 01 07 36 2F 2D 27 26 46 77
+     AA 9E> crc16<0x8778> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<B5 C3 CF 00 3A 29 7A 6A 7C 90 A4 00 2E F3
+     5E 4F 63 74 86 00 23 D2 47 38 49 59 6B 00 17 BA 2F 21 31 41 53 00 0C AA
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2F 2D
+     27 26> crc16<0xEB99> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<11>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 08 02 00 F8 96 B9 8D 00 80 4C 00 BC DA
+     DA 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0x3B23> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<33>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 6F 2E 75 51 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 8F 09 00 00 03 00 FF 03 00 01 07 36 2E 2C 27 26 46 78
+     AA 9E> crc16<0xE555> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<B5 C3 CF 00 3A 29 7A 6A 7C 90 A4 00 2E F4
+     5E 4F 61 74 86 00 23 D3 47 38 49 59 6B 00 17 BA 2F 21 31 41 53 00 0C AA
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2E 2C
+     27 26> crc16<0x6DC3> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<4>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<923> speed<FS>
+    Packet id<SOF> frame<923> crc5<0x01> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<10>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<29>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 6B F5 61 91 01 80 7C 00 00 00
+     00 00 01 00 00 00 06 00 28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 94 09 00 00 04 00 FF 03 00 01 07 36 2E 2C 27 26 45 72
+     A6 9A> crc16<0x7B1D> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<B5 C3 CF 00 3A 2A 7A 6A 7C 90 A1 00 2E F4
+     5E 4F 61 72 86 00 23 D3 47 38 49 59 6B 00 17 BA 2F 21 31 41 53 00 0C AB
+     1A 0B 1A 2C 3C 00 00 9F 05 00 02 14 24 00 00 00 00 00 00 00 00 00 2E 2C
+     27 26> crc16<0x4594> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<42>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<00 02 02 00 04 24 B5 48 01 80 7C 00 00 00
+     00 00 01 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 6C 09 00 00 03 00 FF 03 FD 00 07 38 31 2F 29 28 48 77
+     B3 A8> crc16<0xBA75> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<BF CC D7 00 3C 29 7E 6E 83 95 A6 00 30 F4
+     63 54 65 77 89 00 24 D0 49 3A 4B 5B 6D 00 18 B8 31 23 31 43 55 00 0C A8
+     1A 0B 1A 2C 3C 00 00 9D 05 00 02 14 24 00 00 00 00 00 00 00 00 00 31 2F
+     29 28> crc16<0xAE42> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.007> speed<FS>
+    Packet id<SOF> frame<1.007> crc5<0x00> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<44> data<00 02 02 00 33 04 ED 21 01 80 18 00 00 00
+     00 00 06 00 00 00 06 00 01 00 03 00 01 00 03 00 01 00 03 00 01 00 03 00
+     01 00 78 CC 00 F7> crc16<0xC171> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.008> speed<FS>
+    Packet id<SOF> frame<1.008> crc5<0x1D> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<28> data<00 02 02 00 3B 34 60 4B 01 80 08 00 00 00
+     00 00 0D 00 00 00 03 00 3E 00 3F 00 14 00> crc16<0x12C7> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.009> speed<FS>
+    Packet id<SOF> frame<1.009> crc5<0x02> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<70 08 02 00 CA 4E 91 86 10 40 18 00 08 70
+     9A 82 01 00 07 07 03 03 02 01 01 00 00 00 00 03 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D
+     40 D8> crc16<0x2146> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<28> data<04 01 7E 4C 48 01 00 00 00 02 72 03 29 4D
+     00 14 C1 17 34 11 00 02 72 03 29 4D 00 00> crc16<0x1CB0> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.010> speed<FS>
+    Packet id<SOF> frame<1.010> crc5<0x0A> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<64> data<00 02 02 00 04 24 B5 48 01 80 7C 00 00 00
+     00 00 01 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 6C 09 00 00 03 00 FF 03 FD 00 07 38 31 2F 29 28 48 77
+     B3 A8> crc16<0xBA75> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<BF CC D7 00 3C 29 7E 6E 83 95 A6 00 30 F4
+     63 54 65 77 89 00 24 D0 49 3A 4B 5B 6D 00 18 B8 31 23 31 43 55 00 0C A8
+     1A 0B 1A 2C 3C 00 00 9D 05 00 02 14 24 00 00 00 00 00 00 00 00 00 31 2F
+     29 28> crc16<0xAE42> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<16> data<80 00 70 FE 0F 00 00 00 03 03 01 00 00
+     00 00 00> crc16<0xB061> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.011> speed<FS>
+    Packet id<SOF> frame<1.011> crc5<0x15> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<28> data<00 02 02 00 3B 34 60 4B 01 80 08 00 00 00
+     00 00 0D 00 00 00 03 00 3E 00 3F 00 14 00> crc16<0x12C7> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A1 40 3D 2A AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xB06B> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<4>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<22>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<28> data<00 02 02 00 33 94 C0 4B 01 80 08 00 00 00
+     00 00 0D 00 00 00 03 00 3E 00 3E 00 00 00> crc16<0x0976> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.042> speed<FS>
+    Packet id<SOF> frame<1.042> crc5<0x1D> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<32>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 1F FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     EB FA F7 E7 2F F2 B2 F2 C2 F2 12 F2 8A F6 FB E8 09 EE 05 00 AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x50DB> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<19>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<12>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 2F D9 00 02 04 D9 00 02 04 D8 D8 D8
+     D9 00 02 04 D8 D9 F0 0F 20 D9 90 01 88 D9 06 00 20 D8 D8 D9 07 00 20 D9
+     B6 0B BA D8 D8 D9 20 3C 88 D8 D7 D8 AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x4701> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<90>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<45>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.241> speed<FS>
+    Packet id<SOF> frame<1.241> crc5<0x06> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.242> speed<FS>
+    Packet id<SOF> frame<1.242> crc5<0x0E> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.243> speed<FS>
+    Packet id<SOF> frame<1.243> crc5<0x11> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<55>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<26>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A1 40 3D 2A AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xB06B> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<17>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<27>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 1F FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     EB FA F7 E7 2F F2 B2 F2 C2 F2 12 F2 8A F6 FB E8 09 EE 05 00 AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x50DB> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<30>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 2F D9 00 02 04 D9 00 02 04 D8 D8 D8
+     D9 00 02 04 D8 D9 F0 0F 20 D9 90 01 88 D9 06 00 20 D8 D8 D9 07 00 20 D9
+     B6 0B BA D8 D8 D9 20 3C 88 D8 D7 D8 AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x4701> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<101>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<33>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.537> speed<FS>
+    Packet id<SOF> frame<1.537> crc5<0x03> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<21>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<3>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<44>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<9>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<22>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A1 40 9E 6E AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xEFFB> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<31>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<11>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 12 FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     7F F7 FA FB F6 E8 13 AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x00DA> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<12>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 1E DA 00 00 DA 3F 0E DA F8 6E DA FF
+     0E DA F7 6E DA FE 0E DA F6 6E EE 04 09 F2 00 F0 E9 06 01 AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xD4CD> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<15>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<75>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 F8 96 B9 8D 00 80 4C 00 BC DA
+     DA 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xF8AC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<12>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.898> speed<FS>
+    Packet id<SOF> frame<1.898> crc5<0x1A> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<4>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<4>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<6>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<46>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<21>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 F8 96 B9 8D 00 80 4C 00 BC DA
+     DA 82 0A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xF8AC> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<32> data<00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00> crc16<0x6BFE>
+     speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<1.980> speed<FS>
+    Packet id<SOF> frame<1.980> crc5<0x0B> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A1 40 DF 9C AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x3E7D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<31>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<4>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<2.016> speed<FS>
+    Packet id<SOF> frame<2.016> crc5<0x15> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 12 FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     7F F7 FA FB F6 E8 13 AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x00DA> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<4>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 12 EE 06 00 F2 00 F2 00 EE 06 06 E9
+     03 05 EE 06 04 F0 F0 AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x6895> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<95>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<16>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<188> speed<FS>
+    Packet id<SOF> frame<188> crc5<0x10> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<189> speed<FS>
+    Packet id<SOF> frame<189> crc5<0x0F> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<190> speed<FS>
+    Packet id<SOF> frame<190> crc5<0x07> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<55>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<15>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A1 40 DF 9C AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x3E7D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<14>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<17>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<9>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 12 FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     7F F7 FA FB F6 E8 13 AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x00DA> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<12>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 1E DA 00 00 DA 3F 0E DA F8 6E DA FF
+     0E DA F7 6E DA FE 0E DA F6 6E EE 04 09 F2 00 F0 E9 06 01 AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xD4CD> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<62>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<102>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<41>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<AA AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xF001> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+StartOfFrame frameNumber<520> speed<FS>
+    Packet id<SOF> frame<520> crc5<0x06> speed<FS>
+______________________________________________________________________________
+Transaction type<IN> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<IN> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<02 00 00 FF FF FF FF FF FF FF FF FF FF FF
+     FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00> crc16<0xAA4F> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<23>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 08 FA F7 F8 F3 03 E8 0A F4 AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x620C> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<3>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FE FD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x7D9D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<35>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<18>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F6 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x0599> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<20>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A1 40 DF 9C AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x3E7D> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<32>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A6 01 F7 AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x8498> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<6>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A6 02 FC FF AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0xFE65> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA0> length<64> data<A9 A6 12 FA F7 F9 F5 F3 00 E8 14 F6 FB E7
+     7F F7 FA FB F6 E8 13 AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x00DA> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<2>
+______________________________________________________________________________
+Transaction type<OUT> device<2> endpoint<1> status<ACK> speed<FS>
+    Packet id<OUT> devAddr<2> epNum<1> crc5<0x03> speed<FS>
+    Packet id<DATA1> length<64> data<A9 A6 31 D8 D8 D9 00 01 04 D8 E9 07 01 D9
+     F0 0F 20 D9 90 01 88 D9 06 00 20 D8 D8 D9 80 03 EB D9 B6 0B BA D8 D8 D8
+     D8 D9 20 3C 88 D8 EE 04 01 F2 00 F0 F0 D8 AD AD AD AD AD AD AD AD AD AD
+     AD AD> crc16<0x2FF8> speed<FS>
+    Packet id<ACK> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<22>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<103>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA0> length<64> data<70 06 02 00 B8 B5 5B 51 00 40 10 00 08 70
+     9A 82 01 00 00 00 03 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     00 00 07 FF 00 02 72 03 29 4D 02 02 00 7F 23 4D 40 D8 04 01 7E 4C 48 01
+     00 00> crc16<0x943C> speed<FS>
+______________________________________________________________________________
+Transaction type<OUT> device<1> endpoint<1> status<> speed<FS>
+    Packet id<OUT> devAddr<1> epNum<1> crc5<0x0B> speed<FS>
+    Packet id<DATA1> length<20> data<04 02 72 03 A4 00 01 C0 00 02 72 03 29
+     4D 00 14 C1 17 34 11> crc16<0xD8EB> speed<FS>
+______________________________________________________________________________
+ConsecutiveSof count<50>
