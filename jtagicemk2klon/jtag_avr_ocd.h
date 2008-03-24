@@ -2,6 +2,7 @@
  * JTAG_AVR_OCD.H
  * Copyright (C) 2003 Armand ten Doesschate <a.doesschate@hccnet.nl>
  * Copyright (C) 2007 Benedikt Sauter <satrer@sistecs.de>
+ * Copyright (C) 2008 Martin Lang <Martin.Lang@rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,17 @@ struct AVR_Context_Type {
 	uint8_t r30;
 	uint8_t r31;
 
+	uint16_t PC;
+
+	uint16_t PSB0;
+	uint16_t PSB1;
+	uint16_t PDMSB;
+	uint16_t PDSB;
+
 	uint8_t registerDirty;
 };
+
+extern struct AVR_Context_Type avrContext;
 
 unsigned char ocd_save_context();
 unsigned char ocd_restore_context();
@@ -47,6 +57,14 @@ uint8_t ocd_wr_flash(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
 
+// breakpoint support
+uint8_t ocd_set_psb0(uint16_t addr);
+uint8_t ocd_set_psb1(uint16_t addr);
+uint8_t ocd_set_pdmsb_as_single_program(uint16_t addr);
+uint8_t ocd_set_pdsb_as_single_program(uint16_t addr);
+
+uint8_t ocd_clr_psb0();
+uint8_t ocd_clr_psb1();
 
 
 unsigned char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,

@@ -94,8 +94,8 @@
 #define EXTERNAL_RESET			0x13
 #define FLASH_PAGE_SIZE			0x14
 #define EEPROM_PAGE_SIZE		0x15
-#define PSB0					0x17
-#define PSB1					0x18
+//#define PSB0					0x17
+//#define PSB1					0x18
 #define PROTOCOL_DEBUG_EVENT	0x19
 #define TARGET_MCU_STATE		0x1A
 #define DAISY_CHAIN_INFO		0x1B
@@ -152,7 +152,15 @@ volatile struct jtagice_t {
 	char seq1;				// sequence number
 	char seq2;				// sequence number
 	int emulatormode;
+	char emulator_state;
 } jtagice;
+
+enum emulatormode_t {
+	NOT_CONNECTED,
+	STOPPED,
+	RUNNING,
+	PROGRAMMING
+};
 
 
 struct message_t {

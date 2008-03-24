@@ -1,6 +1,7 @@
 #include "jtag_avr.h"
 #include "jtag_avr_defines.h"
 #include "jtag.h"
+#include "jtag_avr_ocd.h"
 
 
 void idcode(unsigned char *buf)
@@ -20,7 +21,7 @@ void bypass(void)
 
 }
 
-void avr_reset(int true)
+void avr_reset(uint8_t set)
 {
 	// RESET
 	jtag_goto_state(SHIFT_IR);
@@ -28,8 +29,11 @@ void avr_reset(int true)
 	jtagbuf[0]=AVR_RESET;
 	jtag_write(4,jtagbuf);
 	jtag_goto_state(SHIFT_DR);
-	if(true==1)
+	if(set==1) {
 		jtagbuf[0]=0x1;
+		avrContext.registerDirty = 0;
+		avrContext.PC = 0;
+	}
 	else
 		jtagbuf[0]=0x0;
 	jtag_write(1,jtagbuf);

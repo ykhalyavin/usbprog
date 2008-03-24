@@ -2,6 +2,7 @@
  * jtagice - A Downloader/Uploader for AVR device programmers
  * Copyright (C) 2006,2007 Benedikt Sauter
  *		 2007 Robert Schilling robert.schilling@gmx.at
+ * Copyright (C) 2008 Martin Lang <Martin.Lang@rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 #include "uart.h"
 #include "jtag.h"
 #include "crc.h"
+#include "avr_asm.h"
 
 #include "jtag_avr_defines.h"
 #include "../usbn2mc/fifo.h"
@@ -35,6 +37,8 @@
 // actuall message
 volatile struct message_t msg;
 struct deviceDescriptor_t deviceDescriptor;
+
+uint16_t global_pc;
 
 int cmd_get_sign_on(char *msg, char * answer)
 {
@@ -81,12 +85,22 @@ int cmd_get_sign_on(char *msg, char * answer)
 	answer[36] = 0x00;
 	answer[37] = 0x00;
 	crc16_append(answer,(unsigned long)36);
+
+#ifdef DEBUG_ON
+	UARTWrite("DDRB:");
+	SendHex(DDRB);
+	UARTWrite("\r\n");
+#endif
+
+
 	return 38;
 }
 
 int cmd_sign_off(char * msg, char * answer)
 {
 	// TODO (program answer always with ok!)
+	jtagice.emulator_state = NOT_CONNECTED;
+
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -104,6 +118,8 @@ int cmd_sign_off(char * msg, char * answer)
 int cmd_get_sync(char * msg, char * answer)
 {
 	jtag_reset();
+	avr_jtag_instr(AVR_FORCE_BRK, 0);
+	jtagice.emulator_state = STOPPED;
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -221,7 +237,14 @@ int cmd_get_parameter(char *msg, char * answer)
 
 int cmd_read_pc(char *msg, char * answer)
 {
-	uint16_t pc = ocd_read_pc();
+	uint16_t pc = avrContext.PC;
+
+#ifdef DEBUG_ON
+				UARTWrite("GETPC:");
+				SendHex((uint8_t)(pc>>8));
+				SendHex((uint8_t)pc);
+				UARTWrite("\r\n");
+#endif
 
 
 	// TODO (program answer always with ok!)
@@ -247,6 +270,15 @@ int cmd_read_pc(char *msg, char * answer)
 
 int cmd_write_pc(char *msg, char * answer)
 {
+	// write the new pc to the restore buffer
+	avrContext.PC = msg[9] | (msg[10] << 8);
+#ifdef DEBUG_ON
+	UARTWrite("SETPC: ");
+	SendHex(msg[10]);
+	SendHex(msg[9]);
+	UARTWrite("\r\n");
+#endif
+
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -265,7 +297,25 @@ int cmd_write_pc(char *msg, char * answer)
 
 int cmd_clr_break(char *msg, char * answer)
 {
-	// TODO (program answer always with ok!)
+	int16_t addr = msg[11] | (msg[12] << 8);
+	// check the type of bp
+	if (msg[9] == 1) { // this should be a program memory breakpoint
+		// what number?
+		if (msg[10] == 1) {
+			ocd_clr_psb0();
+		}
+		else if (msg[10] == 2) {
+			ocd_clr_psb1();
+		}
+		else if (msg[10] == 3) {
+			// TODO
+		}
+		else if (msg[10] == 4) {
+			// TODO
+		}
+	}
+
+	// TODO: ALL Breakpoint types
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -283,7 +333,25 @@ int cmd_clr_break(char *msg, char * answer)
 
 int cmd_set_break(char *msg, char * answer)
 {
-	// TODO (program answer always with ok!)
+	uint16_t addr = msg[11] | (msg[12] << 8);
+	// check the type of bp
+	if (msg[9] == 1) { // this should be a program memory breakpoint
+		// what number?
+		if (msg[10] == 1) {
+			ocd_set_psb0(addr);
+		}
+		else if (msg[10] == 2) {
+			ocd_set_psb1(addr);
+		}
+		else if (msg[10] == 3) {
+			ocd_set_pdmsb_as_single_program(addr);
+		}
+		else if (msg[10] == 4) {
+			ocd_set_pdsb_as_single_program(addr);
+		}
+	}
+
+
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -324,7 +392,7 @@ int cmd_forced_stop(char * msg, char * answer)
 	avr_jtag_instr(AVR_FORCE_BRK, 0);
 
 
-#ifdef DEBUG_ON
+#ifdef DEBUG_VERBOSE
 	uint16_t brk;
 	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
 	UARTWrite("OCDCTL: ");
@@ -337,8 +405,6 @@ int cmd_forced_stop(char * msg, char * answer)
 	SendHex((char)brk);
 	UARTWrite("\r\n");
 #endif
-
-	ocd_save_context();
 
 
 	// TODO (program answer always with ok!)
@@ -361,9 +427,11 @@ int cmd_go(char * msg, char * answer)
 //  jtag_reset();
 	avr_reset(0);
 	// restore possibly overridden registers
+	// this is needed to clear out the 3 instructions that are used to restore the working registers to their normal state
 	ocd_restore_context();
 
 	avr_jtag_instr(AVR_RUN, 0);
+	jtagice.emulator_state = RUNNING;
 
 #ifdef DEBUG_ON
 	uint16_t brk;
@@ -416,6 +484,8 @@ int cmd_enter_progmode(char * msg, char * answer)
 {
 	avr_reset(1);
 	avr_prog_enable();
+	jtagice.emulator_state = PROGRAMMING;
+
 	avr_prog_cmd();
 
 	answer[0] = MESSAGE_START;
@@ -436,6 +506,7 @@ int cmd_leave_progmode(char * msg, char * answer)
 {
 	// TODO (program answer always with ok!)
 	avr_prog_disable();
+	jtagice.emulator_state = STOPPED;
 
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
@@ -455,7 +526,7 @@ int cmd_leave_progmode(char * msg, char * answer)
 int cmd_reset(char * msg, char * answer)
 {
 	avr_reset(1); // force target controller into reset state
-
+	jtagice.emulator_state = STOPPED;
 	// TODO (program answer always with ok!)
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;

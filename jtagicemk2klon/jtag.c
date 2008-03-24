@@ -29,11 +29,11 @@ void jtag_init(void)
 	JTAG_PORT_INIT |= (1<<TCK)|(1<<TMS)|(1<<TDI);
 	// use as input
 	JTAG_PORT_INIT &=~(1<<TDO);
-	
+
 	// pullup
 	JTAG_PORT_WRITE |= (1<<TDO);
 	//JTAG_PORT_WRITE |= (1<<TDO);
-	
+
 	// use as input
 	JTAG_CLEAR_TCK();
 	JTAG_CLEAR_TMS();
@@ -47,23 +47,23 @@ uint8_t jtag_read_tdo(void)
 {
 	if(JTAG_IS_TDO_SET())
 		return 1;
-	else 
+	else
 		return 0;
 }
 
 void jtag_send_slice(uint8_t tck, uint8_t tms, uint8_t tdi)
 {
-	
+
 	if(tms)
 		JTAG_PORT_WRITE |= (1<<TMS);
 	else
 		JTAG_PORT_WRITE &= ~(1<<TMS);
-	
+
 	if(tdi)
 		JTAG_PORT_WRITE |= (1<<TDI);
 	else
 		JTAG_PORT_WRITE &= ~(1<<TDI);
-	
+
 	if(tck)
 		JTAG_PORT_WRITE |= (1<<TCK);
 	else
@@ -76,7 +76,7 @@ int jtag_reset(void)
 	int i;
 	JTAG_SET_TMS();
 	for(i=0;i<5;i++) {
-		JTAG_CLK();	
+		JTAG_CLK();
 	}
 	JTAG_CLEAR_TMS();
 	tapstate = TEST_LOGIC_RESET;
@@ -104,29 +104,29 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 	  //	JTAG_SET_TMS();			// last one with tms
 
 		if(JTAG_IS_TDO_SET())
-			buf[receivedbits/8] |= (1 << (receivedbits & 7));	
+			buf[receivedbits/8] |= (1 << (receivedbits & 7));
 		else
-			buf[receivedbits/8] &= ~(1 << (receivedbits & 7));	
+			buf[receivedbits/8] &= ~(1 << (receivedbits & 7));
 
 		receivedbits++;
 		JTAG_CLK();
   }
-	
+
 	return receivedbits;
 }
 
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 {
 	int sendbits=0;
-	
+
 	// if numbers is not vaild
 	if(numberofbits<=0)
 		return -1;
-	
+
 	JTAG_CLEAR_TMS();				// last one with tms
 
 	//numberofbits--;
-	while(numberofbits--) 
+	while(numberofbits--)
 	{
 		if(numberofbits==0)
 		{
@@ -135,17 +135,17 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 			{
 				tapstate = EXIT1_IR;
 			}
-			else 
+			else
 			{
 				tapstate = EXIT1_DR;
 			}
 		}
 
-		if(buf[sendbits/8] >> (sendbits & 7) & 1) 
+		if(buf[sendbits/8] >> (sendbits & 7) & 1)
 		{
 			JTAG_SET_TDI();
-		} 
-		else 
+		}
+		else
 		{
 			JTAG_CLEAR_TDI();
 		}
@@ -158,18 +158,18 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 
 
 
-uint8_t jtag_write_and_read(	uint8_t numberofbits, 
+uint8_t jtag_write_and_read(	uint8_t numberofbits,
 															unsigned char * buf,
 															unsigned char * readbuf)
 {
 	int bits=0;
-	
+
 	// if numbers is not vaild
 	if(numberofbits<=0)
 		return -1;
-	
+
 	JTAG_CLEAR_TMS();				// last one with tms
-	
+
   while(numberofbits--) {
 		if(numberofbits==0){
 	 		JTAG_SET_TMS();				// last one with tms
@@ -179,17 +179,17 @@ uint8_t jtag_write_and_read(	uint8_t numberofbits,
 				tapstate = EXIT1_DR;
 			}
 		}
-		if(buf[bits/8] >> (bits & 7) & 1) 
+		if(buf[bits/8] >> (bits & 7) & 1)
 			JTAG_SET_TDI();
 		else
 			JTAG_CLEAR_TDI();
-	
+
 		JTAG_CLK();
 
 		if(JTAG_IS_TDO_SET())
-			readbuf[bits/8] |= (1 << (bits & 7));	
+			readbuf[bits/8] |= (1 << (bits & 7));
 		else
-			readbuf[bits/8] &= ~(1 << (bits & 7));	
+			readbuf[bits/8] &= ~(1 << (bits & 7));
 
 
 	  bits++;
@@ -201,20 +201,20 @@ uint8_t jtag_write_and_read(	uint8_t numberofbits,
 void jtag_goto_state(TAP_STATE state)
 {
   /* If 'state' is invalid, simply ignore it */
-  if( state > UPDATE_IR ) return; 
+  if( state > UPDATE_IR ) return;
 
   while( tapstate != state ){
 		//SendHex(tapstate);
 		switch( tapstate ) {
 			case TEST_LOGIC_RESET:
 			  JTAG_CLEAR_TMS();
-	  		JTAG_CLK(); 
+	  		JTAG_CLK();
 	  		tapstate = RUN_TEST_IDLE;
 	  	break;
-	
+
 			case RUN_TEST_IDLE:
 	  		JTAG_SET_TMS();
-	  		JTAG_CLK(); 
+	  		JTAG_CLK();
 	  		tapstate = SELECT_DR_SCAN;
 	  	break;
 
@@ -278,7 +278,7 @@ void jtag_goto_state(TAP_STATE state)
 	    	}
 	  	break;
 
-			case UPDATE_DR: 
+			case UPDATE_DR:
 	  		if( state == RUN_TEST_IDLE ) {
 	      	JTAG_CLEAR_TMS();
 	      	JTAG_CLK();
@@ -334,7 +334,7 @@ void jtag_goto_state(TAP_STATE state)
 
 			case PAUSE_IR:
 	  		JTAG_SET_TMS();
-	  		JTAG_CLK(); 
+	  		JTAG_CLK();
 	  		tapstate = EXIT2_IR;
 	  	break;
 
@@ -367,4 +367,11 @@ void jtag_goto_state(TAP_STATE state)
   }
 	return;
 }
- 
+
+void jtag_clock_cycles(uint8_t num) {
+	JTAG_CLEAR_TMS();
+
+	while (num--) {
+			JTAG_CLK();
+	}
+}

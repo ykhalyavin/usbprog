@@ -1,6 +1,7 @@
 /*
  * jtagice - A Downloader/Uploader for AVR device programmers
  * Copyright (C) 2006 Benedikt Sauter
+ * Copyright (C) 2008 Martin Lang <Martin.Lang@rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,6 +140,8 @@ void USBReceive(char *inbuf)
 	static uint16_t data_remain = 0;
 	uint16_t data_to_read;
 
+	PORTA |= (1<<PA4); // show that we are doing something *gg*
+
 	while (read_pos < 64) {
 
 		switch (current_state) {
@@ -234,10 +237,8 @@ void USBReceive(char *inbuf)
 				JTAGICE_ProcessCommand(buf);
 		}
 
-
-
-	}
-
+	} // while
+	PORTA &= ~(1<<PA4); // we do nothing anymore
 }
 
 void JTAGICE_ProcessCommand(char *buf) {
@@ -340,7 +341,7 @@ UARTWrite("\r\n");
 		}
 		// recalculate size
 //		jtagice.size = jtagice.size -54;
-
+/*
 		if(forcedStop)
 		{
 			forcedStop = 0;
@@ -362,6 +363,8 @@ UARTWrite("\r\n");
 			crc16_append(answer,(unsigned long)14);
 			CommandAnswer(16);
 		}
+
+		*/
 }
 
 
@@ -377,11 +380,16 @@ int main(void)
 
   USBNInit();
   jtagice.datatogl=1;
+  jtagice.emulator_state = NOT_CONNECTED;
+  avrContext.PSB0 = 0;
+  avrContext.PSB1 = 0;
+  avrContext.PDMSB = 0;
+  avrContext.PDSB = 0;
 
   jtag_init();
 
   DDRA = (1 << DDA4);
-  PORTA &= ~(1<<PA4); //off
+  PORTA &= ~(1<<PA4); // this is the LED
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
   USBNDeviceProductID(0x2103); // atmel ids
@@ -413,73 +421,122 @@ int main(void)
   // start usb chip
   USBNStart();
 
-
-#if 0
-  unsigned char recvbuf[10];
-  unsigned char jtagbuf[10];
-
-
-	//char reg=0x12;	//9	10010	(0. bit = read)	BSR (ff07 12)
-	//char reg=0x09;	//9	10010	(0. bit = read)	BSR (ff07 12)
-	//char reg=0x1A;	//D	10010	(0. bit = read)	Control and status register (f7ef 1a)
-	//char reg=AVR_COMM_DATA_CTL;	//D	10010	(0. bit = read)	Control and status register (f7ef 1a)
-
-
-	avr_reset(1);
-	avr_reset(0);
-	// JTAG Befehl  AVR_OCD waehlen
-	jtag_reset();
-	avr_jtag_instr(AVR_OCD,0);
-
-	// schreiben in das control registers 0x0D
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x80;
-	jtagbuf[2]=0x1D;	// adresse und RW Flag=1
-
-	jtag_write(21,jtagbuf);
-
-	// JTAG Befehl AVR_INSTR weaehlen
-	jtag_reset();
-	avr_jtag_instr(AVR_INSTR,0);
-	jtagbuf[0]=0x05;
-	jtagbuf[1]=0xEF;
-	jtag_write(16,jtagbuf);	// avr befehl in das instr register schreiben
-
-	jtag_reset();
-	avr_jtag_instr(AVR_INSTR,0);
-	jtagbuf[0]=0x01;
-	jtagbuf[1]=0xBF;
-	jtag_write(16,jtagbuf);	// avr befehl in das instr register schreiben
-
-
-	// dann wieder AVR_OCD waehlen
-	jtag_reset();
-	avr_jtag_instr(AVR_OCD,0);
-
-	// Hier ist der inhalt aus dem OCDR Register erreichbar
-	// erstmal muss die adresse pre latched sein
-	jtagbuf[0]=0x0C;
-	jtag_write(5,jtagbuf);
-
- 	// und dann sollte man das register abholen
-	jtag_goto_state(SHIFT_DR);
-	jtagbuf[0]=0x00;
-	jtagbuf[1]=0x00;
-	jtagbuf[2]=0x00;
-	jtagbuf[3]=0x00;
-	jtag_write_and_read(32,jtagbuf,recvbuf);
-#ifdef DEBUG_ON
-	SendHex(recvbuf[0]);
-	SendHex(recvbuf[1]);
-	SendHex(recvbuf[2]);
-	SendHex(recvbuf[3]);
-#endif
-
-#endif
-
 	// ask for new events
 	// while send an event block usb receive routine
-	while(1);
+	uint16_t delay = 0;
+
+#ifdef DEBUG_ON
+		UARTWrite("Main Loop\r\n");
+#endif
+
+	/* This is the program main loop.
+	 * It maintains the state changes of the target mcu by cyclic checking
+	 * of the debug registers.
+	 * Notice that all messages are processed in the ISR of the USBN
+	 */
+	while (1) {
+		if (delay++ != 0)
+			continue;
+
+		// when emulator is running cyclicly check whether it has met a break condidtion
+		if (jtagice.emulator_state == RUNNING) {
+			PORTA ^= (1<<PA4); // toggle led while running to signalize working ^^
+			// check ocd BSR
+			cli(); // does not respond on messages in this time
+			uint16_t bsr;
+			rd_dbg_ocd(AVR_BSR,&bsr,0);
+
+#ifdef DEBUG_VERBOSE
+			UARTWrite("Check BSR:");
+			SendHex((char)(bsr>>8));
+			SendHex((char)bsr);
+			UARTWrite("\r\n");
+#endif
+
+			if (bsr != 0) {
+				wait_ms(5);
+				answer[0] = MESSAGE_START;
+				answer[1] = 0xff;
+				answer[2] = 0xff;
+				answer[3] = 0x06;
+				answer[4] = 0;
+				answer[5] = 0;
+				answer[6] = 0;
+				answer[7] = TOKEN;
+				answer[8] = 0xe0;
+
+				ocd_save_context();
+
+#ifdef DEBUG_ON
+				UARTWrite("Break!\r\nPC:");
+				SendHex((uint8_t)(avrContext.PC>>8));
+				SendHex((uint8_t)avrContext.PC);
+				UARTWrite("\r\n");
+
+				uint16_t data;
+				rd_dbg_ocd(AVR_BCR,&data,0);
+				UARTWrite("BCR:");
+				SendHex(data>>8);
+				SendHex(data);
+				rd_dbg_ocd(AVR_BSR,&data,0);
+				UARTWrite("\r\nBSR:");
+				SendHex(data>>8);
+				SendHex(data);
+				rd_dbg_ocd(AVR_PSB0,&data,0);
+				UARTWrite("\r\nPSB0:");
+				SendHex(data>>8);
+				SendHex(data);
+				rd_dbg_ocd(AVR_PSB1,&data,0);
+				UARTWrite("\r\nPSB1:");
+				SendHex(data>>8);
+				SendHex(data);
+				rd_dbg_ocd(AVR_PDSB,&data,0);
+				UARTWrite("\r\nPDSB:");
+				SendHex(data>>8);
+				SendHex(data);
+				rd_dbg_ocd(AVR_PDMSB,&data,0);
+				UARTWrite("\r\nPDMSB:");
+				SendHex(data>>8);
+				SendHex(data);
+				UARTWrite("\r\n");
+#endif
+
+				// the following is the break type line
+				if (bsr & 0x10)
+					answer[13] = 3;
+				else if (bsr & 0x80)
+					answer[13] = 2;
+				else if (bsr & 0x0061) {
+					answer[13] = 2;
+					if (bsr & 0x0060) {
+						avrContext.PC--;
+					}
+				}
+				else
+					answer[13] = 0;
+
+				// clear all active breakpoints?!
+				/* The AVR067 App Note says that breakpoints
+				 * are cleared automaticly after a break.
+				 * I don't know what the clear commands should do?
+				 */
+				rd_dbg_ocd(AVR_BCR,&bsr,0);
+				bsr &= 0xC000; // rule out all breakpoint configurations
+				wr_dbg_ocd(AVR_BCR,&bsr,0);
+
+				answer[9] = (uint8_t)avrContext.PC;
+				answer[10] = (uint8_t)(avrContext.PC>>8);
+				answer[11] = 0;
+				answer[12] = 0;
+				crc16_append(answer,(unsigned long)14);
+				CommandAnswer(16);
+				jtagice.emulator_state = STOPPED;
+				PORTA &= ~(1<<PA4); // LED OFF
+			}
+			sei(); // resume event processing
+
+		}
+	}
 	// end testing
 }
 

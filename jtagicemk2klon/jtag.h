@@ -30,15 +30,15 @@
 #define JTAG_PORT_WRITE		PORTB
 #define JTAG_PORT_READ		PINB
 /*
-#define	TCK			0	
+#define	TCK			0
 #define TMS			7
-#define TDI			5	
-#define TDO			6	
+#define TDI			5
+#define TDO			6
 */
-#define	TCK			5	
-#define TMS			0	
-#define TDI			6	
-#define TDO			4	
+#define	TCK			5
+#define TMS			0
+#define TDI			6
+#define TDO			4
 
 
 // check if tdo == 1
@@ -108,7 +108,7 @@ uint8_t jtag_write_and_read(  uint8_t numberofbits,
 	                            unsigned char * readbuf);
 
 
-
+void jtag_clock_cycles(uint8_t num);
 
 
 #endif /* _JTAG_H_ */

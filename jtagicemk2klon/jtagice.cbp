@@ -36,6 +36,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="Makefile" />
+		<Unit filename="avr_asm.h" />
 		<Unit filename="bit.h" />
 		<Unit filename="constant.h" />
 		<Unit filename="crc.c">

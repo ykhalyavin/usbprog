@@ -49,7 +49,7 @@ unsigned char UARTGetChar(void)
 	#endif
 }
 
-void UARTWrite(char* msg)
+void UARTWrite(const char* msg)
 {
   	while(*msg != '\0')
   	{

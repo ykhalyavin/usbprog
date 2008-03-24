@@ -2,6 +2,7 @@
  * JTAG_AVR_OCD.C
  * Copyright (C) 2003 Armand ten Doesschate <a.doesschate@hccnet.nl>
  * Copyright (C) 2007 Benedikt Sauter <sauter@ixbat.de>
+ * Copyright (C) 2008 Martin Lang <Martin.Lang@rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ static const uint8_t EECR_Addr = 0x1C;
 /* This struct holds essential chip data for debugging.
  * Please use the according accessor functions to modify it
  */
-static struct AVR_Context_Type avrContext;
+struct AVR_Context_Type avrContext;
 
 unsigned char ocd_enshure_ocdr_enable() {
 	uint16_t csr;
@@ -54,33 +55,32 @@ uint8_t ocd_read_ocdr() {
 	return tdo[1];
 }
 
-/* Saves the avr registers which get used by ocd system*/
+/* Saves the avr registers which get used by ocd system */
 unsigned char ocd_save_context() {
-	if (avrContext.registerDirty == 0) {
-		// save the registers
-		ocd_enshure_ocdr_enable();
-		// save register 0
-		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16)); // out 0x31, r16
-		avrContext.r16 = ocd_read_ocdr();
+	ocd_enshure_ocdr_enable();
 
-		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,30)); // out 0x31, r30
-		avrContext.r30 = ocd_read_ocdr();
+	avrContext.PC = ocd_read_pc();
+	// save register 0
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16)); // out 0x31, r16
+	avrContext.r16 = ocd_read_ocdr();
 
-		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,31)); // out 0x31, r33
-		avrContext.r31 = ocd_read_ocdr();
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,30)); // out 0x31, r30
+	avrContext.r30 = ocd_read_ocdr();
+
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,31)); // out 0x31, r33
+	avrContext.r31 = ocd_read_ocdr();
+
+	avrContext.registerDirty = 1; // reading the above register dirties the context
 #ifdef DEBUG_ON
-		UARTWrite("OCDSave\r\nr0:");
-		SendHex(avrContext.r16);
-		UARTWrite("\r\nr30:");
-		SendHex(avrContext.r30);
-		UARTWrite("\r\nr31:");
-		SendHex(avrContext.r31);
-		UARTWrite("\r\n");
+	UARTWrite("OCDSave\r\nr0:");
+	SendHex(avrContext.r16);
+	UARTWrite("\r\nr30:");
+	SendHex(avrContext.r30);
+	UARTWrite("\r\nr31:");
+	SendHex(avrContext.r31);
+	UARTWrite("\r\n");
 #endif
-		return 1;
-	}
-	else
-		return 0;
+	return 1;
 }
 
 #ifdef DEBUG_ON
@@ -103,9 +103,15 @@ void ocd_dump_debug_registers() {
 
 /* Restores before saved registers after completing the debug modifications */
 unsigned char ocd_restore_context() {
-	if (avrContext.registerDirty != 0) {
-		// restore the registers
+	if (avrContext.registerDirty == 1) {
 		ocd_enshure_ocdr_enable();
+
+		// restore PC
+		avrContext.PC -= 3; // this is needed because of the 3 LDI Instructions after the IJMP
+		ocd_execute_avr_instruction(AVR_LDI(30,avrContext.PC));
+		ocd_execute_avr_instruction(AVR_LDI(31,avrContext.PC>>8));
+		ocd_execute_avr_instruction(AVR_IJMP());
+		jtag_clock_cycles(1);
 
 		// restore registers
 		ocd_execute_avr_instruction(AVR_LDI(16,avrContext.r16));
@@ -113,11 +119,20 @@ unsigned char ocd_restore_context() {
 		ocd_execute_avr_instruction(AVR_LDI(30,avrContext.r30));
 
 		ocd_execute_avr_instruction(AVR_LDI(31,avrContext.r31));
-#ifdef DEBUG_ON
+	#ifdef DEBUG_ON
 		UARTWrite("Registers restored\r\n");
-#endif
+	#endif
 
+		avrContext.registerDirty = 0;
 	}
+	// restore all BP data
+
+	wr_dbg_ocd(AVR_PSB0,&avrContext.PSB0,0);
+	wr_dbg_ocd(AVR_PSB1,&avrContext.PSB1,0);
+	wr_dbg_ocd(AVR_PDMSB,&avrContext.PDMSB,0);
+	wr_dbg_ocd(AVR_PDSB,&avrContext.PDSB,0);
+
+
 	return 1;
 }
 
@@ -238,7 +253,7 @@ uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 
 		if (startaddr > 31 || (startaddr != 16 && startaddr != 30 && startaddr != 31)) {
 			ocd_execute_avr_instruction(AVR_LDZ_PostInc(16)); // load value with post increment
-			ocd_execute_avr_instruction(AVR_NOP()); // this may be needed because LDZ is 2 cycle instruction
+			jtag_clock_cycles(1); // this may be needed because LDZ is 2 cycle instruction
 			ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
 
 			databuf = ocd_read_ocdr();
@@ -253,7 +268,7 @@ uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 
 				// signalize AVR that this address gets skipped
 				ocd_execute_avr_instruction(AVR_ADIW(3, 1));
-				ocd_execute_avr_instruction(AVR_NOP()); // the above is two cycle instruction
+				jtag_clock_cycles(1); // the above is two cycle instruction
 		}
 		startaddr++;
 
@@ -310,7 +325,7 @@ uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 			ocd_execute_avr_instruction(AVR_LDI(16,*buf));
 			buf++; // DO NOT WRITE IT INTO THE MACRO BECAUSE THE PARAMETER GETS REFERENCED MORE THAN ONCE
 			ocd_execute_avr_instruction(AVR_STZ_PostInc(16)); // store value with post increment
-			ocd_execute_avr_instruction(AVR_NOP()); // this may be needed because STZ is 2 cycle instruction
+			jtag_clock_cycles(1); // this may be needed because STZ is 2 cycle instruction
 		}
 		else { // its important to save values which get written to the working registers
 			if (startaddr == 16)
@@ -322,7 +337,7 @@ uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 
 				// signalize AVR that this address gets skipped
 				ocd_execute_avr_instruction(AVR_ADIW(3, 1));
-				ocd_execute_avr_instruction(AVR_NOP()); // the above is two cycle instruction
+				jtag_clock_cycles(1); // the above is two cycle instruction
 		}
 
 
@@ -347,15 +362,13 @@ uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	UARTWrite("OCDCTL: ");
 	SendHex(brk>>8);
 	SendHex((char)brk);
-	UARTWrite("\r\nMod..");
-	brk = 0xFFFF;
-	wr_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
-	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
-	UARTWrite("OCDCTL: ");
-	SendHex(brk>>8);
-	SendHex((char)brk);
 	UARTWrite("\r\n");
 #endif
+	ocd_execute_avr_instruction(AVR_LDI(30,0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(31,0xFB));
+//	ocd_execute_avr_instruction(AVR_IJMP());
+//	ocd_execute_avr_instruction(AVR_NOP());
+
 
 	// load the start adress to the Z register
 	ocd_execute_avr_instruction(AVR_LDI(30,startaddr & 0xFF));
@@ -371,10 +384,11 @@ uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 		// read one program memory word
 		uint8_t databuf;
 
-		ocd_execute_avr_instruction(AVR_LPM_PostInc(16));
+		ocd_execute_avr_instruction(AVR_LPM());
 		//ocd_execute_avr_instruction(0x95C8);
-		ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
-		ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
+		//ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
+		//ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
+		jtag_clock_cycles(4);
 
 		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
 
@@ -400,6 +414,7 @@ uint8_t ocd_wr_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 
 }
 
+/* Ja die Funktion sieht sehr komisch aus - das seh ich ein, aber es geht! */
 uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 		// initialize the ocd system
 	avrContext.registerDirty = 1;
@@ -426,6 +441,8 @@ uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 		ocd_execute_avr_instruction(AVR_NOP());
 		ocd_execute_avr_instruction(AVR_NOP());
 		ocd_execute_avr_instruction(AVR_NOP()); // normally the cpu gets halted for 5 clock cycles when reading the eeprom. it seems that we should occupy this also
+
+		//jtag_clock_cycles(7);
 		// read from eeprom data register
 		ocd_execute_avr_instruction(AVR_IN(16,EECR_Addr+1));
 		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
@@ -435,7 +452,7 @@ uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 
 		databuf = ocd_read_ocdr();
 
-#ifdef DEBUG_VERBOSE
+#ifdef DEBUG_ON
 		SendHex(databuf);
 		UARTWrite("\r\n");
 		ocd_dump_debug_registers();
@@ -450,7 +467,7 @@ uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	return 1;
 }
 
-
+/* Ja die Funktion sieht sehr komisch aus - das seh ich ein, aber es geht! */
 uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 			// initialize the ocd system
 	avrContext.registerDirty = 1;
@@ -504,6 +521,69 @@ uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 #endif
 
 	return 1;
+}
+
+uint8_t ocd_set_psb0(uint16_t addr) {
+	// write adress to psb0 register in context type
+	// the cpu frags this values when running, so we must refresh it every time
+	avrContext.PSB0 = addr;
+
+	uint16_t BCR;
+	rd_dbg_ocd(AVR_BCR,&BCR,0);
+	BCR |= AVR_EN_PSB0;
+	wr_dbg_ocd(AVR_BCR,&BCR,0);
+}
+
+uint8_t ocd_set_psb1(uint16_t addr) {
+	// write adress to psb1 register
+
+	avrContext.PSB1 = addr;
+
+	uint16_t BCR;
+	rd_dbg_ocd(AVR_BCR,&BCR,0);
+	BCR |= AVR_EN_PSB1;
+	wr_dbg_ocd(AVR_BCR,&BCR,0);
+}
+
+uint8_t ocd_set_pdmsb_as_single_program(uint16_t addr) {
+	// write adress to psmsb register
+
+	avrContext.PDMSB = addr;
+
+	uint16_t BCR;
+	rd_dbg_ocd(AVR_BCR,&BCR,0);
+	BCR |= AVR_PDMSB_SINGLE_BRK;
+	wr_dbg_ocd(AVR_BCR,&BCR,0);
+}
+
+uint8_t ocd_set_pdsb_as_single_program(uint16_t addr) {
+	// write adress to pdsb register
+
+	avrContext.PDSB = addr;
+
+	uint16_t BCR;
+	rd_dbg_ocd(AVR_BCR,&BCR,0);
+	BCR |= AVR_MAGIC_PDSB_AS_PROGRAM_BREAK;
+	wr_dbg_ocd(AVR_BCR,&BCR,0);
+}
+
+
+uint8_t ocd_clr_psb0()  {
+	avrContext.PSB0 = 0;
+
+	uint16_t BCR;
+	rd_dbg_ocd(AVR_BCR,&BCR,0);
+	BCR &= ~AVR_EN_PSB0;
+	wr_dbg_ocd(AVR_BCR,&BCR,0);
+}
+
+uint8_t ocd_clr_psb1()  {
+	avrContext.PSB1 = 0;
+
+	uint16_t BCR;
+	rd_dbg_ocd(AVR_BCR,&BCR,0);
+	BCR &= ~AVR_EN_PSB1;
+	wr_dbg_ocd(AVR_BCR,&BCR,0);
 }
 
 /*----------------------------------------------------------------------*

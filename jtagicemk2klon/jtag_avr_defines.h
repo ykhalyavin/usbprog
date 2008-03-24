@@ -63,13 +63,14 @@
 /*
  * BCR bits in high byte of break control register
  */
-#define AVR_COMP_MSK                    2
-#define AVR_PDMSB_SINGLE_BRK            4
-#define AVR_EN_PSB1                     8
-#define AVR_EN_PSB0                     0x10
-#define AVR_BRK_ON_FLOW                 0x20
-#define AVR_RD_PC                       0x40
-#define AVR_TMR_RUN_ON_BRK              0x80
+#define AVR_COMP_MSK                    0x0200
+#define AVR_PDMSB_SINGLE_BRK            0x0400
+#define AVR_EN_PSB1                     0x0400
+#define AVR_EN_PSB0                     0x0800
+#define AVR_BRK_ON_FLOW                 0x2000
+#define AVR_RD_PC                       0x4000
+#define AVR_TMR_RUN_ON_BRK              0x8000
+#define AVR_MAGIC_PDSB_AS_PROGRAM_BREAK 0x0098
 
 /*
  * BSR bits

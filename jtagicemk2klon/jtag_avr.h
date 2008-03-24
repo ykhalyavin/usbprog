@@ -26,7 +26,7 @@
 
 void idcode(unsigned char *buf);
 void bypass(void);
-void avr_reset(int true);
+void avr_reset(uint8_t set);
 void avr_prog_enable(void);
 void avr_prog_disable(void);
 void avr_prog_cmd(void);
