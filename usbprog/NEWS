@@ -1,3 +1,9 @@
+0.1.6
+-----
+  * CLI: fix mechanism to avoid downloading the index file again and again if
+    the CLI is invoked repeatedly in small intervals
+  * remove GPL-incompatible md5_loc.h from source distribution
+
 0.1.5
 -----
  * Linux: add desktop file and install icon

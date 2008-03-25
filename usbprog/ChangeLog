@@ -1,3 +1,9 @@
+2008-03-25  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix mechanism to avoid downloading the index file again and again if
+	  the CLI is invoked repeatedly in small intervals
+	* remove GPL-incompatible md5_loc.h from source distribution
+
 2008-03-23  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* add '2008' to 'license' command

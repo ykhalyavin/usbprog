@@ -23,7 +23,6 @@
  * Written by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.
  * Modified by Gray Watson <http://256.com/gray/>, 1997.
  *
- * $Id$
  */
 
 /*
@@ -51,9 +50,29 @@
 #include <sys/types.h>
 
 #include "md5.h"
-#include "md5_loc.h"
+
+#ifdef WORDS_BIGENDIAN
+# define SWAP(n)							\
+    (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
+#else
+# define SWAP(n) (n)
+#endif
+
+/* static	char	*rcs_id =
+
+/* version id for the library */
+/* static char *version_id = "$MD5Version: 1.0.0 November-19-1997 $"; */
 
 /****************************** local routines *******************************/
+
+/* These are the four functions used in the four steps of the MD5 algorithm
+   and defined in the RFC 1321.  The first function is a little bit optimized
+   (as found in Colin Plumbs public domain implementation).  */
+/* #define FF(b, c, d) ((b & c) | (~b & d)) */
+#define FF(b, c, d) (d ^ (b & (c ^ d)))
+#define FG(b, c, d) FF (d, b, c)
+#define FH(b, c, d) (b ^ c ^ d)
+#define FI(b, c, d) (c ^ (b | ~d))
 
 /*
  * process_block
@@ -98,7 +117,7 @@ static	void	process_block(md5_t *md5_p, const void *buffer,
    */
   if (md5_p->md_total[0] > MAX_MD5_UINT32 - buf_len) {
     md5_p->md_total[1]++;
-    md5_p->md_total[0] -= (MAX_MD5_UINT32 + 1 - buf_len);
+    md5_p->md_total[0] -= (MAX_MD5_UINT32 - buf_len);
   }
   else {
     md5_p->md_total[0] += buf_len;
@@ -116,6 +135,28 @@ static	void	process_block(md5_t *md5_p, const void *buffer,
     B_save = B;
     C_save = C;
     D_save = D;
+
+      /* First round: using the given function, the context and a constant
+	 the next context is computed.  Because the algorithms processing
+	 unit is a 32-bit word and it is determined to work on words in
+	 little endian byte order we perhaps have to change the byte order
+	 before the computation.  To reduce the work for the next steps
+	 we store the swapped words in the array CORRECT_WORDS.  */
+
+#define OP1(a, b, c, d, b_p, c_p, s, T)				\
+     do {							\
+       memcpy(c_p, b_p, sizeof(md5_uint32));       		\
+       *c_p = SWAP(*c_p);					\
+       a += FF (b, c, d) + *c_p + T;				\
+       a = CYCLIC (a, s);					\
+       a += b;							\
+       b_p = (char *)b_p + sizeof(md5_uint32);			\
+       c_p++;							\
+    } while (0)
+
+      /* It is unfortunate that C does not provide an operator for
+	 cyclic rotation.  Hope the C compiler is smart enough.  */
+#define CYCLIC(w, s) (w = (w << s) | (w >> (32 - s)))
 
     /*
      * Before we start, one word to the strange constants.  They are
@@ -141,6 +182,17 @@ static	void	process_block(md5_t *md5_p, const void *buffer,
     OP1 (D, A, B, C, buf_p, corr_p, 12, 0xfd987193);
     OP1 (C, D, A, B, buf_p, corr_p, 17, 0xa679438e);
     OP1 (B, C, D, A, buf_p, corr_p, 22, 0x49b40821);
+
+      /* For the second to fourth round we have the possibly swapped words
+	 in CORRECT_WORDS.  Redefine the macro to take an additional first
+	 argument specifying the function to use.  */
+#undef OP
+#define OP234(FUNC, a, b, c, d, k, s, T)		\
+    do { 						\
+      a += FUNC (b, c, d) + k + T;			\
+      a = CYCLIC (a, s);				\
+      a += b;						\
+    } while (0)
 
     /* Round 2. */
     OP234 (FG, A, B, C, D, correct[  1],  5, 0xf61e2562);
@@ -283,6 +335,8 @@ void	md5_init(md5_t *md5_p)
   md5_p->md_buf_len = 0;
 }
 
+#define BLOCK_SIZE_MASK	(MD5_BLOCK_SIZE - 1)
+
 /*
  * md5_process
  *
@@ -390,7 +444,7 @@ void	md5_finish(md5_t *md5_p, void *signature)
    */
   if (md5_p->md_total[0] > MAX_MD5_UINT32 - bytes) {
     md5_p->md_total[1]++;
-    md5_p->md_total[0] -= (MAX_MD5_UINT32 + 1 - bytes);
+    md5_p->md_total[0] -= (MAX_MD5_UINT32 - bytes);
   }
   else {
     md5_p->md_total[0] += bytes;
@@ -420,17 +474,13 @@ void	md5_finish(md5_t *md5_p, void *signature)
     bytes += pad;
   }
 
-  /*
-   * Put the 64-bit file length in _bits_ (i.e. *8) at the end of the
-   * buffer.  
-   */
-  hold = SWAP((md5_p->md_total[0] & 0x1FFFFFFF) << 3);
+  /* put the 64-bit file length in _bits_ (i.e. *8) at the end of the buffer */
+  hold = SWAP(md5_p->md_total[0] << 3);
   memcpy(md5_p->md_buffer + bytes, &hold, sizeof(md5_uint32));
   bytes += sizeof(md5_uint32);
 
   /* shift the high word over by 3 and add in the top 3 bits from the low */
-  hold = SWAP((md5_p->md_total[1] << 3) |
-	      ((md5_p->md_total[0] & 0xE0000000) >> 29));
+  hold = SWAP((md5_p->md_total[1] << 3) | (md5_p->md_total[0] >> 29));
   memcpy(md5_p->md_buffer + bytes, &hold, sizeof(md5_uint32));
   bytes += sizeof(md5_uint32);
 
@@ -474,6 +524,8 @@ void	md5_buffer(const char *buffer, const unsigned int buf_len,
   /* put result in desired memory area */
   md5_finish(&md5, signature);
 }
+
+#define HEX_STRING	"0123456789abcdef"	/* to convert to hex */
 
 /*
  * md5_sig_to_string

@@ -544,7 +544,7 @@ void Firmwarepool::downloadIndex(const string &url)
     // don't download index if the modification time is less than 10 min
     if (m_indexAutoUpdatetime != 0) {
         try {
-            DateTime dt = Fileutil::getMTime(file);
+            DateTime dt = Fileutil::getMTime(oldPath);
             DateTime now;
             if (now - dt < m_indexAutoUpdatetime * 60)
                 return;
