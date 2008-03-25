@@ -1,7 +1,7 @@
 [Project]
 FileName=libmd5.dev
 Name=libmd5
-UnitCount=3
+UnitCount=2
 Type=2
 Ver=1
 ObjFiles=
@@ -30,7 +30,7 @@ CompilerSet=0
 CompilerSettings=0000000000000000000000
 
 [Unit1]
-FileName=../md5/md5.c
+FileName=..\md5\md5.c
 CompileCpp=0
 Folder=libmd5
 Compile=1
@@ -40,7 +40,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=../md5/md5.h
+FileName=..\md5\md5.h
 CompileCpp=0
 Folder=libmd5
 Compile=1
