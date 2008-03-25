@@ -136,6 +136,10 @@ static	void	process_block(md5_t *md5_p, const void *buffer,
     C_save = C;
     D_save = D;
 
+      /* It is unfortunate that C does not provide an operator for
+	 cyclic rotation.  Hope the C compiler is smart enough.  */
+#define CYCLIC(w, s) ((w << s) | (w >> (32 - s)))
+
       /* First round: using the given function, the context and a constant
 	 the next context is computed.  Because the algorithms processing
 	 unit is a 32-bit word and it is determined to work on words in
@@ -153,10 +157,6 @@ static	void	process_block(md5_t *md5_p, const void *buffer,
        b_p = (char *)b_p + sizeof(md5_uint32);			\
        c_p++;							\
     } while (0)
-
-      /* It is unfortunate that C does not provide an operator for
-	 cyclic rotation.  Hope the C compiler is smart enough.  */
-#define CYCLIC(w, s) (w = (w << s) | (w >> (32 - s)))
 
     /*
      * Before we start, one word to the strange constants.  They are
