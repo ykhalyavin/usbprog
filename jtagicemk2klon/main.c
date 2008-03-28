@@ -504,11 +504,9 @@ int main(void)
 				// the following is the break type line
 				if (bsr & 0x10)
 					answer[13] = 3;
-				else if (bsr & 0x80)
+				else if (bsr & 0x00E1) {
 					answer[13] = 2;
-				else if (bsr & 0x0061) {
-					answer[13] = 2;
-					if (bsr & 0x0060) {
+					if (bsr & 0x00E0) {
 						avrContext.PC--;
 					}
 				}

@@ -4,8 +4,8 @@
 	<File name="Makefile" open="1" top="0" tabpos="5">
 		<Cursor position="2328" topLine="294" />
 	</File>
-	<File name="avr_asm.h" open="1" top="0" tabpos="10">
-		<Cursor position="579" topLine="0" />
+	<File name="avr_asm.h" open="1" top="0" tabpos="9">
+		<Cursor position="152" topLine="0" />
 	</File>
 	<File name="bit.h" open="1" top="0" tabpos="1">
 		<Cursor position="0" topLine="0" />
@@ -16,53 +16,53 @@
 	<File name="crc.h" open="0" top="0" tabpos="21">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="jtag.c" open="1" top="1" tabpos="14">
-		<Cursor position="856" topLine="4" />
+	<File name="jtag.c" open="0" top="0" tabpos="14">
+		<Cursor position="7027" topLine="333" />
 	</File>
-	<File name="jtag.h" open="1" top="0" tabpos="15">
-		<Cursor position="2270" topLine="69" />
+	<File name="jtag.h" open="0" top="0" tabpos="15">
+		<Cursor position="1727" topLine="36" />
 	</File>
-	<File name="jtag_avr.c" open="0" top="0" tabpos="14">
-		<Cursor position="1701" topLine="64" />
+	<File name="jtag_avr.c" open="1" top="0" tabpos="12">
+		<Cursor position="581" topLine="0" />
 	</File>
-	<File name="jtag_avr.h" open="1" top="0" tabpos="8">
-		<Cursor position="0" topLine="15" />
+	<File name="jtag_avr.h" open="1" top="0" tabpos="7">
+		<Cursor position="906" topLine="0" />
 	</File>
-	<File name="jtag_avr_defines.h" open="1" top="0" tabpos="9">
-		<Cursor position="3367" topLine="55" />
+	<File name="jtag_avr_defines.h" open="1" top="0" tabpos="8">
+		<Cursor position="2555" topLine="47" />
 	</File>
-	<File name="jtag_avr_ocd.c" open="1" top="0" tabpos="6">
-		<Cursor position="9813" topLine="339" />
+	<File name="jtag_avr_ocd.c" open="1" top="0" tabpos="4">
+		<Cursor position="15431" topLine="237" />
 	</File>
-	<File name="jtag_avr_ocd.h" open="1" top="0" tabpos="13">
-		<Cursor position="1160" topLine="11" />
+	<File name="jtag_avr_ocd.h" open="1" top="1" tabpos="13">
+		<Cursor position="1348" topLine="21" />
 	</File>
-	<File name="jtag_avr_prg.c" open="1" top="0" tabpos="11">
-		<Cursor position="7712" topLine="304" />
+	<File name="jtag_avr_prg.c" open="1" top="0" tabpos="10">
+		<Cursor position="3271" topLine="0" />
 	</File>
-	<File name="jtag_avr_prg.h" open="1" top="0" tabpos="12">
+	<File name="jtag_avr_prg.h" open="0" top="0" tabpos="12">
 		<Cursor position="1727" topLine="1" />
 	</File>
-	<File name="jtagice2.c" open="1" top="0" tabpos="4">
-		<Cursor position="12907" topLine="595" />
+	<File name="jtagice2.c" open="1" top="0" tabpos="3">
+		<Cursor position="9089" topLine="413" />
 	</File>
-	<File name="jtagice2.h" open="0" top="0" tabpos="17">
-		<Cursor position="1754" topLine="35" />
+	<File name="jtagice2.h" open="1" top="0" tabpos="11">
+		<Cursor position="2783" topLine="75" />
 	</File>
-	<File name="main.c" open="1" top="0" tabpos="7">
-		<Cursor position="8426" topLine="359" />
+	<File name="main.c" open="1" top="0" tabpos="6">
+		<Cursor position="11516" topLine="476" />
 	</File>
-	<File name="uart.c" open="1" top="0" tabpos="3">
-		<Cursor position="1349" topLine="28" />
+	<File name="uart.c" open="0" top="0" tabpos="3">
+		<Cursor position="1080" topLine="31" />
 	</File>
 	<File name="uart.h" open="0" top="0" tabpos="18">
-		<Cursor position="0" topLine="0" />
+		<Cursor position="191" topLine="0" />
 	</File>
 	<File name="usbn2mc.c" open="0" top="0" tabpos="11">
-		<Cursor position="1137" topLine="0" />
+		<Cursor position="1137" topLine="2" />
 	</File>
 	<File name="usbn2mc.h" open="0" top="0" tabpos="10">
-		<Cursor position="1025" topLine="0" />
+		<Cursor position="821" topLine="0" />
 	</File>
 	<File name="wait.c" open="1" top="0" tabpos="2">
 		<Cursor position="0" topLine="0" />

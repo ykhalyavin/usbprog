@@ -430,6 +430,10 @@ int cmd_go(char * msg, char * answer)
 	// this is needed to clear out the 3 instructions that are used to restore the working registers to their normal state
 	ocd_restore_context();
 
+	uint16_t brktest = 0x2000;
+
+	wr_dbg_ocd(AVR_BCR,&brktest,0);
+
 	avr_jtag_instr(AVR_RUN, 0);
 	jtagice.emulator_state = RUNNING;
 
