@@ -1,28 +1,45 @@
 #!/usr/bin/perl
-
-# Diese Datei dient der Auswertung von mit einem Logic Analyzer ausgezeichnetem JTAG Traffic. 
+#-------------------------------------------------------------------------
+#* Auswertung.pl
+#* Copyright (C) 2008 Martin Lang <Martin.Lang@rwth-aachen.de>
+#*
+#* This program is free software; you can redistribute it and/or modify
+#* it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+#* (at your option) any later version.
+#*
+#* This program is distributed in the hope that it will be useful,
+#* but WITHOUT ANY WARRANTY; without even the implied warranty of
+#* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#* GNU General Public License for more details.
+#*
+#* You should have received a copy of the GNU General Public License
+#* along with this program; if not, write to the Free Software
+#* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#*
+#*----------------------------------------------------------------------
 
 ## Definitionen
 
 ## JTAG Statemachine 
 
 @JTAGStates = (
-	"TEST LOGIC RESET",	#0
-	"RUN TEST / IDLE", 	#1 
-	"SELECT DR SCAN",  	#2
-	"SELECT IR SCAN",  	#3
+	"TEST-LOGIC-RESET",	#0
+	"RUN-TEST/IDLE", 	#1 
+	"SELECT-DR-SCAN",  	#2
+	"SELECT-IR-SCAN",  	#3
 	"CAPTURE DR",		#4
-	"SHIFT DR",			#5
-	"EXIT1 DR",			#6	
-	"PAUSE DR",			#7
-	"EXIT2 DR",			#8
-	"UPDATE DR",		#9
-	"CAPTURE IR",		#10
-	"SHIFT IR",			#11
-	"EXIT1 IR",			#12
-	"PAUSE IR",			#13
-	"EXIT2 IR",			#14
-	"UPDATE IR"			#15
+	"SHIFT-DR",			#5
+	"EXIT1-DR",			#6	
+	"PAUSE-DR",			#7
+	"EXIT2-DR",			#8
+	"UPDATE-DR",		#9
+	"CAPTURE-IR",		#10
+	"SHIFT-IR",			#11
+	"EXIT1-IR",			#12
+	"PAUSE-IR",			#13
+	"EXIT2-IR",			#14
+	"UPDATE-IR"			#15
 );
 # Format STATE => ( 0 Transition Target , 1 Transition Target)
 @JTAGTransition = (
@@ -73,7 +90,7 @@
 %OCDRegisters = (
 	0 => "PSB0",
 	1 => "PSB1",
-	2 => "PSMSB",
+	2 => "PDMSB",
 	3 => "PDSB",
 	8 => "BCR",
 	9 => "BSR",
@@ -81,7 +98,7 @@
 	13 => "OCDCSR"
 );
 
-$JTAGStart = 1; # Der Startzustand ist TEST RUN / IDLE
+$JTAGStart = 2; # JTAGICE seems to idle in SELECT-DR-SCAN State
 
 ## /Definitionen
 
@@ -96,7 +113,7 @@ $JTAGStart = 1; # Der Startzustand ist TEST RUN / IDLE
 ## init
 $| = 1;
 if ($#ARGV < 0) {
-	print "Usage: Auswertung.pl [-v | -s=*.sb ] <filename>\n";
+	print "Usage: Auswertung.pl [ -v | -sym=*.sb | -start=JTAG-STATE ] <filename>\n";
 	exit;
 }
 my $JtagState = $JTAGStart;
@@ -128,8 +145,22 @@ for ($i = 0; $i <= $#ARGV; $i++) {
 	if ($ARGV[$i] =~ /^-v$/) {
 		$Verbose = 1;
 	}
-	elsif ($ARGV[$i] =~ /^-s=(.*\.sb)$/) {
+	elsif ($ARGV[$i] =~ /^-sb=(.*\.sb)$/) {
 		LoadProcessorSymbolicFile($1);
+	}
+	elsif ($ARGV[$i] =~ /^-start=([-A-Z]+)$/) {
+		# Find matching JTAG State
+		$JtagState = -1;
+		for ($c = 0; $c <= $#JTAGStates; $c++) {
+			if ($1 eq $JTAGStates[$c]) {
+				$JtagState = $c;
+				last;
+			}
+		}
+		
+		if ($JtagState == -1) {
+			die("Invalid JTAG start state given!");
+		}
 	}
 	else {
 		# treat this as filename
@@ -266,7 +297,7 @@ sub ProcessState_UpdateDR {
 		
 			if ($LatchedData & 0x100000) { 
 				## This is write access to one of the registers 
-				printf "AVR Debug Access:\t\t$OCDRegisters{$Regid} set to %x\n", ($OutputData & 0xFFFF);
+				printf "AVR Debug Access:\t\t$OCDRegisters{$Regid} set to %x\n", ($LatchedData & 0xFFFF);
 			}
 		}
 		#print "Len: $Reglen\n";
