@@ -95,16 +95,20 @@ $JTAGStart = 1; # Der Startzustand ist TEST RUN / IDLE
 
 ## init
 $| = 1;
-if ($#ARGV != 0) {
-	print "Usage: Auswertung.pl <filename>\n";
+if ($#ARGV < 0) {
+	print "Usage: Auswertung.pl [-v | -s=*.sb ] <filename>\n";
 	exit;
 }
-my $filename = $ARGV[0];
 my $JtagState = $JTAGStart;
 my $TDI = 0;
 my $TDO = 0;
 my $TMS = 0;
 my $oldTCK = 0;
+
+$Symbolfile = 0;
+%Regnames = ();
+%Bitnames = ();
+@Registerfile = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 
 $CurrentIR = "";
 $CurrentDRIn = "";
@@ -116,6 +120,22 @@ $OutputData = 0;
 
 $OCDPrelatchReg = 0;
 
+#LoadProcessorSymbolicFile("mega16.sb");
+# Parse command line arguments
+$filename = "";
+$Verbose = 0;
+for ($i = 0; $i <= $#ARGV; $i++) {
+	if ($ARGV[$i] =~ /^-v$/) {
+		$Verbose = 1;
+	}
+	elsif ($ARGV[$i] =~ /^-s=(.*\.sb)$/) {
+		LoadProcessorSymbolicFile($1);
+	}
+	else {
+		# treat this as filename
+		$filename = $ARGV[$i];
+	}
+}
 
 ## /init
 
@@ -146,7 +166,9 @@ while ($line = <INPUT>) {
 			## Calculate next JTAG State
 			$JtagState = $JTAGTransition[$JtagState][$TMS];
 			
-			#print "TDI: $TDI\nTDO: $TDI\nNew JTAG State: $JTAGStates[$JtagState]\n";
+			if ($Verbose == 1) {
+				print "Next JTAG State: $JTAGStates[$JtagState]\n";
+			}
 		
 		}
 		
@@ -179,7 +201,8 @@ sub ProcessState_TestRunIDLE {
 			}
 		}
 		close TMP;	
-		print "AVR Instruction: " . $disasm . "\n";
+		$disasm = PostprocessDisassembler($disasm);
+		print "AVR Instruction: \t\t" . $disasm . "\n";
 	}
 }
 
@@ -192,12 +215,21 @@ sub ProcessState_ShiftDR {
 	my $TDO = shift;
 	my $TDI = shift;
 	
+	if ((length($CurrentDRIn) % 5) == 4) {
+		$CurrentDRIn = "_" . $CurrentDRIn;
+		$CurrentDROut = "_" . $CurrentDROut;
+	}
+	
 	$CurrentDRIn = "$TDI" . $CurrentDRIn;
 	$CurrentDROut = "$TDO" . $CurrentDROut;
 }
 
 sub ProcessState_UpdateDR {
-	print "TDI: $CurrentDRIn\nTDO: $CurrentDROut\n";
+	my $PrintDRIn = $CurrentDRIn;
+	my $PrintDROut = $CurrentDROut;
+	
+	$CurrentDRIn =~ s/_//g; # Remove break symbols which are only present for easier reading of binary values
+	$CurrentDROut =~ s/_//g;
 	
 	my $Reglen = length($CurrentDRIn);
 	
@@ -209,17 +241,35 @@ sub ProcessState_UpdateDR {
 		$CurrentDROut = "0" . $CurrentDROut;
 	}
 	$OutputData = unpack("N", pack("B32",$CurrentDROut));
-	printf "Data: %x\n", $LatchedData; 
+	#printf "Data: %x\n", $LatchedData; 
+	
+	## Print out what have been seen
+	printf "TDI: $PrintDRIn %x\nTDO: $PrintDROut %x\n", $LatchedData, $OutputData;
 	
 	## Test for Access on OCD Registers
 	if ($LatchedInstruction == 11) {
 		if (($Reglen == 5) && !($LatchedData & 0x10)) { # this is prelatching of read access to register
-			print "Prelatch $LatchedData\n";
+			#print "Prelatch $LatchedData\n";
 			$OCDPrelatchReg = $LatchedData;
 		}
 		elsif (($Reglen == 16)) {
-			printf "$OCDRegisters{$OCDPrelatchReg} reads as %x\n", $OutputData;
+			printf "AVR Debug Access:\t\t$OCDRegisters{$OCDPrelatchReg} is %x\n", $OutputData;
 		}
+		elsif (($Reglen == 21)) {
+			# Check whether this is also read access for the prelatched register
+			my $Regid = ($LatchedData>>16) & 0xF;
+			
+			if ($Regid == $OCDPrelatchReg) {
+				# This is also read access for before latched register
+				printf "AVR Debug Access:\t\t$OCDRegisters{$OCDPrelatchReg} is %x\n", ($OutputData & 0xFFFF);
+			}
+		
+			if ($LatchedData & 0x100000) { 
+				## This is write access to one of the registers 
+				printf "AVR Debug Access:\t\t$OCDRegisters{$Regid} set to %x\n", ($OutputData & 0xFFFF);
+			}
+		}
+		#print "Len: $Reglen\n";
 	}
 }
 
@@ -235,8 +285,99 @@ sub ProcessState_ShiftIR {
 }
 
 sub ProcessState_UpdateIR {
+	## Reset the prelatching of OCD Register Read
+	$OCDPrelatchReg = 0xFF;
+
 	$LatchedInstruction = ord(pack('B8', "0000$CurrentIR"));
-	print "JTAG Instruction: $JTAGInstructions{$LatchedInstruction}\n";
+	print "\nJTAG IR: $JTAGInstructions{$LatchedInstruction}\n";
+	
+	# When the instruction was "AVR Run" reset the debug register set value tracking
+	if ($LatchedInstruction == 9) {
+		for (my $i = 0; $i < 32; $i++) {
+			$Registerfile[$i] = -1;
+		}
+	}
 }
 
+sub LoadProcessorSymbolicFile {
+	my $filename = shift;
+	
+	open (SBF, "< $filename") or die ("Error opening processor symbolic file!");
+	
+	my $lin = "";
+	while ($lin = <SBF>)  {
+		if ($lin =~ /^([0-9a-fA-F]+);(.*);(.*);(.*);(.*);(.*);(.*);(.*);(.*);(.*);$/) {
+			$Regnames{hex($1)} = $2;
+			my @Bitnamesloc = ( $3, $4 , $5, $6, $7, $8, $9, $10 );
+			$Bitnames{hex($1)} = \@Bitnamesloc;
+		}
+	
+	}
+	
+	$Symbolfile = 1;
+	close SBF;
+}
+
+sub PostprocessDisassembler {
+	my $asm = shift;
+	
+	if ($Symbolfile == 1) {
+		#print "Symbolfile found: \"$asm\"\n";
+		## Write registernames to in and out instruction
+		if ($asm =~ /^out\s0x([0-9A-Fa-f]{2}),\sr([0-9]{1,2}).*$/i) {
+			if (exists($Regnames{hex($1)})) {
+				# When there is a value in value tracking display matching bitnames
+				if ($Registerfile[int($2)] >= 0) {
+					$asm = "out $Regnames{hex($1)} (0x$1), r$2\t; $Regnames{hex($1)} = " . GetBitnameString(hex($1),$Registerfile[int($2)]);
+				}
+				else {
+					$asm = "out $Regnames{hex($1)} (0x$1), r$2";
+				}
+			}
+		}
+		elsif ($asm =~ /^in\sr([0-9]{1,2}),\s0x([0-9A-Fa-f]{2}).*$/i) {
+			# Remove from valuetracking because it has not known number
+			$Registerfile[int($1)] = -1;
+			
+			if (exists($Regnames{hex($2)})) {
+				$asm = "in r$1, $Regnames{hex($2)} (0x$2)";
+			}
+		}
+	
+	
+	}
+	
+	# Value Tracking for values which are set while debugging session
+	if ($asm =~ /^ldi\sr([0-9]{1,2}),\s0x([0-9a-fA-F]{2}).*$/) {
+		# Assign the value to internal value tracking system
+		#print "Valuetracking: $1 = $2\n";
+		$Registerfile[int($1)] = hex($2);
+	}
+	
+	return $asm;
+}
+
+sub GetBitnameString {
+	my $reg = shift;
+	my $val = shift;
+	
+	my $str = "";
+	my $i;
+	my $mask = 1;
+	
+	for ($i = 0; $i < 8; $i++) {
+		if ($val & $mask) {
+			if (exists($Bitnames{$reg}) && $Bitnames{$reg}->[$i] ne "") {
+				$str = $str . " | " . $Bitnames{$reg}->[$i];
+			}
+		}
+		$mask = $mask * 2;
+	}
+	
+	$str =~ s/ \| //; # Remove first |
+	if ($str eq "") {
+		$str = sprintf("0x%x",$val);
+	}
+	return $str;
+}
 	
