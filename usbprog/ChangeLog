@@ -1,3 +1,8 @@
+2008-03-31  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* use "usbprog-gui" in the usbprog.desktop instead of the command line
+	  "usbprog" binary (thanks to Uwe Herrmann for the patch)
+
 2008-03-25  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fix mechanism to avoid downloading the index file again and again if
