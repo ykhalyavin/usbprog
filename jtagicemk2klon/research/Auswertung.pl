@@ -98,6 +98,12 @@
 	13 => "OCDCSR"
 );
 
+%OCDBitnames = (
+	8 => [ "BCR0", "BCR1", "BCR2", "PDSB_MODE0", "PDSB_MODE1", "PDMSB_MODE0", "PDMSB_MODE1", "EN_PDSB", "EN_PDMSB", "BREAK_MASK", "BPSB1", "BPSB0", "BSTEP", "BFLOW", "PCMOD", "TIMERRUN" ],
+	9 => [ "SOFTB", "FORCEB", "BSR2", "PDSBB", "PDMSBB", "PSB1B", "PSB0B", "FLOWB", "BSR8", "BSR9", "BSR10", "BSR11", "BSR12", "BSR13", "BSR14", "BSR15" ],
+	13 => [ "OCDCTL0", "OCDCTL1", "RESNA0", "RESNA1", "OCDRDIRTY", "OCDCTL5", "OCDCTL6", "OCDCTL7", "OCDCTL8", "OCDCTL9", "OCDCTL10", "OCDCTL11", "OCDCTL12", "OCDCTL13", "OCDCTL14", "OCDRE" ]
+);
+
 $JTAGStart = 2; # JTAGICE seems to idle in SELECT-DR-SCAN State
 
 ## /Definitionen
@@ -113,7 +119,7 @@ $JTAGStart = 2; # JTAGICE seems to idle in SELECT-DR-SCAN State
 ## init
 $| = 1;
 if ($#ARGV < 0) {
-	print "Usage: Auswertung.pl [ -v | -sym=*.sb | -start=JTAG-STATE ] <filename>\n";
+	print "Usage: Auswertung.pl [ -v | -sb=*.sb | -start=JTAG-STATE ] <filename>\n";
 	exit;
 }
 my $JtagState = $JTAGStart;
@@ -171,7 +177,7 @@ for ($i = 0; $i <= $#ARGV; $i++) {
 ## /init
 
 open (INPUT, "< $filename") or die("Cannot open given file");
-open (OUTPUT, "> $filename.out") or die("Cannot open an output file");
+#open (OUTPUT, "> $filename.out") or die("Cannot open an output file");
 
 
 while ($line = <INPUT>) {
@@ -210,7 +216,7 @@ while ($line = <INPUT>) {
 }
 
 close INPUT;
-close OUTPUT;
+#close OUTPUT;
 
 sub ProcessState_TestRunIDLE {
 	print "JTAG Test RUN / IDLE\n";
@@ -284,7 +290,7 @@ sub ProcessState_UpdateDR {
 			$OCDPrelatchReg = $LatchedData;
 		}
 		elsif (($Reglen == 16)) {
-			printf "AVR Debug Access:\t\t$OCDRegisters{$OCDPrelatchReg} is %x\n", $OutputData;
+			printf "AVR Debug Access:\t\t$OCDRegisters{$OCDPrelatchReg} is %x " . GetOCDRegisterNameString($OCDPrelatchReg,$OutputData) . "\n", $OutputData;
 		}
 		elsif (($Reglen == 21)) {
 			# Check whether this is also read access for the prelatched register
@@ -292,12 +298,12 @@ sub ProcessState_UpdateDR {
 			
 			if ($Regid == $OCDPrelatchReg) {
 				# This is also read access for before latched register
-				printf "AVR Debug Access:\t\t$OCDRegisters{$OCDPrelatchReg} is %x\n", ($OutputData & 0xFFFF);
+				printf "AVR Debug Access:\t\t$OCDRegisters{$OCDPrelatchReg} is %x " . GetOCDRegisterNameString($OCDPrelatchReg,($OutputData & 0xFFFF)) . "\n", ($OutputData & 0xFFFF);
 			}
 		
 			if ($LatchedData & 0x100000) { 
 				## This is write access to one of the registers 
-				printf "AVR Debug Access:\t\t$OCDRegisters{$Regid} set to %x\n", ($LatchedData & 0xFFFF);
+				printf "AVR Debug Access:\t\t$OCDRegisters{$Regid} set to %x " . GetOCDRegisterNameString($Regid,($LatchedData & 0xFFFF)) . "\n", ($LatchedData & 0xFFFF);
 			}
 		}
 		#print "Len: $Reglen\n";
@@ -410,5 +416,28 @@ sub GetBitnameString {
 		$str = sprintf("0x%x",$val);
 	}
 	return $str;
+}
+
+sub GetOCDRegisterNameString {
+	my $reg = shift;
+	my $val = shift;
+	
+	my $str = "";
+	my $i;
+	my $mask = 1;
+	
+	if (not(exists($OCDBitnames{$reg}))) {
+		return "";
+	}
+	
+	for ($i = 0; $i < 16; $i++) {
+		if ($val & $mask) {
+			$str = $str . " | " . $OCDBitnames{$reg}->[$i];
+		}
+		$mask = $mask * 2;
+	}
+	
+	$str =~ s/ \| //; # Remove first |
+	return "( " . $str . " )";
 }
 	
