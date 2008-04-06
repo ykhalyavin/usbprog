@@ -99,7 +99,7 @@
 );
 
 %OCDBitnames = (
-	8 => [ "BCR0", "BCR1", "BCR2", "PDSB_MODE0", "PDSB_MODE1", "PDMSB_MODE0", "PDMSB_MODE1", "EN_PDSB", "EN_PDMSB", "BREAK_MASK", "BPSB1", "BPSB0", "BSTEP", "BFLOW", "PCMOD", "TIMERRUN" ],
+	8 => [ "BCR0", "BCR1", "BCR2", "PDSB_MODE0", "PDSB_MODE1", "PDMSB_MODE0", "PDMSB_MODE1", "EN_PDSB", "EN_PDMSB", "BREAK_MASK", "BPSB1", "BPSB0", "BFLOW", "BSTEP", "PCMOD", "TIMERRUN" ],
 	9 => [ "SOFTB", "FORCEB", "BSR2", "PDSBB", "PDMSBB", "PSB1B", "PSB0B", "FLOWB", "BSR8", "BSR9", "BSR10", "BSR11", "BSR12", "BSR13", "BSR14", "BSR15" ],
 	13 => [ "OCDCTL0", "OCDCTL1", "RESNA0", "RESNA1", "OCDRDIRTY", "OCDCTL5", "OCDCTL6", "OCDCTL7", "OCDCTL8", "OCDCTL9", "OCDCTL10", "OCDCTL11", "OCDCTL12", "OCDCTL13", "OCDCTL14", "OCDRE" ]
 );
@@ -372,16 +372,60 @@ sub PostprocessDisassembler {
 				}
 			}
 		}
-		elsif ($asm =~ /^in\sr([0-9]{1,2}),\s0x([0-9A-Fa-f]{2}).*$/i) {
-			# Remove from valuetracking because it has not known number
-			$Registerfile[int($1)] = -1;
+		elsif ($asm =~ /^st\s(X|Y|Z),\sr([0-9]{1,2}).*/) {
+			# check whether the associated address registers are both in value tracking
+			my $address = -1;
 			
-			if (exists($Regnames{hex($2)})) {
-				$asm = "in r$1, $Regnames{hex($2)} (0x$2)";
+			if ($1 eq "X") {
+				if ($Registerfile[26] != -1 && $Registerfile[27] != -1) {
+					$address = ($Registerfile[27] * 0x100) | $Registerfile[26]; 
+				}
+			}
+			elsif ($1 eq "Y") {
+				if ($Registerfile[28] != -1 && $Registerfile[29] != -1) {
+					$address = ($Registerfile[29] * 0x100) | $Registerfile[28]; 
+				}
+			}
+			elsif ($1 eq "Z") {
+				if ($Registerfile[30] != -1 && $Registerfile[31] != -1) {
+					$address = ($Registerfile[31] * 0x100) | $Registerfile[30]; 
+				}
+			}
+			
+			# when there is a valid address check whether the register is named
+			if ($address >= 0) {
+				$address -= 0x20;
+				
+				if (exists($Regnames{$address})) {
+					$asm = $asm . "\t\t; " . $Regnames{$address} . " = ";
+					
+					if ($Registerfile[int($2)] != -1) {
+						$asm = $asm . GetBitnameString($address,$Registerfile[int($2)]);
+					}
+					else {
+						$asm = $asm . "r$2";
+					}
+				}
+				else {
+					if ($Registerfile[int($2)] != -1) {
+						$asm = sprintf("%s\t\t; %x = %x", $asm, $address, $Registerfile[int($2)]);
+					}
+					else {
+						$asm = sprintf("%s\t\t; %x = ?", $asm, $address);
+					}
+				}
+			
 			}
 		}
+	}
 	
-	
+	if ($asm =~ /^in\sr([0-9]{1,2}),\s0x([0-9A-Fa-f]{2}).*$/i) {
+		# Remove from valuetracking because it has not known number
+		$Registerfile[int($1)] = -1;
+		
+		if (exists($Regnames{hex($2)})) {
+			$asm = "in r$1, $Regnames{hex($2)} (0x$2)";
+		}
 	}
 	
 	# Value Tracking for values which are set while debugging session
@@ -389,6 +433,10 @@ sub PostprocessDisassembler {
 		# Assign the value to internal value tracking system
 		#print "Valuetracking: $1 = $2\n";
 		$Registerfile[int($1)] = hex($2);
+	}
+	
+	if ($asm  =~ /^mov\sr([0-9]{1,2}),\s([0-9]{1,2}).*/) {
+		$Registerfile[int($1)] = $Registerfile[int($2)];
 	}
 	
 	return $asm;
