@@ -166,9 +166,9 @@ int cmd_set_parameter(char *msg, char * answer)
 			return rsp_ok(answer);
 		break;
 		default:
-			;
-	}
-	// TODO: Answer is always ok
+			return rsp_illegal_parameter(answer);
+	};
+	return rsp_failed(answer);
 }
 
 
@@ -229,12 +229,16 @@ int cmd_get_parameter(char *msg, char * answer)
 	break;
 	}
 
-	return 0;
+	return rsp_illegal_parameter(answer);
 }
 
 
 int cmd_read_pc(char *msg, char * answer)
 {
+	if (jtagice.emulator_state != STOPPED) {
+		return rsp_illegal_mcu_state(answer);
+	}
+
 	uint16_t pc = avrContext.PC;
 
 #ifdef DEBUG_ON
@@ -268,6 +272,10 @@ int cmd_read_pc(char *msg, char * answer)
 
 int cmd_write_pc(char *msg, char * answer)
 {
+	if (jtagice.emulator_state != STOPPED) {
+		return rsp_illegal_mcu_state(answer);
+	}
+
 	// write the new pc to the restore buffer
 	avrContext.PC = msg[9] | (msg[10] << 8);
 #ifdef DEBUG_ON
@@ -278,18 +286,7 @@ int cmd_write_pc(char *msg, char * answer)
 #endif
 
 	// TODO (program answer always with ok!)
-	answer[0] = MESSAGE_START;
-	answer[1] = jtagice.seq1;
-	answer[2] = jtagice.seq2;
-	answer[3] = 0x01;					// length of body
-	answer[4] = 0;
-	answer[5] = 0;
-	answer[6] = 0;
-	answer[7] = TOKEN;
-
-	answer[8]	= 0x80;		// (0x80 = ok)
-	crc16_append(answer,(unsigned long)9);
-	return 11;
+	return rsp_ok(answer);
 
 }
 
@@ -366,6 +363,9 @@ int cmd_set_break(char *msg, char * answer)
 
 int cmd_single_step(char *msg, char * answer)
 {
+	if (jtagice.emulator_state == PROGRAMMING) {
+		return rsp_illegal_mcu_state(answer);
+	}
 
 #ifdef DEBUG_ON
 	UARTWrite("Single Stepping: ");
@@ -412,6 +412,10 @@ int cmd_forced_stop(char * msg, char * answer)
 
 int cmd_go(char * msg, char * answer)
 {
+	if (jtagice.emulator_state == PROGRAMMING) {
+		return rsp_illegal_mcu_state(answer);
+	}
+
 //  jtag_reset();
 	//avr_reset(0);
 	// restore possibly overridden registers
@@ -441,7 +445,13 @@ int cmd_go(char * msg, char * answer)
 
 int cmd_restore_target(char * msg, char * answer)
 {
-	avr_reset(0);	// clear reset mode
+	// TODO: Remove software breakpoints in case
+
+	// Reset Target
+
+	avr_reset(1);	// clear reset mode
+	jtag_reset(); // reset the complete OCD Interface
+	avr_reset(0); // run target
 
 	// TODO (program answer always with ok!)
 	return rsp_ok(answer);
@@ -526,7 +536,6 @@ int cmd_read_memory(char * msg, char * answer)
 		break;
 
 		case FUSE_BITS:
-			answer[9] = rd_lfuse_avr();
 			switch(msg[10])
 				{
 				case 1:
@@ -546,8 +555,14 @@ int cmd_read_memory(char * msg, char * answer)
 				break;
 
 				case 2:
-					answer[9] = rd_lfuse_avr();
-					answer[10] = rd_hfuse_avr();
+					if (msg[14] == 0) {
+						answer[9] = rd_lfuse_avr();
+						answer[10] = rd_hfuse_avr();
+					}
+					else if (msg[14] == 1) {
+						answer[9] = rd_hfuse_avr();
+						answer[10] = rd_efuse_avr();
+					}
 					msglen = 3;
 				break;
 
@@ -695,33 +710,88 @@ int cmd_write_memory(char *msg, char *answer)
 			wr_lock_avr(msg[18]);
 		break;
 		case FUSE_BITS:
-			//wr_hfuse_avr(msg[18]);
+			if (jtagice.emulator_state != PROGRAMMING) {
+				return rsp_illegal_mcu_state(answer);
+			}
+			switch(msg[10]) {
+				case 1:
+					if(msg[14] == 0) // read low fuse?
+					{
+						wr_lfuse_avr(msg[18]);
+					}
+					else if(msg[14] == 1) // read high fuse?
+					{
+						wr_hfuse_avr(msg[18]);
+					}
+					else if (msg[14] == 2)// otherwise return efuse
+					{
+						wr_efuse_avr(msg[18]);
+					}
+					else {
+						return rsp_illegal_memory_range(answer);
+					}
+					return rsp_ok(answer);
+				break;
+
+				case 2:
+					if (msg[14] == 0) {
+						wr_lfuse_avr(msg[18]);
+						wr_hfuse_avr(msg[19]);
+					}
+					else if (msg[14] == 1) {
+						wr_hfuse_avr(msg[18]);
+						wr_efuse_avr(msg[19]);
+					}
+					else {
+						return rsp_illegal_memory_range(answer);
+					}
+					return rsp_ok(answer);
+				break;
+
+				case 3:
+					if (msg[14] == 0) {
+						wr_lfuse_avr(msg[18]);
+						wr_hfuse_avr(msg[19]);
+						wr_efuse_avr(msg[20]);
+						return rsp_ok(answer);
+					}
+					else {
+						return rsp_illegal_memory_range(answer);
+					}
+				break;
+				};
+
 		break;
 		case EEPROM:
 			ocd_wr_eeprom((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
+			return rsp_ok(answer);
 		break;
 
 		case SRAM:
 			ocd_wr_sram((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
+			return rsp_ok(answer);
 		break;
 
 		case SPM:
 			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], &msg[18]);
+			return rsp_ok(answer);
 		break;
 
 		case FLASH_PAGE:
 			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], &msg[18]);
+			return rsp_ok(answer);
 		break;
 
 		case EEPROM_PAGE:
 			wr_eeprom_page(msg[10], (msg[15] << 8) | msg[14], (unsigned char *) &msg[18]);
+			return rsp_ok(answer);
 		break;
 
 		default:
 		break;
 	}
 
-	return rsp_ok(answer);
+	return rsp_failed(answer);
 }
 
 int cmd_set_device_descriptor(char *msg, char *answer)
@@ -801,6 +871,9 @@ int cmd_set_device_descriptor(char *msg, char *answer)
 
 int cmd_chip_erase(char *msg, char *answer)
 {
+	if (jtagice.emulator_state != PROGRAMMING) {
+		return rsp_illegal_mcu_state(answer);
+	}
 
 	chip_erase();
 
@@ -850,6 +923,77 @@ int rsp_illegal_breakpoint(char *answer) {
 	return 11;
 }
 
+int rsp_illegal_mcu_state(char *answer) {
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x02;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+	answer[8]	= RSP_ILLEGAL_MCU_STATE;
+	answer[9] = jtagice.emulator_state;
+	crc16_append(answer,(unsigned long)8);
+	return 12;
+}
+
+int rsp_illegal_memory_type(char *answer) {
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+	answer[8]	= RSP_ILLEGAL_MEMORY_TYPE;
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int rsp_illegal_memory_range(char *answer) {
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+	answer[8]	= RSP_ILLEGAL_MEMORY_RANGE;
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int rsp_illegal_command(char *answer) {
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+	answer[8]	= RSP_ILLEGAL_COMMAND;
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
+int rsp_illegal_parameter(char *answer) {
+	answer[0] = MESSAGE_START;
+	answer[1] = jtagice.seq1;
+	answer[2] = jtagice.seq2;
+	answer[3] = 0x01;					// length of body
+	answer[4] = 0;
+	answer[5] = 0;
+	answer[6] = 0;
+	answer[7] = TOKEN;
+	answer[8]	= RSP_ILLEGAL_PARAMETER;
+	crc16_append(answer,(unsigned long)9);
+	return 11;
+}
+
 
 int evt_break(char *answer, uint16_t pc, uint8_t break_cause) {
 	answer[0] = MESSAGE_START;
@@ -861,7 +1005,5 @@ int evt_break(char *answer, uint16_t pc, uint8_t break_cause) {
 	answer[6] = 0;
 	answer[7] = TOKEN;
 	answer[8] = 0xe0;
-
-
-
+	return 11;
 }

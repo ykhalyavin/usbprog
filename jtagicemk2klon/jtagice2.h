@@ -73,6 +73,11 @@
 #define RSP_SELFTEST			0x85
 #define RSP_PARAMETER			0x81
 #define RSP_ILLEGAL_BREAKPOINT 0xA8
+#define RSP_ILLEGAL_MCU_STATE 0xA5
+#define RSP_ILLEGAL_MEMORY_TYPE 0xA2
+#define RSP_ILLEGAL_MEMORY_RANGE 0xA3
+#define RSP_ILLEGAL_COMMAND 0xAA
+#define RSP_ILLEGAL_PARAMETER 0xA1
 
 // parameter
 #define HARDWARE_VERSION		0x01
@@ -146,7 +151,12 @@ int cmd_chip_erase(char *msg, char *answer);
 
 int rsp_ok(char *answer);
 int rsp_failed(char *answer);
-int rsp_illigal_breakpoint(char *answer);
+int rsp_illegal_breakpoint(char *answer);
+int rsp_illegal_mcu_state(char *answer);
+int rsp_illegal_memory_type(char *answer);
+int rsp_illegal_memory_range(char *answer);
+int rsp_illegal_command(char *answer);
+int rsp_illegal_parameter(char *answer);
 
 int evt_break(char *answer, uint16_t pc, uint8_t break_cause);
 
@@ -164,10 +174,10 @@ volatile struct jtagice_t {
 } jtagice;
 
 enum emulatormode_t {
-	NOT_CONNECTED,
-	STOPPED,
-	RUNNING,
-	PROGRAMMING
+	NOT_CONNECTED = 4,
+	STOPPED = 0,
+	RUNNING = 1,
+	PROGRAMMING = 2
 };
 
 enum breakpoint_mode {

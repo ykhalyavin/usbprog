@@ -332,9 +332,8 @@ UARTWrite("\r\n");
 			break;
 
 			default:
-				//answer[0]=RSP_FAILED;
-				//cmdlength=1;
-				;
+				cmdlength = rsp_illegal_command((char*)answer);
+
 		}
 		if(cmdlength>0){
 		  CommandAnswer(cmdlength);

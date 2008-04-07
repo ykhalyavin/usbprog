@@ -42,8 +42,8 @@ unsigned char rd_efuse_avr(void)
 	unsigned char jtagbuf[2];
 	avr_prog_cmd();
 	avr_sequence(0x23,0x04,jtagbuf);	//enter fuse lock bits
-	avr_sequence(0x32,0x00,jtagbuf);	// select lfuse
-	avr_sequence(0x33,0x00,jtagbuf); // read lfuse
+	avr_sequence(0x3A,0x00,jtagbuf);	// select lfuse
+	avr_sequence(0x3B,0x00,jtagbuf); // read lfuse
 	return jtagbuf[0];
 }
 
