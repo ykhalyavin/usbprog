@@ -506,9 +506,10 @@ int main(void)
 					break_cause = 3;
 				else if (bsr & 0x00E1) {
 					break_cause = 2;
-					if (bsr & 0x00E0) {
-						avrContext.PC--;
-					}
+				}
+
+				if (bsr & ~0x3) {
+					avrContext.PC--;
 				}
 
 				// clear all active breakpoints?!
@@ -517,7 +518,7 @@ int main(void)
 				 * I don't know what the clear commands should do?
 				 */
 				PORTA |= (1<<PA4); // LED ON
-				avrContext.break_config &= 0xC000; // rule out all breakpoint configurations
+				//avrContext.break_config &= 0xC000; // rule out all breakpoint configurations
 				// wr_dbg_ocd(AVR_BCR,&avrContext.break_config,0); // this is no longer needed because it get's updated on restore context
 
 				evt_break(answer,avrContext.PC,break_cause);

@@ -292,22 +292,22 @@ int cmd_write_pc(char *msg, char * answer)
 
 int cmd_clr_break(char *msg, char * answer)
 {
-	int16_t addr = msg[11] | (msg[12] << 8);
-	// check the type of bp
-	if (msg[9] == 1) { // this should be a program memory breakpoint
-		// what number?
-		if (msg[10] == 1) {
-			ocd_clr_psb0();
-		}
-		else if (msg[10] == 2) {
-			ocd_clr_psb1();
-		}
-		else if (msg[10] == 3) {
-			// TODO
-		}
-		else if (msg[10] == 4) {
-			// TODO
-		}
+	int16_t addr = msg[10] | (msg[11] << 8);
+
+	if (msg[9] == 1) {
+		ocd_clr_psb0();
+	}
+	else if (msg[9] == 2) {
+		ocd_clr_psb1();
+	}
+	else if (msg[9] == 3) {
+		ocd_clr_pdmsb();
+	}
+	else if (msg[9] == 4) {
+		ocd_clr_pdsb();
+	}
+	else {
+		return rsp_illegal_breakpoint(answer);
 	}
 
 	// TODO: ALL Breakpoint types
@@ -341,12 +341,12 @@ int cmd_set_break(char *msg, char * answer)
 	}
 	else if (msg[9] == 2) {
 		// this is a data breakpoint
-		if (msg[10] == 2) {
-			ocd_set_pdmsb(addr,msg[11]);
+		if (msg[10] == 3) {
+			ocd_set_pdmsb(addr,msg[15]);
 			return rsp_ok(answer);
 		}
-		else if (msg[10] == 3) {
-			ocd_set_pdsb(addr,msg[11]);
+		else if (msg[10] == 4) {
+			ocd_set_pdsb(addr,msg[15]);
 			return rsp_ok(answer);
 		}
 		else
@@ -788,6 +788,7 @@ int cmd_write_memory(char *msg, char *answer)
 		break;
 
 		default:
+			return rsp_illegal_memory_type(answer);
 		break;
 	}
 
@@ -830,6 +831,16 @@ int cmd_set_device_descriptor(char *msg, char *answer)
 	deviceDescriptor.ucEepromPageSize = msg[258];
 	deviceDescriptor.uiUpperExtIOLoc = (msg[259] << 8) | msg[260];
 	deviceDescriptor.ulFlashSize = ((long) msg[264] << 24) | ((long) msg[263] << 16) | (msg[262] << 8) | msg[261];
+
+	// for debugging purposes - although this is a dirty hack
+	jtagice.pcmask = (uint16_t)((deviceDescriptor.ulFlashSize>>1)-1);
+#ifdef DEBUG_ON
+	UARTWrite("Set PCMASK to:");
+	SendHex((char)(jtagice.pcmask>>8));
+	SendHex((char)jtagice.pcmask);
+	UARTWrite("\r\n");
+#endif
+
 #ifdef DEBUG_VERBOSE
 	UARTWrite("IDR Addr:");
 	SendHex(deviceDescriptor.ucIDRAddress);
@@ -1005,5 +1016,12 @@ int evt_break(char *answer, uint16_t pc, uint8_t break_cause) {
 	answer[6] = 0;
 	answer[7] = TOKEN;
 	answer[8] = 0xe0;
-	return 11;
+	answer[9] = (pc & 0xFF);
+	answer[10] = (pc >> 8);
+	answer[11] = 0;
+	answer[12] = 0;
+	answer[13] = break_cause;
+
+	crc16_append(answer,(unsigned long)14);
+	return 16;
 }

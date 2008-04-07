@@ -171,6 +171,7 @@ volatile struct jtagice_t {
 	char seq2;				// sequence number
 	int emulatormode;
 	char emulator_state;
+	uint16_t pcmask;
 } jtagice;
 
 enum emulatormode_t {

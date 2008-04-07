@@ -24,6 +24,7 @@
 #include "jtag_avr.h"
 #include "jtag_avr_defines.h"
 #include "jtag_avr_ocd.h"
+#include "jtagice2.h"
 #include "avr_asm.h"
 #include "uart.h"
 
@@ -557,7 +558,7 @@ uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 uint8_t ocd_set_psb0(uint16_t addr) {
 	// write adress to psb0 register in context type
 	// the cpu frags this values when running, so we must refresh it every time
-	avrContext.PSB0 = addr;
+	avrContext.PSB0 = addr & jtagice.pcmask;
 
 	avrContext.break_config |= AVR_EN_PSB0;
 }
@@ -565,7 +566,7 @@ uint8_t ocd_set_psb0(uint16_t addr) {
 uint8_t ocd_set_psb1(uint16_t addr) {
 	// write adress to psb1 register
 
-	avrContext.PSB1 = addr;
+	avrContext.PSB1 = addr & jtagice.pcmask;
 
 	avrContext.break_config |= AVR_EN_PSB1;
 }
@@ -573,7 +574,10 @@ uint8_t ocd_set_psb1(uint16_t addr) {
 uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode) {
 	// write adress to psmsb register
 
-	avrContext.PDMSB = addr;
+	if (mode == break_program)
+		avrContext.PDMSB = addr & jtagice.pcmask;
+	else
+		avrContext.PDMSB = addr;
 
 	if (mode != 4) { // 4 is break_mask
 		avrContext.break_config |= AVR_EN_PDMSB;
@@ -587,7 +591,10 @@ uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode) {
 uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode) {
 	// write adress to pdsb register
 
-	avrContext.PDSB = addr;
+	if (mode == break_program)
+		avrContext.PDSB = addr & jtagice.pcmask;
+	else
+		avrContext.PDSB = addr;
 	avrContext.break_config |= AVR_EN_PDSB;
 	avrContext.break_config = (avrContext.break_config & ~(AVR_PDSB_MODE0|AVR_PDSB_MODE1)) | ((mode & 0x3) << 3);
 }
