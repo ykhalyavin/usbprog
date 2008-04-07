@@ -231,7 +231,7 @@ void USBReceive(char *inbuf)
 				// ignore rest of packet first
 				read_pos = 64;
 				current_state = START;
-#ifdef DEBUG_ON
+#ifdef DEBUG_VERBOSE
 					UARTWrite("Complete -> Process\r\n");
 #endif
 				JTAGICE_ProcessCommand(buf);
@@ -425,7 +425,7 @@ int main(void)
 	// while send an event block usb receive routine
 	uint16_t delay = 0;
 
-#ifdef DEBUG_ON
+#ifdef DEBUG_VERBOSE
 		UARTWrite("Main Loop\r\n");
 #endif
 
@@ -443,6 +443,7 @@ int main(void)
 			PORTA ^= (1<<PA4); // toggle led while running to signalize working ^^
 			// check ocd BSR
 			cli(); // does not respond on messages in this time
+
 			uint16_t bsr;
 			rd_dbg_ocd(AVR_BSR,&bsr,0);
 
@@ -454,20 +455,10 @@ int main(void)
 #endif
 
 			if (bsr != 0) {
-				wait_ms(5);
-				answer[0] = MESSAGE_START;
-				answer[1] = 0xff;
-				answer[2] = 0xff;
-				answer[3] = 0x06;
-				answer[4] = 0;
-				answer[5] = 0;
-				answer[6] = 0;
-				answer[7] = TOKEN;
-				answer[8] = 0xe0;
-
+				wait_ms(1);
 				ocd_save_context();
 
-#ifdef DEBUG_ON
+#ifdef DEBUG_VERBOSE
 				UARTWrite("Break!\r\nPC:");
 				SendHex((uint8_t)(avrContext.PC>>8));
 				SendHex((uint8_t)avrContext.PC);
@@ -501,32 +492,36 @@ int main(void)
 				UARTWrite("\r\n");
 #endif
 
+#ifdef DEBUG_ON
+				uint16_t data;
+				rd_dbg_ocd(AVR_BSR,&data,0);
+				UARTWrite("BSR:");
+				SendHex(data>>8);
+				SendHex(data);
+				UARTWrite("\r\n");
+#endif
+
 				// the following is the break type line
+				uint8_t break_cause = 0;
 				if (bsr & 0x10)
-					answer[13] = 3;
+					break_cause = 3;
 				else if (bsr & 0x00E1) {
-					answer[13] = 2;
+					break_cause = 2;
 					if (bsr & 0x00E0) {
 						avrContext.PC--;
 					}
 				}
-				else
-					answer[13] = 0;
 
 				// clear all active breakpoints?!
 				/* The AVR067 App Note says that breakpoints
 				 * are cleared automaticly after a break.
 				 * I don't know what the clear commands should do?
 				 */
-				rd_dbg_ocd(AVR_BCR,&bsr,0);
-				bsr &= 0xC000; // rule out all breakpoint configurations
-				wr_dbg_ocd(AVR_BCR,&bsr,0);
+				PORTA |= (1<<PA4); // LED ON
+				avrContext.break_config &= 0xC000; // rule out all breakpoint configurations
+				// wr_dbg_ocd(AVR_BCR,&avrContext.break_config,0); // this is no longer needed because it get's updated on restore context
 
-				answer[9] = (uint8_t)avrContext.PC;
-				answer[10] = (uint8_t)(avrContext.PC>>8);
-				answer[11] = 0;
-				answer[12] = 0;
-				crc16_append(answer,(unsigned long)14);
+				evt_break(answer,avrContext.PC,break_cause);
 				CommandAnswer(16);
 				jtagice.emulator_state = STOPPED;
 				PORTA &= ~(1<<PA4); // LED OFF

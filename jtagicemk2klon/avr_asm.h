@@ -35,9 +35,13 @@
 
 #define AVR_ADIW(rid,val) (uint16_t)(0x9600 | (((rid) & 0x3) << 4) | (((val) & 0x30) << 2) | ((val) & 0x0F))
 
+/* LPM seems not to work over Instruction interface. Maybe there is a starting of the processor needed like
+ * using SPM. But there exists special instructions to access the flash over the JTAG interface
+ * for LPM is not needed
 #define AVR_LPM_PostInc(reg) (uint16_t)(0x9005 | (((reg) & 0x1F) << 4))
 #define AVR_LPM(reg) (uint16_t)(0x9004 | (((reg) & 0x1F) << 4))
 #define AVR_LPM() (uint16_t)0x95C8
+*/
 
 #define AVR_NOP() (uint16_t)0
 

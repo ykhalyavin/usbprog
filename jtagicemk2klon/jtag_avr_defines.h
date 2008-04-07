@@ -1,6 +1,7 @@
 /*-------------------------------------------------------------------------
  * JTAG.H
  * Copyright (C) 2003 Armand ten Doesschate <a.doesschate@hccnet.nl>
+ * Copyright (C) 2008 Martin Lang <Martin.Lang@rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,15 +63,23 @@
 
 /*
  * BCR bits in high byte of break control register
+ * please note that breakpoint modes of pdsb and pdmsb
+ * are like the mode parameter in SET_BREAK command
  */
-#define AVR_COMP_MSK                    0x0200
-#define AVR_PDMSB_SINGLE_BRK            0x0400
+
+#define AVR_PDSB_MODE0                  0x0008
+#define AVR_PDSB_MODE1                  0x0010
+#define AVR_PDMSB_MODE0                 0x0020
+#define AVR_PDMSB_MODE1                 0x0040
+#define AVR_EN_PDSB                     0x0080
+#define AVR_EN_PDMSB                    0x0100
+#define AVR_MASK_BREAK                  0x0200
 #define AVR_EN_PSB1                     0x0400
 #define AVR_EN_PSB0                     0x0800
-#define AVR_BRK_ON_FLOW                 0x2000
-#define AVR_RD_PC                       0x4000
+#define AVR_BRK_ON_FLOW                 0x1000
+#define AVR_BRK_STEP                    0x2000
+#define AVR_PC_MOD                      0x4000
 #define AVR_TMR_RUN_ON_BRK              0x8000
-#define AVR_MAGIC_PDSB_AS_PROGRAM_BREAK 0x0098
 
 /*
  * BSR bits

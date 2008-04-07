@@ -24,6 +24,7 @@
 #define JTAG_AVR_OCD_H
 
 struct AVR_Context_Type {
+	uint8_t STATUS;
 	uint8_t r16;
 	uint8_t r30;
 	uint8_t r31;
@@ -35,8 +36,19 @@ struct AVR_Context_Type {
 	uint16_t PDMSB;
 	uint16_t PDSB;
 
+	/* This Value contains the current breakpoint config
+	 * It saves which breakpoints are currently enabled, and
+	 * in which mode we use the 2 data/program/mask breakpoints
+	 * therefore it holds the values like in OCD BCR Register
+	 *
+	 * According to JTAGICE Specification it get's cleared on break
+	 */
+	uint16_t break_config;
+
+
 	uint8_t registerDirty;
 };
+
 
 extern struct AVR_Context_Type avrContext;
 
@@ -60,11 +72,13 @@ uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
 // breakpoint support
 uint8_t ocd_set_psb0(uint16_t addr);
 uint8_t ocd_set_psb1(uint16_t addr);
-uint8_t ocd_set_pdmsb_as_single_program(uint16_t addr);
-uint8_t ocd_set_pdsb_as_single_program(uint16_t addr);
+uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode);
+uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode);
 
 uint8_t ocd_clr_psb0();
 uint8_t ocd_clr_psb1();
+uint8_t ocd_clr_pdmsb();
+uint8_t ocd_clr_pdsb();
 
 
 unsigned char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,

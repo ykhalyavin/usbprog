@@ -37,7 +37,7 @@ void avr_reset(uint8_t set)
 	else
 		jtagbuf[0]=0x0;
 	jtag_write(1,jtagbuf);
-	jtag_goto_state(IDLE);
+	jtag_goto_state(RUN_TEST_IDLE);
 }
 
 void avr_prog_enable(void)

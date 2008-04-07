@@ -1,7 +1,8 @@
 /*
  * usbprog - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006,2007 Benedikt Sauter
- *		 2007 Robert Schilling robert.schilling@gmx.at
+ * Copyright (C) 	2006,2007 Benedikt Sauter
+ *		 						2007 Robert Schilling robert.schilling@gmx.at
+									2008 Martin Lang <Martin.Lang@rwth-aachen.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,7 @@
 #define RSP_SIGN_ON				0x86
 #define RSP_SELFTEST			0x85
 #define RSP_PARAMETER			0x81
+#define RSP_ILLEGAL_BREAKPOINT 0xA8
 
 // parameter
 #define HARDWARE_VERSION		0x01
@@ -142,6 +144,12 @@ int cmd_selftest(char *msg, char *buf);
 int cmd_write_memory(char *msg, char *answer);
 int cmd_chip_erase(char *msg, char *answer);
 
+int rsp_ok(char *answer);
+int rsp_failed(char *answer);
+int rsp_illigal_breakpoint(char *answer);
+
+int evt_break(char *answer, uint16_t pc, uint8_t break_cause);
+
 
 
 volatile struct jtagice_t {
@@ -162,6 +170,13 @@ enum emulatormode_t {
 	PROGRAMMING
 };
 
+enum breakpoint_mode {
+	break_memory_read = 0,
+	break_memory_write = 1,
+	break_memory_rw = 2,
+	break_program = 3,
+	break_mask = 4
+};
 
 struct message_t {
 	unsigned char start;

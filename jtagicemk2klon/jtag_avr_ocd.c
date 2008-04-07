@@ -30,6 +30,7 @@
 static const uint8_t OCDR_Addr = 0x31;
 static const uint8_t SPMCR_Addr = 0x37;
 static const uint8_t EECR_Addr = 0x1C;
+static const uint8_t SREG_Addr = 0x3F;
 
 
 /* This struct holds essential chip data for debugging.
@@ -60,9 +61,13 @@ unsigned char ocd_save_context() {
 	ocd_enshure_ocdr_enable();
 
 	avrContext.PC = ocd_read_pc();
-	// save register 0
+	// save register 16
 	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16)); // out 0x31, r16
 	avrContext.r16 = ocd_read_ocdr();
+
+	ocd_execute_avr_instruction(AVR_IN(16,SREG_Addr));
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
+	avrContext.STATUS = ocd_read_ocdr();
 
 	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,30)); // out 0x31, r30
 	avrContext.r30 = ocd_read_ocdr();
@@ -71,7 +76,7 @@ unsigned char ocd_save_context() {
 	avrContext.r31 = ocd_read_ocdr();
 
 	avrContext.registerDirty = 1; // reading the above register dirties the context
-#ifdef DEBUG_ON
+#ifdef DEBUG_VERBOSE
 	UARTWrite("OCDSave\r\nr0:");
 	SendHex(avrContext.r16);
 	UARTWrite("\r\nr30:");
@@ -106,6 +111,10 @@ unsigned char ocd_restore_context() {
 	if (avrContext.registerDirty == 1) {
 		ocd_enshure_ocdr_enable();
 
+		// restore SREG
+		ocd_execute_avr_instruction(AVR_LDI(16,avrContext.STATUS));
+		ocd_execute_avr_instruction(AVR_OUT(SREG_Addr,16));
+
 		// restore PC
 		avrContext.PC -= 3; // this is needed because of the 3 LDI Instructions after the IJMP
 		ocd_execute_avr_instruction(AVR_LDI(30,avrContext.PC));
@@ -119,7 +128,7 @@ unsigned char ocd_restore_context() {
 		ocd_execute_avr_instruction(AVR_LDI(30,avrContext.r30));
 
 		ocd_execute_avr_instruction(AVR_LDI(31,avrContext.r31));
-	#ifdef DEBUG_ON
+	#ifdef DEBUG_VERBOSE
 		UARTWrite("Registers restored\r\n");
 	#endif
 
@@ -127,10 +136,28 @@ unsigned char ocd_restore_context() {
 	}
 	// restore all BP data
 
+#ifdef DEBUG_ON
+	UARTWrite("PSB0:");
+	SendHex((char)(avrContext.PSB0>>8));
+	SendHex((char)avrContext.PSB0);
+	UARTWrite("\r\nPSB1:");
+	SendHex((char)(avrContext.PSB1>>8));
+	SendHex((avrContext.PSB1));
+	UARTWrite("\r\nPDMSB:");
+	SendHex((char)(avrContext.PDMSB>>8));
+	SendHex((avrContext.PDMSB));
+	UARTWrite("\r\nPDSB:");
+	SendHex((char)(avrContext.PDSB>>8));
+	SendHex((char)avrContext.PDSB);
+	UARTWrite("\r\n");
+#endif
+
 	wr_dbg_ocd(AVR_PSB0,&avrContext.PSB0,0);
 	wr_dbg_ocd(AVR_PSB1,&avrContext.PSB1,0);
 	wr_dbg_ocd(AVR_PDMSB,&avrContext.PDMSB,0);
 	wr_dbg_ocd(AVR_PDSB,&avrContext.PDSB,0);
+
+	wr_dbg_ocd(AVR_BCR,&avrContext.break_config,0);
 
 
 	return 1;
@@ -354,57 +381,61 @@ uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	// initialize the ocd system
 	avrContext.registerDirty = 1;
-	ocd_enshure_ocdr_enable();
+	//ocd_enshure_ocdr_enable();
+	// adjust pc so that it does not collide with read access
 
-#ifdef DEBUG_ON
-	uint16_t brk;
-	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
-	UARTWrite("OCDCTL: ");
-	SendHex(brk>>8);
-	SendHex((char)brk);
-	UARTWrite("\r\n");
-#endif
-	ocd_execute_avr_instruction(AVR_LDI(30,0xFF));
-	ocd_execute_avr_instruction(AVR_LDI(31,0xFB));
-//	ocd_execute_avr_instruction(AVR_IJMP());
-//	ocd_execute_avr_instruction(AVR_NOP());
+	unsigned char obuf[4] = { 0, 0, 0, 0 };
+	unsigned char ibuf[4];
 
+	uint16_t curraddr = startaddr>>1; // this is word address of avr memory
+	uint8_t skipbyte = (startaddr & 1);
 
-	// load the start adress to the Z register
-	ocd_execute_avr_instruction(AVR_LDI(30,startaddr & 0xFF));
-	ocd_execute_avr_instruction(AVR_LDI(31,startaddr >> 8));
+	while (1) {
+		avr_jtag_instr(AVR_INSTR,0);
+		obuf[0] = curraddr & 0xFF;
+		obuf[1] = (curraddr>>8) & 0xFF;
 
-#ifdef DEBUG_ON
-	ocd_dump_debug_registers();
-	UARTWrite("SPM Read ");
-#endif
+		// you have to latch first the address of the word
+		// when recieving the second one you have the complete program word ready
+		jtag_write(32,obuf);
+		jtag_goto_state(SHIFT_DR);
+		jtag_write_and_read(32,obuf,ibuf);
 
-	// then clock out bytewise the data from program memory
-	while (len--) {
-		// read one program memory word
-		uint8_t databuf;
-
-		ocd_execute_avr_instruction(AVR_LPM());
-		//ocd_execute_avr_instruction(0x95C8);
-		//ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
-		//ocd_execute_avr_instruction(AVR_NOP()); // 3-cycle instruction
-		jtag_clock_cycles(4);
-
-		ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
-
-		databuf = ocd_read_ocdr();
-
-#ifdef DEBUG_ON
-		SendHex(databuf);
+#ifdef DEBUG_VERBOSE
+		UARTWrite("JTAG Data:");
+		SendHex(ibuf[0]);
+		UARTWrite(" ");
+		SendHex(ibuf[1]);
+		UARTWrite(" ");
+		SendHex(ibuf[2]);
+		UARTWrite(" ");
+		SendHex(ibuf[3]);
 		UARTWrite("\r\n");
-		ocd_dump_debug_registers();
 #endif
-		*buf++ = databuf;
-	}
 
-#ifdef DEBUG_ON
-	UARTWrite("\r\n");
-#endif
+		// now save used bytes
+		if (!skipbyte) {
+			*buf++ = ibuf[3]; // please notice that default byte order is little endian
+		}
+		else {
+			skipbyte = 0;
+		}
+
+		--len;
+
+		if (!len)
+			break;
+
+		*buf++ = ibuf[2];
+
+		--len;
+
+		if (!len)
+			break;
+
+		++curraddr; // increase word address
+
+	}
 
 	return 1;
 }
@@ -528,10 +559,7 @@ uint8_t ocd_set_psb0(uint16_t addr) {
 	// the cpu frags this values when running, so we must refresh it every time
 	avrContext.PSB0 = addr;
 
-	uint16_t BCR;
-	rd_dbg_ocd(AVR_BCR,&BCR,0);
-	BCR |= AVR_EN_PSB0;
-	wr_dbg_ocd(AVR_BCR,&BCR,0);
+	avrContext.break_config |= AVR_EN_PSB0;
 }
 
 uint8_t ocd_set_psb1(uint16_t addr) {
@@ -539,51 +567,54 @@ uint8_t ocd_set_psb1(uint16_t addr) {
 
 	avrContext.PSB1 = addr;
 
-	uint16_t BCR;
-	rd_dbg_ocd(AVR_BCR,&BCR,0);
-	BCR |= AVR_EN_PSB1;
-	wr_dbg_ocd(AVR_BCR,&BCR,0);
+	avrContext.break_config |= AVR_EN_PSB1;
 }
 
-uint8_t ocd_set_pdmsb_as_single_program(uint16_t addr) {
+uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode) {
 	// write adress to psmsb register
 
 	avrContext.PDMSB = addr;
 
-	uint16_t BCR;
-	rd_dbg_ocd(AVR_BCR,&BCR,0);
-	BCR |= AVR_PDMSB_SINGLE_BRK;
-	wr_dbg_ocd(AVR_BCR,&BCR,0);
+	if (mode != 4) { // 4 is break_mask
+		avrContext.break_config |= AVR_EN_PDMSB;
+		avrContext.break_config = (avrContext.break_config & ~(AVR_PDMSB_MODE0|AVR_PDMSB_MODE1)) | ((mode & 0x3) << 5);
+	}
+	else {
+		avrContext.break_config |= AVR_EN_PDMSB | AVR_MASK_BREAK;
+	}
 }
 
-uint8_t ocd_set_pdsb_as_single_program(uint16_t addr) {
+uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode) {
 	// write adress to pdsb register
 
 	avrContext.PDSB = addr;
-
-	uint16_t BCR;
-	rd_dbg_ocd(AVR_BCR,&BCR,0);
-	BCR |= AVR_MAGIC_PDSB_AS_PROGRAM_BREAK;
-	wr_dbg_ocd(AVR_BCR,&BCR,0);
+	avrContext.break_config |= AVR_EN_PDSB;
+	avrContext.break_config = (avrContext.break_config & ~(AVR_PDSB_MODE0|AVR_PDSB_MODE1)) | ((mode & 0x3) << 3);
 }
 
 
 uint8_t ocd_clr_psb0()  {
 	avrContext.PSB0 = 0;
 
-	uint16_t BCR;
-	rd_dbg_ocd(AVR_BCR,&BCR,0);
-	BCR &= ~AVR_EN_PSB0;
-	wr_dbg_ocd(AVR_BCR,&BCR,0);
+	avrContext.break_config &= ~AVR_EN_PSB0;
 }
 
 uint8_t ocd_clr_psb1()  {
 	avrContext.PSB1 = 0;
 
-	uint16_t BCR;
-	rd_dbg_ocd(AVR_BCR,&BCR,0);
-	BCR &= ~AVR_EN_PSB1;
-	wr_dbg_ocd(AVR_BCR,&BCR,0);
+	avrContext.break_config &= ~AVR_EN_PSB1;
+}
+
+uint8_t ocd_clr_pdsb()  {
+	avrContext.PDSB = 0;
+
+	avrContext.break_config &= ~AVR_EN_PDSB;
+}
+
+uint8_t ocd_clr_pdmsb()  {
+	avrContext.PDMSB = 0;
+
+	avrContext.break_config &= ~(AVR_EN_PDMSB | AVR_MASK_BREAK);
 }
 
 /*----------------------------------------------------------------------*
