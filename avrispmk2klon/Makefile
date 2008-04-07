@@ -45,7 +45,7 @@ MCU = atmega32
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex 
+FORMAT = ihex
 
 # Target file name (without extension).
 TARGET = main
@@ -350,7 +350,8 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
-	hex2bin main.hex
+	avr-objcopy -I ihex -O binary main.hex main.bin
+	#hex2bin main.hex
 	#mv main.hex main.bin
 
 %.eep: %.elf

@@ -24,6 +24,9 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
+
+//#define AT89MODE
+
 #define F_CPU 16000000
 #include <util/delay.h>
 
@@ -590,6 +593,11 @@ void cmd_enter_progmode(struct cmd_enter_progmode_s *cmd) {
     wait_ms(10);
     PORTB &= ~(1<<RESET_PIN);
     wait_ms(10);
+    
+    #ifdef AT89MODE 
+    PORTB |= (1<<RESET_PIN);  // give reset a positive pulse
+    wait_ms(10);
+    #endif
   }
   else
   {
