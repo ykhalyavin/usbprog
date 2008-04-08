@@ -86,10 +86,14 @@ void avr_prog_cmd(void)
 int avr_jtag_instr(unsigned char instr, int delay)
 {
 	unsigned char jtagbuf[1];
+	//UARTWrite("PT12\r\n");
 	jtag_goto_state(SHIFT_IR);
+	//UARTWrite("PT13\r\n");
 	jtagbuf[0]=instr;
 	jtag_write(4,jtagbuf);
+//	UARTWrite("PT14\r\n");
 	jtag_goto_state(SHIFT_DR);
+//	UARTWrite("PT15\r\n");
 	return 1;
 }
 

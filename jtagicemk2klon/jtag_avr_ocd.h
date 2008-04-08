@@ -64,7 +64,10 @@ uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
 
 uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf);
-uint8_t ocd_wr_flash(uint16_t startaddr, uint16_t len, uint8_t *buf);
+uint8_t ocd_erase_flash_page(uint16_t pageaddr);
+uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh);
+uint8_t ocd_read_spmcr();
+
 
 uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
@@ -81,43 +84,8 @@ uint8_t ocd_clr_pdmsb();
 uint8_t ocd_clr_pdsb();
 
 
-unsigned char rd_flash_ocd_avr (unsigned long addr, unsigned char *buf,
-                       short size, unsigned char delay);
-unsigned char rd_sram_ocd_avr (unsigned short addr, unsigned char *buf,
-                               short size, unsigned char delay);
-unsigned char rd_io_ocd_avr (unsigned char addr, unsigned char *buf,
-                             short size, unsigned char delay);
-unsigned char rd_e2_ocd_avr (unsigned short addr, unsigned char *buf,
-                             short size, unsigned char delay);
-unsigned char wr_avr_flash_ocd (unsigned long addr, unsigned char *buf,
-                                short size, unsigned char delay);
-unsigned char wr_sram_ocd_avr (unsigned short addr, unsigned char *buf,
-                               short size, unsigned char delay);
-unsigned char wr_io_ocd_avr (unsigned char addr, unsigned char *buf,
-                             short size, unsigned char delay);
-
-
 unsigned char wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay);
 unsigned char rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay);
-unsigned char rd_dbg_channel (unsigned char *buf_out, unsigned char delay);
-
-
-void step_avr (unsigned char delay);
-unsigned char force_avr_stop (unsigned char delay);
-unsigned char run_avr (unsigned char mode, unsigned char go_flg,
-                              unsigned long addr, unsigned char delay);
-
-unsigned char init_avr_jtag (struct avr_reg *reg, unsigned char delay);
-
-void init_all_regs_avr (void);
-void get_all_regs_avr (unsigned char delay);
-void set_all_regs_avr (unsigned char *buf, unsigned char delay);
-
-unsigned char activate_ocd (unsigned char delay);
-
-unsigned char
-exec_instr_avr (unsigned char *out, unsigned char *in, unsigned char flg,
-                unsigned char delay);
 
 #define write_flash		0x01
 

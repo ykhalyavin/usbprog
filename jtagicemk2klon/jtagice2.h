@@ -161,6 +161,8 @@ int rsp_illegal_parameter(char *answer);
 int evt_break(char *answer, uint16_t pc, uint8_t break_cause);
 
 
+extern struct deviceDescriptor_t deviceDescriptor;
+
 
 volatile struct jtagice_t {
   char lastcmd;

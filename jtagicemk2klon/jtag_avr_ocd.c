@@ -29,15 +29,60 @@
 #include "uart.h"
 
 static const uint8_t OCDR_Addr = 0x31;
-static const uint8_t SPMCR_Addr = 0x37;
+static const uint8_t SPMCR_Addr = 0x57;
 static const uint8_t EECR_Addr = 0x1C;
 static const uint8_t SREG_Addr = 0x3F;
+
 
 
 /* This struct holds essential chip data for debugging.
  * Please use the according accessor functions to modify it
  */
 struct AVR_Context_Type avrContext;
+
+/*----------------------------------------------------------------------*
+ * write to on chip debugging registers                                 *
+ *----------------------------------------------------------------------*/
+unsigned char
+wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay) {
+	unsigned char stat, tdi [3], tdo [3];
+
+//	jtag_reset();
+	avr_jtag_instr (AVR_OCD, delay);
+	tdi [0] = buf [0];
+	tdi [1] = buf [1];
+	tdi [2] = reg | AVR_WR_OCDR; // start with writing
+	jtag_write(21,tdi);
+	jtag_goto_state(UPDATE_DR);
+
+	return 1;
+}
+
+/*----------------------------------------------------------------------*
+ * read from on chip debugging registers                                *
+ * prepare to read the register : in the second run you can get the data*
+ * acts just like a shift register : when you must read you must clock  *
+ * in redundant data in order to read the shift register                *
+ *----------------------------------------------------------------------*/
+unsigned char
+rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay) {
+	unsigned char stat, tdo [3], tdi [3];
+	//jtag_reset();
+	//UARTWrite("PT1\r\n");
+	avr_jtag_instr (AVR_OCD, delay);
+	tdi [0] = reg;
+	jtag_write(5,tdi); // write register adress to OCD - leading 0 indicated reading
+	jtag_goto_state(UPDATE_DR);
+	jtag_goto_state(SHIFT_DR);
+	tdi [0]     = 0;
+	tdi [1]     = 0;
+	tdi [2]     = reg;
+	jtag_read (16, tdo);
+	buf_out [0] = tdo [0];
+	buf_out [1] = tdo [1];
+	return 1;
+}
+
 
 unsigned char ocd_enshure_ocdr_enable() {
 	uint16_t csr;
@@ -133,6 +178,11 @@ unsigned char ocd_restore_context() {
 		UARTWrite("Registers restored\r\n");
 	#endif
 
+		uint16_t OCDSCR;
+		rd_dbg_ocd(AVR_DBG_COMM_CTL,&OCDSCR,0);
+		OCDSCR &= ~AVR_EN_OCDR;
+		wr_dbg_ocd(AVR_DBG_COMM_CTL,&OCDSCR,0);
+
 		avrContext.registerDirty = 0;
 	}
 	// restore all BP data
@@ -164,65 +214,6 @@ unsigned char ocd_restore_context() {
 	return 1;
 }
 
-/*----------------------------------------------------------------------*
- * This function reads or writes the peripherals, internal memory, CPU  *
- * registers of the AVR target by executing AVR target instructions.    *
- *                                                                      *
- * Note :                                                               *
- * The jtag interface cannot access the peripherals or memory directly. *
- * Instead it sends and receives commands through use of the ocdr       *
- * register which is mapped in the AVR core. The cpu core will access   *
- * the peripheral and memory by executing the "normal" avr instructions.*
- * The ocdr register isnot enabled by default and must be enabled when  *
- * the avr target is stopped succefully.                                *
- *                                                                      *
- * A special case is for access of the program counter : this program   *
- * counter can be accessed by a 32 bit data in which the first 16 bits  *
- * are 0xffff.                                                          *
- *                                                                      *
- * Every avr instruction transmitted to the jtag data register must end *
- * with an run-test/idle stage, while the access of the ocd register    *
- * set is not required                                                  *
- *----------------------------------------------------------------------*/
-unsigned char
-exec_instr_avr (unsigned char *out, unsigned char *in, unsigned char flg,
-				unsigned char delay) {
-	unsigned char tdi [4], tdo [4], stat;
-
-	//jtag_reset();
-	avr_jtag_instr(AVR_INSTR, delay);
-	if (flg == CHK_PC) {
-			tdi [0] = 0;
-			tdi [1] = 0;
-			tdi [2] = 0xFF;
-			tdi [3] = 0xFF;
-			jtag_write_and_read (32,tdi, tdo);
-			out [0] = tdo [0];
-			out [1] = tdo [1];
-			out [2] = tdo [2];
-			out [3] = tdo [3];
-		} else {
-			/*
-			* an avr instruction
-			*/
-			tdi [0] = in [0];
-			tdi [1] = in [1];
-			UARTWrite("AVR_Instr:");
-			SendHex(tdi[1]);
-			SendHex(tdi[0]);
-			UARTWrite("\r\n");
-
-			jtag_write_and_read(16,tdi,tdo);
-			jtag_goto_state(RUN_TEST_IDLE);
-
-			UARTWrite("Readback:");
-			SendHex(tdo[1]);
-			SendHex(tdo[0]);
-			UARTWrite("\r\n");
-
-		}
-	return 1;
-}
 
 uint16_t ocd_read_pc() {
 	avr_jtag_instr(AVR_INSTR,0);
@@ -441,9 +432,85 @@ uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	return 1;
 }
 
-uint8_t ocd_wr_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+uint8_t ocd_erase_flash_page(uint16_t pageaddr) {
+	// first we have to save some more registers which are involved in this operation
+	// there are for page erasing the addressing registers for the Y pointer
+	// we have to use the Z pointer to indicate the page, so we must use another one for
+	// writing to SPMCR
+	uint8_t r28, r29;
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,28));
+	r28 = ocd_read_ocdr();
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,29));
+	r29 = ocd_read_ocdr();
+#ifdef DEBUG_VERBOSE
+	UARTWrite("Starting Page Erase...\r\n");
+#endif
 
+	ocd_spm_sequence(AVR_SPMCR_SPMEN | AVR_SPMCR_PGERS, pageaddr & 0xFF, pageaddr >> 8);
 
+	// wait for action to complete
+#ifdef DEBUG_VERBOSE
+	UARTWrite("Wait for completion...\r\n");
+#endif
+	while (ocd_read_spmcr() & AVR_SPMCR_SPMEN);
+
+#ifdef DEBUG_VERBOSE
+	UARTWrite("Page Erased\r\n");
+#endif
+
+	// restore registers
+	ocd_execute_avr_instruction(AVR_LDI(28,r28));
+	ocd_execute_avr_instruction(AVR_LDI(29,r29));
+	return 1;
+}
+
+uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh) {
+	// now we place the address of the SPMCR to the adressing register
+	ocd_execute_avr_instruction(AVR_LDI(28,SPMCR_Addr & 0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(29,SPMCR_Addr>>8));
+
+	// load the value to be written to r16
+	ocd_execute_avr_instruction(AVR_LDI(16,spmcr));
+
+	// then set the pc to beginning of the bootloader space
+	ocd_execute_avr_instruction(AVR_LDI(30,deviceDescriptor.ulBootAddress & 0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(31,(deviceDescriptor.ulBootAddress >> 8) & 0xFF));
+	ocd_execute_avr_instruction(AVR_IJMP());
+
+	// then set the Z register to correct location
+	ocd_execute_avr_instruction(AVR_LDI(30,zlow));
+	ocd_execute_avr_instruction(AVR_LDI(31,zhigh));
+
+	// and write control character to SPMCR
+	ocd_execute_avr_instruction(AVR_STY(16));
+
+	// set BCR to Stepping mode
+	uint16_t bcr = AVR_BRK_STEP;
+	wr_dbg_ocd(AVR_BCR,&bcr,0);
+
+	// execute SPM and run device
+	ocd_execute_avr_instruction(AVR_SPM());
+	avr_jtag_instr(AVR_RUN,0);
+
+	// now wait for avr to stop again
+	uint16_t ocdcr;
+	do {
+		rd_dbg_ocd(AVR_DBG_COMM_CTL,&ocdcr,0);
+	} while (!(ocdcr & 0xC));
+
+	return 1; // when avr has stopped again the sequence has finished
+}
+
+uint8_t ocd_read_spmcr() {
+	// load address of the register to Z pointer
+	ocd_execute_avr_instruction(AVR_LDI(30,SPMCR_Addr & 0xFF));
+	ocd_execute_avr_instruction(AVR_LDI(31,SPMCR_Addr>>8));
+
+	// now load value to r16 and put it to ocdr
+	ocd_execute_avr_instruction(AVR_LDZ(16));
+	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16));
+
+	return ocd_read_ocdr();
 }
 
 /* Ja die Funktion sieht sehr komisch aus - das seh ich ein, aber es geht! */
@@ -622,396 +689,4 @@ uint8_t ocd_clr_pdmsb()  {
 	avrContext.PDMSB = 0;
 
 	avrContext.break_config &= ~(AVR_EN_PDMSB | AVR_MASK_BREAK);
-}
-
-/*----------------------------------------------------------------------*
- * write to on chip debugging registers                                 *
- *----------------------------------------------------------------------*/
-unsigned char
-wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay) {
-	unsigned char stat, tdi [3], tdo [3];
-
-//	jtag_reset();
-	avr_jtag_instr (AVR_OCD, delay);
-	tdi [0] = buf [0];
-	tdi [1] = buf [1];
-	tdi [2] = reg | AVR_WR_OCDR; // start with writing
-	jtag_write(21,tdi);
-	jtag_goto_state(UPDATE_DR);
-
-	return 1;
-}
-
-/*----------------------------------------------------------------------*
- * read from on chip debugging registers                                *
- * prepare to read the register : in the second run you can get the data*
- * acts just like a shift register : when you must read you must clock  *
- * in redundant data in order to read the shift register                *
- *----------------------------------------------------------------------*/
-unsigned char
-rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay) {
-	unsigned char stat, tdo [3], tdi [3];
-	//jtag_reset();
-	avr_jtag_instr (AVR_OCD, delay);
-	tdi [0] = reg;
-	jtag_write(5,tdi); // write register adress to OCD - leading 0 indicated reading
-	jtag_goto_state(UPDATE_DR);
-	jtag_goto_state(SHIFT_DR);
-
-	tdi [0]     = 0;
-	tdi [1]     = 0;
-	tdi [2]     = reg;
-	jtag_read (16, tdo);
-	buf_out [0] = tdo [0];
-	buf_out [1] = tdo [1];
-	return 1;
-}
-
-/*----------------------------------------------------------------------*
- *----------------------------------------------------------------------*/
-unsigned char
-rd_dbg_channel (unsigned char *buf_out, unsigned char delay) {
-	unsigned char stat, tdo [2], tdi [2];
-
-	jtag_reset();
-	avr_jtag_instr (AVR_OCD, delay);
-	tdi [0] = AVR_DBG_COMM_DATA;
-	jtag_write_and_read (5,tdi, tdo);
-
-	tdi [0]     = 0;
-	tdi [1]     = 0;
-	jtag_write_and_read (16,tdi, tdo);
-	buf_out [0] = tdo [0];
-	buf_out [1] = tdo [1];
-
-	return 1;
-}
-
-/*----------------------------------------------------------------------*
- *----------------------------------------------------------------------*/
-unsigned char
-force_avr_stop (unsigned char delay) {
-	jtag_reset();
-	avr_jtag_instr (AVR_FORCE_BRK, delay);
-	return 1;
-}
-
-/*----------------------------------------------------------------------*
- *----------------------------------------------------------------------*/
-unsigned char init_avr_jtag (struct avr_reg *reg, unsigned char delay) {
-	unsigned char stat, buf_in [4], buf_out [4], *p, *q;
-	char          cnt;
-	//jtag_reset();
-	//avr_reset (0);
-	rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-	//avr_reset(0);
-	avr_jtag_instr (AVR_FORCE_BRK, delay);
-	rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-	//avr_reset (1);
-
-	/*
-	 * set break point at reset vector :
-	 * write (= 1 bit) breakpoint register PSB0 (4 bits) : address 0 (= 16
-	 * bits).  makes total 21 bits -> 3 bytes
-	 */
-	buf_in [0] = 0;
-	buf_in [1] = 0;
-	wr_dbg_ocd (AVR_PSB0, buf_in, delay);
-	/*
-	 * prepare to read control and status register
-	 */
-	rd_dbg_ocd (AVR_BCR, buf_out, delay);
-	/*
-	 * write control and status register with PSB1 activated
-	 */
-	buf_in [0] = 0;
-	buf_in [1] = AVR_EN_PSB1;
-	wr_dbg_ocd (AVR_BCR, buf_in, delay);
-
-	/*
-	 * and let the target run
-	 */
-	//avr_reset (0);
-	rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-
-	/*
-	 * prepare to read control and status register again
-	 */
-	rd_dbg_ocd (AVR_BCR, buf_out, delay);
-
-	/*
-	 * write control and status register with PSB0 deactivated
-	 * prepare to read the pc
-	 */
-	buf_in [0] = 0;
-	buf_in [1] = 0;
-	wr_dbg_ocd (AVR_BCR, buf_in, delay);
-
-	/*
-	 * prepare to read the pc
-	 */
-	exec_instr_avr (buf_out, buf_in, CHK_PC, delay);
-	rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-
-	buf_in [0] = buf_out [0];
-	buf_in [1] = buf_out [1] | AVR_EN_OCDR;
-	wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-
-	buf_in [0] = 0xE1;
-	buf_in [1] = 0xBF;
-	buf_in [2] = 0xF1;
-	buf_in [3] = 0xBF;
-	q          = (unsigned char *) &(reg->pc);
-	p          = buf_in;
-	cnt        = 1;
-	do {
-			exec_instr_avr (buf_out, p, 0, delay);
-			p += 2;
-			rd_dbg_channel (buf_out, delay);
-			*q++ = buf_out [1];
-		} while ((!(--cnt & 0x80)));
-
-
-	rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-	buf_in [0] = BIT3 | BIT2;
-	buf_in [1] = AVR_EN_OCDR;
-	wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-
-	return 1;
-}
-
-/*----------------------------------------------------------------------*
- * this one really gets the register values right after a break, stop,  *
- * or initial condition                                                 *
- *----------------------------------------------------------------------*/
-#if 0
-void
-get_avr_regs (unsigned char delay) {
-	unsigned char buf_in [2], buf_out [2], stat, *p, *q, xsum, byte_buf [2];
-	char          cnt;
-
-#ifdef AVR
-	unsigned char code_buf [64];
-#endif
-
-	stat = rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_out, delay);
-	if (stat == JTAG_OK) {
-			buf_in [0] = buf_out [0] | BIT4 | BIT3 | BIT2;
-			buf_in [1] = buf_out [1] | AVR_EN_OCDR;
-			stat = wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-		}
-	if (stat == JTAG_OK) {
-			/*
-			 * read register set
-			 */
-#ifdef AVR
-			memcpy_P (code_buf, avr_code_get_reg, 64);
-			p = code_buf;
-#else
-			p = (unsigned char *) &avr_code_get_reg;
-#endif
-			q = (unsigned char *) &(reg.avr);
-			cnt = 31;
-			do {
-					stat = exec_instr_avr (buf_out, p, 0, delay);
-					p += 2;
-					if (stat == JTAG_OK) stat = rd_dbg_channel (buf_out, delay);
-					if (stat == JTAG_OK) *q++ = buf_out [1];
-				} while (!((--cnt & 0x80)) && (stat == JTAG_OK));
-		}
-	p    = (unsigned char *) &(reg.avr);
-	cnt  = 0;
-	xsum = 0;
-	outch ('$');
-	while (cnt < (sizeof (struct avr_reg))) {
-			byte2ascii (byte_buf, *p);
-			xsum += byte_buf [0] + byte_buf [1];
-			outbyte (*p++);
-			cnt++;
-		}
-	outch ('#');
-	outbyte (xsum);
-
-}
-#endif
-
-/*----------------------------------------------------------------------*
- * enable on chip debugging                                             *
- *----------------------------------------------------------------------*/
-unsigned char
-activate_ocd (unsigned char delay) {
-	unsigned char stat, buf_in [2];
-
-	do {
-			jtag_reset ();
-			avr_jtag_instr (AVR_FORCE_BRK, delay);
-			buf_in [0] = BIT2;
-			buf_in [1] = AVR_EN_OCDR;
-			wr_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-			rd_dbg_ocd (AVR_DBG_COMM_CTL, buf_in, delay);
-		} while (((buf_in [0] & (BIT2 | BIT3)) != (BIT2 | BIT3)));
-#ifdef DEBUG
-	SendHex(buf_in [0]);
-#endif
-	return 1;
-}
-
-/*----------------------------------------------------------------------*
- * reading flash bytes :                                                *
- *                                                                      *
- * 0xe<lo_adr_hi_nib><e><lo_adr_lo_nib> ldi     r30,lo8(addr)           *
- * 0xe<hi_adr_hi_nib><f><hi_adr_lo_nib> ldi     r31,hi8(addr)           *
- * 0x95c8                               lpm                             *
- * 0xbe01                               out     0x31,r0                 *
- *                                      read ocdr                       *
- * 0x9631                               adiw    r30,1                   *
- *                                                                      *
- * low byte is first byte in jtag chain                                 *
- *----------------------------------------------------------------------*/
-unsigned char
-rd_flash_ocd_avr (unsigned long addr, unsigned char *buf, short size,
-				  unsigned char delay) {
-
-	unsigned char stat, *p, buf_in [2], buf_out [2];
-	short         num;
-
-	num  = 0;
-	//init_avr_jtag (&(reg.avr), 0);
-	activate_ocd (delay);
-
-	p    = (unsigned char *) &addr;
-	p   += 2;
-	/*
-	 * ldi      r31,hi8(addr)
-	 */
-	buf_in [0] = (*p & 0xF) + 0xF0;
-	buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-	exec_instr_avr (buf_out, buf_in, 0, delay);
-
-	/*
-	 * ldi      r30,lo8(addr)
-	 */
-
-	buf_in [0] = (*++p & 0xF) + 0xE0;
-	buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-	exec_instr_avr (buf_out, buf_in, 0, delay);
-
-	//SendHex(0x99);
-	while (num < size) {
-			/*
-			 * lpm  r0,z+
-			 */
-			buf_in [0] = 5;
-			buf_in [1] = 0x90;
-			exec_instr_avr (buf_out, buf_in, 0, delay);
-			/*
-			 * out  ocdr,r0
-			 */
-			buf_in [0] = 1;
-			buf_in [1] = 0xBE;
-			exec_instr_avr (buf_out, buf_in, 0, delay);
-			rd_dbg_channel (buf_out, delay);
-			//SendHex(buf_out [0]);
-			//SendHex(buf_out [1]);
-			*buf++ = buf_out [1];
-			num++;
-		}
-
-	return 1;
-}
-
-
-/*----------------------------------------------------------------------*
- *                                                                      *
- * 0xe<lo_adr_hi_nib><e><lo_adr_lo_nib> ldi     r30,lo8(addr)           *
- * 0xe<hi_adr_hi_nib><f><hi_adr_lo_nib> ldi     r31,hi8(addr)           *
- * 0xbbff                               out     eearh,r31               *
- * 0xbbee                               out     eearl,r30               *
- * 0x9ae1                               sbi     eecr,1                  *
- * 0xb20d                               in      r0,eedr                 *
- * 0xbe01                               out     0x31,r0                 *
- *                                      read ocdr                       *
- * 0x9631                               adiw    r30,1                   *
- *----------------------------------------------------------------------*/
-unsigned char
-rd_e2_ocd_avr (unsigned short addr, unsigned char *buf, short size,
-			   unsigned char delay) {
-	unsigned char stat, buf_in [2], buf_out [2], *p;
-	short         num;
-
-	num  = 0;
-	stat = activate_ocd (delay);
-	p    = (unsigned char *) &addr;
-	/*
-	 * ldi      r31,hi8(addr)
-	 */
-	if (stat == JTAG_OK) {
-			buf_in [0] = (unsigned char) (*p & 0xF) + 0xF0;
-			buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-			stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-		}
-	/*
-	 * ldi      r30,lo8(addr)
-	 */
-	if (stat == JTAG_OK) {
-			buf_in [0] = (*++p & 0xF) + 0xE0;
-			buf_in [1] = ((*p & 0xF0) >> 4) + 0xE0;
-			stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-		}
-	while ((stat == JTAG_OK) && (num < size)) {
-			/*
-			 * out  eearh,r31
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 0xFF;
-					buf_in [1] = 0xBB;
-					stat = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			/*
-			 * out  eearl,r30
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 0xEE;
-					buf_in [1] = 0xBB;
-					stat = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			/*
-			 * sbi  eecr,1
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 0xE1;
-					buf_in [1] = 0x9A;
-					stat = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			/*
-			 * in   r0,eedr
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 0xD;
-					buf_in [1] = 0xB2;
-					stat = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			/*
-			 * out  ocdr,r0
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 1;
-					buf_in [1] = 0xBE;
-					stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			if (stat == JTAG_OK) stat = rd_dbg_channel (buf_out, delay);
-			if (stat == JTAG_OK) *buf++ = buf_out [1];
-			/*
-			 * adiw r30,1
-			 */
-			if (stat == JTAG_OK) {
-					buf_in [0] = 0x31;
-					buf_in [1] = 0x96;
-					stat       = exec_instr_avr (buf_out, buf_in, 0, delay);
-				}
-			addr++;
-			num++;
-		}
-
-	return stat;
 }

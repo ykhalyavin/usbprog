@@ -81,6 +81,14 @@
 #define AVR_PC_MOD                      0x4000
 #define AVR_TMR_RUN_ON_BRK              0x8000
 
+/* Bits in SPMCR */
+#define AVR_SPMCR_SPMEN 0x01
+#define AVR_SPMCR_PGERS 0x02
+#define AVR_SPMCR_PGWRT 0x04
+#define AVR_SPMCR_BLBSET 0x08
+#define AVR_SPMCR_RWWSRE 0x10
+#define AVR_SPMCR_RWWSB 0x40
+
 /*
  * BSR bits
  */

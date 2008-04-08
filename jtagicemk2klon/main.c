@@ -232,9 +232,12 @@ void USBReceive(char *inbuf)
 				read_pos = 64;
 				current_state = START;
 #ifdef DEBUG_VERBOSE
-					UARTWrite("Complete -> Process\r\n");
+					UARTWrite("Process ->\r\n");
 #endif
 				JTAGICE_ProcessCommand(buf);
+#ifdef DEBUG_VERBOSE
+					UARTWrite("-> Completed\r\n");
+#endif
 		}
 
 	} // while
@@ -372,6 +375,8 @@ int main(void)
 {
   int conf, interf;
 	// only for testing
+	//asm volatile ("push r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0");
+
 #ifdef DEBUG_ON
 	UARTInit();
 	UARTWrite("Hallo\r\n");
@@ -423,6 +428,7 @@ int main(void)
 	// ask for new events
 	// while send an event block usb receive routine
 	uint16_t delay = 0;
+	uint8_t ledtimer = 0;
 
 #ifdef DEBUG_VERBOSE
 		UARTWrite("Main Loop\r\n");
@@ -439,15 +445,20 @@ int main(void)
 
 		// when emulator is running cyclicly check whether it has met a break condidtion
 		if (jtagice.emulator_state == RUNNING) {
-			PORTA ^= (1<<PA4); // toggle led while running to signalize working ^^
+			if (++ledtimer == 0)
+				PORTA ^= (1<<PA4); // toggle led while running to signalize working ^^
 			// check ocd BSR
 			cli(); // does not respond on messages in this time
 
+#ifdef DEBUG_VERBOSE
+			UARTWrite("Check BSR:");
+#endif
+
 			uint16_t bsr;
+			//debug_verbose = 1;
 			rd_dbg_ocd(AVR_BSR,&bsr,0);
 
 #ifdef DEBUG_VERBOSE
-			UARTWrite("Check BSR:");
 			SendHex((char)(bsr>>8));
 			SendHex((char)bsr);
 			UARTWrite("\r\n");

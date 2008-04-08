@@ -5,6 +5,9 @@
 
 
 #ifdef DEBUG_ON
+
+//unsigned char debug_verbose = 0;
+
 void UARTInit(void)
 {
   	//UCSRB |= (1<<TXEN);			// UART TX einschalten

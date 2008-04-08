@@ -316,6 +316,11 @@ int cmd_clr_break(char *msg, char * answer)
 
 int cmd_set_break(char *msg, char * answer)
 {
+	/* Debugging Purposes */
+/*	ocd_erase_flash_page(0);
+
+	return rsp_ok(answer); */
+
 	uint16_t addr = msg[11] | (msg[12] << 8);
 	// check the type of bp
 	if (msg[9] == 1) { // this should be a program memory breakpoint
@@ -389,6 +394,10 @@ int cmd_forced_stop(char * msg, char * answer)
 {
  	//jtag_reset();
 	avr_jtag_instr(AVR_FORCE_BRK, 0);
+
+#ifdef DEBUG_ON
+	UARTWrite("STOP!\r\n");
+#endif
 
 
 #ifdef DEBUG_VERBOSE

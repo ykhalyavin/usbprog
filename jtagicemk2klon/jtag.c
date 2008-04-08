@@ -202,9 +202,11 @@ void jtag_goto_state(TAP_STATE state)
 {
   /* If 'state' is invalid, simply ignore it */
   if( state > UPDATE_IR ) return;
-
-  while( tapstate != state ){
-		//SendHex(tapstate);
+	//SendHex(tapstate);
+	//SendHex(state);
+  while( tapstate != state ) {
+  	//if (debug_verbose != 0)
+			//SendHex(tapstate);
 		switch( tapstate ) {
 			case TEST_LOGIC_RESET:
 			  JTAG_CLEAR_TMS();

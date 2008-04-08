@@ -30,8 +30,13 @@
 #define AVR_ORI(reg,mask) (uint16_t)(0x6000 | (((mask) & 0xF0) << 4) | (((reg) & 0x0F) << 4) | ((mask) & 0xF))
 
 #define AVR_LDZ_PostInc(reg) (uint16_t)(0x9001 | (((reg) & 0x1F) << 4))
+#define AVR_LDZ(reg) (uint16_t)(0x8000 | (((reg) & 0x1F) << 4))
 
 #define AVR_STZ_PostInc(reg) (uint16_t)(0x9201 | (((reg) & 0x1F) << 4))
+
+#define AVR_STY(reg) (uint16_t)(0x8208 | (((reg) & 0x1F) << 4))
+
+#define AVR_LDY(reg) (uint16_t)(0x8008 | (((reg) & 0x1F) << 4))
 
 #define AVR_ADIW(rid,val) (uint16_t)(0x9600 | (((rid) & 0x3) << 4) | (((val) & 0x30) << 2) | ((val) & 0x0F))
 
@@ -42,6 +47,8 @@
 #define AVR_LPM(reg) (uint16_t)(0x9004 | (((reg) & 0x1F) << 4))
 #define AVR_LPM() (uint16_t)0x95C8
 */
+
+#define AVR_SPM() (uint16_t)0x95E8
 
 #define AVR_NOP() (uint16_t)0
 
