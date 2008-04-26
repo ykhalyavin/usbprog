@@ -89,6 +89,8 @@ inline void USBNBurstWrite(unsigned char Data)
 
 void USBNDebug(char *msg)
 {
+  #if DEBUG_ON
   UARTWrite(msg);
+  #endif
 }
 

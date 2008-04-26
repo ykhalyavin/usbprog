@@ -35,7 +35,7 @@
 #include "wait.h"
 
 #include "../usbprog_base/firmwarelib/avrupdate.h"
-#include "uart.h"
+//#include "uart.h"
 #include "usbn2mc.h"
 
 /* command descriptions for mk2 */
@@ -772,12 +772,12 @@ void USBFlash(char *buf)
           answer[2] = STATUS_ISP_READY;
         break;
 
-        case PARAM_SW_MAJOR:  // avrisp mkII special
-          answer[2] = 1;
+        case PARAM_SW_MAJOR:  // avrisp mkII special 1
+          answer[2] = 9;
         break;
 
-        case PARAM_SW_MINOR:  // abrisp mkII special
-          answer[2] = 6;
+        case PARAM_SW_MINOR:  // abrisp mkII special 6
+          answer[2] = 9;
         break;
 
         case PARAM_HW_VER:
@@ -1126,8 +1126,8 @@ int main(void)
 
  int conf, interf;
   #if DEBUG_ON
-  #endif
   UARTInit();
+  #endif
 
 
   spi_init();
