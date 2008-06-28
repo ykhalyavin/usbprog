@@ -1,3 +1,8 @@
+2008-06-28  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* add warning in Windows installer that Windows Vista is unsupported
+	  so that users don't get broken systems
+
 2008-03-31  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* use "usbprog-gui" in the usbprog.desktop instead of the command line
