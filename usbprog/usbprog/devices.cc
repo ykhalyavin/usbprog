@@ -460,10 +460,12 @@ void UsbprogUpdater::writeFirmware(const ByteVector &bv)
         copy(bv.begin() + i, bv.begin() + i + sz, buf);
 
         cmd[0] = WRITEPAGE;
-        cmd[1] = (char)page++;
+        cmd[1] = (char)page;
+        cmd[2] = (char)(page++ >> 8);
 
         Debug::debug()->trace("usb_bulk_write(%p, 2, %p, %d, 100)",
                 m_devHandle, 2, cmd, USB_PAGESIZE);
+
         ret = usb_bulk_write(m_devHandle,2,cmd,USB_PAGESIZE, 100);
         if (ret < 0) {
             updateClose();

@@ -1,3 +1,8 @@
+2008-07-02  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix problem that firmware with more than 16k can't be flashed
+	  (http://www.embedded-projects.net/bugs/index.php?do=details&task_id=2)
+
 2008-06-28  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* add warning in Windows installer that Windows Vista is unsupported
