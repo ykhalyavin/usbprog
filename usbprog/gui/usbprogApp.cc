@@ -30,7 +30,7 @@ IMPLEMENT_APP(usbprogFrmApp)
 void parse_command_line(int argc, wxChar **argv)
 {
     char **nargv = new char*[argc];
-        
+
     for (int i = 0; i < argc; i++)
         nargv[i] = strdup(wxString(argv[i]).mb_str());
 
@@ -81,4 +81,4 @@ int usbprogFrmApp::OnExit()
 	return 0;
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

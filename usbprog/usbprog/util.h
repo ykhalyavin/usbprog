@@ -38,4 +38,4 @@ void usbprog_msleep(unsigned int msec);
 
 #endif /* USBPROG_UTIL_H */
 
-// vim: set sw=4 ts=4 et:
+// vim: set sw=4 ts=4 et: :collapseFolds=1:

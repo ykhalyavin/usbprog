@@ -469,7 +469,7 @@ string Firmware::formatDeviceId() const
         ss << ", ";
     if (getProductId() != 0)
         ss << "Product: 0x" << setw(4) << hex << getProductId();
-    if (getBcdDevice() != 0 && (getProductId() != 0 
+    if (getBcdDevice() != 0 && (getProductId() != 0
                 || getVendorId() != 0))
         ss << ", ";
     if (getBcdDevice() != 0)
@@ -591,7 +591,7 @@ void Firmwarepool::readIndex()
 		xmlFreeDoc(doc);
         throw ParseError("Root element is not \"usbprog\"");
 	}
-	
+
     FirmwareXMLParser parser(this);
     for (cur = cur->xmlChildrenNode; cur != NULL; cur = cur->next)
 		if (xmlStrcmp(cur->name, XMLCHAR("pool")) == 0)
@@ -805,4 +805,4 @@ void Firmwarepool::addFirmware(Firmware *fw)
     m_firmware[fw->getName()] = fw;
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

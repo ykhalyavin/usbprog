@@ -26,13 +26,14 @@
 #include <usbprog/inifile.h>
 #include <usbprog/downloader.h>
 
-/* Typedefs {{{1 */
+/* Typedefs {{{ */
 
 class Firmware;
 typedef std::map<std::string, Firmware *> StringFirmwareMap;
 typedef std::list<std::string>            StringList;
 
-/* Firmware {{{1 */
+/* }}} */
+/* Firmware {{{ */
 
 class Firmware {
     public:
@@ -107,7 +108,8 @@ class Firmware {
         std::string           m_md5sum;
 };
 
-/* Firmwarepool {{{1 */
+/* }}} */
+/* Firmwarepool {{{ */
 
 class FirmwareXMLParser;
 
@@ -164,6 +166,8 @@ class Firmwarepool {
         int m_indexAutoUpdatetime;
 };
 
+/* }}} */
+
 #endif /* FIRMWAREPOOL_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

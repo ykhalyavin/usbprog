@@ -1,3 +1,7 @@
+2008-07-03  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix indentation
+
 2008-07-02  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fix problem that firmware with more than 16k can't be flashed
@@ -195,3 +199,5 @@
 	* run DeviceManager::discoverUpdateDevices() in the "devices" command
 	  instead of printing an error message when zero update devices are
 	  currently registered
+
+:tabSize=8:

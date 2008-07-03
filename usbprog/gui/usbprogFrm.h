@@ -124,4 +124,4 @@ class usbprogFrm : public wxFrame {
 
 #endif /* USBPROG_FORM_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

@@ -23,7 +23,7 @@
 
 #include "shell.h"
 
-/* ListCommand {{{1 */
+/* ListCommand {{{ */
 
 class ListCommand : public AbstractCommand {
     public:
@@ -43,7 +43,8 @@ class ListCommand : public AbstractCommand {
         Firmwarepool *m_firmwarepool;
 };
 
-/* InfoCommand {{{1 */
+/* }}} */
+/* InfoCommand {{{ */
 
 class InfoCommand : public AbstractCommand {
     public:
@@ -70,7 +71,8 @@ class InfoCommand : public AbstractCommand {
         Firmwarepool *m_firmwarepool;
 };
 
-/* PinCommand {{{1 */
+/* }}} */
+/* PinCommand {{{ */
 
 class PinCommand : public AbstractCommand {
     public:
@@ -98,7 +100,8 @@ class PinCommand : public AbstractCommand {
         Firmwarepool *m_firmwarepool;
 };
 
-/* DownloadCommand {{{1 */
+/* }}} */
+/* DownloadCommand {{{ */
 
 class DownloadCommand : public AbstractCommand {
     public:
@@ -130,7 +133,8 @@ class DownloadCommand : public AbstractCommand {
         Firmwarepool *m_firmwarepool;
 };
 
-/* CacheCommand {{{1 */
+/* }}} */
+/* CacheCommand {{{ */
 
 class CacheCommand : public AbstractCommand {
     public:
@@ -156,7 +160,8 @@ class CacheCommand : public AbstractCommand {
         Firmwarepool *m_firmwarepool;
 };
 
-/* DevicesCommand {{{1 */
+/* }}} */
+/* DevicesCommand {{{ */
 
 class DevicesCommand : public AbstractCommand {
     public:
@@ -176,7 +181,8 @@ class DevicesCommand : public AbstractCommand {
         Firmwarepool  *m_firmwarepool;
 };
 
-/* DeviceCommand {{{1 */
+/* }}} */
+/* DeviceCommand {{{ */
 
 class DeviceCommand : public AbstractCommand {
     public:
@@ -203,7 +209,8 @@ class DeviceCommand : public AbstractCommand {
         Firmwarepool *m_firmwarepool;
 };
 
-/* UploadCommand {{{1 */
+/* }}} */
+/* UploadCommand {{{ */
 
 class UploadCommand : public AbstractCommand {
     public:
@@ -232,7 +239,8 @@ class UploadCommand : public AbstractCommand {
         Firmwarepool  *m_firmwarepool;
 };
 
-/* StartCommand {{{1 */
+/* }}} */
+/* StartCommand {{{ */
 
 class StartCommand : public AbstractCommand {
     public:
@@ -249,7 +257,8 @@ class StartCommand : public AbstractCommand {
         DeviceManager *m_devicemanager;
 };
 
-/* CopyingCommand {{{1 */
+/* }}} */
+/* CopyingCommand {{{ */
 
 class CopyingCommand : public AbstractCommand {
     public:
@@ -264,6 +273,8 @@ class CopyingCommand : public AbstractCommand {
         void printLongHelp(std::ostream &os) const;
 };
 
+/* }}} */
+
 #endif /* COMMANDS_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

@@ -40,7 +40,7 @@ ProxySettings Downloader::m_proxySettings;
 #  define CURL_GLOBAL_FLAGS   0
 #endif
 
-/* Static functions {{{1 */
+/* Static functions {{{ */
 
 /* -------------------------------------------------------------------------- */
 #ifdef _WIN32
@@ -90,7 +90,7 @@ void Downloader::readProxySettings()
             m_proxySettings.username = (char *)buffer;
             Debug::debug()->dbg("IE proxy username = %s",
                     m_proxySettings.username.c_str());
-	
+
             buflen = INFOBUFFER_SIZE;
 			if (m_proxySettings.username.size() > 0) {
 				if (InternetQueryOption(NULL, INTERNET_OPTION_PROXY_PASSWORD,
@@ -146,8 +146,8 @@ int Downloader::curl_progress_callback(void *clientp, double dltotal, double
     return 0;
 }
 
-/* Members {{{1 */
-
+/* }}} */
+/* Members {{{ */
 
 /* -------------------------------------------------------------------------- */
 Downloader::Downloader(ostream &output) throw (DownloadError)
@@ -270,5 +270,6 @@ void Downloader::download() throw (DownloadError)
         throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 }
 
+/* }}} */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

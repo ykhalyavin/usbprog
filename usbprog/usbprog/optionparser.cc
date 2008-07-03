@@ -340,4 +340,4 @@ void OptionParser::printHelp(ostream &os, const string &name) const
     }
 }
 
-// vim: set sw=4 ts=4 et:
+// vim: set sw=4 ts=4 et: :collapseFolds=1:

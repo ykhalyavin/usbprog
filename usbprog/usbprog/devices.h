@@ -25,13 +25,13 @@
 #include <usbprog/usbprog.h>
 #include <usbprog/firmwarepool.h>
 
-/* Forward declarations {{{1 */
+/* Forward declarations {{{ */
 
 struct usb_dev_handle;
 struct usb_device;
 
-
-/* Device {{{1 */
+/* }}} */
+/* Device {{{ */
 
 class Device {
     public:
@@ -68,7 +68,8 @@ bool operator==(const Device &a, const Device &b);
 bool operator!=(const Device &a, const Device &b);
 bool operator==(const DeviceVector &a, const DeviceVector &b);
 
-/* DeviceManager {{{1 */
+/* }}} */
+/* DeviceManager {{{ */
 
 class DeviceManager {
     public:
@@ -95,7 +96,8 @@ class DeviceManager {
         ssize_t m_currentUpdateDevice;
 };
 
-/* UsbprogUpdater {{{1 */
+/* }}} */
+/* UsbprogUpdater {{{ */
 
 class UsbprogUpdater {
     public:
@@ -119,7 +121,8 @@ class UsbprogUpdater {
         usb_dev_handle   *m_devHandle;
 };
 
+/* }}} */
 
 #endif /* DEVICES_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

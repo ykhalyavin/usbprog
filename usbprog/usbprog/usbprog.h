@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <cstdarg>
 
-/* Preprocessor definitions {{{1 */
+/* Preprocessor definitions {{{ */
 
 /* also update configure.in and win32/installer.nsi */
 #define USBPROG_VERSION_STRING "0.1.6"
@@ -30,7 +30,8 @@
 #define DEFAULT_INDEX_URL       "http://www.ixbat.de/usbprog/versions.xml"
 #define AUTO_NOT_UPDATE_TIME    10
 
-/* Typedefs {{{1 */
+/* }}} */
+/* Typedefs {{{ */
 
 struct Device;
 typedef std::vector<unsigned char> ByteVector;
@@ -38,6 +39,7 @@ typedef std::map<std::string, std::string> StringStringMap;
 typedef std::vector<Device *> DeviceVector;
 typedef std::vector<std::string> StringVector;
 
+/* }}} */
 /* Exceptions {{{1 */
 
 class IOError : public std::runtime_error {
@@ -58,7 +60,8 @@ class GeneralError : public std::runtime_error {
             : std::runtime_error(string) {}
 };
 
-/* ProgressNotifier {{{1 */
+/* }}} */
+/* ProgressNotifier {{{ */
 
 class ProgressNotifier {
     public:
@@ -69,7 +72,8 @@ class ProgressNotifier {
         virtual void finished() = 0;
 };
 
-/* interface for handling messages {{{1 */
+/* }}} */
+/* interface for handling messages {{{ */
 
 enum MessageType {
     MT_STATUS
@@ -83,7 +87,8 @@ class OutputHandler {
         virtual void message(MessageType type, const std::string &message) = 0;
 };
 
-/* Debugging {{{1 */
+/* }}} */
+/* Debugging {{{ */
 
 class Debug {
     public:
@@ -120,7 +125,8 @@ class Debug {
         FILE *m_handle;
 };
 
+/* }}} */
 
 #endif /* USBPROG_USBPROG_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

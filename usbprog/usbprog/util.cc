@@ -40,7 +40,7 @@ using std::strncmp;
 using std::string;
 using std::getenv;
 
-/* Fileutil {{{1 */
+/* Fileutil {{{ */
 
 /* -------------------------------------------------------------------------- */
 #ifdef _WIN32
@@ -185,7 +185,8 @@ string Fileutil::resolvePath(const string &path)
 }
 #endif
 
-/* global {{{1 */
+/* }}} */
+/* global {{{ */
 
 /* -------------------------------------------------------------------------- */
 #ifdef _WIN32
@@ -223,4 +224,6 @@ void usbprog_msleep(unsigned int msec)
 }
 #endif
 
-// vim: set sw=4 ts=4 fdm=marker et:
+/* }}} */
+
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

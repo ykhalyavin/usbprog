@@ -40,7 +40,7 @@ using std::setw;
 using std::vector;
 using std::find;
 
-/* AbstractCommand {{{1 */
+/* AbstractCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 AbstractCommand::AbstractCommand(const string &name)
@@ -90,7 +90,8 @@ std::vector<std::string> AbstractCommand::getCompletions(
     return empty_element_sv();
 }
 
-/* CommandArg ------------------------------------------------------ {{{1 --- */
+/* }}} */
+/* CommandArg {{{ */
 
 /* -------------------------------------------------------------------------- */
 CommandArg::Type CommandArg::getType() const
@@ -204,7 +205,8 @@ CommandArg *CommandArg::fromString(const std::string &str, CommandArg::Type type
     return ret;
 }
 
-/* Shell ----------------------------------------------------------- {{{1 --- */
+/* }}} */
+/* Shell {{{ */
 
 /* -------------------------------------------------------------------------- */
 Shell::Shell(const string &prompt)
@@ -264,7 +266,7 @@ void Shell::addCommand(Command *cmd)
 }
 
 /* -------------------------------------------------------------------------- */
-StringVector Shell::complete(const string &text, const string &full_text, 
+StringVector Shell::complete(const string &text, const string &full_text,
         size_t start_idx, ssize_t end_idx)
 {
     //
@@ -436,7 +438,8 @@ bool Shell::run(StringVector input, bool multiple)
     return result;
 }
 
-/* ExitCommand {{{1 */
+/* }}} */
+/* ExitCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 ExitCommand::ExitCommand()
@@ -478,7 +481,8 @@ void ExitCommand::printLongHelp(ostream &os) const
     os << "Exits the program." << endl;
 }
 
-/* HelpCommand {{{1 */
+/* }}} */
+/* HelpCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 HelpCommand::HelpCommand(Shell *sh)
@@ -524,7 +528,8 @@ void HelpCommand::printLongHelp(ostream &os) const
     os << "command, use \"helpcmd command\"." << endl;
 }
 
-/* HelpCmdCommand  {{{1 */
+/* }}} */
+/* HelpCmdCommand  {{{ */
 
 /* -------------------------------------------------------------------------- */
 HelpCmdCommand::HelpCmdCommand(Shell *sh)
@@ -534,7 +539,7 @@ HelpCmdCommand::HelpCmdCommand(Shell *sh)
 }
 
 /* -------------------------------------------------------------------------- */
-bool HelpCmdCommand::execute(CommandArgVector args, 
+bool HelpCmdCommand::execute(CommandArgVector args,
                              StringVector     options,
                              ostream          &os)
     throw (ApplicationError)
@@ -619,5 +624,6 @@ void HelpCmdCommand::printLongHelp(ostream &os) const
     os << "all commands, use \"help\"." << endl;
 }
 
+/* }}} */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

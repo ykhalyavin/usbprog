@@ -28,7 +28,7 @@
 
 using std::stringstream;
 
-/* Event table {{{1 */
+/* Event table {{{ */
 
 BEGIN_EVENT_TABLE(PinDialog, wxDialog )
     EVT_BUTTON(ID_OK, PinDialog::OnOkClick)
@@ -237,4 +237,4 @@ void PinDialog::OnOkClick(wxCommandEvent &evt)
     EndModal(wxID_OK);
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

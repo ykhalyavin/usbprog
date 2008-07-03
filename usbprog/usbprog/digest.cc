@@ -100,4 +100,4 @@ bool check_digest(const string &file, const string &reference,
     return result == reference;
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

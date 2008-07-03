@@ -27,7 +27,7 @@
 #include "io.h"
 #include "usbprog.h"
 
-/* Typedefs {{{1 */
+/* Typedefs {{{ */
 
 class Command;
 class CommandArg;
@@ -35,7 +35,8 @@ typedef std::map<std::string, Command *> StringCommandMap;
 typedef std::vector<CommandArg *> CommandArgVector;
 
 
-/* CommandArg {{{1 */
+/* }}} */
+/* CommandArg {{{ */
 
 class CommandArg {
     public:
@@ -77,8 +78,8 @@ class CommandArg {
         Type m_type;
 };
 
-
-/* Interface for commands {{{1 */
+/* }}} */
+/* Interface for commands {{{ */
 
 class Command {
     public:
@@ -105,7 +106,8 @@ class Command {
                 size_t pos, bool option, bool *filecompletion) const = 0;
 };
 
-/* AbstractCommand {{{1 */
+/* }}} */
+/* AbstractCommand {{{ */
 
 class AbstractCommand : public Command {
     public:
@@ -125,7 +127,8 @@ class AbstractCommand : public Command {
         std::string m_name;
 };
 
-/* The shell itself {{{1 */
+/* }}} */
+/* The shell itself {{{ */
 
 class Shell : public Completor {
     friend class HelpCommand;
@@ -149,7 +152,8 @@ class Shell : public Completor {
         LineReader *m_lineReader;
 };
 
-/* Exit command {{{1 */
+/* }}} */
+/* Exit command {{{ */
 
 class ExitCommand : public AbstractCommand {
     public:
@@ -165,7 +169,8 @@ class ExitCommand : public AbstractCommand {
         void printLongHelp(std::ostream &os) const;
 };
 
-/* Help command {{{1 */
+/* }}} */
+/* Help command {{{ */
 
 class HelpCommand : public AbstractCommand {
     public:
@@ -182,7 +187,8 @@ class HelpCommand : public AbstractCommand {
         Shell *m_sh;
 };
 
-/* HelpCmd command {{{1 */
+/* }}} */
+/* HelpCmd command {{{ */
 
 class HelpCmdCommand : public AbstractCommand {
     public:
@@ -207,6 +213,8 @@ class HelpCmdCommand : public AbstractCommand {
         Shell *m_sh;
 };
 
+/* }}} */
+
 #endif /* SHELL_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

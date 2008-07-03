@@ -21,7 +21,7 @@
 
 #include <usbprog/usbprog.h>
 
-/* Digest {{{1 */
+/* Digest {{{ */
 
 class Digest {
     public:
@@ -37,7 +37,8 @@ class Digest {
         std::string end();
 };
 
-/* MD5Digest {{{1 */
+/* }}} */
+/* MD5Digest {{{ */
 
 class MD5Digest : public Digest {
     public:
@@ -55,9 +56,10 @@ class MD5Digest : public Digest {
                         "struct ... { }" */
 };
 
-/* check_digest() {{{1 */
+/* }}} */
+/* check_digest() {{{ */
 
-bool check_digest(const std::string &file, 
+bool check_digest(const std::string &file,
         const std::string &reference,
         Digest::Algorithm da) throw(IOError);
 
@@ -66,4 +68,4 @@ bool check_digest(const std::string &file,
 
 #endif /* USBPROG_DIGEST_H */
 
-// vim: set sw=4 ts=4 foldmethod=marker et:
+// vim: set sw=4 ts=4 foldmethod=marker et: :collapseFolds=1:

@@ -37,7 +37,7 @@ static const char *formatstrings[] = {
     "%y-%m-%d"                  /* case DTF_ISO_SHORT_DATE */
 };
 
-/* DateTime {{{1 */
+/* DateTime {{{ */
 
 /* -------------------------------------------------------------------------- */
 DateTime::DateTime()
@@ -158,7 +158,8 @@ string DateTime::getDateTimeString(DateTimeFormat format) const
     return string(buffer);
 }
 
-/* Operators {{{1 */
+/* }}} */
+/* Operators {{{ */
 
 /* -------------------------------------------------------------------------- */
 bool operator==(const DateTime &a, const DateTime &b)
@@ -208,4 +209,6 @@ long long operator+(const DateTime &a, const DateTime &b)
     return a.getDateTimeSeconds() - b.getDateTimeSeconds();
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+/* }}} */
+
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

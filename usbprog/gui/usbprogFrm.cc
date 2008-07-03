@@ -52,7 +52,7 @@ using std::setvbuf;
 // Global Variables:
 bool internetConnection = true;
 
-/* Event table {{{1 */
+/* Event table {{{ */
 
 /* -------------------------------------------------------------------------- */
 BEGIN_EVENT_TABLE(usbprogFrm,wxFrame)
@@ -75,9 +75,8 @@ BEGIN_EVENT_TABLE(usbprogFrm,wxFrame)
 END_EVENT_TABLE()
 
 /* }}} */
+/* GUIProgressNotifier {{{ */
 
-
-/* GUIProgressNotifier {{{1 */
 class GUIProgressNotifier : public ProgressNotifier {
     public:
         GUIProgressNotifier(wxGauge *gauge);
@@ -109,8 +108,8 @@ void GUIProgressNotifier::finished()
     m_gauge->SetValue(0);
 }
 
-/* usbprogFrm {{{1 */
-
+/* }}} */
+/* usbprogFrm {{{ */
 
 /* -------------------------------------------------------------------------- */
 usbprogFrm::usbprogFrm(wxWindow *parent, wxWindowID id, const wxString &title,
@@ -664,5 +663,6 @@ void usbprogFrm::showPinInfo(wxCommandEvent &evt)
     dialog.ShowModal();
 }
 
+/* }}} */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

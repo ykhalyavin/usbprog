@@ -36,4 +36,4 @@ DECLARE_APP(usbprogFrmApp);
 
 #endif /* USBPROG_APP_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

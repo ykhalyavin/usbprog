@@ -29,7 +29,7 @@ using std::stringstream;
 using std::strncmp;
 using std::malloc;
 
-/* ShellStringTokenizer {{{1 */
+/* ShellStringTokenizer {{{ */
 
 enum ShellStringTokenizerState {
     STATE_WORD,
@@ -124,7 +124,8 @@ StringVector ShellStringTokenizer::tokenize()
     return ret;
 }
 
-/* global functions {{{1 */
+/* }}} */
+/* global functions {{{ */
 
 /* -------------------------------------------------------------------------- */
 string wordwrap(const string &text, ssize_t margins)
@@ -220,4 +221,6 @@ std::vector<std::string> empty_element_sv()
     return sv;
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+/* }}} */
+
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

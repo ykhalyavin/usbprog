@@ -47,7 +47,7 @@ using std::memset;
 #define PRODUCT_ID_USBPROG      0x0c62
 #define BCDDEVICE_UPDATE        0x0000
 
-/* Device {{{1 */
+/* Device {{{ */
 
 /* -------------------------------------------------------------------------- */
 Device::Device(struct usb_device *handle)
@@ -165,7 +165,8 @@ bool operator==(const DeviceVector &a, const DeviceVector &b)
     return true;
 }
 
-/* DeviceManager {{{1 */
+/* }}} */
+/* DeviceManager {{{ */
 
 /* -------------------------------------------------------------------------- */
 DeviceManager::DeviceManager()
@@ -212,7 +213,7 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
     usb_find_busses();
     Debug::debug()->trace("usb_find_devices()");
     usb_find_devices();
-    
+
     DeviceVector oldDevices = m_updateDevices;
     m_updateDevices.clear();
 
@@ -245,7 +246,7 @@ void DeviceManager::discoverUpdateDevices(Firmwarepool *firmwarepool)
                             (*it)->getProductId() == productid &&
                             (*it)->getBcdDevice() == bcddevice) {
                         d = new Device(dev);
-                        d->setName("USBprog with \"" + (*it)->getLabel() + 
+                        d->setName("USBprog with \"" + (*it)->getLabel() +
                                 "\" firmware");
                         d->setShortName((*it)->getName());
                     }
@@ -414,7 +415,8 @@ bool operator!=(const Device &a, const Device &b)
         a.getVendor() != b.getVendor();
 }
 
-/* UsbprogUpdater {{{1 */
+/* }}} */
+/* UsbprogUpdater {{{ */
 
 #define USB_PAGESIZE 64
 #define WRITEPAGE      0x02
@@ -568,4 +570,4 @@ void UsbprogUpdater::startDevice()
 
 /* }}} */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

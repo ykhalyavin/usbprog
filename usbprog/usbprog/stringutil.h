@@ -20,7 +20,7 @@
 #include <usbprog/usbprog.h>
 #include <string>
 
-/* StringTokenizer interface {{{1 */
+/* StringTokenizer interface {{{ */
 
 class StringTokenizer {
     public:
@@ -33,7 +33,8 @@ class StringTokenizer {
         virtual StringVector tokenize() = 0;
 };
 
-/* ShellStringTokenizer {{{1 */
+/* }}} */
+/* ShellStringTokenizer {{{ */
 
 class ShellStringTokenizer : public StringTokenizer {
     public:
@@ -50,7 +51,8 @@ class ShellStringTokenizer : public StringTokenizer {
         size_t m_pos;
 };
 
-/* global functions {{{1 */
+/* }}} */
+/* global functions {{{ */
 
 std::string strip(std::string a);
 unsigned long parse_long(const char *string);
@@ -59,6 +61,8 @@ char **stringvector_to_array(const StringVector &vec);
 bool str_starts_with(const std::string &string, const std::string &start);
 std::vector<std::string> empty_element_sv();
 
+/* }}} */
+
 #endif /* USBPROG_STRINGUTIL_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

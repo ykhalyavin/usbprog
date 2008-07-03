@@ -22,11 +22,12 @@
 #include <usbprog/firmwarepool.h>
 #include <usbprog/devices.h>
 
-/* constants {{{1 */
+/* constants {{{ */
 
 #define DEFAULT_TERMINAL_WIDTH  80
 
-/* ApplicationError {{{1 */
+/* }}} */
+/* ApplicationError {{{ */
 
 class ApplicationError : public std::runtime_error {
     public:
@@ -34,7 +35,8 @@ class ApplicationError : public std::runtime_error {
             : std::runtime_error(string) {}
 };
 
-/* HashNotifier {{{1 */
+/* }}} */
+/* HashNotifier {{{ */
 
 class HashNotifier : public ProgressNotifier {
     public:
@@ -50,7 +52,8 @@ class HashNotifier : public ProgressNotifier {
         int m_lastProgress;
 };
 
-/* Usbprog {{{1 */
+/* }}} */
+/* Usbprog {{{ */
 
 class Usbprog {
     public:
@@ -78,7 +81,8 @@ class Usbprog {
         ProgressNotifier *m_progressNotifier;
 };
 
+/* }}} */
 
 #endif /* USBPROG_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

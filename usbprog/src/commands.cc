@@ -48,7 +48,7 @@ using std::max;
 using std::find;
 using std::hex;
 
-/* functions {{{1 */
+/* functions {{{ */
 
 /* -------------------------------------------------------------------------- */
 StringVector complete_firmware(const string &start, Firmwarepool *pool)
@@ -62,12 +62,13 @@ StringVector complete_firmware(const string &start, Firmwarepool *pool)
         if (str_starts_with(fwname, start))
             result.push_back(fwname);
     }
-    
+
     return result;
 }
 
 
-/* ListCommand {{{1 */
+/* }}} */
+/* ListCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 ListCommand::ListCommand(Firmwarepool *firmwarepool)
@@ -131,7 +132,9 @@ void ListCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* InfoCommand {{{1 */
+/* }}} */
+/* InfoCommand {{{ */
+
 InfoCommand::InfoCommand(Firmwarepool *firmwarepool)
     : AbstractCommand("info"), m_firmwarepool(firmwarepool)
 {}
@@ -237,13 +240,13 @@ void InfoCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* PinCommand {{{1 */
+/* PinCommand {{{ */
 PinCommand::PinCommand(Firmwarepool *firmwarepool)
     : AbstractCommand("pin"), m_firmwarepool(firmwarepool)
 {}
 
 /* -------------------------------------------------------------------------- */
-bool PinCommand::execute(CommandArgVector   args, 
+bool PinCommand::execute(CommandArgVector   args,
                          StringVector       options,
                          ostream            &os)
     throw (ApplicationError)
@@ -361,7 +364,8 @@ void PinCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* DownloadCommand {{{1 */
+/* }}} */
+/* DownloadCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 DownloadCommand::DownloadCommand(Firmwarepool *firmwarepool)
@@ -487,7 +491,8 @@ void DownloadCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* CacheCommand {{{1 */
+/* }}} */
+/* CacheCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 CacheCommand::CacheCommand(Firmwarepool *firmwarepool)
@@ -575,7 +580,8 @@ void CacheCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* DevicesCommand {{{1 */
+/* }}} */
+/* DevicesCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 DevicesCommand::DevicesCommand(DeviceManager *devicemanager,
@@ -620,7 +626,8 @@ void DevicesCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* DeviceCommand {{{1 */
+/* }}} */
+/* DeviceCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 DeviceCommand::DeviceCommand(DeviceManager *devicemanager,
@@ -738,7 +745,8 @@ void DeviceCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* UploadCommand {{{1 */
+/* }}} */
+/* UploadCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 UploadCommand::UploadCommand(DeviceManager *devicemanager,
@@ -910,7 +918,8 @@ StringVector UploadCommand::getSupportedOptions() const
     return sv;
 }
 
-/* StartCommand {{{1 */
+/* }}} */
+/* StartCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 StartCommand::StartCommand(DeviceManager *devicemanager)
@@ -959,7 +968,8 @@ void StartCommand::printLongHelp(ostream &os) const
        << endl;
 }
 
-/* CopyingCommand {{{1 */
+/* }}} */
+/* CopyingCommand {{{ */
 
 /* -------------------------------------------------------------------------- */
 CopyingCommand::CopyingCommand()
@@ -1009,5 +1019,7 @@ void CopyingCommand::printLongHelp(ostream &os) const
        << "Shows the license of the program."
        << endl;
 }
+
+/* }}} */
 
 // vim: set sw=4 ts=4 fdm=marker et:

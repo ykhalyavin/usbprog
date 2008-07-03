@@ -40,7 +40,7 @@ using std::endl;
 using std::exit;
 using std::runtime_error;
 
-/* HashNotifier {{{1 */
+/* HashNotifier {{{ */
 
 /* -------------------------------------------------------------------------- */
 HashNotifier::HashNotifier(int width)
@@ -80,8 +80,8 @@ void HashNotifier::finished()
     }
 }
 
-
-/* Usbprog {{{1 */
+/* }}} */
+/* Usbprog {{{ */
 
 /* -------------------------------------------------------------------------- */
 Usbprog::Usbprog()
@@ -214,4 +214,6 @@ void Usbprog::exec()
         sh.run();
 }
 
-// vim: set sw=4 ts=4 fdm=marker et:
+/* }}} */
+
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

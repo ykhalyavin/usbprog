@@ -23,7 +23,7 @@
 #include <usbprog/usbprog.h>
 #include <curl/curl.h>
 
-/* DownloadError {{{1 */
+/* DownloadError {{{ */
 
 class DownloadError : public std::runtime_error {
     public:
@@ -31,7 +31,8 @@ class DownloadError : public std::runtime_error {
             : std::runtime_error(string) {}
 };
 
-/* ProxySettings {{{1 */
+/* }}} */
+/* ProxySettings {{{ */
 
 struct ProxySettings {
     std::string host;
@@ -39,8 +40,8 @@ struct ProxySettings {
     std::string password;
 };
 
-
-/* Downloader {{{1 */
+/* }}} */
+/* Downloader {{{ */
 
 class Downloader {
     public:
@@ -72,7 +73,8 @@ class Downloader {
         static ProxySettings    m_proxySettings;
 };
 
+/* }}} */
 
 #endif /* USBPROG_DOWNLOADER_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:

@@ -19,7 +19,7 @@
 
 #include <usbprog/usbprog.h>
 
-/* Interface for completors {{{1 */
+/* Interface for completors {{{ */
 class Completor {
     public:
         virtual ~Completor() {}
@@ -29,7 +29,8 @@ class Completor {
                 const std::string &full_text, size_t start_idx, ssize_t end_idx) = 0;
 };
 
-/* Interface for a linereader {{{1 */
+/* }}} */
+/* Interface for a linereader {{{ */
 class LineReader {
     public:
         virtual ~LineReader() {}
@@ -52,7 +53,8 @@ class LineReader {
         virtual void setCompletor(Completor *comp) = 0;
 };
 
-/* Abstract base class for line readers {{{1 */
+/* }}} */
+/* Abstract base class for line readers {{{ */
 
 class AbstractLineReader : public LineReader {
     public:
@@ -78,6 +80,8 @@ class AbstractLineReader : public LineReader {
         bool m_eof;
 };
 
+/* }}} */
+
 #endif /* IO_H */
 
-// vim: set sw=4 ts=4 fdm=marker et:
+// vim: set sw=4 ts=4 fdm=marker et: :collapseFolds=1:
