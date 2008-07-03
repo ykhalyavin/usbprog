@@ -1,6 +1,7 @@
 0.1.7
 -----
   * fix problem that firmware with more than 16k can't be flashed
+  * add warning to installer that Microsoft Windows Vista is not supported
 
 0.1.6
 -----
