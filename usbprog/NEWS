@@ -1,3 +1,7 @@
+0.1.7
+-----
+  * fix problem that firmware with more than 16k can't be flashed
+
 0.1.6
 -----
   * CLI: fix mechanism to avoid downloading the index file again and again if
