@@ -490,7 +490,7 @@ void _USBNTransmit(EPInfo* ep)
       
       USBNWrite(TXC0,FLUSH);       //send data to the FIFO
       //USBNDebug(" ");
-      for(i=0;((i < 8) & (ep->Index < ep->Size)); i++)
+      for(i=0;((i < 8) && (ep->Index < ep->Size)); i++)
       {
         USBNWrite(TXD0,ep->Buf[ep->Index]);
 	//USBNWrite(TXD0,fifo_get_nowait(EP0tx.fifo));
@@ -596,7 +596,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
-      SendHex(req->wLength);
+      //SendHex(req->wLength);
       
       if(req->wLength==0x08)
 	req->wLength=0x40;

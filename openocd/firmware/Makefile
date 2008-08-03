@@ -444,6 +444,9 @@ reset:
 	avrdude -p m32 -c bsd -E noreset
 loader:
 	usbprog device 0 upload main.bin
+loader2:
+	usbprog device 1 upload main.bin
+
 ready:
 	hex2bin main.hex
 

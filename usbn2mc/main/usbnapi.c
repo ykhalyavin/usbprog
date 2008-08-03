@@ -161,8 +161,8 @@ int USBNAddConfiguration(void)
   conf->bNumInterfaces=0x00;
   conf->bConfigurationValue=index; // number of configuration
   conf->iConfiguration=0x00; // string index for configuration 
-  //conf->bmAttributes=0x80;  // bus powered
-  conf->bmAttributes=0xA0;  // bus powered
+  conf->bmAttributes=0x80;  // bus powered
+  //conf->bmAttributes=0xA0;  // bus powered
   conf->MaxPower=0x1A;  // max power 
 
   _USBNAddToList((void*)conf, 0x09,0x02,0,0,0);
@@ -430,7 +430,8 @@ void _USBNCreateConfDescrField(void)
       FinalConfigurationArray[conf-1][index] = actualconf[index];
       
     // update configuration total length
-    FinalConfigurationArray[conf-1][2] = desclen+9; // FIXME
+    FinalConfigurationArray[conf-1][2] = desclen; // FIXME
+    //FinalConfigurationArray[conf-1][2] = desclen +9 ; //  old version
   }
 
   // next index start`s here ( confi descr is always 9 signs long )

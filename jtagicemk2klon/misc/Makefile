@@ -436,7 +436,7 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c bsd -U flash:w:main.hex -E noreset
+	avrdude -p m32 -c avrisp2 -P usb -U flash:w:blink.hex -E noreset
 
 reset:
 	avrdude -p m32 -c bsd -E noreset

@@ -445,6 +445,12 @@ reset:
 	avrdude -p m32 -c bsd -E noreset
 loader:
 	usbprog device 0 upload main.bin
+loader2:
+	usbprog device 1 upload main.bin
+fuse:
+	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe0:m
+	avrdude -p m32 -c avrispv2 -P usb -B 10 -U hfuse:w:0xd9:m
+
 
 ready:
 	mv main.hex avrispmk2.hex
@@ -453,3 +459,4 @@ ready:
 upgrade:
 	hex2bin main.hex
 	usbprog main.bin
+

@@ -22,17 +22,35 @@
 #include <avr/io.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <util/delay.h>
 
 int main(void)
 {
 	DDRB = (1 << DDB0);
-
+	int i;
+	Testfunc();
 	while(1){
 		PORTB &= ~(1<<PB0); //off
-		asm("nop");
+		for(i=0;i<10;i++)
+		  _delay_ms(0xff);
 		PORTB |= (1<<PB0); //on
+		for(i=0;i<10;i++)
+		  _delay_ms(0xff);
 	}	
 
 }
+
+
+void Testfunc()
+{
+  int muh;
+  int mampf;
+
+  if(muh > 200)
+    mampf = 4;
+  else
+    mampf = 0;
+}
+
 
 
