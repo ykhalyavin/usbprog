@@ -110,6 +110,21 @@ wait_ms (int ms)
     _delay_ms (1);
 }
 
+/* disable all hardware interrupts */
+void disable_all_interrupts(void)
+{
+  cli();
+  GICR &= ~((1<<INT1)|(1<<INT0)|(1<<INT2));
+  TIMSK = 0;
+  SPCR &= ~(1<<SPIE);
+  UCSRB &= ~((1<<RXCIE)|(1<<TXCIE)|(1<<UDRIE));
+  TWCR &= ~(1<<TWIE);
+  ACSR &= ~(1<<ACIE);
+  ADCSRA &= ~(1<<ADIE);
+  SPMCR &= ~(1<<SPMIE);
+  EECR &= ~(1<<EERIE);
+}
+
 /* pogramm a page into flash 
  *	@page = number of page
  *	global pageblock = data
@@ -155,6 +170,7 @@ avrupdate_program_page (uint32_t page)
 void
 avrupdate_cmd (char *buf)
 {
+  uint8_t sreg = SREG;
   cli ();			// disable Interrupts
   uint8_t i;
 
@@ -215,10 +231,12 @@ avrupdate_cmd (char *buf)
 	  USBNWrite (RXC1, RX_EN);
 
 	  USBNWrite (MCNTRL, SRST);	// clear all usb registers
+	  disable_all_interrupts(); // disable all interrupts
 
 	  GICR = _BV (IVCE);	// enable wechsel der Interrupt Vectoren
 	  GICR = 0x00;		// Interrupts auf Application Section umschalten
-	  sei ();
+	  //sei ();
+	  SREG = sreg;            // enable Interrupts again
 
 	  // Reenable flash RWW-section again, where new application was written to
 	  boot_rww_enable ();
@@ -237,6 +255,7 @@ avrupdate_cmd (char *buf)
 int
 main (void)
 {
+  disable_all_interrupts();
   // Initialize
   DDRA = 0x00;			// First all pins input
   DDRA |= (1 << PA4);		// then configure PIN with red LED as output
