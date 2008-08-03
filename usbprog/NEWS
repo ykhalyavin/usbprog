@@ -1,3 +1,7 @@
+0.1.8
+-----
+  * fix tab completion for multiple matches (like 'device' and 'devices')
+
 0.1.7
 -----
   * fix problem that firmware with more than 16k can't be flashed

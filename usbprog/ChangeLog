@@ -1,3 +1,7 @@
+2008-08-03  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* fix tab completion for multiple matches (like 'device' and 'devices')
+
 2008-07-03  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* fix indentation
