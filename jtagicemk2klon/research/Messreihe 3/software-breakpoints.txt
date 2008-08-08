@@ -505,7 +505,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1000_1011 1f8b
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN | PGERS
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -727,7 +727,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1000_0111 1f87
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN | RWWSRE
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -981,7 +981,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -1140,7 +1140,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -1299,7 +1299,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -1458,7 +1458,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -1617,7 +1617,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -1776,7 +1776,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -1935,7 +1935,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -2094,7 +2094,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -2253,7 +2253,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -2412,7 +2412,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -2571,7 +2571,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -2730,7 +2730,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -2889,7 +2889,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -3048,7 +3048,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -3207,7 +3207,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -3366,7 +3366,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -3525,7 +3525,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -3684,7 +3684,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -3843,7 +3843,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4002,7 +4002,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4161,7 +4161,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4320,7 +4320,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4479,7 +4479,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4638,7 +4638,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4797,7 +4797,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -4956,7 +4956,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -5115,7 +5115,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -5274,7 +5274,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -5433,7 +5433,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -5592,7 +5592,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -5751,7 +5751,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -5910,7 +5910,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -6069,7 +6069,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -6228,7 +6228,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -6387,7 +6387,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -6546,7 +6546,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -6705,7 +6705,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -6864,7 +6864,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7023,7 +7023,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7182,7 +7182,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7341,7 +7341,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7500,7 +7500,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7659,7 +7659,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7818,7 +7818,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -7977,7 +7977,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -8136,7 +8136,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -8295,7 +8295,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
@@ -8454,7 +8454,7 @@ JTAG IR: Exec AVR Instruction
 TDI: 1000_0011_0000_1000 8308
 TDO: 0001_1111_1001_0011 1f93
 JTAG Test RUN / IDLE
-AVR Instruction: 		st	Y, r16
+AVR Instruction: 		st	Y, r16		; SPMCR = SPMEN
 
 JTAG IR: Access OCD Registers
 TDI: 0_1000 8
