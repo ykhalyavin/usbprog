@@ -161,7 +161,7 @@ int main(void)
   _USBNAddStringDescriptor(lang); // language descriptor
   
   USBNDeviceManufacture ("EmbeddedProjects");
-  USBNDeviceProduct	("usbprogOpenOCD  ");
+  USBNDeviceProduct	("USBprog JTAG v.1");
 
   conf = USBNAddConfiguration();
 
@@ -172,7 +172,7 @@ int main(void)
 
   USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,&CommandAnswerRest);
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&Commands);
-
+  
   
   USBNInitMC();
   sei();
@@ -181,7 +181,6 @@ int main(void)
   DDRA |= (1 << PA4); // status led
   DDRA |= (1 << PA7); // debug
   // PORTA |= (1<<PA7); //switch on internal pullup
-
 
   LED_off;
   

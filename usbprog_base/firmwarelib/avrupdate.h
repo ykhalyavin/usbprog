@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <avr/io.h>
 #include <avr/eeprom.h>
+#include <avr/interrupt.h>
 
 
 // EEMEM wird bei aktuellen Versionen der avr-lib in eeprom.h definiert

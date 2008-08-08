@@ -1,6 +1,7 @@
 /*
 * usbprog - A Downloader/Uploader for AVR device programmers
 * Copyright (C) 2006 Benedikt Sauter
+* Copyright (C) 2008 Hartmut Birr
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
 #include <stdint.h>
 #include <avr/interrupt.h>
 #include <inttypes.h>
+#include <string.h>
 
 
 //#define AT89MODE
@@ -96,7 +98,7 @@ struct cmd_spi_multi_s {
 
 /*** prototypes and global vars ***/
 /* send a command back to pc */
-void CommandAnswer(int length);
+void CommandAnswer(uint8_t length);
 
 volatile struct usbprog_t {
   char lastcmd;
@@ -124,6 +126,12 @@ struct pgmmode_t {
   uint8_t poll2;
   uint32_t address;
   uint32_t pageaddress;
+  uint8_t status;
+  uint16_t poll_address;
+  uint8_t poll_address_valid :1;
+  uint8_t poll_address_odd   :1;
+  uint8_t large_flash        :1;
+  uint8_t ext_address;
 } pgmmode;
 
 
@@ -328,6 +336,14 @@ void spi_pulseclockonce(void) {
   SPSR=spsr_save;
 }
 
+uint8_t spi_cmd(uint8_t cmd, uint16_t address, uint8_t data)
+{
+    spi_inout(cmd);
+    spi_inout(address>>8);
+    spi_inout(address);
+    return spi_inout(data);
+}
+
 void spi_out(char data) {
   spi_inout(data);
 }
@@ -335,65 +351,30 @@ char spi_in(void) {
   return spi_inout(0);;
 }
 
-void word_mode_write_wait(unsigned char cmd,unsigned char addrh,
-    unsigned char addrl, unsigned char expect) {
+void program_fsm(uint8_t* buffer, uint8_t eeprom)
+{
+  uint8_t databytes = 64;
+  static uint8_t *ptr;
 
-  uint8_t delay=pgmmode.delay;
-
-  if ((expect==pgmmode.poll1) | (pgmmode.mode & 1)) {
-    //If the value written equals the polling value, polling is not possible
-    //Also if timed delay is requested, do timed delay
-    wait_ms(pgmmode.delay);
-  } else {
-    //Read back the flash. If programming is completed, the read back should be
-    //the expected value. Time out as given by pgmmode.delay
-    while (delay--) {
-      wait_ms(1);
-      spi_out(cmd);
-      spi_out(addrh);
-      spi_out(addrl);
-      if (spi_in()==expect) return;
+  if (usbprog.cmdpackage) {
+    // skip the header bytes
+    buffer += 10;
+    databytes -= 10;
+    
+    if (eeprom) {
+      answer[0] = CMD_PROGRAM_EEPROM_ISP;
+      ptr = (uint8_t*)answer +_TMP_OFFSET;  // reserve some space at beginning of the buffer to handle
+                                            // answer packets during programming if necessary
+      if (pgmmode.numbytes > sizeof(answer) - _TMP_OFFSET) {
+        answer[1] = STATUS_CMD_FAILED;      // we are not able to program more than this
+                                            // in one cycle, because we haven't enough RAM
+                                            // AVR-Studio sends max. 128 Bytes in one USB-Packet
+                                            // so this should never happen...
+      } else {
+        answer[1] = STATUS_CMD_OK;
+      }
     }
   }
-
-}
-void spi_write_program_memory(unsigned short wordaddr,char wordl,char wordh)
-{
-  char addrh,addrl;
-
-  addrh = (char)(wordaddr >> 8);
-  addrl = (char)(wordaddr);
-
-  // write low
-  spi_out(pgmmode.cmd1);
-  spi_out(addrh);
-  spi_out(addrl);
-  spi_out(wordl);
-
-  //In word mode, wait for programming
-  if (!(pgmmode.mode & 1)) word_mode_write_wait(pgmmode.cmd3,addrh,addrl,wordl);
-
-  // write high
-  spi_out(pgmmode.cmd1|8);
-  spi_out(addrh);
-  spi_out(addrl);
-  spi_out(wordh);
-
-  //In word mode, wait for programming
-  if (!(pgmmode.mode & 1)) word_mode_write_wait(pgmmode.cmd3|8,addrh,addrl,wordh);
-
-}
-
-/* programm finite state machine
-*
-*/
-void flash_program_fsm(char * buf)
-{
-  int i = 0, datastart=0, databytes = 0;
-
-  datastart=usbprog.cmdpackage ? 10:0; //Number of command bytes in this packet
-  databytes=64-datastart;             //Max. number of data bytes in this packet
-
   if (pgmmode.numbytes>databytes) {
     pgmmode.numbytes-=databytes;
     usbprog.longpackage=1;        //Expect more data
@@ -402,101 +383,146 @@ void flash_program_fsm(char * buf)
     pgmmode.numbytes=0;           //No more data left
     usbprog.longpackage=0;        //Expect no more data
   }
-
-  //Write the program memory bytes
-  for(i=0; i < databytes; i+=2){
-    spi_write_program_memory(pgmmode.address, buf[datastart+i], buf[datastart + i + 1]);
-    pgmmode.address++;
+  if (eeprom && answer[1] == STATUS_CMD_OK) {
+    // copy the datas to our temp buffer
+    memcpy(ptr, buffer, databytes);
+    ptr += databytes;
   }
+  if (!eeprom || pgmmode.numbytes == 0)
+  {
+    uint8_t poll;
+    uint8_t i;
+    uint8_t loop;
+    uint8_t tmp;
 
-  if (pgmmode.numbytes==0) {
-    //If in page mode, and the write bit is set, perform page write
-    if ((pgmmode.mode & 0x1) && (pgmmode.mode & 0x80)) {
-      // write page to flash
-       spi_out(pgmmode.cmd2);
-       spi_out((char)(pgmmode.pageaddress >> 8));  //high-byte of page address
-       spi_out((char)(pgmmode.pageaddress));        //low-byte  of page address
-       spi_out(0x00);
-       wait_ms(20); //Timed delay, TODO: other modes
+    if (eeprom) {
+      if (answer[1] != STATUS_CMD_OK) {
+        // we got a buffer overflow, 
+        // we must eat up all bytes before we can return an error
+        pgmmode.status = STATUS_CMD_OK;
+        pgmmode.poll_address_valid = 0;
+        CommandAnswer(2);
+        return;
+      }
+      // set the pointer to the saved datas  
+      buffer = (uint8_t*)answer + _TMP_OFFSET;
+      databytes = ptr - buffer; 
+      poll = pgmmode.poll2;
+    } else {
+      poll = pgmmode.poll1;
     }
 
-    // acknowlegde to host
-    answer[0] = CMD_PROGRAM_FLASH_ISP;
-    answer[1] = STATUS_CMD_OK;
-    CommandAnswer(2);
-  }
-}
+    for (i = 0; i < databytes; i++, buffer++) {
+      if (pgmmode.large_flash && (uint8_t)(pgmmode.address >> 16) != pgmmode.ext_address){
+        // set the extended page address
+        pgmmode.ext_address = pgmmode.address >> 16;
+        spi_cmd(0x4d, pgmmode.ext_address, 0x00);
+      }
+      if (!eeprom) {
+        if (i&1){
+          pgmmode.cmd1 |= 8;
+        }else{
+          pgmmode.cmd1 &= ~8;
+        }
+      }
+      spi_cmd(pgmmode.cmd1, pgmmode.address, *buffer);
+      if (!(pgmmode.mode & 1)) {
+        // byte/word mode
+        loop = 200; // 200*250sec = 50msec
+        if (pgmmode.mode & 8) {
+          // RDY/BSY polling
+          do {
+            _delay_us(250);
+            tmp = spi_cmd(0xf0, 0, 0);
+          }
+          while ((tmp & 1) && --loop);
 
-unsigned char eeprom_read_byte_isp(unsigned char high, unsigned char low)
-{
-  unsigned char res;
+          if (tmp & 1) {
+            pgmmode.status = STATUS_RDY_BSY_TOUT;
+          }
+        }else if ((pgmmode.mode & 4) && *buffer != poll) {
+          // value polling
+          if (!eeprom) {
+            if (i&1){
+              pgmmode.cmd3 |= 8;
+            }else{
+              pgmmode.cmd3 &= ~8;
+            }
+          } 
+          do{
+            _delay_us(250);
+            tmp = spi_cmd(pgmmode.cmd3, pgmmode.address, 0);
+          }while(tmp != *buffer && --loop);
 
-  spi_out(pgmmode.cmd3);
-  spi_out(pgmmode.address >> 8);
-  spi_out(pgmmode.address);
-  res = spi_in();
-  return(res);
-}
-
-void eeprom_write_byte_isp(unsigned char high, unsigned char low, unsigned char value)
-{
-  spi_out(0xc0);
-  spi_out(high);
-  spi_out(low);
-  spi_out(value);
-  wait_ms(10);
-return;
-}
-
-unsigned int _tmp_buf_index = 0;
-
-void eeprom_write(char * buf){
-
-unsigned int bufindex = 0, end_index = 0, i;
-
-  if(usbprog.cmdpackage == 1){
-    bufindex = 10;    // first packet, skip the packet header
-    usbprog.cmdpackage = 0;
-    if (pgmmode.numbytes >= (_BUF_LEN - _TMP_OFFSET)) {
-      answer[0] = CMD_PROGRAM_EEPROM_ISP;  // we are not able to program more than this
-      answer[1] = STATUS_CMD_FAILED;       // in one cycle, because we haven't enough RAM
-      CommandAnswer(2);            // AVR-Studio sends max. 128 Bytes in one USB-Packet
-    }                      // so this should never happen...
-    else {
-      _tmp_buf_index = _TMP_OFFSET;    // reserve some space at beginning of the buffer to handle
-                      // answer packets during programming if necessary
+          if (tmp != *buffer) {
+            pgmmode.status = STATUS_CMD_TOUT;
+          }
+        } else{
+          wait_ms(pgmmode.delay);
+        }
+      } else { 
+        if (*buffer != poll && !pgmmode.poll_address_valid) {
+          pgmmode.poll_address = pgmmode.address;
+          pgmmode.poll_address_odd = i&1; 
+          pgmmode.poll_address_valid = 1;
+        }
+      }
+      if (eeprom || (i&1)) {
+        pgmmode.address++;
+      }
     }
-  }
+    if (pgmmode.numbytes==0) {
+      if ((pgmmode.mode & 0x81) == 0x81) {
+        // page mode
+        loop = 200; // 200*250usec = 50msec
+        spi_cmd(pgmmode.cmd2, pgmmode.pageaddress, 0);
 
-  if(pgmmode.numbytes > (64 - bufindex)) {
-    end_index = 64;
-    pgmmode.numbytes = pgmmode.numbytes - 64 + bufindex;
-    usbprog.longpackage = 1; // we do expect more data from FIFO
-  }
-  else {
-    end_index = pgmmode.numbytes + bufindex;
-    pgmmode.numbytes = 0;
-    usbprog.longpackage = 0; // we do not expect mor data from FIFO
-  }
-  for(; bufindex < end_index; _tmp_buf_index++, bufindex++){
-    answer[_tmp_buf_index] = buf[bufindex];     // copy the USB-FIFO to temporary memory to speed up the transfer
-                        // therefore we will borrow some memory from answer[]-buffer
-  }
-  // we've received all bytes to programm, so program it and send acknowlegde to host
-  // perhaps this should be done in the idle-loop to accept other commands during programming
-  // because it'll take 10ms per byte, we'll see...
-  if (pgmmode.numbytes == 0){
-    for(i = _TMP_OFFSET; i < _tmp_buf_index; i++, pgmmode.address++){
-      eeprom_write_byte_isp((unsigned char)(pgmmode.address >> 8), (unsigned char)pgmmode.address, answer[i]);
+        if (pgmmode.mode & 0x40){
+          // RDY/BSY polling
+          do {
+            _delay_us(250);
+            tmp = spi_cmd(0xf0, 0, 0);
+          }
+          while ((tmp & 1) && --loop);
+
+          if (tmp & 1) {
+            pgmmode.status = STATUS_RDY_BSY_TOUT;
+          }
+        }else if ((pgmmode.mode & 0x20) && pgmmode.poll_address_valid) {
+          // value polling
+          if (!eeprom) {
+            if (pgmmode.poll_address_odd) {
+              pgmmode.cmd3 |= 8;
+            }else{
+              pgmmode.cmd3 &= ~8;
+            }  
+          }
+          do{
+            _delay_us(250);
+            tmp = spi_cmd(pgmmode.cmd3, pgmmode.poll_address, 0);
+          }while(tmp == poll && --loop);
+
+          if (tmp == poll) {
+            pgmmode.status = STATUS_CMD_TOUT;
+          }
+        }else {
+          // timed delay
+          wait_ms(pgmmode.delay);
+        }
+      }
+      answer[0] = eeprom ? CMD_PROGRAM_EEPROM_ISP : CMD_PROGRAM_FLASH_ISP;
+      answer[1] = pgmmode.status;
+      pgmmode.status = STATUS_CMD_OK;
+      pgmmode.poll_address_valid = 0;
+      CommandAnswer(2);
     }
-    answer[0] = CMD_PROGRAM_EEPROM_ISP;
-    answer[1] = STATUS_CMD_OK;
-    CommandAnswer(2);
   }
 }
 
 void USBToglAndSend(void)
 {
+  uint8_t sreg = SREG;
+  cli();
   if(usbprog.datatogl == 1) {
     USBNWrite(TXC1, TX_LAST+TX_EN+TX_TOGL);
     usbprog.datatogl = 0;
@@ -504,6 +530,7 @@ void USBToglAndSend(void)
     USBNWrite(TXC1, TX_LAST+TX_EN);
     usbprog.datatogl = 1;
   }
+  SREG = sreg;
 }
 
 void SendCompleteAnswer(void)
@@ -553,16 +580,18 @@ void NackEvent(unsigned int number)
 #endif
 
 
-void CommandAnswer(int length)
+void CommandAnswer(uint8_t length)
 {
-  int i;
-
+  uint8_t i;
+  uint8_t sreg = SREG;
+  cli();
   USBNWrite(TXC1, FLUSH);
   for(i = 0; i < length; i++)
     USBNWrite(TXD1, answer[i]);
 
   /* control togl bit */
   USBToglAndSend();
+  SREG = sreg;
 }
 
 /** Enter ISP programming mode
@@ -580,6 +609,10 @@ void cmd_enter_progmode(struct cmd_enter_progmode_s *cmd) {
   SendHex(cmd->cmd1);
   #endif
   pgmmode.address = 0;
+  pgmmode.status = STATUS_CMD_OK;
+  pgmmode.ext_address = 0xff;
+  pgmmode.large_flash = 0;
+  pgmmode.poll_address_valid = 0;
   spi_active();
   LED_on;
 
@@ -684,7 +717,7 @@ void USBFlash(char *buf)
 {
   char result = 0;
   int numbytes;
-  int i;
+  uint8_t *ptr;
   
   USBNWrite(TXC1, 0x00);
   
@@ -697,11 +730,11 @@ void USBFlash(char *buf)
   // first see if this packet is expected by Flash or EEPROM programming
   if(usbprog.longpackage) {
     if(usbprog.lastcmd == CMD_PROGRAM_FLASH_ISP) {// last operation was flash programming
-      flash_program_fsm(buf);
+       program_fsm((uint8_t*)buf, 0);
     }
 
     if(usbprog.lastcmd == CMD_PROGRAM_EEPROM_ISP) {// last operation was eeprom programming
-      eeprom_write(buf);
+       program_fsm((uint8_t*)buf, 1);
     }
     return;
   }
@@ -831,6 +864,7 @@ void USBFlash(char *buf)
       pgmmode.address = (pgmmode.address << 8) | buf[2];
       pgmmode.address = (pgmmode.address << 8) | buf[3];
       pgmmode.address = (pgmmode.address << 8) | buf[4];
+      pgmmode.large_flash = buf[1] & 0x80 ? 1 : 0;
       answer[0] = CMD_LOAD_ADDRESS;
       answer[1] = STATUS_CMD_OK;
       CommandAnswer(2);
@@ -850,6 +884,8 @@ void USBFlash(char *buf)
 
     case CMD_ENTER_PROGMODE_ISP:
       cmd_enter_progmode((struct cmd_enter_progmode_s *)buf);
+      pgmmode.poll_address_valid = 0;
+      pgmmode.status = STATUS_CMD_OK;
       return;
 
       break;
@@ -910,12 +946,16 @@ void USBFlash(char *buf)
       pgmmode.cmd2 = buf[6];
       // buf[7] = spi command for read program memory
       pgmmode.cmd3 = buf[7];
+      // buf[8] = poll value #1 (used for flash programming)
+      pgmmode.poll1 = buf[8];
+      // buf[9] = poll value #2 (used for eeprom programming)
+      pgmmode.poll2 = buf[9];
 
       // store the page address (which in fact are the first 5 bits) for page write command
       // because we will increment pgmode.address during transfer
       pgmmode.pageaddress = pgmmode.address;
       usbprog.cmdpackage = 1;
-      flash_program_fsm(buf);
+      program_fsm((uint8_t*)buf, 0);
       usbprog.cmdpackage = 0;
     break;
 
@@ -923,17 +963,17 @@ void USBFlash(char *buf)
       #if DEBUG_ON
       UARTWrite("rflash\r\n");
       #endif
+      ptr = (uint8_t*)&answer[2];
       pgmmode.numbytes = ((buf[1] << 8) | (buf[2])) + 1; // number of bytes
       pgmmode.cmd3 = buf[3];  // read command
       numbytes = pgmmode.numbytes - 1;
       // collect max first 62 bytes
-      int answerindex = 2;
-      for(;numbytes > 0; numbytes--) {
-        spi_out(pgmmode.cmd3);
-        spi_out(pgmmode.address >> 8); // read from word address MSB
-        spi_out(pgmmode.address);      // read from word address LSB
-        answer[answerindex] = spi_in();
-        answerindex++;
+      while (numbytes--) {
+        if (pgmmode.large_flash && (uint8_t)(pgmmode.address >> 16) != pgmmode.ext_address){
+          pgmmode.ext_address = pgmmode.address >> 16;
+          spi_cmd(0x4d, pgmmode.ext_address, 0);
+        }
+        *ptr++ = spi_cmd(pgmmode.cmd3, pgmmode.address, 0);
         if(pgmmode.cmd3 == 0x20){
           pgmmode.cmd3 = 0x28;
         }
@@ -1007,11 +1047,21 @@ void USBFlash(char *buf)
       pgmmode.delay = buf[4];
       // buf[5] = spi command for load page and write program memory (one byte at a time)
       pgmmode.cmd1 = buf[5];
+      // buf[6] = spi command for write program memory page (one page at a time)
+      pgmmode.cmd2 = buf[6];
       // buf[7] = spi command for read program memory
       pgmmode.cmd3 = buf[7];
+      // buf[8] = poll value #1 (used for flash programming)
+      pgmmode.poll1 = buf[8];
+      // buf[9] = poll value #2 (used for eeprom programming)
+      pgmmode.poll2 = buf[9];
+
+      // store the page address (which in fact are the first 5 bits) for page write command
+      // because we will increment pgmode.address during transfer
+      pgmmode.pageaddress = pgmmode.address;
 
       usbprog.cmdpackage = 1;
-      eeprom_write(buf);
+      program_fsm((uint8_t*)buf, 1);
       usbprog.cmdpackage = 0;
       return;
     break;
@@ -1021,13 +1071,9 @@ void USBFlash(char *buf)
       pgmmode.cmd3 = buf[3];  // read command
       numbytes = pgmmode.numbytes - 1;
       // collect max first 62 bytes
-      answerindex = 2;
-      for(;numbytes > 0; numbytes--) {
-        spi_out(pgmmode.cmd3);
-        spi_out(pgmmode.address >> 8);
-        spi_out(pgmmode.address);
-        answer[answerindex] = spi_in();
-        answerindex++;
+      ptr = (uint8_t*)&answer[2];
+      while(numbytes--) {
+        *ptr++ = spi_cmd(pgmmode.cmd3, pgmmode.address, 0);
         pgmmode.address++;
       }
 

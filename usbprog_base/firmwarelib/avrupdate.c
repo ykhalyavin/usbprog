@@ -12,6 +12,6 @@ void avrupdate_start(void)
   // 	 myByte = eeprom_read_byte(&ee_version);
   PORTA |= (1 << PA4);
 
-  GICR |= _BV(IVSEL); //move interruptvectors to the Boot sector
+  cli();    // disable all interrupts
   avrupdate_jump_to_boot();
 }
