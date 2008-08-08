@@ -52,7 +52,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c uart.c usbn2mc/tiny/usbn960x.c usbn2mc.c usbn2mc/tiny/usbnapi.c usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c
+SRC = $(TARGET).c uart.c ../usbn2mc/tiny/usbn960x.c usbn2mc.c ../usbn2mc/tiny/usbnapi.c ../usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c
 
 
 # List Assembler source files here.
@@ -276,16 +276,13 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter finished end
 
-build: elf hex eep lss sym hex2bin
+build: elf hex eep lss sym
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
 eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
-hex2bin:
-	hex2bin main.hex
-
 
 # Eye candy.
 # AVR Studio 3.x does not check make's exit code but relies on
@@ -352,6 +349,8 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
+	avr-objcopy -I ihex -O binary main.hex main.bin
+
 
 %.eep: %.elf
 	@echo
@@ -437,7 +436,7 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 loader:
-	usbprog device 0 upload usbserial.bin
+	usbprog device 0 upload main.bin
 
 download:
 	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex -E noreset
