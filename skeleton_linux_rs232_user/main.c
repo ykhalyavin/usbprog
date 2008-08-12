@@ -53,11 +53,11 @@ enum {
 
 const unsigned char usbrs232[] =
 { 
-	0x12,             // 18 length of device descriptor
+	0x12,       // 18 length of device descriptor
     	0x01,       // descriptor type = device descriptor
     	0x10,0x01,  // version of usb spec. ( e.g. 1.1)
-    	0x02,             // device class
-    	0x00,             // device subclass
+    	0x00,       // device class 2
+    	0x00,       // device subclass
     	0x00,       // protocol code
     	0x08,       // deep of ep0 fifo in byte (e.g. 8)
     	0x81,0x17,  // vendor id
@@ -73,24 +73,24 @@ const unsigned char usbrs232[] =
 
 const unsigned char usbrs232Conf[] =
 { 
-	0x09,       // 9 length of this descriptor
-    	0x02,       // descriptor type = configuration descriptor
-    	0x48,0x00,  // total length with first interface ...
-    	0x02,       // number of interfaces //bene 01
-    	0x01,       // number if this config. ( arg for setconfig)
-    	0x00,       // string index for config
-    	0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
-    	0x1A,       // power for this configuration in mA (e.g. 50mA)
+    0x09,       // 9 length of this descriptor
+    0x02,       // descriptor type = configuration descriptor
+    0x5F,0x00,  // total length with first interface ...
+    0x02,       // number of interfaces //bene 01
+    0x01,       // number if this config. ( arg for setconfig)
+    0x00,       // string index for config
+    0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
+    0x1A,       // power for this configuration in mA (e.g. 50mA)
 		    //InterfaceDescriptor
-    	0x09,       // 9 length of this descriptor
-    	0x04,       // descriptor type = interface descriptor
-    	0x00,       // interface number
-    	0x00,       // alternate setting for this interface
-    	0x01,       // number endpoints without 0
-    	0x02,       // class code
-    	0x02,       // sub-class code
-    	0x01,       // protocoll code
-    	0x00,       // string index for interface
+    0x09,       // 9 length of this descriptor
+    0x04,       // descriptor type = interface descriptor
+    0x00,       // interface number
+    0x00,       // alternate setting for this interface
+    0x01,       // number endpoints without 0
+    0x02,       // class code 2
+    0x02,       // sub-class code 2
+    0x01,       // protocoll code 1
+    0x00,       // string index for interface
 
     /* CDC Class-Specific descriptor */
     5,           /* sizeof(usbDescrCDC_HeaderFn): length of descriptor in bytes */
@@ -153,6 +153,34 @@ const unsigned char usbrs232Conf[] =
     0x02,        /* attrib: Bulk endpoint */
     8, 0,        /* maximum packet size */
     0,           /* in ms */
+  
+    /* Interface Descriptor  */
+    9,           /* sizeof(usbDescrInterface): length of descriptor in bytes */
+    4,           /* descriptor type */
+    2,           /* index of this interface */
+    0,           /* alternate setting for this interface */
+    2,           /* endpoints excl 0: number of endpoint descriptors to follow */
+    0,        /* Data Interface Class Codes */
+    0,
+    0,           /* Data Interface Class Protocol Codes */
+    0,           /* string index for interface */
+
+  /* Endpoint Descriptor */
+    7,           /* sizeof(usbDescrEndpoint) */
+    5,  /* descriptor type = endpoint */
+    0x87,        /* IN endpoint number 1 */
+    0x02,        /* attrib: Bulk endpoint */
+    8, 0,        /* maximum packet size */
+    0,           /* in ms */
+  
+  /* Endpoint Descriptor */
+    7,           /* sizeof(usbDescrEndpoint) */
+    5,  /* descriptor type = endpoint */
+    0x07,        /* IN endpoint number 1 */
+    0x02,        /* attrib: Bulk endpoint */
+    8, 0,        /* maximum packet size */
+    0,           /* in ms */
+  
 
 };
 

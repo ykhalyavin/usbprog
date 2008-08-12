@@ -60,8 +60,8 @@ const unsigned char usbrs232[] =
     	0x00,       // device subclass
     	0x00,       // protocol code
     	0x08,       // deep of ep0 fifo in byte (e.g. 8)
-    	0x81,0x17,  // vendor id
-    	0x64,0x0c,  // product id
+    	0x86,0x17,  // vendor id
+    	0x62,0x0c,  // product id
     	0x00,0x01,  // revision id (e.g 1.02)
     	0x01,       // index of manuf. string
     	0x02,       // index of product string
@@ -75,8 +75,8 @@ const unsigned char usbrs232Conf[] =
 { 
     0x09,       // 9 length of this descriptor
     0x02,       // descriptor type = configuration descriptor
-    0x5F,0x00,  // total length with first interface ...
-    0x02,       // number of interfaces //bene 01
+    0x5A,0x00,  // total length with first interface ...
+    0x03,       // number of interfaces //bene 01
     0x01,       // number if this config. ( arg for setconfig)
     0x00,       // string index for config
     0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
@@ -139,11 +139,7 @@ const unsigned char usbrs232Conf[] =
     5,  /* descriptor type = endpoint */
     0x01,        /* OUT endpoint number 1 */
     0x02,        /* attrib: Bulk endpoint */
-#if UART_CFG_HAVE_USART
-    6, 0,        /* maximum packet size 8->6 */
-#else
     1, 0,        /* maximum packet size */
-#endif
     0,           /* in ms */
 
     /* Endpoint Descriptor */
@@ -170,7 +166,7 @@ const unsigned char usbrs232Conf[] =
     5,  /* descriptor type = endpoint */
     0x87,        /* IN endpoint number 1 */
     0x02,        /* attrib: Bulk endpoint */
-    8, 0,        /* maximum packet size */
+    64, 0,        /* maximum packet size */
     0,           /* in ms */
   
   /* Endpoint Descriptor */
@@ -178,7 +174,7 @@ const unsigned char usbrs232Conf[] =
     5,  /* descriptor type = endpoint */
     0x07,        /* IN endpoint number 1 */
     0x02,        /* attrib: Bulk endpoint */
-    8, 0,        /* maximum packet size */
+    64, 0,        /* maximum packet size */
     0,           /* in ms */
   
 
