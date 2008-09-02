@@ -1,37 +1,91 @@
 #include <inttypes.h>
 #include <avr/io.h>
+#include <avr/delay.h>
 
 #include "uart.h"
+#define F_CPU 16000000ULL
 
+void wait_ms(unsigned int i) {
+  while(i--)
+    _delay_ms(1);
+}
 
-
-void UARTInit(void)
+void UARTInit(unsigned int baud0, unsigned int baud1, char stopbits, char parity, char databits)
 {
-  //UCSRB |= (1<<TXEN);			// UART TX einschalten
-  //UCSRC |= (1<<URSEL)|(3<<UCSZ0);	// Asynchron 8N1
+  // unsigned int32
+  unsigned long long int baudrate;
+  unsigned char ubrrh;
+  unsigned char ubrrl;
+  unsigned char ucsrc = (1 << URSEL);
 
-	//UCSRB |= ( 1 << RXEN ); // RX aktivieren
-	//UCSRB |= ( 1 << RXCIE ); // RX interrupt aktivieren
+  PORTA |= (1<<PA4);  //on
+  wait_ms(100);
+  PORTA &= ~(1<<PA4); //off
+  wait_ms(100);
 
-	//UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
- 	
-	UCSRA = (1 << RXC) | (1 << TXC);
+
+  // baudrate berechnen
+  baudrate = (baud0 + (baud1 << 8));
+  ubrrh = (unsigned char) (((F_CPU/16ULL/baudrate)-1ULL) >> 8);
+  ubrrl = (unsigned char)  ((F_CPU/16ULL/baudrate)-1ULL);
+  
+
+  // num of stopbits (0=1, 1=1.5, 2=2)
+  // we cannot support 1.5 stopbits
+  if(stopbits == 2)
+  {
+    // 2 stopbits
+    ucsrc |= (1 << USBS);
+  }
+
+  // parity (0=none, 1=odd, 2=even, 3=mark, 4=space)
+  // we cannot support parity mark or space
+  switch(parity)
+  {
+    case 1:
+      // parity bit odd
+      ucsrc |= (1 << UPM0 | 1 << UPM1);
+      break;
+    case 2:
+      // parity bit even
+      ucsrc |= (1 << UPM1);
+      break;
+    // default:
+    // no parity bit UPM0 = 0, UPM1 = 0
+  }
+  
+  //data bits (5,6,7,8 or 16)
+  switch(databits)
+  {
+    case 5:
+      //ucsrc |= (0 << UCSZ0 | 0 << UCSZ1 | 0 << UCSZ2);
+      break;
+    case 6:
+      ucsrc |= (1 << UCSZ0 | 0 << UCSZ1 | 0 << UCSZ2);
+      break;
+    case 7:
+      ucsrc |= (0 << UCSZ0 | 1 << UCSZ1 | 0 << UCSZ2);
+      break;
+    default:
+      // 8 databits
+      ucsrc |= (1 << UCSZ0 | 1 << UCSZ1 | 0 << UCSZ2);
+      break;
+  }
+
+  UCSRA = (1 << RXC) | (1 << TXC);
   UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
-  UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
-	//ATmega32 bei 16MHz und für 9600 Baud
-  UBRRH  = 0;                                   // Highbyte ist 0
-  //UBRRL  = 51;                                  // Lowbyte ist 51 ( dezimal )
-  UBRRL = 103; // Lowbyte ist 51 für
-    // Flush Receive-Buffer
+  UBRRH = ubrrh;
+  UBRRL = ubrrl;
+  UCSRC = ucsrc;
+
+  // Flush Receive-Buffer
   do
   {
-      uint8_t dummy;
-      (void) (dummy = UDR);
+    uint8_t dummy;
+    (void) (dummy = UDR);
   }
   while (UCSRA & (1 << RXC));
 }
-
-
 
 void UARTPutChar(unsigned char sign)
 {

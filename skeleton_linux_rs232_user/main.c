@@ -4,20 +4,16 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define  F_CPU   16000000
 
+#include "main.h"
 #include "uart.h"
 #include "usbn2mc.h"
 #include "usbn2mc/fifo.h"
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 
 
-
-void interrupt_ep_send();
-void rs232_send();
-
 volatile int tx1togl=0; 		// inital value of togl bit
-
+volatile short flag = 0;
 
 char toUSBBuf[100];
 char toRS232Buf[100];
@@ -28,25 +24,7 @@ fifo_t* toUSBFIFO;
 int togl3=0;
 int togl1=0;
 
-
-struct {
-	char		dwDTERrate[4];   //data terminal rate, in bits per second
-	char    bCharFormat;  //num of stop bits (0=1, 1=1.5, 2=2)
-	char    bParityType;  //parity (0=none, 1=odd, 2=even, 3=mark, 4=space)
-	char    bDataBits;    //data bits (5,6,7,8 or 16)
-} usb_cdc_line_coding;
-
-enum {
-	SEND_ENCAPSULATED_COMMAND = 0,
-	GET_ENCAPSULATED_RESPONSE,
-	SET_COMM_FEATURE,
-	GET_COMM_FEATURE,
-	CLEAR_COMM_FEATURE,
-	SET_LINE_CODING = 0x20,
-	GET_LINE_CODING,
-	SET_CONTROL_LINE_STATE,
-	SEND_BREAK
-};
+struct usb_cdc_line_coding line_coding;
 
 
 /* Device Descriptor */
@@ -197,7 +175,7 @@ SIGNAL(SIG_UART_RECV)
 	rs232_send();	
 }
 
-/* interrupt signael from usb controller */
+/* interrupt signal from usb controller */
 
 SIGNAL(SIG_INTERRUPT0)
 {
@@ -226,23 +204,24 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 // class requests
 void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 {
-	UARTWrite("class");
+	//UARTWrite("class");
 	static unsigned char serialNotification[10] = {0xa1,0x20,0,0,0,0,2,0,3,0};
 	int loop;
 	switch(req->bRequest)
 	{
 		case 0x20:	//SET_LINE_CODING:
-			UARTWrite("set line\r\n");
+			//UARTWrite("set line\r\n");
 			USBNWrite(RXC0,RX_EN);
 			
-			USBNRead(RXD0);
-			USBNRead(RXD0);
-			USBNRead(RXD0);
-			USBNRead(RXD0);
-			USBNRead(RXD0);
-			USBNRead(RXD0);
-			USBNRead(RXD0);
+			line_coding.dwDTERrate[0] = USBNRead(RXD0);
+			line_coding.dwDTERrate[1] = USBNRead(RXD0);
+			line_coding.dwDTERrate[2] = USBNRead(RXD0);
+			line_coding.dwDTERrate[3] = USBNRead(RXD0);
+			line_coding.bCharFormat   = USBNRead(RXD0);
+			line_coding.bParityType   = USBNRead(RXD0);
+			line_coding.bDataBits     = USBNRead(RXD0);
 			
+			flag = 1;
 			//USBNWrite(RXC0,RX_EN);
 			//USBNWrite(RXC0,FLUSH);
 		
@@ -254,14 +233,14 @@ void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 			USBNWrite(TXC0,FLUSH);
 
 			// baud rate
-			USBNWrite(TXD0,0x80);
-			USBNWrite(TXD0,0x25);
-			USBNWrite(TXD0,0);
-			USBNWrite(TXD0,0);
+			USBNWrite(TXD0, line_coding.dwDTERrate[0]);
+			USBNWrite(TXD0, line_coding.dwDTERrate[1]);
+			USBNWrite(TXD0, line_coding.dwDTERrate[2]);
+			USBNWrite(TXD0, line_coding.dwDTERrate[3]);
 
-			USBNWrite(TXD0,0); //stopbit
-			USBNWrite(TXD0,0); // parity
-			USBNWrite(TXD0,8); // databits
+			USBNWrite(TXD0, line_coding.bCharFormat); //stopbit
+			USBNWrite(TXD0, line_coding.bParityType); // parity
+			USBNWrite(TXD0, line_coding.bDataBits); // databits
 
 			interrupt_ep_send();
 
@@ -337,7 +316,7 @@ int main(void)
 	//USBNCallbackFIFOTX2Ready(&USBtoRS232);
 
 	sei();			// activate global interrupts
-	UARTInit();		// only for debugging
+	//UARTInit(0x80, 0x25, 1, 0, 8);		// only for debugging
 
 	// setup usbstack with your descriptors
 	USBNInit(usbrs232,usbrs232Conf);
@@ -352,7 +331,11 @@ int main(void)
 	USBNStart();		// start device stack
 
 	while(1){
-	  #if 0
+if(flag) {
+UARTInit(line_coding.dwDTERrate[0], line_coding.dwDTERrate[1], line_coding.bCharFormat, line_coding.bParityType, line_coding.bDataBits);
+flag = 0;
+}
+#if 0
 		// wenn cpu zeit vorhanden fifos weiterverteilen
 		// usb -> rs232
 	
