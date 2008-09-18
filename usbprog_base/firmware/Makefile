@@ -193,7 +193,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 
 # Uncomment the following if you do /not/ wish a verification to be
 # performed after programming the device.
-#AVRDUDE_NO_VERIFY = -V
+AVRDUDE_NO_VERIFY = -V
 
 # Increase verbosity level.  Please use this when submitting bug
 # reports about avrdude. See <http://savannah.nongnu.org/projects/avrdude> 
@@ -435,9 +435,10 @@ build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
 download:
-	avrdude -p m32 -c avrispv2 -P usb -B 10 -U flash:w:main.hex -e
+	avrdude -p m32 -V -c avrispv2 -P usb -B 10 -U flash:w:main.hex -e
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe0:m
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U hfuse:w:0xd8:m
+	perl upload.pl
 downloadb:
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U flash:w:main.hex -e
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe4:m
