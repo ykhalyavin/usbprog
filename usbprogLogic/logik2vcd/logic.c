@@ -40,7 +40,7 @@ Logic* openLogic()
   {
     for (dev = bus->devices; dev; dev = dev->next)	
     {
-      if (dev->descriptor.idVendor == 0x0400) 
+      if (dev->descriptor.idVendor == 0x1786) // 0x0400 changed to new VID
       {	
 	located++;
 	tmp->logic_handle = usb_open(dev);
@@ -161,11 +161,11 @@ void RecordingInternal(Logic* self,char samplerate)
   SetLogicSampleRate(self,samplerate);
   StartLogic(self);
   // TODO check here with an endless loop and  GetLogicState if record is ready
-  sleep(1);
+  Sleep(1);
   return;
   while(GetLogicState(self) !=STATE_DONOTHING)
   {
-    sleep(1);
+    Sleep(1);
   }
 }
 
