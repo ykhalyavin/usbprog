@@ -330,7 +330,8 @@ void logic2vcd( void )
 int main( int argc, char *argv[] )
 {
 	int opt = 0;
-	progname = rindex(argv[0],'/');
+	//progname = rindex(argv[0],'/'); rindex() is obsolete
+	progname = strrchr(argv[0],'/');
 	if (progname)
 	  progname++;
 	 else
