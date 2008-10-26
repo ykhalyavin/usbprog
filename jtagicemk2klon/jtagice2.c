@@ -55,20 +55,34 @@ int cmd_get_sign_on(char *msg, char * answer)
 	answer[8]  = RSP_SIGN_ON;		// page 57 datasheet
 	answer[9]  = 0x01;	// communication protocoll version
 	answer[10] = 0xff;
-	answer[11] = 0x21;  //07
-	answer[12] = 0x04;
+	// orignal id answer[11] = 0x21;  //07
+	// original id answer[12] = 0x04;
+	answer[11] = 0x25;  //07
+	answer[12] = 0x05;
+
 	answer[13] = 0x00;
 	answer[14] = 0xff;
-	answer[15] = 0x21; //21
-	answer[16] = 0x04;
-	answer[17] = 0x00;
-	answer[18] = 0x00;
+	//original answer[15] = 0x21; //21
+	//original answer[16] = 0x04;
+	answer[15] = 0x25; //21
+	answer[16] = 0x05;
 
+	//original answer[17] = 0x00;
+	answer[17] = 0x01;
+	answer[18] = 0x00;
+	/* original
 	answer[19] = 0xa0;	// serial number
 	answer[20] = 0x00;
 	answer[21] = 0x00;
 	answer[22] = 0x0d;
 	answer[23] = 0x3f;	// end of serial number
+	*/
+
+	answer[19] = 0xB0;	// serial number
+	answer[20] = 0x00;
+	answer[21] = 0x00;
+	answer[22] = 0x50;
+	answer[23] = 0xAC;	// end of serial number
 
 	answer[24] = 'J';
 	answer[25] = 'T';
@@ -208,10 +222,14 @@ int cmd_get_parameter(char *msg, char * answer)
 		answer[3] = 0x05;		// length of body
 		answer[8] = RSP_PARAMETER;		// (0x80 = ok)
 
-		answer[9] = jtagbuf[0];	//JTAG ID
-		answer[10] = jtagbuf[1];
-		answer[11] = jtagbuf[2];
-		answer[12] = jtagbuf[3];
+		//answer[9] = jtagbuf[0];	//JTAG ID
+		//answer[10] = jtagbuf[1];
+		//answer[11] = jtagbuf[2];
+		//answer[12] = jtagbuf[3];
+		answer[9] = 0x3F;
+		answer[10] = 0xC0;
+		answer[11] = 0x74;
+		answer[12] = 0x69;
 		crc16_append(answer,(unsigned long)13);
 		return 15;
 	break;
@@ -639,6 +657,13 @@ int cmd_read_memory(char * msg, char * answer)
 			    ;
 			}
 
+			// xmega test
+			msglen = 4;
+			answer[3] = 4;
+			answer[8] = 0x82;
+			answer[9] = 0x1E;
+			answer[10] = 0x97;
+			answer[11] = 0x4C;
 		break;
 
 		case FLASH_PAGE:

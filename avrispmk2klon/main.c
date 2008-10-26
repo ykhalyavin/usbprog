@@ -131,7 +131,7 @@ struct pgmmode_t {
   uint8_t poll_address_valid :1;
   uint8_t poll_address_odd   :1;
   uint8_t large_flash        :1;
-  uint8_t ext_address;
+  uint16_t ext_address;
 } pgmmode;
 
 
@@ -413,7 +413,7 @@ void program_fsm(uint8_t* buffer, uint8_t eeprom)
     }
 
     for (i = 0; i < databytes; i++, buffer++) {
-      if (pgmmode.large_flash && (uint8_t)(pgmmode.address >> 16) != pgmmode.ext_address){
+      if (pgmmode.large_flash && (pgmmode.address >> 16) != pgmmode.ext_address){
         // set the extended page address
         pgmmode.ext_address = pgmmode.address >> 16;
         spi_cmd(0x4d, pgmmode.ext_address, 0x00);
@@ -610,7 +610,7 @@ void cmd_enter_progmode(struct cmd_enter_progmode_s *cmd) {
   #endif
   pgmmode.address = 0;
   pgmmode.status = STATUS_CMD_OK;
-  pgmmode.ext_address = 0xff;
+  pgmmode.ext_address = 0xffff;
   pgmmode.large_flash = 0;
   pgmmode.poll_address_valid = 0;
   spi_active();
@@ -894,6 +894,10 @@ void USBFlash(char *buf)
       #if DEBUG_ON
       UARTWrite("leave\r\n");
       #endif
+      
+      // clear extende addr 
+      spi_cmd(0x4d, 0x0000, 0);
+
       LED_off;
       RESET_high;
       spi_idle();
@@ -969,11 +973,12 @@ void USBFlash(char *buf)
       numbytes = pgmmode.numbytes - 1;
       // collect max first 62 bytes
       while (numbytes--) {
-        if (pgmmode.large_flash && (uint8_t)(pgmmode.address >> 16) != pgmmode.ext_address){
+        if (pgmmode.large_flash && (pgmmode.address >> 16) != pgmmode.ext_address){
           pgmmode.ext_address = pgmmode.address >> 16;
           spi_cmd(0x4d, pgmmode.ext_address, 0);
         }
         *ptr++ = spi_cmd(pgmmode.cmd3, pgmmode.address, 0);
+
         if(pgmmode.cmd3 == 0x20){
           pgmmode.cmd3 = 0x28;
         }
@@ -995,8 +1000,9 @@ void USBFlash(char *buf)
         pgmmode.numbytes = pgmmode.numbytes - 62;
         usbprog.fragmentnumber = 1;
       }
-      else {CommandAnswer(pgmmode.numbytes + 2);
-      usbprog.datatogl=0; 
+      else {
+	CommandAnswer(pgmmode.numbytes + 2);
+	usbprog.datatogl=0; 
       }
 
       return;

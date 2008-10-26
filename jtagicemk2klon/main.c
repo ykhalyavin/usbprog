@@ -404,8 +404,11 @@ int main(void)
   char lang[]={0x09,0x04};
   _USBNAddStringDescriptor(lang); // language descriptor
 
-  USBNDeviceManufacture ("EmbeddedProjects");
-  USBNDeviceProduct	("USBprog JTAGICE2");
+  //USBNDeviceManufacture ("EmbeddedProjects");
+  //USBNDeviceProduct	("USBprog JTAGICE2");
+  USBNDeviceManufacture ("ATMEL");
+  USBNDeviceProduct	("JTAGICE mkII");
+
   USBNDeviceSerialNumber("A000000D3F");
 
 

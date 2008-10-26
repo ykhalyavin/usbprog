@@ -45,14 +45,14 @@ MCU = atmega32
 F_OSC = 16000000 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex 
+FORMAT = ihex
 
 # Target file name (without extension).
 TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ../../usbn2mc/main/usbn960x.c usbn2mc.c ../../usbn2mc/main/usbnapi.c uart.c ../../usbprog_base/firmwarelib/avrupdate.c jtagcmd.c fifo.c
+SRC = $(TARGET).c ../usbn2mc/main/usbn960x.c usbn2mc.c ../usbn2mc/main/usbnapi.c uart.c ../usbn2mc/fifo.c ../usbprog_base/firmwarelib/avrupdate.c 
 
 
 # List Assembler source files here.
@@ -298,7 +298,6 @@ finished:
 end:
 	@echo $(MSG_END)
 	@echo
-	#hex2bin main.hex
 
 
 # Display size of file.
@@ -351,7 +350,6 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH) $@
 	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
-	hex2bin main.hex
 	#mv main.hex main.bin
 
 %.eep: %.elf
@@ -449,8 +447,6 @@ reset:
 
 ready:
 	mv main.hex avrispmk2.hex
-	hex2bin avrispmk2.hex
 
 upgrade:
-	hex2bin main.hex
 	usbprog main.bin
