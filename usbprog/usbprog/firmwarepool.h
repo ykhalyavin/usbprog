@@ -17,6 +17,7 @@
 #ifndef FIRMWAREPOOL_H
 #define FIRMWAREPOOL_H
 
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <map>
