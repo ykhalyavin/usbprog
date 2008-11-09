@@ -436,9 +436,11 @@ clean clean_list program
 
 download:
 	avrdude -p m32 -V -c avrispv2 -P usb -B 10 -U flash:w:main.hex -e
-	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe0:m
+	#avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe0:m
+	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xa0:m
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U hfuse:w:0xd8:m
 	perl upload.pl
+
 downloadb:
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U flash:w:main.hex -e
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe4:m
