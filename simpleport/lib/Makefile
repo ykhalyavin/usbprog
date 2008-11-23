@@ -12,8 +12,6 @@ python:
 	#ld -shared simpleport.o simpleport_wrap.o /usr/lib/libusb.so -o _simpleport.so 
 	gcc -fPIC -shared simpleport_wrap.o simpleport.o /usr/lib/libusb.so -o _simpleport.so
 
-
-
 java:
 	swig -java simpleport.i
 	gcc -fpic -c simpleport.c simpleport_wrap.c -I/usr/lib/jvm/java-1.5.0-sun-1.5.0.10/include \

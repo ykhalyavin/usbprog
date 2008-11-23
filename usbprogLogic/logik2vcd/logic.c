@@ -161,7 +161,7 @@ void RecordingInternal(Logic* self,char samplerate)
   SetLogicSampleRate(self,samplerate);
   StartLogic(self);
   // TODO check here with an endless loop and  GetLogicState if record is ready
-  Sleep(1);
+  sleep(1);
   return;
   while(GetLogicState(self) !=STATE_DONOTHING)
   {

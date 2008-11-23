@@ -32,8 +32,11 @@ void LogicSendScopeData()
   USBNWrite(TXC1,FLUSH);
   
   USBNWrite(TXD1,ring_get_nowait(&logic.ring));
+
   for(i=1;i<64;i++)
-      USBNBurstWrite(ring_get_nowait(&logic.ring));
+      //USBNBurstWrite(ring_get_nowait(&logic.ring));
+      USBNWrite(TXD1,ring_get_nowait(&logic.ring));
+
   USBNWrite(TXC1,TX_LAST+TX_EN);
 }
 

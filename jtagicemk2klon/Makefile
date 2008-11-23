@@ -448,5 +448,5 @@ binform:
 	$(OBJCOPY) -O binary main.elf -R .eeprom main.bin
 
 loader:
-	usbprog device 0 upload main.bin
+	usbprog -o device 0 upload main.bin
 

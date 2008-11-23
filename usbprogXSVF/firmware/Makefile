@@ -440,7 +440,7 @@ clean clean_list program
 download:
 	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex 
 loader:
-	usbprog device 0 upload main.bin
+	usbprog -o device 0 upload usbprogXSVF.bin
 reset:
 	avrdude -p m32 -c bsd -E noreset
 
