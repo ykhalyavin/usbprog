@@ -38,52 +38,53 @@ void UARTInit(void)
 
 void UARTPutChar(unsigned char sign)
 {
-  	// bei neueren AVRs steht der Status in UCSRA/UCSR0A/UCSR1A, hier z.B. fuer ATmega16:
-  	while (!(UCSRA & (1<<UDRE))); /* warten bis Senden moeglich                   */
-  		UDR = sign;                    /* schreibt das Zeichen x auf die Schnittstelle */
+	// bei neueren AVRs steht der Status in UCSRA/UCSR0A/UCSR1A, hier z.B. fuer ATmega16:
+	while (!(UCSRA & (1<<UDRE)));	// warten bis Senden moeglich
+		UDR = sign;		// schreibt das Zeichen x auf die Schnittstelle
 }
 
 
 unsigned char UARTGetChar(void)
 {
-	#if 0
-    while (!(UCSRA & (1<<RXC)));  // warten bis Zeichen verfuegbar
-  		return UDR;                   // Zeichen aus UDR an Aufrufer zurueckgeben
-	#endif
+	if ( 0 ) {
+		while (!(UCSRA & (1<<RXC)));	// warten bis Zeichen verfuegbar
+		return UDR;			// Zeichen aus UDR an Aufrufer zurueckgeben
+	} else {
+		return '\0';		// TODO
+	}
 }
 
 void UARTWrite(const char* msg)
 {
-  	while(*msg != '\0')
-  	{
-     	UARTPutChar (*msg++);
-  	}
+	while(*msg != '\0') {
+		UARTPutChar(*msg++);
+	}
 }
 
 unsigned char AsciiToHex(unsigned char high,unsigned char low)
 {
-  	unsigned char new;
+	unsigned char new;
 
-  	// check if lower equal 9 ( assii 57 )
-  	if(high <= 57) // high is a number
-    	high = high -48;
-  	else // high is a letter
-    	high = high -87;
+	// check if lower equal 9 ( assii 57 )
+	if(high <= 57) // high is a number
+		high = high -48;
+	else // high is a letter
+		high = high -87;
 
-  	high = high << 4;
-  	high = high & 0xF0;
+	high = high << 4;
+	high = high & 0xF0;
 
-  	// check if lower equal 9 ( assii 57 )
-  	if(low <= 57) // high is a number
-    	low = low -48;
-  	else // high is a letter
-    	low = low -87;
+	// check if lower equal 9 ( assii 57 )
+	if(low <= 57) // high is a number
+		low = low -48;
+	else // high is a letter
+		low = low -87;
 
 	low = low & 0x0F;
 
-  	new = high | low;
+	new = high | low;
 
-  	return new;
+	return new;
 }
 
 void SendHex(unsigned char hex)

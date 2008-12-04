@@ -44,8 +44,10 @@ struct AVR_Context_Type avrContext;
  * write to on chip debugging registers                                 *
  *----------------------------------------------------------------------*/
 unsigned char
-wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay) {
-	unsigned char stat, tdi [3], tdo [3];
+wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay)
+{
+//	unsigned char stat, tdi [3], tdo [3];
+	unsigned char tdi [3];
 
 //	jtag_reset();
 	avr_jtag_instr (AVR_OCD, delay);
@@ -65,9 +67,11 @@ wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay) {
  * in redundant data in order to read the shift register                *
  *----------------------------------------------------------------------*/
 unsigned char
-rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay) {
-	unsigned char stat, tdo [3], tdi [3];
-	//jtag_reset();
+rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay)
+{
+//	unsigned char stat, tdo [3], tdi [3];
+	unsigned char tdo [3], tdi [3];
+//	jtag_reset();
 	//UARTWrite("PT1\r\n");
 	avr_jtag_instr (AVR_OCD, delay);
 	tdi [0] = reg;
@@ -84,17 +88,20 @@ rd_dbg_ocd (unsigned char reg, unsigned char *buf_out, unsigned char delay) {
 }
 
 
-unsigned char ocd_enshure_ocdr_enable() {
+unsigned char ocd_enshure_ocdr_enable(void)
+{
 	uint16_t csr;
-	rd_dbg_ocd(AVR_DBG_COMM_CTL,&csr,0);
+	rd_dbg_ocd(AVR_DBG_COMM_CTL, (unsigned char *)&csr, 0);
 
 	if (!(csr & AVR_EN_OCDR)) {
 		csr |= AVR_EN_OCDR;
-		wr_dbg_ocd(AVR_DBG_COMM_CTL,&csr,0);
+		wr_dbg_ocd(AVR_DBG_COMM_CTL, (unsigned char *)&csr, 0);
 	}
+	return '\0';	// TODO
 }
 
-uint8_t ocd_read_ocdr() {
+uint8_t ocd_read_ocdr(void)
+{
 	unsigned char tdo[2];
 
 	rd_dbg_ocd(AVR_DBG_COMM_DATA,tdo,0);
@@ -103,7 +110,8 @@ uint8_t ocd_read_ocdr() {
 }
 
 /* Saves the avr registers which get used by ocd system */
-unsigned char ocd_save_context() {
+unsigned char ocd_save_context(void)
+{
 	ocd_enshure_ocdr_enable();
 
 	avrContext.PC = ocd_read_pc();
@@ -135,7 +143,8 @@ unsigned char ocd_save_context() {
 }
 
 #ifdef DEBUG_ON
-void ocd_dump_debug_registers() {
+void ocd_dump_debug_registers(void)
+{
 	UARTWrite("r16:");
 	ocd_execute_avr_instruction(AVR_OUT(OCDR_Addr,16)); // out 0x31, r16
 	SendHex(ocd_read_ocdr());
@@ -153,7 +162,8 @@ void ocd_dump_debug_registers() {
 #endif
 
 /* Restores before saved registers after completing the debug modifications */
-unsigned char ocd_restore_context() {
+unsigned char ocd_restore_context(void)
+{
 	if (avrContext.registerDirty == 1) {
 		ocd_enshure_ocdr_enable();
 
@@ -179,9 +189,9 @@ unsigned char ocd_restore_context() {
 	#endif
 
 		uint16_t OCDSCR;
-		rd_dbg_ocd(AVR_DBG_COMM_CTL,&OCDSCR,0);
+		rd_dbg_ocd(AVR_DBG_COMM_CTL, (unsigned char *)&OCDSCR, 0);
 		OCDSCR &= ~AVR_EN_OCDR;
-		wr_dbg_ocd(AVR_DBG_COMM_CTL,&OCDSCR,0);
+		wr_dbg_ocd(AVR_DBG_COMM_CTL, (unsigned char *)&OCDSCR, 0);
 
 		avrContext.registerDirty = 0;
 	}
@@ -203,19 +213,20 @@ unsigned char ocd_restore_context() {
 	UARTWrite("\r\n");
 #endif
 
-	wr_dbg_ocd(AVR_PSB0,&avrContext.PSB0,0);
-	wr_dbg_ocd(AVR_PSB1,&avrContext.PSB1,0);
-	wr_dbg_ocd(AVR_PDMSB,&avrContext.PDMSB,0);
-	wr_dbg_ocd(AVR_PDSB,&avrContext.PDSB,0);
+	wr_dbg_ocd(AVR_PSB0, (unsigned char *)&avrContext.PSB0, 0);
+	wr_dbg_ocd(AVR_PSB1, (unsigned char *)&avrContext.PSB1, 0);
+	wr_dbg_ocd(AVR_PDMSB, (unsigned char *)&avrContext.PDMSB, 0);
+	wr_dbg_ocd(AVR_PDSB, (unsigned char *)&avrContext.PDSB, 0);
 
-	wr_dbg_ocd(AVR_BCR,&avrContext.break_config,0);
+	wr_dbg_ocd(AVR_BCR, (unsigned char *)&avrContext.break_config, 0);
 
 
 	return 1;
 }
 
 
-uint16_t ocd_read_pc() {
+uint16_t ocd_read_pc(void)
+{
 	avr_jtag_instr(AVR_INSTR,0);
 
 	unsigned char tdi[4] = { 0, 0 , 0xFF, 0xFF };
@@ -229,16 +240,19 @@ uint16_t ocd_read_pc() {
 	return res;
 }
 
-unsigned char ocd_execute_avr_instruction(uint16_t instr) {
+unsigned char ocd_execute_avr_instruction(uint16_t instr)
+{
 	avr_jtag_instr(AVR_INSTR, 0);
 
-	jtag_write(16,&instr);
+	(void)jtag_write(16, (unsigned char *)&instr);
 	jtag_goto_state(RUN_TEST_IDLE); // some documentation said that its neccesary to go to IDLE state after executing the instr
 
+	return '\0';		// TODO
 }
 
 // TODO: in the following 2 functions pay attention that the debugging registers are not in memory range!
-uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf)
+{
 	avrContext.registerDirty = 1;
 	ocd_enshure_ocdr_enable();
 
@@ -309,7 +323,8 @@ uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	return 1;
 }
 
-uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf)
+{
 	avrContext.registerDirty = 1;
 	ocd_enshure_ocdr_enable();
 
@@ -370,7 +385,8 @@ uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	return 1;
 }
 
-uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf)
+{
 	// initialize the ocd system
 	avrContext.registerDirty = 1;
 	//ocd_enshure_ocdr_enable();
@@ -432,7 +448,8 @@ uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	return 1;
 }
 
-uint8_t ocd_erase_flash_page(uint16_t pageaddr) {
+uint8_t ocd_erase_flash_page(uint16_t pageaddr)
+{
 	// first we have to save some more registers which are involved in this operation
 	// there are for page erasing the addressing registers for the Y pointer
 	// we have to use the Z pointer to indicate the page, so we must use another one for
@@ -464,7 +481,8 @@ uint8_t ocd_erase_flash_page(uint16_t pageaddr) {
 	return 1;
 }
 
-uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh) {
+uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh)
+{
 	// now we place the address of the SPMCR to the adressing register
 	ocd_execute_avr_instruction(AVR_LDI(28,SPMCR_Addr & 0xFF));
 	ocd_execute_avr_instruction(AVR_LDI(29,SPMCR_Addr>>8));
@@ -486,7 +504,7 @@ uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh) {
 
 	// set BCR to Stepping mode
 	uint16_t bcr = AVR_BRK_STEP;
-	wr_dbg_ocd(AVR_BCR,&bcr,0);
+	wr_dbg_ocd(AVR_BCR, (unsigned char *)&bcr, 0);
 
 	// execute SPM and run device
 	ocd_execute_avr_instruction(AVR_SPM());
@@ -495,13 +513,14 @@ uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh) {
 	// now wait for avr to stop again
 	uint16_t ocdcr;
 	do {
-		rd_dbg_ocd(AVR_DBG_COMM_CTL,&ocdcr,0);
+		rd_dbg_ocd(AVR_DBG_COMM_CTL, (unsigned char *)&ocdcr, 0);
 	} while (!(ocdcr & 0xC));
 
 	return 1; // when avr has stopped again the sequence has finished
 }
 
-uint8_t ocd_read_spmcr() {
+uint8_t ocd_read_spmcr(void)
+{
 	// load address of the register to Z pointer
 	ocd_execute_avr_instruction(AVR_LDI(30,SPMCR_Addr & 0xFF));
 	ocd_execute_avr_instruction(AVR_LDI(31,SPMCR_Addr>>8));
@@ -514,7 +533,8 @@ uint8_t ocd_read_spmcr() {
 }
 
 /* Ja die Funktion sieht sehr komisch aus - das seh ich ein, aber es geht! */
-uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf)
+{
 		// initialize the ocd system
 	avrContext.registerDirty = 1;
 	ocd_enshure_ocdr_enable();
@@ -567,7 +587,8 @@ uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 }
 
 /* Ja die Funktion sieht sehr komisch aus - das seh ich ein, aber es geht! */
-uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
+uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf)
+{
 			// initialize the ocd system
 	avrContext.registerDirty = 1;
 	ocd_enshure_ocdr_enable();
@@ -622,23 +643,30 @@ uint8_t ocd_wr_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf) {
 	return 1;
 }
 
-uint8_t ocd_set_psb0(uint16_t addr) {
+uint8_t ocd_set_psb0(uint16_t addr)
+{
 	// write adress to psb0 register in context type
 	// the cpu frags this values when running, so we must refresh it every time
 	avrContext.PSB0 = addr & jtagice.pcmask;
 
 	avrContext.break_config |= AVR_EN_PSB0;
+
+	return 0;		// TODO
 }
 
-uint8_t ocd_set_psb1(uint16_t addr) {
+uint8_t ocd_set_psb1(uint16_t addr)
+{
 	// write adress to psb1 register
 
 	avrContext.PSB1 = addr & jtagice.pcmask;
 
 	avrContext.break_config |= AVR_EN_PSB1;
+
+	return 0;		// TODO
 }
 
-uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode) {
+uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode)
+{
 	// write adress to psmsb register
 
 	if (mode == break_program)
@@ -653,9 +681,12 @@ uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode) {
 	else {
 		avrContext.break_config |= AVR_EN_PDMSB | AVR_MASK_BREAK;
 	}
+
+	return 0;		// TODO
 }
 
-uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode) {
+uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode)
+{
 	// write adress to pdsb register
 
 	if (mode == break_program)
@@ -664,29 +695,39 @@ uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode) {
 		avrContext.PDSB = addr;
 	avrContext.break_config |= AVR_EN_PDSB;
 	avrContext.break_config = (avrContext.break_config & ~(AVR_PDSB_MODE0|AVR_PDSB_MODE1)) | ((mode & 0x3) << 3);
+
+	return 0;		// TODO
 }
 
 
-uint8_t ocd_clr_psb0()  {
+uint8_t ocd_clr_psb0(void)  {
 	avrContext.PSB0 = 0;
 
 	avrContext.break_config &= ~AVR_EN_PSB0;
+
+	return 0;		// TODO
 }
 
-uint8_t ocd_clr_psb1()  {
+uint8_t ocd_clr_psb1(void)  {
 	avrContext.PSB1 = 0;
 
 	avrContext.break_config &= ~AVR_EN_PSB1;
+
+	return 0;		// TODO
 }
 
-uint8_t ocd_clr_pdsb()  {
+uint8_t ocd_clr_pdsb(void)  {
 	avrContext.PDSB = 0;
 
 	avrContext.break_config &= ~AVR_EN_PDSB;
+
+	return 0;		// TODO
 }
 
-uint8_t ocd_clr_pdmsb()  {
+uint8_t ocd_clr_pdmsb(void)  {
 	avrContext.PDMSB = 0;
 
 	avrContext.break_config &= ~(AVR_EN_PDMSB | AVR_MASK_BREAK);
+
+	return 0;		// TODO
 }

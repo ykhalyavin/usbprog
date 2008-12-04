@@ -370,10 +370,11 @@ void jtag_goto_state(TAP_STATE state)
 	return;
 }
 
-void jtag_clock_cycles(uint8_t num) {
+void jtag_clock_cycles(uint8_t num)
+{
 	JTAG_CLEAR_TMS();
 
 	while (num--) {
-			JTAG_CLK();
+		JTAG_CLK();
 	}
 }

@@ -52,13 +52,13 @@ struct AVR_Context_Type {
 
 extern struct AVR_Context_Type avrContext;
 
-unsigned char ocd_save_context();
-unsigned char ocd_restore_context();
+unsigned char ocd_save_context(void);
+unsigned char ocd_restore_context(void);
 
 unsigned char ocd_execute_avr_instruction(uint16_t instr);
-uint8_t ocd_read_ocdr();
+uint8_t ocd_read_ocdr(void);
 
-uint16_t ocd_read_pc();
+uint16_t ocd_read_pc(void);
 
 uint8_t ocd_rd_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
@@ -66,7 +66,7 @@ uint8_t ocd_wr_sram(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_rd_flash(uint16_t startaddr, uint16_t len, uint8_t *buf);
 uint8_t ocd_erase_flash_page(uint16_t pageaddr);
 uint8_t ocd_spm_sequence(uint8_t spmcr, uint8_t zlow, uint8_t zhigh);
-uint8_t ocd_read_spmcr();
+uint8_t ocd_read_spmcr(void);
 
 
 uint8_t ocd_rd_eeprom(uint16_t startaddr, uint16_t len, uint8_t *buf);
@@ -78,10 +78,10 @@ uint8_t ocd_set_psb1(uint16_t addr);
 uint8_t ocd_set_pdmsb(uint16_t addr, uint8_t mode);
 uint8_t ocd_set_pdsb(uint16_t addr, uint8_t mode);
 
-uint8_t ocd_clr_psb0();
-uint8_t ocd_clr_psb1();
-uint8_t ocd_clr_pdmsb();
-uint8_t ocd_clr_pdsb();
+uint8_t ocd_clr_psb0(void);
+uint8_t ocd_clr_psb1(void);
+uint8_t ocd_clr_pdmsb(void);
+uint8_t ocd_clr_pdsb(void);
 
 
 unsigned char wr_dbg_ocd (unsigned char reg, unsigned char *buf, unsigned delay);

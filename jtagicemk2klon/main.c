@@ -47,6 +47,7 @@ unsigned char forcedStop = 0;
 /*** prototypes and global vars ***/
 /* send a command back to pc */
 void CommandAnswer(int length);
+void JTAGICE_ProcessCommand(unsigned char *localbuf);
 
 
 SIGNAL(SIG_UART_RECV)
@@ -96,7 +97,7 @@ void CommandAnswer(int length)
   for(i = 0; i < length; i++)
     USBNWrite(TXD1, answer[i]);
 
-   /* control togl bit
+   // control togl bit
    USBToglAndSend();
 } */
 
@@ -128,8 +129,8 @@ void USBSend(void)
 
 }
 
-unsigned char buf[MESSAGE_BUFFER_SIZE];	//Recievebuffer for long packages
-static char recieveCounter = 0;
+unsigned char buf[MESSAGE_BUFFER_SIZE];	// Recievebuffer for long packages
+// static char recieveCounter = 0;	// not used now
 
 /* is called when received data from pc */
 void USBReceive(char *inbuf)
@@ -244,94 +245,94 @@ void USBReceive(char *inbuf)
 	PORTA &= ~(1<<PA4); // we do nothing anymore
 }
 
-void JTAGICE_ProcessCommand(char *buf) {
+void JTAGICE_ProcessCommand(unsigned char *localbuf) {
 	int cmdlength=0;
 UARTWrite("Com: ");
 SendHex(buf[8]);
 UARTWrite("\r\n");
-		switch(buf[8]) {
+	switch(localbuf[8]) {
 
 			case CMND_GET_SIGN_ON:
-				cmdlength = cmd_get_sign_on((char*)buf,(char *)answer);
+				cmdlength = cmd_get_sign_on((char*)localbuf,(char *)answer);
 			break;
 
 			case CMND_GET_SIGN_OFF:
-				cmdlength = cmd_sign_off((char*)buf,(char*)answer);
+				cmdlength = cmd_sign_off((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_SET_PARAMETER:
-				cmdlength = cmd_set_parameter((char*)buf,(char*)answer);
+				cmdlength = cmd_set_parameter((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_READ_MEMORY:
-				cmdlength = cmd_read_memory((char*)buf,(char*)answer);
+				cmdlength = cmd_read_memory((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_GET_PARAMETER:
-				cmdlength = cmd_get_parameter((char*)buf,(char*)answer);
+				cmdlength = cmd_get_parameter((char*)localbuf,(char*)answer);
 			break;
 			case CMND_GET_SYNC:
-				cmdlength = cmd_get_sync((char*)buf,(char*)answer);
+				cmdlength = cmd_get_sync((char*)localbuf,(char*)answer);
 			break;
 			case CMND_FORCED_STOP:
-				cmdlength = cmd_forced_stop((char*)buf,(char*)answer);
+				cmdlength = cmd_forced_stop((char*)localbuf,(char*)answer);
 				forcedStop = 1;
 			break;
 
 			case CMND_SET_DEVICE_DESCRIPTOR:
-				cmdlength = cmd_set_device_descriptor((char*)buf, (char*)answer);
+				cmdlength = cmd_set_device_descriptor((char*)localbuf, (char*)answer);
 			break;
 
 			case CMND_GO:
-				cmdlength = cmd_go((char*)buf,(char*)answer);
+				cmdlength = cmd_go((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_RESTORE_TARGET:
-				cmdlength = cmd_restore_target((char*)buf,(char*)answer);
+				cmdlength = cmd_restore_target((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_LEAVE_PROGMODE:
-				cmdlength = cmd_leave_progmode((char*)buf,(char*)answer);
+				cmdlength = cmd_leave_progmode((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_ENTER_PROGMODE:
-				cmdlength = cmd_enter_progmode((char*)buf,(char*)answer);
+				cmdlength = cmd_enter_progmode((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_RESET:
-				cmdlength = cmd_reset((char*)buf,(char*)answer);
+				cmdlength = cmd_reset((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_READ_PC:
-				cmdlength = cmd_read_pc((char*)buf,(char*)answer);
+				cmdlength = cmd_read_pc((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_SET_BREAK:
-				cmdlength = cmd_set_break((char*)buf,(char*)answer);
+				cmdlength = cmd_set_break((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_CLR_BREAK:
-				cmdlength = cmd_clr_break((char*)buf,(char*)answer);
+				cmdlength = cmd_clr_break((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_SINGLE_STEP:
-				cmdlength = cmd_single_step((char*)buf,(char*)answer);
+				cmdlength = cmd_single_step((char*)localbuf,(char*)answer);
 			break;
 
 			case CMND_SELFTEST:
-				cmdlength = cmd_selftest((char*)buf, (char*)answer);
+				cmdlength = cmd_selftest((char*)localbuf, (char*)answer);
 			break;
 
 			case CMND_WRITE_MEMORY:
-				cmdlength = cmd_write_memory((char*)buf, (char*)answer);
+				cmdlength = cmd_write_memory((char*)localbuf, (char*)answer);
 			break;
 
 			case CMND_CHIP_ERASE:
-				cmdlength = cmd_chip_erase((char*)buf, (char*)answer);
+				cmdlength = cmd_chip_erase((char*)localbuf, (char*)answer);
 			break;
 
 			case CMND_WRITE_PC:
-				cmdlength = cmd_write_pc((char*)buf,(char*)answer);
+				cmdlength = cmd_write_pc((char*)localbuf,(char*)answer);
 			break;
 
 			default:
@@ -371,8 +372,7 @@ UARTWrite("\r\n");
 
 
 
-int main(void)
-{
+int main(void) {
   int conf, interf;
 	// only for testing
 	//asm volatile ("push r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0\npush r0");
@@ -457,9 +457,9 @@ int main(void)
 			UARTWrite("Check BSR:");
 #endif
 
-			uint16_t bsr;
+			uint8_t bsr;
 			//debug_verbose = 1;
-			rd_dbg_ocd(AVR_BSR,&bsr,0);
+			rd_dbg_ocd(AVR_BSR, &bsr, 0);
 
 #ifdef DEBUG_VERBOSE
 			SendHex((char)(bsr>>8));
@@ -506,7 +506,7 @@ int main(void)
 #endif
 
 #ifdef DEBUG_ON
-				uint16_t data;
+				uint8_t data;
 				rd_dbg_ocd(AVR_BSR,&data,0);
 				UARTWrite("BSR:");
 				SendHex(data>>8);
@@ -535,7 +535,7 @@ int main(void)
 				//avrContext.break_config &= 0xC000; // rule out all breakpoint configurations
 				// wr_dbg_ocd(AVR_BCR,&avrContext.break_config,0); // this is no longer needed because it get's updated on restore context
 
-				evt_break(answer,avrContext.PC,break_cause);
+				(void)evt_break((char *)answer, avrContext.PC, break_cause);
 				CommandAnswer(16);
 				jtagice.emulator_state = STOPPED;
 				PORTA &= ~(1<<PA4); // LED OFF

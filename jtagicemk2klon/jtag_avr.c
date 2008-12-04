@@ -2,6 +2,7 @@
 #include "jtag_avr_defines.h"
 #include "jtag.h"
 #include "jtag_avr_ocd.h"
+#include "uart.h"
 
 
 void idcode(unsigned char *buf)

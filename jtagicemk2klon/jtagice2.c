@@ -126,7 +126,7 @@ int cmd_get_sign_on(char *msg, char * answer)
 	SendHex((char)(addr>>8));
 	SendHex((char)addr);
 	UARTWrite("\r\nDDescAddr:");
-	addr = &deviceDescriptor;
+	addr = (uint16_t)&deviceDescriptor;
 	SendHex((char)(addr>>8));
 	SendHex((char)addr);
 	UARTWrite("\r\n");
@@ -198,7 +198,7 @@ int cmd_get_parameter(char *msg, char * answer)
 	answer[5] = 0;
 	answer[6] = 0;
 
-	char signature[3];
+//	char signature[3];
 
 	switch(msg[9])
 	{
@@ -216,7 +216,7 @@ int cmd_get_parameter(char *msg, char * answer)
 
 	case JTAG_ID_STRING:
 		// get id from target controller over jtag connection
-		idcode(jtagbuf);
+		idcode((unsigned char *)jtagbuf);
 
 		answer[3] = 0x05;		// length of body
 		answer[8] = RSP_PARAMETER;		// (0x80 = ok)
@@ -310,7 +310,7 @@ int cmd_write_pc(char *msg, char * answer)
 
 int cmd_clr_break(char *msg, char * answer)
 {
-	int16_t addr = msg[10] | (msg[11] << 8);
+//	int16_t addr = msg[10] | (msg[11] << 8);
 
 	if (msg[9] == 1) {
 		ocd_clr_psb0();
@@ -399,7 +399,7 @@ int cmd_single_step(char *msg, char * answer)
 	ocd_restore_context();
 
 	uint16_t stepbit = AVR_BRK_STEP;
-	wr_dbg_ocd(AVR_BCR,&stepbit,0); // set the stepping bit remove other breakpoints
+	wr_dbg_ocd(AVR_BCR, (unsigned char *)&stepbit, 0); // set the stepping bit remove other breakpoints
 
 	avr_jtag_instr(AVR_RUN, 0);
 	jtagice.emulator_state = RUNNING;
@@ -454,12 +454,12 @@ int cmd_go(char * msg, char * answer)
 
 #ifdef DEBUG_ON
 	uint16_t brk;
-	rd_dbg_ocd(AVR_DBG_COMM_CTL,&brk,0);
+	rd_dbg_ocd(AVR_DBG_COMM_CTL, (unsigned char *)&brk, 0);
 	UARTWrite("OCDCTL: ");
 	SendHex(brk>>8);
 	SendHex((char)brk);
 	UARTWrite("\r\n");
-	rd_dbg_ocd(AVR_BCR,&brk,0);
+	rd_dbg_ocd(AVR_BCR, (unsigned char *)&brk, 0);
 	UARTWrite("BCR: ");
 	SendHex(brk>>8);
 	SendHex((char)brk);
@@ -545,8 +545,10 @@ int cmd_read_memory(char * msg, char * answer)
 #endif
 
 	// decode generic parameters
-	len = (msg[13] << 24) |  (msg[12] << 16) | (msg[11] << 8) | msg[10];
-	startaddr = (msg[17] << 24) |  (msg[16] << 16) | (msg[15] << 8) | msg[14];
+	len = ((unsigned long)msg[13] << 24) |
+		((unsigned long)msg[12] << 16) | (msg[11] << 8) | msg[10];
+	startaddr = ((unsigned long)msg[17] << 24) |
+		((unsigned long)msg[16] << 16) | (msg[15] << 8) | msg[14];
 
 
 	//// !!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -608,14 +610,14 @@ int cmd_read_memory(char * msg, char * answer)
 			msglen = len+1;
 			// todo: range checks against the device parameters
 
-			ocd_rd_eeprom((uint16_t)startaddr,(uint16_t)len,&answer[9]);
+			ocd_rd_eeprom((uint16_t)startaddr,(uint16_t)len, (uint8_t *)&answer[9]);
 			break;
 		case SRAM:
 			// read from registerspace, io/memory or sram
 			msglen = len+1;
 			// todo: range checks against the device parameters
 
-			ocd_rd_sram((uint16_t)startaddr,(uint16_t)len,&answer[9]);
+			ocd_rd_sram((uint16_t)startaddr,(uint16_t)len,(uint8_t *)&answer[9]);
 
 		break;
 
@@ -624,7 +626,7 @@ int cmd_read_memory(char * msg, char * answer)
 			msglen = len+1;
 			// todo: range checks against the device parameters
 
-			ocd_rd_flash((uint16_t)startaddr,(uint16_t)len,&answer[9]);
+			ocd_rd_flash((uint16_t)startaddr,(uint16_t)len,(uint8_t *)&answer[9]);
 		break;
 
 		case OSCCAL_BYTE:
@@ -634,7 +636,7 @@ int cmd_read_memory(char * msg, char * answer)
 		break;
 
 		case SIGN_JTAG:
-			rd_signature_avr(&answer[9]);
+			rd_signature_avr((unsigned char *)&answer[9]);
 			//msglen = 4;
 			//answer[3] = 4;					// length of body with ok
 
@@ -672,13 +674,13 @@ int cmd_read_memory(char * msg, char * answer)
 #ifdef DEBUG_ON
 			UARTWrite("flash");
 #endif
-			rd_flash_page(len, startaddr, &answer[9]);
+			rd_flash_page(len, startaddr, (uint8_t *)&answer[9]);
 			msglen = len + 1;
 		}
 		break;
 
 		case EEPROM_PAGE:
-			rd_eeprom_page((msg[11] << 8) | msg[10], (msg[15] << 8) | msg[14],  &answer[9]);
+			rd_eeprom_page((msg[11] << 8) | msg[10], (msg[15] << 8) | msg[14], (uint8_t *)&answer[9]);
 			answer[3] = msg[10] + 1;
 			msglen = answer[3];
 		break;
@@ -798,22 +800,22 @@ int cmd_write_memory(char *msg, char *answer)
 
 		break;
 		case EEPROM:
-			ocd_wr_eeprom((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
+			ocd_wr_eeprom((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], (uint8_t *)&msg[18]);
 			return rsp_ok(answer);
 		break;
 
 		case SRAM:
-			ocd_wr_sram((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], &msg[18]);
+			ocd_wr_sram((msg[15] << 8) | msg[14], (msg[11] << 8) | msg[10], (uint8_t *)&msg[18]);
 			return rsp_ok(answer);
 		break;
 
 		case SPM:
-			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], &msg[18]);
+			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], (uint8_t *)&msg[18]);
 			return rsp_ok(answer);
 		break;
 
 		case FLASH_PAGE:
-			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], &msg[18]);
+			wr_flash_page((msg[11] << 8) | msg[10], ((unsigned long) msg[16] << 16) | ((unsigned long) msg[15] << 8) | msg[14], (uint8_t *)&msg[18]);
 			return rsp_ok(answer);
 		break;
 

@@ -21,6 +21,7 @@
 #include <string.h>
 #include "usbn960x.h"
 //#include "../fifo.h"
+#include "../jtagicemk2klon/usbn2mc.h"
 
 #define DEBUG 0
 
@@ -117,11 +118,10 @@ void _USBNNackEvent(void)
 
 
 
-
 void _USBNReceiveEvent(void)
 {
   unsigned char event;
-  void (*ptr)();
+  void (*ptr)(void *) = (void*)NULL;
   char buf[64];
   char *bufp=&buf[0];
   event = USBNRead(RXEV);
@@ -186,7 +186,7 @@ void _USBNReceiveEvent(void)
 void _USBNTransmitEvent(void)
 {
   unsigned char event;
-  void (*ptr)();
+  void (*ptr)(void) = (void *)NULL;
   event = USBNRead(TXEV);
   //USBNDebug("tx event\r\n");
   if(event & TX_FIFO0) _USBNTransmitFIFO0();
@@ -592,7 +592,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
       //USBNDebug("DEVICE DESCRIPTOR\n\r");  
       //#endif
       EP0tx.Size = DeviceDescriptor.bLength;
-      EP0tx.Buf = (char*)&(DeviceDescriptor);
+      EP0tx.Buf = (unsigned char*)(&DeviceDescriptor);
       
       // first get descriptor request is
       // always be answered with first 8 unsigned chars of dev descriptor
@@ -612,7 +612,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 
       // send complete tree
       EP0tx.Size =req->wLength;
-      EP0tx.Buf = &FinalConfigurationArray[index][0];
+      EP0tx.Buf = (unsigned char*)&(FinalConfigurationArray[index][0]);
 
     break;
     case STRING:
@@ -624,7 +624,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 
       if(index >0)
       {
-	EP0tx.Buf = &FinalStringArray[index][0];
+	EP0tx.Buf = (unsigned char*)&(FinalStringArray[index][0]);
 	EP0tx.Size = EP0tx.Buf[0];
       }
       else { 
@@ -635,7 +635,7 @@ void _USBNGetDescriptor(DeviceRequest *req)
 	//EP0tx.Buf = &FinalStringArray[0][0];
 	//EP0tx.Size = EP0tx.Buf[0];
 	EP0tx.Size=4;
-	EP0tx.Buf=lang;
+	EP0tx.Buf = (unsigned char*)lang;
 
       }
     break;

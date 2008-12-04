@@ -149,6 +149,8 @@ int cmd_selftest(char *msg, char *buf);
 int cmd_write_memory(char *msg, char *answer);
 int cmd_chip_erase(char *msg, char *answer);
 
+int cmd_write_pc(char *msg, char *answer);
+
 int rsp_ok(char *answer);
 int rsp_failed(char *answer);
 int rsp_illegal_breakpoint(char *answer);
