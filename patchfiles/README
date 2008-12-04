@@ -1,0 +1,5 @@
+usbprog.diff
+- upload hanger shoule be away ( tested but my controller didn't work with this patch)
+
+usbprog.patch2.bz2
+- clean up the jtag ice mk2 clone source
