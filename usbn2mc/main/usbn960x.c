@@ -21,7 +21,7 @@
 #include <string.h>
 #include "usbn960x.h"
 //#include "../fifo.h"
-#include "../jtagicemk2klon/usbn2mc.h"
+//#include "../jtagicemk2klon/usbn2mc.h"
 
 #define DEBUG 0
 
