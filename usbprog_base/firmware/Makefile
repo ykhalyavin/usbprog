@@ -439,6 +439,7 @@ download:
 	#avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe0:m
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xa0:m
 	avrdude -p m32 -c avrispv2 -P usb -B 10 -U hfuse:w:0xd8:m
+	sleep 2
 	perl upload.pl
 
 downloadb:
