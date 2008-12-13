@@ -22,9 +22,9 @@ void UARTInit(void)
 	//ATmega32 bei 16MHz und für 19200 Baud
 	// 4 mhz 9600 baud =25 
   	UBRRH  = 0;                                   // Highbyte ist 0
-  	//UBRRL  = 25;                                  // Lowbyte ist 51 ( dezimal )
-  	//UBRRL  = 51;                                  // Lowbyte ist 51 ( dezimal )
-  	UBRRL  = 103;                                  // Lowbyte ist 51 ( dezimal )
+  	UBRRL  = 25;                                  // 38400
+  	//UBRRL  = 51;                                // Lowbyte ist 51 ( dezimal )
+  	//UBRRL  = 103;                                  // Lowbyte ist 51 ( dezimal )
     // Flush Receive-Buffer
   
   	do

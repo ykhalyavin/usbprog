@@ -37,7 +37,11 @@
 #include "wait.h"
 
 #include "../usbprog_base/firmwarelib/avrupdate.h"
-//#include "uart.h"
+
+#if DEBUG_ON
+#include "uart.h"
+#endif
+
 #include "usbn2mc.h"
 
 /* command descriptions for mk2 */
@@ -375,6 +379,16 @@ void program_fsm(uint8_t* buffer, uint8_t eeprom)
       }
     }
   }
+  #if DEBUG_ON
+  UARTWrite("pgm num ");
+  SendHex(pgmmode.numbytes);
+  UARTWrite("\r\n ");
+  #endif
+  
+  // get an additional 0 byte cmd package if the size of the last package = 64 
+  if (pgmmode.numbytes==64)
+    pgmmode.numbytes++;
+
   if (pgmmode.numbytes>databytes) {
     pgmmode.numbytes-=databytes;
     usbprog.longpackage=1;        //Expect more data
@@ -383,6 +397,7 @@ void program_fsm(uint8_t* buffer, uint8_t eeprom)
     pgmmode.numbytes=0;           //No more data left
     usbprog.longpackage=0;        //Expect no more data
   }
+
   if (eeprom && answer[1] == STATUS_CMD_OK) {
     // copy the datas to our temp buffer
     memcpy(ptr, buffer, databytes);
@@ -471,6 +486,7 @@ void program_fsm(uint8_t* buffer, uint8_t eeprom)
         pgmmode.address++;
       }
     }
+
     if (pgmmode.numbytes==0) {
       if ((pgmmode.mode & 0x81) == 0x81) {
         // page mode
@@ -718,17 +734,17 @@ void USBFlash(char *buf)
   char result = 0;
   int numbytes;
   uint8_t *ptr;
+  int i;
   
   USBNWrite(TXC1, 0x00);
   
-  #if DEBUG_ON
-  UARTWrite("cmd ");
-  SendHex(buf[0]);
-  UARTWrite("cmd\r\n");
-  #endif
   USBNWrite(TXC1, FLUSH);
   // first see if this packet is expected by Flash or EEPROM programming
   if(usbprog.longpackage) {
+    #if DEBUG_ON
+    UARTWrite("USBFlash longpackage\r\n ");
+    #endif
+
     if(usbprog.lastcmd == CMD_PROGRAM_FLASH_ISP) {// last operation was flash programming
        program_fsm((uint8_t*)buf, 0);
     }
@@ -741,6 +757,12 @@ void USBFlash(char *buf)
 
   // if not, this is a command packet, we will decode here
   else {
+    #if DEBUG_ON
+    UARTWrite("cmd ");
+    SendHex(buf[0]);
+    UARTWrite("cmd\r\n");
+    #endif
+
     usbprog.lastcmd = buf[0]; // store current command for later use
     switch(buf[0]) {
     
@@ -936,7 +958,11 @@ void USBFlash(char *buf)
         SendHex(buf[i]);
         UARTPutChar(' ');
       }
+      UARTWrite("len ");
+        SendHex(buf[2]);
+      UARTWrite(" \r\n");
       #endif
+
       pgmmode.numbytes = (buf[1] << 8) | (buf[2]);
 
       // buf[3] = mode
