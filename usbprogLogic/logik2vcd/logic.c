@@ -40,7 +40,7 @@ Logic* openLogic()
   {
     for (dev = bus->devices; dev; dev = dev->next)	
     {
-      if (dev->descriptor.idVendor == 0x1786) // 0x0400 changed to new VID
+      if (dev->descriptor.idVendor == 0x0400) // 0x0400 changed to new VID
       {	
 	located++;
 	tmp->logic_handle = usb_open(dev);
@@ -51,7 +51,6 @@ Logic* openLogic()
   if (tmp->logic_handle==0) return (0);
   else 
   {
-    printf("found\n");
     usb_set_configuration(tmp->logic_handle,1);
     usb_claim_interface(tmp->logic_handle,0);
     usb_set_altinterface(tmp->logic_handle,0);
@@ -71,11 +70,12 @@ int closeLogic(Logic* self)
 
 int sendLogicCommand(Logic* self,char *command)
 {
-  return usb_bulk_write(self->logic_handle,2,command,(int)command[1],1000);
+  return usb_bulk_write(self->logic_handle,0x02,command,(int)command[1],1000);
 }
 
 int readLogicData(Logic* self, char* data, int length)
 {
+  sleep(3);
   int i,j,dataindex=0;
   char tmp[length];
   char command[2] = {CMD_GETDATA,2};
@@ -83,7 +83,7 @@ int readLogicData(Logic* self, char* data, int length)
   while(1) 
   {
     sendLogicCommand(self,command);
-    i = usb_bulk_read(self->logic_handle,2,tmp,length,100);	
+    i = usb_bulk_read(self->logic_handle,0x92,tmp,length,100);	
     for(j=0;((j<i) && (dataindex<length));j++)
     {
       data[dataindex]=tmp[j];
@@ -160,12 +160,13 @@ void RecordingInternal(Logic* self,char samplerate)
   SetLogicMode(self,MODE_LOGICINTERN);
   SetLogicSampleRate(self,samplerate);
   StartLogic(self);
+
   // TODO check here with an endless loop and  GetLogicState if record is ready
-  sleep(1);
-  return;
+  // return;
+
   while(GetLogicState(self) !=STATE_DONOTHING)
   {
-    Sleep(1);
+    sleep(1);
   }
 }
 

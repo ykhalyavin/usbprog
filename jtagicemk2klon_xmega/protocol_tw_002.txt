@@ -1,0 +1,258 @@
+Author: Thomas Wollenhaupt / thomas.wollenhaupt[at]web.de / 25.03.2007 / V0.2
+
+AVR JTAG interface for programming and debugging
+-------------------------------------------------
+(Information derived from different sources in the web, e.g. gipper)
+
+(!!! Not yet reviewed !!!)
+
+0. General
+----------
+data[tdi] = data sent to target during DR-shift (TDO of programmer).
+data[tdo] = data received from target during DR-shift (TDI of programmer).
+instr = data send into instruction register (during IR-Shift) of targets TAP-controller
+x = undefined data-byte received
+
+Command register (data register if instr=AVR_PRG_CMDS) seems to be 16 bit wide. [0x12, 0x34] = 0x3412
+Transmits LSB first of each byte (see JTAG-Spec).
+
+1. JTAG commands
+----------------
+This commands are derived from the BSDL-File of an ATmegaxxx.
+
+1.1 IR
+------
+IR-Register length = 4 bit.
+
+EXTEST:            IR = 0x0 (BSDL)
+ID:                IR = 0x1 (BSDL)
+SAMPLE:            IR = 0x2 (BSDL)
+AVR_PRG_ENABLE:    IR = 0x4 (undocumented)
+AVR_PRG_CMDS:      IR = 0x5 (undocumented)
+AVR_PRG_PAGE_LOAD: IR = 0x6 (undocumented)
+AVR_PRG_PAGE_READ: IR = 0x7 (undocumented)
+AVR_FORCE_BRK:     IR = 0x8 (BSDL)
+AVR_RUN:           IR = 0x9 (BSDL)
+AVR_INSTR:         IR = 0xA (BSDL)
+AVR_OCD:           IR = 0xB (BSDL)
+AVR_RESET:         IR = 0xC (BSDL)
+BYPASS:            IR = 0xF (BSDL)
+
+1.2 IDs of Atmel
+----------------
+
+ATmega16:   0x8940303F (1000 1001 0100 0000 0011 0000 0011 1111)
+ATmega32:   0x0950203F (0000 1001 0101 0000 0010 0000 0011 1111)
+ATmega64:   0x0960203F (0000 1001 0110 0000 0010 0000 0011 1111)
+ATmega128:  0x0960203F (0000 1001 0110 0000 0010 0000 0011 1111)
+ATmega162:  0x3940403F (0011 1001 0100 0000 0100 0000 0011 1111)
+ATmega165:  0x0940703F (0000 1001 0100 0000 0111 0000 0011 1111)
+ATmega169:  0x4940503F (0100 1001 0100 0000 0101 0000 0011 1111)
+ATmega323:  0x0950103F (0000 1001 0101 0000 0001 0000 0011 1111)
+ATmega325:  0x0950503F (0000 1001 0101 0000 0101 0000 0011 1111)
+ATmega329:  0x0950303F (0000 1001 0101 0000 0011 0000 0011 1111)
+AT90CAN128: 0x0978103F (0000 1001 0111 1000 0001 0000 0011 1111)
+ATmega2560: 0x0980103F (0000 1001 1000 0000 0001 0000 0011 1111)
+ATmega2561: 0x0980203F (0000 1001 1000 0000 0010 0000 0011 1111)
+ATmega3250: 0x0950603F (0000 1001 0101 0000 0110 0000 0011 1111)
+ATmega6450: 0x0960603F (0000 1001 0110 0000 0110 0000 0011 1111)
+ATmega6490: 0x0960403F (0000 1001 0110 0000 0100 0000 0011 1111)
+ATmega3290: 0x0950403F (0000 1001 0101 0000 0100 0000 0011 1111)
+
+2. Programming
+--------------
+
+2.1 JTAG-Reset
+--------------
+action:
+(1) toggle tck 0->1->0 with TMS=0, TDI=0
+(2) clock 5x with TMS = 1, TDI = 0  (JTAG reset)
+(3) toggle tck 0->1->0 with TMS=0, TDI=0
+(4) instr = AVR_RESET (0xC)         (AVR reset)
+(5) data = 0x1 (only one bit !)
+
+2.2 Enable programming mode
+---------------------------
+action:
+(1) JTAG-Reset first (see 2.1)
+(2) instr = AVR_PRG_ENABLE (0x4)
+(3) data[tdi] = [0x70, 0xA3]
+
+2.3 Disable programming mode
+----------------------------
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = [0x00, 0x23], [0x00, 0x33]
+(3) instr = AVR_PRG_ENABLE (0x4)
+(4) data[tdi] = 0x00, 0x00
+
+2.4. Chip erase
+---------------
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = [0x80, 0x23], [0x80, 0x31], [0x80, 0x33], [0x80, 0x33], [0x80, 0x33] (chip erase sequence)
+
+2.5 Flash program (Page)
+------------------------
+Pagesize depends on silicon (e.g. 1024 or 2048 bytes)
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = [0x10, 0x23], [high byte address, 0x07], [low byte address, 0x03]
+(3) instr = AVR_PRG_PAGE_LOAD (0x6)
+(4) data[tdi] = [data_byte0, data_byte1], ...
+(5) instr = AVR_PRG_CMDS (0x5)
+(6) data[tdi] = [0x00, 0x37], [0x00, 0x35], [0x00, 0x37], [0x00, 0x37]
+
+2.6 Flash read (Page)
+---------------------
+Pagesize depends on silicon (e.g. 1024 or 2048 bytes)
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = [0x02, 0x23], [high byte address, 0x07], [low byte address, 0x03]
+(3) instr = AVR_PRG_PAGE_READ (0x7)
+(4) data[tdi, loop] = [0x00, 0x00], [0x00, 0x00], ...
+(5) data[tdo, loop] = [x, byte0], [byte1, byte2], [byte3,...
+(6) instr = AVR_PRG_CMDS (0x5)
+
+2.7 EEPROM write (Page mode)
+----------------------------
+Pagesize depends on silicon (e.g. 32 bytes)
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = [0x11, 0x23], [high byte address, 0x07]
+(3) data[tdi, loop] = [low byte address, 0x03], [databyte, 0x13], [0x00, 0x37], [0x00, 0x77], [0x00, 0x37]
+(4) data[tdi] =  [0x00, 0x33], [0x00, 0x31], [0x00, 0x33], [0x00, 0x33] (eeprom write page sequence)
+
+2.8 EEPROM read (Byte mode)
+---------------------------
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data = [0x03, 0x23]
+(3) data[tdi] = [high byte address, 0x07], [low byte address, 0x03], [0x00, 0x33]
+(4) data[tdo] = [x, x], [x, x], [eeprom-byte, x]
+
+2.9 Read calibartion byte
+-------------------------
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x08, 0x23, 0x00, 0x03, 0x00, 0x36, 0x00, 0x37
+(3) data[tdo] = x, x, x, x, x, x, [calibration-byte], x
+
+2.10 Read signature bytes
+-------------------------
+action:
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x08, 0x23
+(3) data[tdi] = 0x00, 0x03, 0x00, 0x32, 0x00, 0x33
+(4) data[tdo] = x, x, x, x, [signature-byte0], x
+(5) data[tdi] = 0x01, 0x03, 0x00, 0x32, 0x00, 0x33
+(6) data[tdo] = x, x, x, x, [signature-byte1], x
+(7) data[tdi] = 0x02, 0x03, 0x00, 0x32, 0x00, 0x33
+(8) data[tdo] = x, x, x, x, [signature-byte2], x
+
+2.11 Read lock byte
+-------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x04, 0x23, 0x00, 0x36, 0x00, 0x37
+(3) data[tdo] = x, x, x, x, [lock-byte], x
+
+2.12 Write lock byte
+--------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x20, 0x23, [lock-byte | 0xC0] , 0x13, 0x00, 0x33, 0x00, 0x31, 0x00, 0x33, 0x00, 0x33, 0x00, 0x33
+
+2.13 Read fuse
+--------------
+2.13.1 Read low fuse byte
+-------------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x04, 0x23, 0x00, 0x32, 0x00, 0x33
+(3) data[tdo] = x, x, x, x, [fuse-byte], x
+
+2.13.2 Read high fuse byte
+--------------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x04, 0x23, 0x00, 0x3E, 0x00, 0x3F
+(3) data[tdo] = x, x, x, x, [fuse-byte], x
+
+2.13.3 Read extended fuse byte
+------------------------------
+onyl for ATmegas >= ATmega64
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x04, 0x23, 0x00, 0x3E, 0x00, 0x3F (??? same as high fuse)
+(3) data[tdo] = x, x, x, x, [fuse-byte], x
+
+2.13.4 Read all fuse bytes
+--------------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+
+without extended fuse byte
+(2) data[tdi] = 0x04, 0x23, 0x00, 0x3E, 0x00, 0x32, 0x00, 0x36, 0x00, 0x37
+(3) data[tdo] = x, x, x, x, x, x, x, [high-fuse-byte],[low-fuse-byte], x
+
+with extended fuse byte
+(2) data[tdi] = 0x04, 0x23, 0x00, 0x3A, 0x00, 0x3E, 0x00, 0x32, 0x00, 0x36, 0x00, 0x37
+(3) data[tdo] = x, x, x, x, x, x, x, [high-fuse-byte],[low-fuse-byte],[ext-fuse-byte], x
+
+
+2.14 Write fuse
+---------------
+2.14.1 Write low fuse byte
+--------------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x40, 0x23, [fuse-byte], 0x13, 0x00, 0x33, 0x00, 0x31, 0x00, 0x33, 0x00, 0x33, 0x00, 0x33
+
+2.14.2 Write high fuse byte
+---------------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x40, 0x23, [fuse-byte], 0x13, 0x00, 0x37, 0x00, 0x35, 0x00, 0x37, 0x00, 0x37, 0x00, 0x37
+
+2.14.3 Write extended fuse byte
+-------------------------------
+(1) instr = AVR_PRG_CMDS (0x5)
+(2) data[tdi] = 0x40, 0x23, [fuse-byte], 0x13, 0x00, 0x3B, 0x00, 0x39, 0x00, 0x3B, 0x00, 0x3B, 0x00, 0x37
+
+
+3. Debugging
+------------
+tbd
+
+The AVR debugging register addresses. All registers are 16 bits wide.
+ AVR_PSB0  = 0x0
+ AVR_PSB1  = 0x1
+ AVR_PDMSB = 0x2
+ AVR_PDSB  = 0x3
+ AVR_BCR   = 0x8  (Break control register)
+ AVR_BSR   = 0x9  (Break control and status register)
+ AVR_DBG_COMM_DATA = 0xC (communication data OCDR register)
+ AVR_DBG_COMM_CTL  = 0xD (control and status of OCDR register)
+
+BCR register definition (0x8)
+ AVR_COMP_MSK                    0x0002
+ AVR_PDMSB_SINGLE_BRK            0x0004
+ AVR_EN_PSB1                     0x0008
+ AVR_EN_PSB0                     0x0010
+ AVR_BRK_ON_FLOW                 0x0020
+ AVR_RD_PC                       0x0040
+ AVR_TMR_RUN_ON_BRK              0x0080
+
+BSR register definition (0x9)
+ AVR_BRK_BRK_INSTR               0x0001
+ AVR_BRK_FORCED                  0x0002
+ AVR_BRK_STAT                    0x0004
+ AVR_BRK_PDSB                    0x0008
+ AVR_BRK_PDMSB                   0x0010
+ AVR_BRK_PSB1                    0x0020
+ AVR_BRK_PSB2                    0x0040
+ AVR_BRK_FLOW                    0x0080
+
+OCDR register definition
+ AVR_SET_OCDR                    0x0004
+ AVR_RES_1                       0x0008
+ AVR_WR_OCDR                     0x0010
+ AVR_EN_OCDR                     0x8000
+
+
+
+
+

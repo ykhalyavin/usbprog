@@ -8,6 +8,9 @@
 #include "usbn2mc.h"
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 
+#define F_CPU 160000000UL
+#include <util/delay.h>
+
 
 #define LED_PIN     PA4
 #define LED_PORT    PORTA
@@ -142,8 +145,15 @@ int main(void)
   
   PORTA &= ~(1<<PA7);
   //CommandAnswer(320);
+  DDRB = 0xFF;
 
   while(1){
+    
+    for(i=0;i < 255; i++)
+    {
+      _delay_us(1);
+      PORTB = (unsigned char)i;
+    }
     //PORTA |= (1<<PA7);
     //PORTA &= ~(1<<PA7);
   }

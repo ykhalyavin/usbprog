@@ -10,4 +10,4 @@ install:
 	chmod o+x /etc/hotplug/usb/logic
 	
 clean:
-	rm demo logicdevice.o 
+	rm *.o

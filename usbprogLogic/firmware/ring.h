@@ -101,7 +101,7 @@ _inline_ring_get (ring_t *f)
 	//uint8_t sreg = SREG;
 	//cli();
 	//_inline_ring_lock(f);
-	f->count--;
+	//f->count--;
 	//_inline_ring_unlock(f);
 	//SREG = sreg;
 	

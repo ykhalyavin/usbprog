@@ -134,11 +134,11 @@ void LogicCommand(char *buf)
     break;
 
     case CMD_GETDATA:
-      //UARTWrite("get scope state\r\n");
+      UARTWrite("get scope data\r\n");
       LogicSendScopeData();
       LogicPingPongTX1();
     break;
-
+e
     case CMD_SETEDGETRIG:
       logic.trigger=TRIGGER_EDGE;
       logic.trigger_channel=buf[2];

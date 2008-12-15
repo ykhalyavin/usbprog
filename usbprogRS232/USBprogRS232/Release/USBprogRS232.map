@@ -1,0 +1,447 @@
+Archive member included because of file (symbol)
+
+/usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_udivmodsi4.o)
+                              ./src/main.o (__udivmodsi4)
+/usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+                              /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o (exit)
+/usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_copy_data.o)
+                              ./src/main.o (__do_copy_data)
+/usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_clear_bss.o)
+                              ./src/main.o (__do_clear_bss)
+/usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/libc.a(strlen_P.o)
+                              ./src/usbn2mc/tiny/usbnapi.o (strlen_P)
+
+Allocating common symbols
+Common symbol       size              file
+
+EP1out_buf          0x8               ./src/usbn2mc/class/CDC/usbcdc.o
+RX1Callback         0x2               ./src/usbn2mc/tiny/usbn960x.o
+sendBuffer          0x42              ./src/main.o
+USB_numStringDescriptors
+                    0x1               ./src/usbn2mc/tiny/usbn960x.o
+recvBuffer          0x42              ./src/main.o
+EP0RXBuf            0x8               ./src/usbn2mc/tiny/usbn960x.o
+StringDescriptors   0x28              ./src/usbn2mc/tiny/usbn960x.o
+DeviceDescriptor    0x2               ./src/usbn2mc/tiny/usbn960x.o
+ConfigurationDescriptor
+                    0x2               ./src/usbn2mc/tiny/usbn960x.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00020000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+LOAD ./src/main.o
+LOAD ./src/usbn2mc.o
+LOAD ./src/usbn2mc/tiny/usbn960x.o
+LOAD ./src/usbn2mc/tiny/usbnapi.o
+LOAD ./src/usbn2mc/class/CDC/usbcdc.o
+LOAD ./src/firmwarelib/avrupdate.o
+LOAD /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a
+LOAD /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/libc.a
+LOAD /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000      0xc30
+ *(.vectors)
+ .vectors       0x00000000       0x54 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ *(.progmem*)
+ .progmem.data  0x00000054       0x26 ./src/main.o
+ .progmem.data  0x0000007a        0x4 ./src/usbn2mc/tiny/usbn960x.o
+                0x0000007a                _USBN_langDesc
+ .progmem.data  0x0000007e       0x5f ./src/usbn2mc/class/CDC/usbcdc.o
+                0x0000007e                cdc_device_descriptor
+                0x00000090                cdc_config_desc
+                0x000000de                . = ALIGN (0x2)
+ *fill*         0x000000dd        0x1 00
+                0x000000de                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x000000de        0x0 linker stubs
+ *(.trampolines*)
+                0x000000de                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x000000de                __ctors_start = .
+ *(.ctors)
+                0x000000de                __ctors_end = .
+                0x000000de                __dtors_start = .
+ *(.dtors)
+                0x000000de                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x000000de        0x0 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+                0x000000de                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x000000de        0xc /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x000000ea       0x16 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_copy_data.o)
+                0x000000ea                __do_copy_data
+ .init4         0x00000100       0x10 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_clear_bss.o)
+                0x00000100                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x00000110        0x8 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+ *(.init9)
+ *(.text)
+ .text          0x00000118        0x4 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+                0x00000118                __vector_12
+                0x00000118                __bad_interrupt
+                0x00000118                __vector_6
+                0x00000118                __vector_3
+                0x00000118                __vector_11
+                0x00000118                __vector_17
+                0x00000118                __vector_19
+                0x00000118                __vector_7
+                0x00000118                __vector_5
+                0x00000118                __vector_4
+                0x00000118                __vector_9
+                0x00000118                __vector_2
+                0x00000118                __vector_15
+                0x00000118                __vector_8
+                0x00000118                __vector_10
+                0x00000118                __vector_16
+                0x00000118                __vector_18
+                0x00000118                __vector_20
+ .text          0x0000011c      0x266 ./src/main.o
+                0x0000011c                __vector_13
+                0x000001ce                USB_CDC_setLineCoding
+                0x00000244                UARTInit
+                0x00000258                main
+                0x00000212                USB_CDC_rxCallback
+                0x00000166                __vector_14
+                0x0000036c                USBNDecodeVendorRequest
+ .text          0x00000382       0x98 ./src/usbn2mc.o
+                0x000003c4                USBNWrite
+                0x000003ea                USBNRead
+                0x000003b2                USBNBurstWrite
+                0x0000039a                USBNBurstRead
+                0x00000382                USBNInitMC
+ .text          0x0000041a      0x594 ./src/usbn2mc/tiny/usbn960x.o
+                0x000005e0                __vector_1
+                0x00000588                USBNReceive
+                0x0000041a                USBNTransmit
+ .text          0x000009ae       0xe4 ./src/usbn2mc/tiny/usbnapi.o
+                0x000009c4                USBNCallbackFIFORX1
+                0x000009ae                USBNInit
+                0x00000a1e                USBNStart
+                0x000009ce                _USBNAddStringDescriptor_P
+ .text          0x00000a92      0x136 ./src/usbn2mc/class/CDC/usbcdc.o
+                0x00000b7a                USB_CDC_tx
+                0x00000a92                USBNSetConfiguration
+                0x00000adc                USBNDecodeClassRequest
+                0x00000b98                USB_CDC_init
+                0x00000ba6                USB_CDC_EP1_receive
+ .text          0x00000bc8       0x10 ./src/firmwarelib/avrupdate.o
+                0x00000bc8                avrupdate_start
+ .text          0x00000bd8        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_udivmodsi4.o)
+ .text          0x00000bd8        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+ .text          0x00000bd8        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_copy_data.o)
+ .text          0x00000bd8        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_clear_bss.o)
+ .text          0x00000bd8       0x12 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/libc.a(strlen_P.o)
+                0x00000bd8                strlen_P
+                0x00000bea                . = ALIGN (0x2)
+ *(.text.*)
+ .text.libgcc   0x00000bea       0x44 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_udivmodsi4.o)
+                0x00000bea                __udivmodsi4
+ .text.libgcc   0x00000c2e        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc   0x00000c2e        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000c2e        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_clear_bss.o)
+                0x00000c2e                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00000c2e        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+                0x00000c2e                exit
+                0x00000c2e                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00000c2e        0x2 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+ *(.fini0)
+                0x00000c30                _etext = .
+
+.data           0x00800060       0x3c load address 0x00000c30
+                0x00800060                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800060        0x0 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+ .data          0x00800060        0x0 ./src/main.o
+ .data          0x00800060        0x0 ./src/usbn2mc.o
+ .data          0x00800060       0x14 ./src/usbn2mc/tiny/usbn960x.o
+                0x00800060                EP0rx
+                0x0080006a                EP0tx
+ .data          0x00800074        0x0 ./src/usbn2mc/tiny/usbnapi.o
+ .data          0x00800074       0x25 ./src/usbn2mc/class/CDC/usbcdc.o
+                0x00800085                EP1out
+                0x0080008f                EP1in
+                0x00800074                lineCoding
+                0x0080007b                EP3in
+ .data          0x00800099        0x2 ./src/firmwarelib/avrupdate.o
+                0x00800099                avrupdate_jump_to_boot
+ .data          0x0080009b        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_udivmodsi4.o)
+ .data          0x0080009b        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+ .data          0x0080009b        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_copy_data.o)
+ .data          0x0080009b        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_clear_bss.o)
+ .data          0x0080009b        0x0 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/libc.a(strlen_P.o)
+ *(.data*)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x0080009c                . = ALIGN (0x2)
+ *fill*         0x0080009b        0x1 00
+                0x0080009c                _edata = .
+                0x0080009c                PROVIDE (__data_end, .)
+
+.bss            0x0080009c       0xcc load address 0x00000c6c
+                0x0080009c                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x0080009c        0x0 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+ .bss           0x0080009c        0x0 ./src/main.o
+ .bss           0x0080009c        0x0 ./src/usbn2mc.o
+ .bss           0x0080009c        0x9 ./src/usbn2mc/tiny/usbn960x.o
+ .bss           0x008000a5        0x0 ./src/usbn2mc/tiny/usbnapi.o
+ .bss           0x008000a5        0x0 ./src/usbn2mc/class/CDC/usbcdc.o
+ .bss           0x008000a5        0x0 ./src/firmwarelib/avrupdate.o
+ .bss           0x008000a5        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_udivmodsi4.o)
+ .bss           0x008000a5        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_exit.o)
+ .bss           0x008000a5        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_copy_data.o)
+ .bss           0x008000a5        0x0 /usr/lib/gcc/avr/4.2.2/avr5/libgcc.a(_clear_bss.o)
+ .bss           0x008000a5        0x0 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/libc.a(strlen_P.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x008000a5       0x84 ./src/main.o
+                0x008000a5                sendBuffer
+                0x008000e7                recvBuffer
+ COMMON         0x00800129       0x37 ./src/usbn2mc/tiny/usbn960x.o
+                0x00800129                RX1Callback
+                0x0080012b                USB_numStringDescriptors
+                0x0080012c                EP0RXBuf
+                0x00800134                StringDescriptors
+                0x0080015c                DeviceDescriptor
+                0x0080015e                ConfigurationDescriptor
+ COMMON         0x00800160        0x8 ./src/usbn2mc/class/CDC/usbcdc.o
+                0x00800160                EP1out_buf
+                0x00800168                PROVIDE (__bss_end, .)
+                0x00000c30                __data_load_start = LOADADDR (.data)
+                0x00000c6c                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800168        0x0
+                0x00800168                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800168                PROVIDE (__noinit_end, .)
+                0x00800168                _end = .
+                0x00800168                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab           0x00000000      0x3fc
+ *(.stab)
+ .stab          0x00000000      0x378 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+ .stab          0x00000378       0x84 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/libc.a(strlen_P.o)
+                                 0x90 (size before relaxing)
+
+.stabstr        0x00000000       0x86
+ *(.stabstr)
+ .stabstr       0x00000000       0x86 /usr/lib/gcc/avr/4.2.2/../../../../avr/lib/avr5/crtm32.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info
+ *(.debug_info)
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(USBprogRS232.elf elf32-avr)
+LOAD linker stubs

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="Makefile" open="1" top="0" tabpos="5">
+		<Cursor position="2328" topLine="231" />
+	</File>
+	<File name="avr_asm.h" open="1" top="0" tabpos="8">
+		<Cursor position="152" topLine="0" />
+	</File>
+	<File name="bit.h" open="1" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="constant.h" open="0" top="0" tabpos="8">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="crc.h" open="0" top="0" tabpos="21">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="jtag.c" open="1" top="0" tabpos="13">
+		<Cursor position="3024" topLine="154" />
+	</File>
+	<File name="jtag.h" open="0" top="0" tabpos="15">
+		<Cursor position="1727" topLine="36" />
+	</File>
+	<File name="jtag_avr.c" open="1" top="0" tabpos="11">
+		<Cursor position="1313" topLine="40" />
+	</File>
+	<File name="jtag_avr.h" open="0" top="0" tabpos="7">
+		<Cursor position="969" topLine="6" />
+	</File>
+	<File name="jtag_avr_defines.h" open="1" top="0" tabpos="7">
+		<Cursor position="2509" topLine="42" />
+	</File>
+	<File name="jtag_avr_ocd.c" open="1" top="0" tabpos="4">
+		<Cursor position="1194" topLine="0" />
+	</File>
+	<File name="jtag_avr_ocd.h" open="1" top="1" tabpos="12">
+		<Cursor position="1698" topLine="33" />
+	</File>
+	<File name="jtag_avr_prg.c" open="1" top="0" tabpos="9">
+		<Cursor position="7158" topLine="0" />
+	</File>
+	<File name="jtag_avr_prg.h" open="0" top="0" tabpos="12">
+		<Cursor position="1727" topLine="1" />
+	</File>
+	<File name="jtagice2.c" open="1" top="0" tabpos="3">
+		<Cursor position="7363" topLine="314" />
+	</File>
+	<File name="jtagice2.h" open="1" top="0" tabpos="10">
+		<Cursor position="5292" topLine="150" />
+	</File>
+	<File name="main.c" open="1" top="0" tabpos="6">
+		<Cursor position="11627" topLine="485" />
+	</File>
+	<File name="uart.c" open="0" top="0" tabpos="3">
+		<Cursor position="1080" topLine="31" />
+	</File>
+	<File name="uart.h" open="0" top="0" tabpos="18">
+		<Cursor position="191" topLine="0" />
+	</File>
+	<File name="usbn2mc.c" open="0" top="0" tabpos="11">
+		<Cursor position="1137" topLine="2" />
+	</File>
+	<File name="usbn2mc.h" open="0" top="0" tabpos="10">
+		<Cursor position="821" topLine="0" />
+	</File>
+	<File name="wait.c" open="1" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="wait.h" open="0" top="0" tabpos="16">
+		<Cursor position="0" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

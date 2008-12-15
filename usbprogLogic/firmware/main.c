@@ -8,11 +8,12 @@
 #include "usbn2mc.h"
 #include "../../usbprog_base/firmwarelib/avrupdate.h"
 
+#define F_CPU 16000000UL
+#include <util/delay.h>
 
 #include "ring.h"
 
 #include "logic.h"
-
 
 SIGNAL(SIG_UART_RECV)
 {
@@ -64,7 +65,7 @@ SIGNAL(SIG_OUTPUT_COMPARE1A)
   {
     ring_put (&logic.ring, port);
   }
-  
+
   if(togl==1)
   {
     PORTA = 0xFF;
@@ -95,7 +96,7 @@ int main(void)
 
   USBNDeviceVendorID(0x0400);
   USBNDeviceProductID(0x9876);
-  //USBNDeviceBCDDevice(0x0201);
+  USBNDeviceBCDDevice(0x0201);
 
 
   char lang[]={0x09,0x04};
@@ -112,8 +113,8 @@ int main(void)
   USBNAlternateSetting(conf,interf,0);
 
   
-  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,&LogicPingPongTX1); // scope data
   USBNAddOutEndpoint(conf,interf,1,0x02,BULK,64,0,&LogicCommand); // scope commands
+  USBNAddInEndpoint(conf,interf,1,0x02,BULK,64,0,&LogicPingPongTX1); // scope data
 
   
   USBNInitMC();
@@ -134,7 +135,7 @@ int main(void)
   USBNStart();
 
   //DDRB=0xff;
-  //DDRA=0xff;
+  DDRA=0xff;
   DDRB=0x00; //in port
   PORTB = 0xff; //internal pull up resistors
 
@@ -143,6 +144,9 @@ int main(void)
   int ringstate=1;
   int internstate=1;
   int i,j;
+
+  UARTWrite("ready...\r\n");
+
   while(1){
 
     if(logic.ring.count>=1000)
@@ -160,6 +164,7 @@ int main(void)
 	}
     }
 
+/*
   if(logic.ring.count>0 &&logic.tx==1 && logic.mode==MODE_LOGIC)
   {
     logic.tx=0;
@@ -173,7 +178,6 @@ int main(void)
     for(i=0;i<j;i++)
       USBNBurstWrite(ring_get_nowait(&logic.ring));
 
-  
     if(datatogl==1)
     {
       USBNWrite(TXC1,TX_LAST+TX_EN+TX_TOGL);
@@ -184,6 +188,7 @@ int main(void)
       datatogl=1;
     }
   }
+*/
   }
 }
 

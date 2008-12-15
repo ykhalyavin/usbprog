@@ -18,9 +18,9 @@ void UARTInit(void)
 	UCSRA = (1 << RXC) | (1 << TXC);
   UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
   UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
-	//ATmega32 bei 16MHz und für 19200 Baud
+  //ATmega32 bei 16MHz und für 19200 Baud
   UBRRH  = 0;                                   // Highbyte ist 0
-  UBRRL  = 51;                                  // Lowbyte ist 51 ( dezimal )
+  UBRRL  = 25;                                  // Lowbyte ist 51 ( dezimal )
     // Flush Receive-Buffer
   do
   {

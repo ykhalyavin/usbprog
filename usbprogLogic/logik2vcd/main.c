@@ -209,10 +209,6 @@ void logic2vcd( void )
 	}
 
 
-
-
-
-
 	// check trigger and switch on
 	if(globalArgs.triggertype==TRIGGER_EDGE)
 	{
@@ -243,14 +239,17 @@ void logic2vcd( void )
 	// online - start, catch into memory, stop 
 	if(globalArgs.recordtype==0)
 	{
+		printf("start online session\n");
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording intern\n"); // TODO say if n > 1000
+
 		RecordingInternal(logic,globalArgs.samplerate_v);
 		GetRecordInternal(logic,buf,1000);
 	}
 	// intern - start, catch values
 	else if(globalArgs.recordtype==1)
 	{
+		printf("start internal record\n");
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording online\n");
 		Recording(logic,globalArgs.samplerate_v,globalArgs.numbers,buf);
@@ -263,6 +262,7 @@ void logic2vcd( void )
 			fprintf(stderr,"Snapshot: comming ...\n");
 	}
 
+	printf("session end reached\n");
 	
 	// write to file
 	  // create file header
