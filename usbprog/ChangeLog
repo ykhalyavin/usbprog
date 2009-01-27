@@ -1,3 +1,8 @@
+2009-01-27  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* Fix problem with recent wxGtk versions that the whole GUI was
+	  hanging when updating the progress bar.
+
 2008-11-09  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Fix build with gcc 4.4, patch from Martin Michlmayr <tbm@cyrius.com>

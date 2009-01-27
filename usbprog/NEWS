@@ -1,6 +1,8 @@
 0.1.8
 -----
   * fix tab completion for multiple matches (like 'device' and 'devices')
+  * Fix problem with recent wxGtk versions that the whole GUI was
+    hanging when updating the progress bar.
 
 0.1.7
 -----

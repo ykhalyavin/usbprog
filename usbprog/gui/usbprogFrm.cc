@@ -272,7 +272,7 @@ void usbprogFrm::CreateGUIControls()
 
     // progress bar
     m_progressGauge = new wxGauge(m_panel, ID_PROCESS_GAUGE, 100, wxDefaultPosition,
-            wxSize(2, 2));
+            wxSize(5, 5));
     topSizer->Add(m_progressGauge, wxGBPosition(5, 1), wxGBSpan(1, 3),
             wxTOP|wxBOTTOM|wxLEFT| wxALIGN_CENTER_VERTICAL |
             wxEXPAND, 5);
