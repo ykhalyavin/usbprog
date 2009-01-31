@@ -1,3 +1,9 @@
+2009-01-31  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* Fix problem that prevented the last byte of the firmware from
+	  being copied
+	  (http://www.embedded-projects.net/bugs/index.php?do=details&task_id=5)
+
 2009-01-27  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Fix problem with recent wxGtk versions that the whole GUI was

@@ -457,7 +457,7 @@ void UsbprogUpdater::writeFirmware(const ByteVector &bv)
     memset(cmd, 0, USB_PAGESIZE);
 
     for (int i = 0; i < bv.size(); i += 64) {
-        size_t sz = min(USB_PAGESIZE, int(bv.size()-i-1));
+        size_t sz = min(USB_PAGESIZE, int(bv.size()-i));
         memset(buf, 0, USB_PAGESIZE);
         copy(bv.begin() + i, bv.begin() + i + sz, buf);
 
