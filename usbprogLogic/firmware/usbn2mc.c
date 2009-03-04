@@ -78,7 +78,7 @@ void USBNWrite(unsigned char Adr, unsigned char Data)
 }
 
 
-inline void USBNBurstWrite(unsigned char Data)
+void USBNBurstWrite(unsigned char Data)
 {
    USB_DATA_OUT = Data;       // put data on the bus
    USB_CTRL_PORT ^= (PF_CS | PF_WR);
