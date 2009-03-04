@@ -57,7 +57,7 @@ void LogicCommand(char *buf)
     case CMD_STARTSCOPE:
       UARTWrite("start scope\r\n");
       datatogl=0;
-      ring_init(&logic.ring, ringbuffer, 1000);
+      ring_init(&logic.ring, ringbuffer, BUFFER_SIZE);
 
       TCCR1A = 0;
 
@@ -138,7 +138,7 @@ void LogicCommand(char *buf)
       LogicSendScopeData();
       LogicPingPongTX1();
     break;
-e
+
     case CMD_SETEDGETRIG:
       logic.trigger=TRIGGER_EDGE;
       logic.trigger_channel=buf[2];

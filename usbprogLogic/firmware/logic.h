@@ -37,9 +37,11 @@
 #define CMD_DEACTIVTRIG	  0x0B
 #define CMD_GETSNAPSHOT	  0x0C
 
-int togl;
+#define BUFFER_SIZE 1000
 
-volatile int8_t ringbuffer[1000];
+volatile char togl;
+
+volatile int8_t ringbuffer[BUFFER_SIZE];
 
 typedef struct {
   uint8_t state;
@@ -56,7 +58,7 @@ typedef struct {
 
 volatile logic_t logic;
 
-void LogicSendScopeData();
+void LogicSendScopeData(void);
 void LogicCommand(char *buf);
-void LogicPingPongTX1();
-void LogicPingPongTX2();
+void LogicPingPongTX1(void);
+void LogicPingPongTX2(void);
