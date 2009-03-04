@@ -21,11 +21,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <string.h>
 
 
 #include "logic.h"
 
+
+#define TYPE_INTERN   0
+#define TYPE_ONLINE   1
+#define TYPE_SNAPSHOT 2
 
 struct globalArgs_t {
 	int triggertype;			
@@ -103,11 +107,11 @@ void logic2vcd( void )
 	int errorfilename = 0;
 	int errors = 0;
 
-	long values = 0;
+	//long values = 0;
 
 	// recordtype
-	if((globalArgs.recordtype!=0) && (globalArgs.recordtype>3))
-		errorrecordtype = 1;
+	if((globalArgs.recordtype != TYPE_INTERN) && (globalArgs.recordtype > TYPE_SNAPSHOT))
+		errorrecordtype = TYPE_ONLINE;
 
 	// triggertype
 	if((globalArgs.triggertype!=TRIGGER_OFF) && (globalArgs.triggertype!=TRIGGER_EDGE)
@@ -237,29 +241,36 @@ void logic2vcd( void )
 
 	// check record typ 
 	// online - start, catch into memory, stop 
-	if(globalArgs.recordtype==0)
+	if(globalArgs.recordtype == TYPE_INTERN)
 	{
-		printf("start online session\n");
+		printf("start internal record\n");
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording intern\n"); // TODO say if n > 1000
 
+
+		//printf("Hallo kosmos\n");
 		RecordingInternal(logic,globalArgs.samplerate_v);
-		GetRecordInternal(logic,buf,1000);
+	//	printf("Hallo welt\n");
+		GetRecordInternal(logic,buf,globalArgs.numbers); //XXX
+//		printf("cu welt\n");
 	}
 	// intern - start, catch values
-	else if(globalArgs.recordtype==1)
+	else if(globalArgs.recordtype == TYPE_ONLINE)
 	{
-		printf("start internal record\n");
+		printf("start online session\n");
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording online\n");
 		Recording(logic,globalArgs.samplerate_v,globalArgs.numbers,buf);
 
 	}
 	// snapshot - get one value
-	else if(globalArgs.recordtype==2)
+	else if(globalArgs.recordtype==TYPE_SNAPSHOT)
 	{
 		if(globalArgs.verbose)
+		{
 			fprintf(stderr,"Snapshot: comming ...\n");
+			exit(1); //XXX
+		}
 	}
 
 	printf("session end reached\n");
@@ -308,6 +319,7 @@ void logic2vcd( void )
   	for(i=0;i<globalArgs.numbers;i++)
   	{
     		sign=buf[i];
+		printf("%d\n", (int) sign);
     		fprintf(globalArgs.file,"#%i\n%i!\n%i*\n%i$\n%i(\n%i)\n%i?\n%i=\n%i+\n",s*2500
                     ,Bit_Test(sign, 0)?1:0
                     ,Bit_Test(sign, 1)?1:0
@@ -323,7 +335,7 @@ void logic2vcd( void )
 	closeLogic(logic);
 	
 	// write data to file
-	printf("Summary: values(%i), samplerate(%s), file(%s)\n",
+	printf("Summary: values(%ld), samplerate(%s), file(%s)\n",
 			globalArgs.numbers,globalArgs.samplerate,globalArgs.filename);
 }
 
