@@ -1,6 +1,6 @@
 all:
-	gcc -g -c logic.c
-	gcc -g -o logic2vcd main.c logic.o -lusb
+	gcc -Wall -g -c logic.c
+	gcc -Wall -g -o logic2vcd main.c logic.o -lusb
 
 install:
 	cp logicc /usr/bin
