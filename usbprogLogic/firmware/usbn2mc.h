@@ -24,7 +24,7 @@
 unsigned char USBNRead(unsigned char Adr);
 unsigned char USBNBurstRead(void);
 void USBNWrite(unsigned char Adr,unsigned char Data);
-inline void USBNBurstWrite(unsigned char Data);
+void USBNBurstWrite(unsigned char Data);
 
 void USBNInitMC(void);
 
