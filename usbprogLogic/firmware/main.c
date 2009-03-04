@@ -121,7 +121,7 @@ int main(void)
   sei();
 
   // init ring
-  ring_init(&logic.ring, ringbuffer, 1000);   
+  ring_init(&logic.ring, ringbuffer, BUFFER_SIZE);   
 
 
   //setup logic state and mode
@@ -149,7 +149,7 @@ int main(void)
 
   while(1){
 
-    if(logic.ring.count>=1000)
+    if(logic.ring.count>=BUFFER_SIZE)
     {
 	if(logic.mode==MODE_LOGICINTERN)
 	{
