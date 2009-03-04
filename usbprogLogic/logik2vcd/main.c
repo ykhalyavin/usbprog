@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define TYPE_ONLINE   1
 #define TYPE_SNAPSHOT 2
 
+#define BYTE unsigned char
+
 struct globalArgs_t {
 	int triggertype;			
 	int recordtype;			// 0 = intern, 1 = online, 2 = snapshot		
@@ -60,7 +62,7 @@ void display_usage( void )
 	"Usage: %s [options]\n"
 	"Options:\n"
 	"  -f <vcd-file>			Specify location of data file.\n\n"
-	"  -R <record-type>		Specify the record type (online,internal or snapshot).\n"
+	"  -R <record-type>		Specify the record type (online,intern or snapshot).\n"
 	"  -T <trigger-type>		Activate Trigger.\n"
 	"  -c <channel>		      	Specify channel for edge trigger (1-8).\n"
 	"  -t <trigger-value>	      	0 or 1 for edgetrigger.\n"
@@ -80,7 +82,6 @@ void display_usage( void )
 
 
 // for generate the vcd file
-#define BYTE unsigned char
 int Bit_Test(BYTE val, BYTE bit) {
 	BYTE test_val = 0x01;    /* dezimal 1 / binaer 0000 0001 */
 	/* Bit an entsprechende Pos. schieben */
@@ -97,7 +98,6 @@ int Bit_Test(BYTE val, BYTE bit) {
  */
 void logic2vcd( void )
 {
-
 	// check default values
 	int errorrecordtype = 0;
 	int errortriggertype = 0;
@@ -239,38 +239,41 @@ void logic2vcd( void )
 
 	char buf[globalArgs.numbers];
 
-	// check record typ 
-	// online - start, catch into memory, stop 
 	if(globalArgs.recordtype == TYPE_INTERN)
 	{
-		printf("start internal record\n");
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording intern\n"); // TODO say if n > 1000
 
 
-		//printf("Hallo kosmos\n");
+		if(globalArgs.verbose)
+		  fprintf(stderr, "Starting recording...\n");
+
 		RecordingInternal(logic,globalArgs.samplerate_v);
-	//	printf("Hallo welt\n");
-		GetRecordInternal(logic,buf,globalArgs.numbers); //XXX
-//		printf("cu welt\n");
+
+		if(globalArgs.verbose)
+		  fprintf(stderr, "Getting internal recording...\n");
+
+		GetRecordInternal(logic,buf,globalArgs.numbers,globalArgs.samplerate_v); //XXX
 	}
-	// intern - start, catch values
+
 	else if(globalArgs.recordtype == TYPE_ONLINE)
 	{
-		printf("start online session\n");
 		if(globalArgs.verbose)
 			fprintf(stderr,"Recording online\n");
+
 		Recording(logic,globalArgs.samplerate_v,globalArgs.numbers,buf);
+
+		StopLogic(logic);
 
 	}
 	// snapshot - get one value
 	else if(globalArgs.recordtype==TYPE_SNAPSHOT)
 	{
-		if(globalArgs.verbose)
-		{
+		//if(globalArgs.verbose)
+		//{
 			fprintf(stderr,"Snapshot: comming ...\n");
-			exit(1); //XXX
-		}
+			exit( EXIT_FAILURE ); //XXX
+		//}
 	}
 
 	printf("session end reached\n");
@@ -393,7 +396,7 @@ int main( int argc, char *argv[] )
 				  globalArgs.triggertype = TRIGGER_PATTERN;
 				else
 				fprintf(stderr,"-T Unkown triggertype.\n Use edge,pattern or forget\
-						\n parameter if you doesn't need a start trigger.\n");
+						\n parameter if you don't need a start trigger.\n");
 				break;
 			case 'c':
 				globalArgs.channel = atoi(optarg);

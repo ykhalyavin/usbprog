@@ -73,25 +73,45 @@ int sendLogicCommand(Logic* self,char *command)
   return usb_bulk_write(self->logic_handle,0x02,command,(int)command[1],1000);
 }
 
-int readLogicData(Logic *self, char *data, int length)
+int readLogicData(Logic *self, char *data, int length, int samplerate)
 {
-  sleep(10); // XXX: might not be enough: e.g. 100ms * 1000 = 100s
+  double snooze;
   int i,j,dataindex=0;
   char tmp[length];
   char command[2] = {CMD_GETDATA,2};
 
+	if(samplerate) // sleep only when recording intern and samplerate > 0
+	{
+		switch(samplerate)
+		{
+			case SAMPLERATE_5US:   snooze =   5e-6; break;
+			case SAMPLERATE_10US:  snooze =  10e-6; break;
+			case SAMPLERATE_50US:  snooze =  50e-6; break;
+			case SAMPLERATE_100US: snooze = 100e-6; break;
+			case SAMPLERATE_1MS:   snooze =   1e-3; break;
+			case SAMPLERATE_10MS:  snooze =  10e-3; break;
+			default:               snooze = 100e-3; // SAMPLERATE_100MS
+		}
+
+		snooze *= length;
+		snooze += 1.5;
+//	printf("snooze: %d\n", (int) snooze);
+    sleep( (int) snooze );
+  }
+
+//  printf("length: %d\n", length);
+
   while(1) 
   {
-    printf("length: %d\n", length);
-    sendLogicCommand(self,command); // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-		//sleep(1);
-    printf("b\n");
-    i = usb_bulk_read(self->logic_handle,0x02,tmp,length,100);
-    printf("i: %d, %s\n", i, usb_strerror());
+    sendLogicCommand(self,command);
+
+    i = usb_bulk_read(self->logic_handle,0x02,tmp, length > 60 ? 60 : length,100);
+
+//    printf("i: %d, %s\n", i, usb_strerror());
     for(j = 0; ((j<i) && (dataindex<length)); j++)
     {
       data[dataindex]=tmp[j];
-      printf("dataindex: %d | %d\n", dataindex, (int) tmp[dataindex]);
+//      printf("dataindex: %d | %d\n", dataindex, (int) tmp[dataindex]);
       dataindex++;
     }
     if(dataindex >= (length-1))
@@ -155,7 +175,7 @@ void Recording(Logic* self,char samplerate,int numbers,char* data)
   SetLogicMode(self,MODE_LOGIC);
   SetLogicSampleRate(self,samplerate);
   StartLogic(self);
-  readLogicData(self, data, numbers);
+  readLogicData(self, data, numbers, 0); //XXX
   StopLogic(self);
 }
 
@@ -168,7 +188,7 @@ void RecordingInternal(Logic* self,char samplerate)
 //  printf("logic samplerate: %d\n", GetLogicSampleRate(self));
 
   StartLogic(self);
-  printf("d\n");
+//  printf("d\n");
 
   // TODO check here with an endless loop and  GetLogicState if record is ready
   // return;
@@ -184,11 +204,11 @@ int i;
   */
 }
 
-void GetRecordInternal(Logic *self, char *data, int length)
+void GetRecordInternal(Logic *self, char *data, int length, int samplerate)
 {
   if(length > 1000)
     length = 1000;
-  readLogicData(self, data, length);
+  readLogicData(self, data, length, samplerate);
 }
 
 

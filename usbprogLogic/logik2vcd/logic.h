@@ -73,7 +73,7 @@ struct logic {
 Logic* openLogic();
 void closeLogic(Logic* self);
 int sendLogicCommand(Logic* self,char *command);
-int readLogicData(Logic* self, char* data,int length);
+int readLogicData(Logic* self, char* data,int length,int samplerate);
 int readLogicResults(Logic* self,char *data);
 
 
@@ -94,7 +94,7 @@ void Recording(Logic* self,char samplerate,int numbers,char* data);
 char TakeSnapshot(Logic* self);
 
 void RecordingInternal(Logic* self,char samplerate);
-void GetRecordInternal(Logic* self,char*data,int length);
+void GetRecordInternal(Logic* self,char*data,int length,int samplerate);
 
 void ActivateEdgeTrigger(Logic* self,int channel,int value);
 void ActivatePatternTrigger(Logic* self,char pattern,char ignore);
