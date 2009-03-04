@@ -71,7 +71,7 @@ struct logic {
 };
 
 Logic* openLogic();
-int closeLogic(Logic* self);
+void closeLogic(Logic* self);
 int sendLogicCommand(Logic* self,char *command);
 int readLogicData(Logic* self, char* data,int length);
 int readLogicResults(Logic* self,char *data);

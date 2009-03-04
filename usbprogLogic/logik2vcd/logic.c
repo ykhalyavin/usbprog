@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "logic.h"
 
 
-Logic* openLogic()
+Logic *openLogic()
 {
   unsigned char located = 0;
   struct usb_bus *bus;
@@ -62,7 +62,7 @@ Logic* openLogic()
 
    
 
-int closeLogic(Logic* self)
+void closeLogic(Logic* self)
 {
   usb_close(self->logic_handle);	
 }
@@ -73,20 +73,25 @@ int sendLogicCommand(Logic* self,char *command)
   return usb_bulk_write(self->logic_handle,0x02,command,(int)command[1],1000);
 }
 
-int readLogicData(Logic* self, char* data, int length)
+int readLogicData(Logic *self, char *data, int length)
 {
-  sleep(3);
+  sleep(10); // XXX: might not be enough: e.g. 100ms * 1000 = 100s
   int i,j,dataindex=0;
   char tmp[length];
   char command[2] = {CMD_GETDATA,2};
 
   while(1) 
   {
-    sendLogicCommand(self,command);
-    i = usb_bulk_read(self->logic_handle,0x92,tmp,length,100);	
-    for(j=0;((j<i) && (dataindex<length));j++)
+    printf("length: %d\n", length);
+    sendLogicCommand(self,command); // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		//sleep(1);
+    printf("b\n");
+    i = usb_bulk_read(self->logic_handle,0x02,tmp,length,100);
+    printf("i: %d, %s\n", i, usb_strerror());
+    for(j = 0; ((j<i) && (dataindex<length)); j++)
     {
       data[dataindex]=tmp[j];
+      printf("dataindex: %d | %d\n", dataindex, (int) tmp[dataindex]);
       dataindex++;
     }
     if(dataindex >= (length-1))
@@ -97,7 +102,7 @@ int readLogicData(Logic* self, char* data, int length)
 
 int readLogicResults(Logic* self,char *data)
 {
-	
+return 0; // XXX	
 }
 
 void SetLogicSampleRate(Logic* self,char samplerate)
@@ -128,20 +133,20 @@ void StopLogic(Logic* self)
 int GetLogicState(Logic* self)
 {
   char command[2] = {CMD_GETSCOPESTATE,2};
-  sendLogicCommand(self,command);
+  return sendLogicCommand(self,command);
 }
 
 int GetLogicMode(Logic* self)
 {
   char command[2] = {CMD_GETSCOPEMODE,2};
-  sendLogicCommand(self,command);
+  return sendLogicCommand(self,command);
 }
 
 
 int GetLogicFIFOLoad(Logic* self)
 {
   char command[2] = {CMD_GETFIFOLOAD,2};
-  sendLogicCommand(self,command);
+  return sendLogicCommand(self,command);
 }
 
 
@@ -158,23 +163,32 @@ void Recording(Logic* self,char samplerate,int numbers,char* data)
 void RecordingInternal(Logic* self,char samplerate)
 {
   SetLogicMode(self,MODE_LOGICINTERN);
+
   SetLogicSampleRate(self,samplerate);
+//  printf("logic samplerate: %d\n", GetLogicSampleRate(self));
+
   StartLogic(self);
+  printf("d\n");
 
   // TODO check here with an endless loop and  GetLogicState if record is ready
   // return;
 
-  while(GetLogicState(self) !=STATE_DONOTHING)
+/*
+int i;
+  while((i = GetLogicState(self)) != STATE_DONOTHING)
   {
+    printf("schlafe %d\n", i);
     sleep(1);
   }
+  printf("fertig");
+  */
 }
 
-void GetRecordInternal(Logic* self,char*data,int lengths)
+void GetRecordInternal(Logic *self, char *data, int length)
 {
-  if(lengths>1000)
-    lengths=1000;
-  readLogicData(self, data, lengths);
+  if(length > 1000)
+    length = 1000;
+  readLogicData(self, data, length);
 }
 
 
