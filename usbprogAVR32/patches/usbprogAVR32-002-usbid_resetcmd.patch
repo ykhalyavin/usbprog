@@ -1,0 +1,325 @@
+Index: usbprogAVR32/src/main.c
+===================================================================
+--- usbprogAVR32/src/main.c	(Revision 1080)
++++ usbprogAVR32/src/main.c	(Arbeitskopie)
+@@ -22,6 +22,8 @@
+ #include "usbn2mc.h"
+ #include "cmd.h"
+ 
++#define _USBSTR(ser) #ser
++#define USBSTR(ser) _USBSTR(ser)
+ 
+ SIGNAL(SIG_INTERRUPT0)
+ {
+@@ -53,7 +55,7 @@
+ 
+     USBNDeviceManufacture("EmbeddedProjects");
+     USBNDeviceProduct("usbprogAVR32 programmer ");
+-    USBNDeviceSerialNumber("ZhuYun");
++    USBNDeviceSerialNumber(USBSTR(USBSERIAL));
+ 
+     conf = USBNAddConfiguration();
+ 
+Index: usbprogAVR32/Makefile
+===================================================================
+--- usbprogAVR32/Makefile	(Revision 1080)
++++ usbprogAVR32/Makefile	(Arbeitskopie)
+@@ -31,6 +31,9 @@
+ # To rebuild project do "make clean" then "make all".
+ #
+ 
++# Set the serial of the resulting USB-Device
++USBSERIAL ?= ZhuYun
++
+ # mth 2004/09 
+ # Differences from WinAVR 20040720 sample:
+ # - DEPFLAGS according to Eric Weddingtion's fix (avrfreaks/gcc-forum)
+@@ -120,6 +123,7 @@
+ CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
+ CFLAGS += $(CSTANDARD)
+ CFLAGS += -DF_OSC=$(F_OSC)
++CFLAGS += -DUSBSERIAL='$(USBSERIAL)'
+ 
+ 
+ 
+@@ -358,6 +362,7 @@
+ 	@echo
+ 	@echo $(MSG_FLASH) $@
+ 	$(OBJCOPY) -O binary -R .eeprom $< $@
++	$(COPY) $@ $*.$(patsubst "%",%,$(USBSERIAL)).bin
+ 	
+ %.hex: %.elf
+ 	@echo
+Index: usbprogAVR32/host/usbprog.cpp
+===================================================================
+--- usbprogAVR32/host/usbprog.cpp	(Revision 1080)
++++ usbprogAVR32/host/usbprog.cpp	(Arbeitskopie)
+@@ -1,9 +1,11 @@
+ #include "usbprog.h"
+ 
+ #include <stdio.h>
++#include <string.h>
+ 
+ /* the device handle */
+ static usb_dev_handle *g_dev = NULL;
++char g_serial[USBPROG_SERIAL_MAXLENGTH];
+ 
+ void usbprog_init(void)
+ {
+@@ -14,10 +16,11 @@
+ {
+ 	struct usb_bus *bus;
+ 	struct usb_device *dev;
++	char dev_serial[USBPROG_SERIAL_MAXLENGTH];
++	int ret;
+ 
+ 	usb_init();
+-	//usb_set_debug(2);
+-
++	//usb_set_debug(2);
+ 	usb_find_busses();
+ 	usb_find_devices();
+ 
+@@ -25,8 +28,25 @@
+ 	for(bus = usb_get_busses(); bus; bus = bus->next)
+ 		for(dev = bus->devices; dev; dev = dev->next)
+ 			if ( dev->descriptor.idVendor == DEV_VID
+-				 && dev->descriptor.idProduct == DEV_PID )
++				 && dev->descriptor.idProduct == DEV_PID ) {
+ 				g_dev = usb_open(dev);
++				if((g_serial != NULL) && (g_serial[0] != '\0')){
++					ret = usb_get_string_simple(
++							g_dev,
++							dev->descriptor.iSerialNumber,
++							dev_serial,
++							USBPROG_SERIAL_MAXLENGTH
++							);
++					if(ret<0) {
++						printf("Error: Can't read serial\n");
++						continue;
++					}
++					if(strncmp(g_serial,dev_serial,ret) != 0) {
++						usb_close(g_dev);
++						g_dev = NULL;
++					}
++				}
++			}
+ 
+ 	if(g_dev == NULL) {
+ 		printf("Error: device not found!\n");
+Index: usbprogAVR32/host/cmd.cpp
+===================================================================
+--- usbprogAVR32/host/cmd.cpp	(Revision 1080)
++++ usbprogAVR32/host/cmd.cpp	(Arbeitskopie)
+@@ -85,4 +85,19 @@
+ 	return cmd_execute(&cmd);
+ }
+ 
++int cmd_avr32_reset(void)
++{
++	CMD_STR cmd;
++	int ret;
+ 
++	cmd.command = CMD_AVR32_JTAG_AVR_RESET;
++	cmd.data[0] = 0x1F;
++	cmd.size = 1;
++ 	ret = cmd_execute(&cmd);
++//	if(ret != CMD_STATUS_OK) {
++//		return ret;
++//	}
++	sleep(1);
++	cmd.data[0] = 0x00;
++	return cmd_execute(&cmd);
++}
+Index: usbprogAVR32/host/main.cpp
+===================================================================
+--- usbprogAVR32/host/main.cpp	(Revision 1080)
++++ usbprogAVR32/host/main.cpp	(Arbeitskopie)
+@@ -11,6 +11,7 @@
+ #define COMMAND_BLINK						3
+ #define COMMAND_PROG						4
+ #define COMMAND_TEST						5
++#define COMMAND_RESET						6
+ 
+ #define BUFFER_SIZE							512
+ 
+@@ -19,7 +20,9 @@
+ int  g_size = -1;
+ int  g_address = 0;
+ int  g_verify = 0;
++int  g_reset = 0;
+ int  g_command = COMMAND_BLINK;
++
+ FLASH_STR * g_flash = NULL;
+ 
+ void welcome(void);
+@@ -28,6 +31,7 @@
+ int option_l(char* param);
+ int option_s(char* param);
+ int option_f(char* param);
++int option_c(char* param);
+ int parse_command(int argc, char* argv[]);
+ int check(void);
+ int detect(void);
+@@ -35,6 +39,7 @@
+ int program(void);
+ int test(void);
+ int blink(void);
++int reset(void);
+ void swap(char* buf, int num);
+ 
+ #pragma argsused
+@@ -88,10 +93,14 @@
+ 	case COMMAND_TEST:
+ 		test();
+ 		break;
++	case COMMAND_RESET:
++		reset();
++		break;
+ 	default:
+ 		break;
+ 	}
+-
++	if(g_reset != 0)
++		reset();
+ 	cmd_tap_reset(100);
+ 	cmd_tap_set_srst(0);
+ 
+@@ -115,12 +124,15 @@
+ 		"  prog    program the flash\n"\
+ 		"  read    read from the flash\n"\
+ 		/*"  verify  program the flash chip\n"\*/
++		"  reset   resets the target\n"\
+ 		"  help    show this help\n"\
+ 		"options:\n"\
+ 		/*"  -l [start btye address in decimal]  default=0\n"\*/
+ 		"  -s [size in decimal]\n"\
+-		"  -f [binary_file_name]"\
++		"  -f [binary_file_name]\n"\
+ 		/*"  -v  verify\n"\*/
++		"  -c [serial of the usbprog to use]\n"\
++		"  -R reset the target after executing the command\n"\
+ 	);
+ }
+ 
+@@ -148,6 +160,13 @@
+ 			case 'v':
+ 				g_verify = 1;
+ 				break;
++			case 'c':
++				if (option_c(argv[++i]) != STATUS_OK)
++					return STATUS_ERROR;
++				break;
++			case 'R':
++				g_reset = 1;
++				break;
+ 			default:
+ 				printf("Error: invalid option \'%s\'!", argv[i]);
+ 				return STATUS_ERROR;
+@@ -231,6 +250,20 @@
+ 	return STATUS_OK;
+ }
+ 
++int option_c(char *param)
++{
++	if ( (param ==NULL) || (strlen(param) == 0) ) {
++		puts("Error: no parameter with option '-c'!\n");
++		return STATUS_INVALID_PARAM;
++	}
++	if ( strlen(param) > USBPROG_SERIAL_MAXLENGTH ) {
++		puts("Error: Serial is too long!\n");
++		return STATUS_INVALID_PARAM;
++	}
++	memcpy(g_serial,param,strlen(param));
++	return STATUS_OK;
++}
++
+ int parse_command(int argc, char* argv[])
+ {
+ 	int r;
+@@ -265,6 +298,8 @@
+ 			g_command = COMMAND_PROG;
+ 		} else if ( !strcmp(cmdl, "test") ) {
+ 			g_command = COMMAND_TEST;
++		} else if ( !strcmp(cmdl, "reset") ) {
++			g_command = COMMAND_RESET;
+ 		} else {
+ 			printf("Error: invalid command \'%s\'!", cmdl);
+ 			r = STATUS_ERROR;
+@@ -357,8 +392,10 @@
+ 	i = 0;
+ 	k = 0;
+ 	while (i < g_size) {
+-		if ((k++ % 8) == 0)
++		if ((k++ % 8) == 0) {
+ 			putchar('.');
++			fflush(stdout);
++		}
+ 
+ 		size = g_size - i;
+ 		if (size > BUFFER_SIZE)
+@@ -383,6 +420,21 @@
+ 	return r;
+ }
+ 
++int reset (void)
++{
++	int r;
++
++	printf("Resetting target: ");
++	r = cmd_avr32_reset();
++//	if (r == STATUS_OK) {
++		printf("[DONE]\n");
++//	} else {
++//		printf("[ERROR] %d\n",r);
++//	}
++//	return r;
++	return STATUS_OK;
++}
++
+ int blink(void)
+ {
+ 	puts("This function is not implemented yet:)");
+@@ -450,6 +502,7 @@
+ 	size = g_flash->group[group_index].size;
+ 	while (addr < g_size) {
+ 		putchar('.');
++		fflush(stdout);
+ 		/* Erase current sector */
+ 		if ( (g_flash->id == FLASH_DEVICE_AT49BV6416) ||
+ 			 (g_flash->id == FLASH_DEVICE_AT49BV6416T) ) {
+@@ -524,6 +577,7 @@
+ 	addr = 0;
+ 	while (addr < g_size) {
+ 		putchar('.');
++		fflush(stdout);
+ 		size = g_size - addr;
+ 		if (size > BUFFER_SIZE)
+ 			size = BUFFER_SIZE;
+Index: usbprogAVR32/host/usbprog.h
+===================================================================
+--- usbprogAVR32/host/usbprog.h	(Revision 1080)
++++ usbprogAVR32/host/usbprog.h	(Arbeitskopie)
+@@ -23,7 +23,11 @@
+ #define USBPROG_STATUS_INVALID_OPTIONS		-8
+ #define USBPROG_STATUS_ERROR				-9
+ 
++#define USBPROG_SERIAL_MAXLENGTH 32
+ 
++extern char g_serial[USBPROG_SERIAL_MAXLENGTH];
++	// "ZhuYun" is the default serial
++
+ void usbprog_init(void);
+ int  usbprog_open(void);
+ void usbprog_close(void);
+Index: usbprogAVR32/host/cmd.h
+===================================================================
+--- usbprogAVR32/host/cmd.h	(Revision 1080)
++++ usbprogAVR32/host/cmd.h	(Arbeitskopie)
+@@ -17,4 +17,6 @@
+ int cmd_comm_init(void);
+ int cmd_comm_led(int on);
+ 
++int cmd_avr32_reset(void);
++
+ #endif /* __CMD_H__ */

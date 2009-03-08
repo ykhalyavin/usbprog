@@ -1,0 +1,341 @@
+Index: usbprogAVR32/src/avr32_ebi.c
+===================================================================
+--- usbprogAVR32/src/avr32_ebi.c	(Revision 1080)
++++ usbprogAVR32/src/avr32_ebi.c	(Arbeitskopie)
+@@ -42,6 +42,7 @@
+ {
+ 	uint32_t addr = ALIGN_ADDRESS(address);
+ 	
++	DISASSERT();
+ 	SET_ADDRESS(addr);
+ 	SET_DATA_IN();
+ 	ASSERT_READ();
+@@ -64,6 +65,7 @@
+ 	if (num == 0)
+ 		return AVR32_EBI_STATUS_OK;
+ 
++	DISASSERT();
+ 	SET_ADDRESS(addr);
+ 	SET_DATA_IN();
+ 	ASSERT_READ();
+@@ -104,6 +106,7 @@
+ {
+ 	uint32_t addr = ALIGN_ADDRESS(address);
+ 
++	DISASSERT();
+ 	SET_ADDRESS(addr);
+ 	SET_DATA(data);
+ 	ASSERT_WRITE();
+Index: usbprogAVR32/src/cmd_flash.c
+===================================================================
+--- usbprogAVR32/src/cmd_flash.c	(Revision 1080)
++++ usbprogAVR32/src/cmd_flash.c	(Arbeitskopie)
+@@ -4,12 +4,15 @@
+ #include "flash.h"
+ 
+ 
++static void get_id(const CMD_STR* cmd, CMD_STR* ans);
+ static void unlock_erase_sector(const CMD_STR* cmd, CMD_STR* ans);
+ static void erase_verify(const CMD_STR* cmd, CMD_STR* ans);
+ static void program(const CMD_STR* cmd, CMD_STR* ans);
+ static void read(const CMD_STR* cmd, CMD_STR* ans);
+ 
++static uint8_t bw8 = 0;
+ 
++
+ void cmd_flash_init(void)
+ {
+ 	avr32_ebi_init();
+@@ -19,7 +22,6 @@
+ {
+ 	uint8_t command = cmd->command;
+ 	uint16_t   size = cmd->size;
+-	uint32_t id;
+ 
+ 	ans->status = CMD_STATUS_OK;
+ 	switch (command) {
+@@ -38,13 +40,7 @@
+ 				ans->status = CMD_STATUS_SIZE_ERROR;
+ 				ans->size = 0;
+ 			} else {
+-				if (flash_get_id(&id) == FLASH_STATUS_OK) {
+-					CMD_SET_DWORD(ans, 0, id);
+-					ans->size = sizeof(id);
+-				} else {
+-					ans->status = CMD_STATUS_ERROR;
+-					ans->size = 0;
+-				}
++				get_id(cmd, ans);
+ 			}
+ 			break;
+ 
+@@ -75,6 +71,25 @@
+ 	}
+ }
+ 
++static void get_id(const CMD_STR *cmd, CMD_STR *ans)
++{
++	uint32_t id;
++
++	if ((flash_get_id(&id, 1) == FLASH_STATUS_OK) &&
++			(id == FLASH_DEVICE_2xMX29LV040)) {
++		bw8 = 1;
++		CMD_SET_DWORD(ans, 0, id);
++		ans->size = sizeof(id);
++	} else if ((flash_get_id(&id, 0) == FLASH_STATUS_OK)) {
++		bw8 = 0;
++		CMD_SET_DWORD(ans, 0, id);
++		ans->size = sizeof(id);
++	} else {
++		ans->status = CMD_STATUS_ERROR;
++		ans->size = 0;
++	}
++}
++
+ static void unlock_erase_sector(const CMD_STR* cmd, CMD_STR* ans)
+ {
+ 	uint16_t num, size, i;
+@@ -96,10 +111,9 @@
+ 	ans->size = 0;
+ 	for (i=0; i<num; i++) {
+ 		sect_addr = CMD_GET_DWORD(cmd, 2 + i*sizeof(sect_addr));
++		status = flash_unlock_sector(sect_addr, bw8);
+ 		if (cmd->command == CMD_FLASH_ERASE_SECTOR)
+-			status = flash_erase_sector(sect_addr);
+-		else	// Unlock the sector
+-			status = flash_unlock_sector(sect_addr);
++			status = flash_erase_sector(sect_addr, bw8);
+ 		if (status != FLASH_STATUS_OK) {
+ 			ans->status = CMD_STATUS_ERROR;
+ 			ans->size = sizeof(sect_addr);
+@@ -164,7 +178,7 @@
+ 	ans->size = 0;
+ 	flash_null_read(0);
+ 	for (; i<size; i+=2, addr+=2) {
+-		status = flash_program(addr, CMD_GET_WORD(cmd, i));
++		status = flash_program(addr, CMD_GET_WORD(cmd, i), bw8);
+ 		if (status != FLASH_STATUS_OK) {
+ 			ans->status = CMD_STATUS_ERROR;
+ 			ans->size = sizeof(addr);
+Index: usbprogAVR32/src/flash.c
+===================================================================
+--- usbprogAVR32/src/flash.c	(Revision 1080)
++++ usbprogAVR32/src/flash.c	(Arbeitskopie)
+@@ -4,15 +4,18 @@
+ #include "avr32_bsr.h"
+ #include "wait.h"
+ 
++//#define FLASH_CMD(val, bw8) ((bw8)?((val) | ((val)<<8)):(val))
++#define FLASH_CMD(val, bw8) ((val) | ((val)<<8))
+ 
+-STATUS_T seq_head(uint8_t add_on);
+-STATUS_T seq_cmd(uint16_t cmd);
+-STATUS_T seq_exit(void);
++STATUS_T seq_head(uint8_t add_on, uint8_t bw8);
++STATUS_T seq_cmd(uint16_t cmd, uint8_t bw8);
++STATUS_T seq_exit(uint8_t bw8);
+ 
+ 
+ void flash_init(void)
+ {
+ 	avr32_ebi_init();
++	avr32_ebi_write16(0, 0xF0F0, 0);
+ }
+ 
+ STATUS_T flash_null_read(uint8_t add_on)
+@@ -22,47 +25,50 @@
+ 	return avr32_ebi_read16(0, &temp, add_on);
+ }
+ 
+-STATUS_T flash_get_id(uint32_t *id)
++STATUS_T flash_get_id(uint32_t *id, uint8_t bw8)
+ {
+ 	STATUS_T r = FLASH_STATUS_OK;
+ 	uint16_t* p = (uint16_t*)id;
+ 
+ 	r |= flash_null_read(0);
+ 
+-	r |= seq_head(1);
+-	r |= seq_cmd(0x0090);
++	r |= seq_head(1, bw8);
++	r |= seq_cmd(0x0090, bw8);
+ 	r |= avr32_ebi_read16(0, &p[1], 1);
+ 	r |= avr32_ebi_read16(2, &p[0], 1);
+-	r |= seq_exit();
++	r |= seq_exit(bw8);
+ 
+ 	r |= flash_null_read(1);
+ 
+ 	return r;
+ }
+ 
+-STATUS_T flash_unlock_sector(uint32_t address)
++STATUS_T flash_unlock_sector(uint32_t address, uint8_t bw8)
+ {
+ 	STATUS_T r = FLASH_STATUS_OK;
++	const uint16_t cmd = FLASH_CMD(0x0070, bw8);
+ 	
+-	r |= seq_cmd(0x00AA);
+-	r |= avr32_ebi_write16(address, 0x0070, 1);
++	r |= seq_cmd(0x00AA, bw8);
++	r |= avr32_ebi_write16(address, cmd, 1);
+ 
+ 	return r;
+ }
+ 
+-STATUS_T flash_erase_sector(uint32_t address)
++STATUS_T flash_erase_sector(uint32_t address, uint8_t bw8)
+ {
+ 	STATUS_T r = FLASH_STATUS_OK;
+ 	uint8_t count = 0;
+ 	uint16_t data;
++	const uint16_t cmd = FLASH_CMD(0x0030, bw8);
++	const uint16_t err = FLASH_CMD(0x0028, bw8);
+ 	
+ 	avr32_ebi_led(IOP_LED_A, IOP_LED_ON);
+ 	r |= flash_null_read(0);
+ 
+-	r |= seq_head(1);
+-	r |= seq_cmd(0x0080);
+-	r |= seq_head(1);
+-	r |= avr32_ebi_write16(address, 0x0030, 1);
++	r |= seq_head(1, bw8);
++	r |= seq_cmd(0x0080, bw8);
++	r |= seq_head(1, bw8);
++	r |= avr32_ebi_write16(address, cmd, 1);
+ 	
+ 	/* Wait for completion */
+ 	do {
+@@ -73,8 +79,11 @@
+ 		count++;
+ 		
+ 		r |= avr32_ebi_read16(address, &data, 1);
+-	} while ((data != 0xffff) && !(data & 0x28));
+-	r |= seq_exit();
++	} while ((data != 0xffff) ); 
++			//&& ((!(data & 0x0808)) || (data & 0x2020)));
++			/* && !((data & err & 0x00FF) && 
++				((data & err & 0xFF00) || (!(err&0xFF00)))));*/
++	r |= seq_exit(bw8);
+ 	
+ 	avr32_ebi_led(IOP_LED_A, IOP_LED_OFF);
+ 	r |= flash_null_read(1);
+@@ -85,22 +94,24 @@
+ 	return r;
+ }
+ 
+-STATUS_T flash_program(uint32_t address, uint16_t data)
++STATUS_T flash_program(uint32_t address, uint16_t data, uint8_t bw8)
+ {
+ 	STATUS_T r = FLASH_STATUS_OK;
+ 	uint32_t addr = ALIGN_ADDRESS(address);
+ 
+ #if 1	
+-	r |= seq_head(1);
+-	r |= seq_cmd(0x00A0);
++	r |= seq_head(1, bw8);
++	r |= seq_cmd(0x00A0, bw8);
+ 	r |= avr32_ebi_write16(addr, data, 1);
+-	//r |= seq_exit();
++	//r |= seq_exit(bw8);
+ 
+ #else
+ 	uint16_t d0, d1;
++	const uint16_t tgl = FLASH_CMD(0x0040, bw8);
++	const uint16_t err = FLASH_CMD(0x0028, bw8);
+ 	
+-	r |= seq_head(1);
+-	r |= seq_cmd(0x00A0);
++	r |= seq_head(1, bw8);
++	r |= seq_cmd(0x00A0, bw8);
+ 	r |= avr32_ebi_write16(addr, data, 1);
+ 	
+ 	/* Wait for completion */
+@@ -108,8 +119,8 @@
+ 	do {
+ 		/* TODO: Timeout */
+ 		r = avr32_ebi_read16(addr, &d0,1);
+-	} while ( ((d0 ^ d1) & 0x40)		// toggled
+-			  && !(d1 & 0x28) );		// error bits
++	} while ( ((d0 ^ d1) & tgl)		// toggled
++			  && !(d1 & err) );		// error bits
+ 
+ 	/* We'll need to check once again for toggle bit
+ 	 * because the toggle bit may stop toggling as I/O5
+@@ -117,34 +128,40 @@
+ 	 */
+ 	r |= avr32_ebi_read16(addr, &d1,1);
+ 	r |= avr32_ebi_read16(addr, &d0,1);
+-	r |= seq_exit();
++	r |= seq_exit(bw8);
+ 	r |= flash_null_read(1);
+-	if ( ((d0 ^ d1) & 0x40) && (check != 0) )
++	if ( ((d0 ^ d1) & tgl) && (check != 0) )
+ 		r = FLASH_STATUS_PROGRAM_ERROR;
+ #endif
+ 
+ 	return r;
+ }
+ 
+-STATUS_T seq_head(uint8_t add_on)
++STATUS_T seq_head(uint8_t add_on, uint8_t bw8)
+ {
+-	if (avr32_ebi_write16(0x0555<<1, 0x00AA, add_on) != AVR32_EBI_STATUS_OK)
++	const uint16_t cmd1 = FLASH_CMD(0x00AA, bw8);
++	const uint16_t cmd2 = FLASH_CMD(0x0055, bw8);
++
++	if (avr32_ebi_write16(0x0555<<1, cmd1, add_on) != AVR32_EBI_STATUS_OK)
+ 		return FLASH_STATUS_SUBROUTINE_ERROR;
+-	if (avr32_ebi_write16(0x02aa<<1, 0x0055, 1) != AVR32_EBI_STATUS_OK)
++	if (avr32_ebi_write16(0x02aa<<1, cmd2, 1) != AVR32_EBI_STATUS_OK)
+ 		return FLASH_STATUS_SUBROUTINE_ERROR;
+ 
+ 	return FLASH_STATUS_OK;
+ }
+ 
+-STATUS_T seq_cmd(uint16_t cmd)
++STATUS_T seq_cmd(uint16_t cmd, uint8_t bw8)
+ {
++	cmd = FLASH_CMD(cmd, bw8);
++
+ 	if (avr32_ebi_write16(0x0555<<1, cmd, 1) != AVR32_EBI_STATUS_OK)
+ 		return FLASH_STATUS_SUBROUTINE_ERROR;
+ 	else
+ 		return FLASH_STATUS_OK;
+ }
+ 
+-STATUS_T seq_exit(void)
++STATUS_T seq_exit(uint8_t bw8)
+ {
+-	return avr32_ebi_write16(0, 0x00F0, 1);
++	const uint16_t cmd = FLASH_CMD(0x00F0, bw8);
++	return avr32_ebi_write16(0, cmd, 1);
+ }
+Index: usbprogAVR32/host/cmd_flash.cpp
+===================================================================
+--- usbprogAVR32/host/cmd_flash.cpp	(Revision 1080)
++++ usbprogAVR32/host/cmd_flash.cpp	(Arbeitskopie)
+@@ -25,6 +25,9 @@
+ 	{	"AT49BV6416T", 0x001F00D2, 8388608, 135,
+ 		2, { {65536L, 127L, 0L}, {8192L, 8L, 0x7F0000}, {}, {} }
+ 	},
++	{	"MX29LV040", FLASH_DEVICE_2xMX29LV040, 1024*1024, 8,
++		1, { {2*64*1024L, 8L, 0L}, {}, {}, {},}
++	},
+ 	{   NULL, 0, 0, 0,
+ 		0, { {}, {}, {}, {} }		/* This is the last array element */
+ 	},
+Index: usbprogAVR32/host/cmd_flash.h
+===================================================================
+--- usbprogAVR32/host/cmd_flash.h	(Revision 1080)
++++ usbprogAVR32/host/cmd_flash.h	(Arbeitskopie)
+@@ -9,7 +9,9 @@
+ #define FLASH_DEVICE_AT49BV6416			0x001F00D6
+ #define FLASH_DEVICE_AT49BV6416T		0x001F00D2
+ #define FLASH_DEVICE_AM29LV64XD			0x000122D7		// X = 0, 1, 2
++#define FLASH_DEVICE_2xMX29LV040                0xC2C24F4F
+ 
++
+ /* Sector Group is a collection of the sectors which have the same structure
+  * and in continuous addresses
+  */

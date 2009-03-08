@@ -1,0 +1,68 @@
+Index: usbprogAVR32/Makefile
+===================================================================
+--- usbprogAVR32/Makefile	(Revision 1080)
++++ usbprogAVR32/Makefile	(Arbeitskopie)
+@@ -216,7 +216,7 @@
+ # ---------------------------------------------------------------------------
+ 
+ # Define directories, if needed.
+-DIRAVR = c:/eda/WinAVR-20070525
++DIRAVR ?= c:/eda/WinAVR-20070525
+ DIRAVRBIN = $(DIRAVR)/bin
+ DIRAVRUTILS = $(DIRAVR)/utils/bin
+ DIRINC = .
+@@ -225,12 +225,12 @@
+ 
+ # Define programs and commands.
+ SHELL = sh
+-CC = avr-gcc
+-OBJCOPY = avr-objcopy
+-OBJDUMP = avr-objdump
+-SIZE = avr-size
+-NM = avr-nm
+-AVRDUDE = avrdude
++CC = $(DIRAVRBIN)/avr-gcc
++OBJCOPY = $(DIRAVRBIN)/avr-objcopy
++OBJDUMP = $(DIRAVRBIN)/avr-objdump
++SIZE = $(DIRAVRBIN)/avr-size
++NM = $(DIRAVRBIN)/avr-nm
++AVRDUDE = $(DIRAVRBIN)/avrdude
+ REMOVE = rm -f
+ COPY = cp
+ 
+@@ -387,7 +387,7 @@
+ # Link: create ELF output file from object files.
+ .SECONDARY : $(TARGET).elf
+ .PRECIOUS : $(OBJ)
+-%.elf: $(OBJ)
++$(TARGET).elf: $(OBJ)
+ 	@echo
+ 	@echo $(MSG_LINKING) $@
+ 	$(CC) $(ALL_CFLAGS) $(OBJ) --output $@ $(LDFLAGS)
+Index: usbprogAVR32/host/Makefile
+===================================================================
+--- usbprogAVR32/host/Makefile	(Revision 1080)
++++ usbprogAVR32/host/Makefile	(Arbeitskopie)
+@@ -1,19 +1,9 @@
++CXXFLAGS=-O0 -ggdb
++
+ all:	usbprogavr32
+ 
+ usbprogavr32:	cmd.o cmd_flash.o cmd_tap_jtag.o main.o usbprog.o
+-	g++ -o usbprogavr32 cmd.o cmd_flash.o cmd_tap_jtag.o main.o usbprog.o -lusb
++	$(CXX) -o $@ -lusb $^
+ 
+-cmd.o:	cmd.cpp cmd.h
+-	g++ -c cmd.cpp
+-
+-cmd_flash.o: cmd_flash.cpp cmd_flash.h
+-	g++ -c cmd_flash.cpp
+-
+-main.o: main.cpp
+-	g++ -c main.cpp
+-
+-usbprog.o: usbprog.cpp usbprog.h
+-	g++ -c usbprog.cpp
+-
+ clean:
+ 	rm *.o
