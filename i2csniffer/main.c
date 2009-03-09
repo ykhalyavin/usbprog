@@ -58,14 +58,14 @@ SIGNAL(SIG_INTERRUPT0)
 
 void USBNDecodeVendorRequest(DeviceRequest *req)
 {
-	//UARTWrite("vendor request check ");
-	//SendHex(req->bRequest);
-	switch(req->bRequest)
-	{
-		case STARTAVRUPDATE:
-			avrupdate_start();
-		break;
-	}
+  //UARTWrite("vendor request check ");
+  //SendHex(req->bRequest);
+  switch(req->bRequest)
+  {
+    case STARTAVRUPDATE:
+      avrupdate_start();
+    break;
+  }
 }
 void USBFlash(char *buf)
 {
@@ -80,10 +80,10 @@ int main(void)
   USBNInit();   
   
   DDRA = (1 << DDA4);
-  //PORTA |= (1<<PA4);	//on
+  //PORTA |= (1<<PA4);  //on
   PORTA &= ~(1<<PA4); //off
 
-  USBNDeviceVendorID(0x1781);	//atmel ids
+  USBNDeviceVendorID(0x1781);  //atmel ids
   USBNDeviceProductID(0x0c62); // atmel ids
   
   USBNDeviceBCDDevice(0x0001);
@@ -94,11 +94,11 @@ int main(void)
 
   
   USBNDeviceManufacture ("B.Sauter");
-  USBNDeviceProduct	("I2CSNIFFER");
+  USBNDeviceProduct  ("I2CSNIFFER");
 
-	//0000A0016461 (aktuelle)
-	//0000A0019647
-	//0000A0000252
+  //0000A0016461 (aktuelle)
+  //0000A0019647
+  //0000A0000252
 
   conf = USBNAddConfiguration();
 
@@ -116,99 +116,118 @@ int main(void)
   sei();
 
   wait_ms(1000);
-	PORTA |= (1<<PA4);  //on
-	wait_ms(100);
-	PORTA &= ~(1<<PA4); //off
+  PORTA |= (1<<PA4);  //on
+  wait_ms(100);
+  PORTA &= ~(1<<PA4); //off
 
 
   #define ACTIVE   1
   #define INACTIVE 0
 
-	#define BIT_LOW     0
-	#define BIT_HIGH    1
+  #define BIT_LOW     0
+  #define BIT_HIGH    1
   #define BIT_INVALID 2
 
-	// SDA, SCL Input
-	I2C_DDR &= (1 << I2C_SDA | 1 << I2C_SCL);
+  // SDA, SCL Input
+  I2C_DDR &= (1 << I2C_SDA | 1 << I2C_SCL);
 
   char i2c = I2C_PORT;
 
-	struct {
+  struct {
     char sda;
     char scl;
     char sda_last;
     char scl_last;
-		char status;
-		char i;
-		char cur_bit;
-		char byte;
-	} state;
+    char status;
+    char i;
+    char cur_bit;
+    char byte;
+  } state;
 
-	state.byte     = 0;
-	state.cur_bit  = BIT_INVALID;
-	state.sda_last = (1 << I2C_SDA) & i2c;
-	state.scl_last = (1 << I2C_SCL) & i2c;
+  state.byte     = 0;
+  state.i        = 0;
+  state.cur_bit  = BIT_INVALID;
+  state.sda_last = (1 << I2C_SDA) & i2c;
+  state.scl_last = (1 << I2C_SCL) & i2c;
+  state.status   = INACTIVE;
 
   while(1)
-	{
-		// get current levels of SDA and SCL
+  {
+    // get current levels of SDA and SCL
     i2c = I2C_PORT; 
-		state.sda = (1 << I2C_SDA) & i2c;
-		state.scl = (1 << I2C_SCL) & i2c;
+    state.sda = ((1 << I2C_SDA) & i2c) ? 1 : 0; // convert into bool (0,1)
+    state.scl = ((1 << I2C_SCL) & i2c) ? 1 : 0; // convert into bool (0,1)
 
-		// transmission in progress
-		if(ACTIVE)
-		{
-			// SCL is currently High
+    // transmission in progress
+    if(state.status)
+    {
+      // SCL currently high
       if(state.scl)
-			{
-				// SCL was High last time
+      {
+        // SCL was High last time:
         if(state.scl_last)
-				{
-					// test, if SDA has changed during clock and BIT is invalid
-					if(state.cur_bit != BIT_INVALID && state.cur_bit != state.sda)
-				    state.cur_bit = BIT_INVALID;
-				}
-				// SCL was not High last time
+        {
+          if(!state.sda_last && state.sda)
+          {
+            // stop: SCL High, SDA von Low auf High
+            state.status = INACTIVE;
+            UARTWrite("Stop ");
+          }
+          // test, if SDA has changed during clock and BIT is invalid XXX
+          else if(state.cur_bit != state.sda)
+            state.cur_bit = BIT_INVALID;
+        }
 				else
-				{
-					// handle last bit
-				  if(state.cur_bit != BIT_INVALID)
-					{
-						state.byte |= state.cur_bit << (8-state.i); // MSB first
-						if(state.i == 8)
-						{
-							// byte ausgeben
-						}
-						else if(state.i == 9)
-						{
-							state.byte = 0;
-							state.i    = 0;
-							// ACK: lo; NACK: hi
-						}
-						else
-							state.i++;
-					}
+          state.cur_bit = state.sda; // value of bit
+      }
+      // SCL is not high
+      else
+      {
+        // handle last bit
+        if(state.cur_bit != BIT_INVALID)
+        {
+          state.i++;
+          state.byte |= (state.cur_bit << (8-state.i)); // MSB first
 
-					state.cur_bit = I2C_SDA;
-				}
-			}
-		}
+          if(state.i == 9)
+          {
+            state.byte = 0;
+            state.i    = 0;
 
-		if(state.scl && state.scl_last)
-		{
-			if(state.scl_last && !state.scl)
-			{
-        // start: SCL High, SDA von High auf Low
-				state.status = ACTIVE;
-				state.i = 0;
-			}
-			else if(!state.scl_last && state.scl)
-        // stop: SCL High, SDA von Low auf High
-				state.status = INACTIVE;
-		}
+            // ACK: lo; NACK: hi
+            if(state.sda_last)
+              UARTWrite("NACK ");
+            else
+              UARTWrite("ACK ");
+          }
+          else if(state.i == 8)
+          {
+            // byte ausgeben
+            SendHex(state.byte); // byte ausgeben
+            UARTPutChar(' ');
+          }
 
-		state.sda_last = state.sda;
-		state.scl_last = state.scl;
-	}
-}
+					state.cur_bit = BIT_INVALID; // handle bit just once
+        }
+      } // end SCL high
+    } // end active
+    else  // inactive
+    {
+      // start: SCL High, SDA von High auf Low
+      if(state.scl && state.scl_last && state.sda_last && !state.sda)
+      {
+        state.status  = ACTIVE;
+				state.cur_bit = BIT_INVALID;
+        state.i       = 0;
+        state.byte    = 0;
+        UARTWrite("Start ");
+
+				// wait till SCL is low
+				while((1 << I2C_SCL) & i2c);
+      }
+    }
+
+    state.sda_last = state.sda;
+    state.scl_last = state.scl;
+  } // end while
+} // end main
