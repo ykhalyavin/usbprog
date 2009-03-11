@@ -276,7 +276,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter finished end
 
-build: elf hex eep lss sym hex2bin
+build: elf hex eep lss sym 
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
@@ -439,8 +439,5 @@ clean clean_list program
 
 download:
 	avrdude -p m32 -c avrispv2 -P usb -U flash:w:main.hex 
-ready:
-	mv main.hex blinkdemo.hex
-	hex2bin blinkdemo.hex
 reset:
 	avrdude -p m32 -c bsd -E noreset
