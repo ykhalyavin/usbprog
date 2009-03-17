@@ -22,8 +22,8 @@
 set -x
 aclocal -I config
 autoheader
+libtoolize --copy
 automake --foreign --add-missing --copy
 autoconf
-libtoolize --copy
 
 ## @end 1
