@@ -1,3 +1,4 @@
+ACLOCAL_AMFLAGS       = -I m4
 auxdir                = $(top_srcdir)/$(ac_aux_dir)
 AUX_DIST              = $(auxdir)/install-sh $(auxdir)/missing \
                         $(auxdir)/mkinstalldirs
