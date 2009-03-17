@@ -1,6 +1,7 @@
 2009-03-17  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Change some autoconf/automake/libtool stuff.
+	* Print error when downloading fails with a non 400 status code.
 
 2009-01-31  Bernhard Walle <bernhard.walle@gmx.de>
 

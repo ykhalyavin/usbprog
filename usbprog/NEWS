@@ -1,3 +1,7 @@
+0.1.9
+-----
+  * Print error when downloading fails with a non 400 status code.
+
 0.1.8
 -----
   * fix tab completion for multiple matches (like 'device' and 'devices')
