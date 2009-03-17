@@ -203,6 +203,11 @@ Downloader::Downloader(ostream &output) throw (DownloadError)
                 throw DownloadError(string("CURL error: ") + m_curl_errorstring);
         }
     }
+
+    // fail on non-400 error code
+    err = curl_easy_setopt(m_curl, CURLOPT_FAILONERROR, 1);
+    if (err != CURLE_OK)
+        throw DownloadError(string("CURL error: ") + m_curl_errorstring);
 }
 
 /* -------------------------------------------------------------------------- */
