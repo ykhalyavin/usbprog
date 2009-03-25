@@ -79,7 +79,6 @@ void USBNStart(void)
 void USBNInterrupt(void)
 {
   unsigned char maev,mask;
-
  
   maev = USBNRead(MAEV);
 
@@ -91,7 +90,6 @@ void USBNInterrupt(void)
   mask = USBNRead(MAMSK);
   USBNWrite(MAMSK,0x00);                  // disable irq
   USBNWrite(MAMSK,mask);
-
 }
 
 
@@ -204,10 +202,3 @@ uint8_t USBNAddToStringList( void* data)
   //SendHex(index);    
   return index;
 }
-
-
-
-
-
-
-

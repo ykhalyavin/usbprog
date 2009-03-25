@@ -1,45 +1,62 @@
+#define  F_CPU   16000000
+
 #include <stdlib.h>
 #include <avr/io.h>
 #include <stdint.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 #include <inttypes.h>
 
 
-#include "main.h"
-#include "uart.h"
 #include "usbn2mc.h"
-#include "../usbn2mc/fifo.h"
+#include "usbn2mc/fifo.h"
 #include "../usbprog_base/firmwarelib/avrupdate.h"
 
 
+
+void interrupt_ep_send(void);
+void rs232_send(void);
+
 volatile int tx1togl=0; 		// inital value of togl bit
-volatile short flag = 0;
 
-char toUSBBuf[100];
-char toRS232Buf[100];
-
-fifo_t* toRS232FIFO;
-fifo_t* toUSBFIFO;
 
 int togl3=0;
 int togl1=0;
 
-struct usb_cdc_line_coding line_coding;
+
+struct {
+	char		dwDTERrate[4];   //data terminal rate, in bits per second
+	char    bCharFormat;  //num of stop bits (0=1, 1=1.5, 2=2)
+	char    bParityType;  //parity (0=none, 1=odd, 2=even, 3=mark, 4=space)
+	char    bDataBits;    //data bits (5,6,7,8 or 16)
+} usb_cdc_line_coding;
+
+enum {
+	SEND_ENCAPSULATED_COMMAND = 0,
+	GET_ENCAPSULATED_RESPONSE,
+	SET_COMM_FEATURE,
+	GET_COMM_FEATURE,
+	CLEAR_COMM_FEATURE,
+	SET_LINE_CODING = 0x20,
+	GET_LINE_CODING,
+	SET_CONTROL_LINE_STATE,
+	SEND_BREAK
+};
 
 
 /* Device Descriptor */
 
-const unsigned char usbrs232[] =
+unsigned char usbrs232[] =
 { 
-	0x12,       // 18 length of device descriptor
+	0x12,             // 18 length of device descriptor
     	0x01,       // descriptor type = device descriptor
     	0x10,0x01,  // version of usb spec. ( e.g. 1.1)
-    	0x00,       // device class 2
-    	0x00,       // device subclass
+    	0x02,             // device class
+    	0x00,             // device subclass
     	0x00,       // protocol code
     	0x08,       // deep of ep0 fifo in byte (e.g. 8)
-    	0x86,0x17,  // vendor id
-    	0x62,0x0c,  // product id
+    	0x81,0x17,  // vendor id
+    	0x64,0x0c,  // product id
     	0x00,0x01,  // revision id (e.g 1.02)
     	0x01,       // index of manuf. string
     	0x02,       // index of product string
@@ -49,26 +66,26 @@ const unsigned char usbrs232[] =
 
 /* Configuration descriptor */
 
-const unsigned char usbrs232Conf[] =
+unsigned char usbrs232Conf[] =
 { 
-    0x09,       // 9 length of this descriptor
-    0x02,       // descriptor type = configuration descriptor
-    0x5A,0x00,  // total length with first interface ...
-    0x03,       // number of interfaces //bene 01
-    0x01,       // number if this config. ( arg for setconfig)
-    0x00,       // string index for config
-    0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
-    0x1A,       // power for this configuration in mA (e.g. 50mA)
+	0x09,       // 9 length of this descriptor
+    	0x02,       // descriptor type = configuration descriptor
+    	0x48,0x00,  // total length with first interface ...
+    	0x02,       // number of interfaces //bene 01
+    	0x01,       // number if this config. ( arg for setconfig)
+    	0x00,       // string index for config
+    	0xA0,       // attrib for this configuration ( bus powerded, remote wakup support)
+    	0x1A,       // power for this configuration in mA (e.g. 50mA)
 		    //InterfaceDescriptor
-    0x09,       // 9 length of this descriptor
-    0x04,       // descriptor type = interface descriptor
-    0x00,       // interface number
-    0x00,       // alternate setting for this interface
-    0x01,       // number endpoints without 0
-    0x02,       // class code 2
-    0x02,       // sub-class code 2
-    0x01,       // protocoll code 1
-    0x00,       // string index for interface
+    	0x09,       // 9 length of this descriptor
+    	0x04,       // descriptor type = interface descriptor
+    	0x00,       // interface number
+    	0x00,       // alternate setting for this interface
+    	0x01,       // number endpoints without 0
+    	0x02,       // class code
+    	0x02,       // sub-class code
+    	0x01,       // protocoll code
+    	0x00,       // string index for interface
 
     /* CDC Class-Specific descriptor */
     5,           /* sizeof(usbDescrCDC_HeaderFn): length of descriptor in bytes */
@@ -117,8 +134,12 @@ const unsigned char usbrs232Conf[] =
     5,  /* descriptor type = endpoint */
     0x01,        /* OUT endpoint number 1 */
     0x02,        /* attrib: Bulk endpoint */
-    1, 0,        /* maximum packet size */
-    0,           /* in ms */
+#if UART_CFG_HAVE_USART
+    8, 0,        /* maximum packet size 8->6 */
+#else
+    8, 0,        /* maximum packet size */
+#endif
+    1,           /* in ms */
 
     /* Endpoint Descriptor */
     7,           /* sizeof(usbDescrEndpoint) */
@@ -126,56 +147,35 @@ const unsigned char usbrs232Conf[] =
     0x81,        /* IN endpoint number 1 */
     0x02,        /* attrib: Bulk endpoint */
     8, 0,        /* maximum packet size */
-    0,           /* in ms */
-  
-    /* Interface Descriptor  */
-    9,           /* sizeof(usbDescrInterface): length of descriptor in bytes */
-    4,           /* descriptor type */
-    2,           /* index of this interface */
-    0,           /* alternate setting for this interface */
-    2,           /* endpoints excl 0: number of endpoint descriptors to follow */
-    0,        /* Data Interface Class Codes */
-    0,
-    0,           /* Data Interface Class Protocol Codes */
-    0,           /* string index for interface */
-
-  /* Endpoint Descriptor */
-    7,           /* sizeof(usbDescrEndpoint) */
-    5,  /* descriptor type = endpoint */
-    0x87,        /* IN endpoint number 1 */
-    0x02,        /* attrib: Bulk endpoint */
-    64, 0,        /* maximum packet size */
-    0,           /* in ms */
-  
-  /* Endpoint Descriptor */
-    7,           /* sizeof(usbDescrEndpoint) */
-    5,  /* descriptor type = endpoint */
-    0x07,        /* IN endpoint number 1 */
-    0x02,        /* attrib: Bulk endpoint */
-    64, 0,        /* maximum packet size */
-    0,           /* in ms */
-  
-
+    100,           /* in ms */
 };
 
 
 
 /* uart interrupt (only for debugging) */
 
-SIGNAL(SIG_UART_RECV)
+void say(char *s, int length)
 {
 	//UARTWrite("tipp");
 	//fifo_put (toUSBFIFO,UARTGetChar());
-	USBNWrite(TXC2,FLUSH);
-	USBNWrite(TXD2,UARTGetChar());
-	rs232_send();	
+  USBNWrite(TXC2,FLUSH);
+
+  while(length--)
+  {
+    USBNWrite(TXD2,*s);
+    s++;
+  }
+
+  rs232_send();	
+  _delay_ms(1);
+  _delay_us(500);
 }
 
-/* interrupt signal from usb controller */
+/* interrupt signael from usb controller */
 
 SIGNAL(SIG_INTERRUPT0)
 {
-	USBNInterrupt();
+  USBNInterrupt();
 }
 
 
@@ -200,24 +200,21 @@ void USBNDecodeVendorRequest(DeviceRequest *req)
 // class requests
 void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 {
-	//UARTWrite("class");
 	static unsigned char serialNotification[10] = {0xa1,0x20,0,0,0,0,2,0,3,0};
 	int loop;
 	switch(req->bRequest)
 	{
 		case 0x20:	//SET_LINE_CODING:
-			//UARTWrite("set line\r\n");
 			USBNWrite(RXC0,RX_EN);
 			
-			line_coding.dwDTERrate[0] = USBNRead(RXD0);
-			line_coding.dwDTERrate[1] = USBNRead(RXD0);
-			line_coding.dwDTERrate[2] = USBNRead(RXD0);
-			line_coding.dwDTERrate[3] = USBNRead(RXD0);
-			line_coding.bCharFormat   = USBNRead(RXD0);
-			line_coding.bParityType   = USBNRead(RXD0);
-			line_coding.bDataBits     = USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
+			USBNRead(RXD0);
 			
-			flag = 1;
 			//USBNWrite(RXC0,RX_EN);
 			//USBNWrite(RXC0,FLUSH);
 		
@@ -229,14 +226,14 @@ void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 			USBNWrite(TXC0,FLUSH);
 
 			// baud rate
-			USBNWrite(TXD0, line_coding.dwDTERrate[0]);
-			USBNWrite(TXD0, line_coding.dwDTERrate[1]);
-			USBNWrite(TXD0, line_coding.dwDTERrate[2]);
-			USBNWrite(TXD0, line_coding.dwDTERrate[3]);
+			USBNWrite(TXD0,0x80);
+			USBNWrite(TXD0,0x25);
+			USBNWrite(TXD0,0);
+			USBNWrite(TXD0,0);
 
-			USBNWrite(TXD0, line_coding.bCharFormat); //stopbit
-			USBNWrite(TXD0, line_coding.bParityType); // parity
-			USBNWrite(TXD0, line_coding.bDataBits); // databits
+			USBNWrite(TXD0,0); //stopbit
+			USBNWrite(TXD0,0); //parity
+			USBNWrite(TXD0,8); //databits
 
 			interrupt_ep_send();
 
@@ -258,25 +255,9 @@ void USBNDecodeClassRequest(DeviceRequest *req,EPInfo* ep)
 }
 
 
-// usb zu rs232
-void USBtoRS232(char * buf)
-{
-
-	//fifo_put(toRS232FIFO,0x33);
-	//fifo_put(toRS232FIFO,0x34);
-	//fifo_put(toRS232FIFO,0x35);
-	UARTPutChar(buf[0]);
-
-	//USBNWrite(TXC2,FLUSH);
-	//USBNWrite(TXD2,0x44);
-	//rs232_send();	
-	//UARTWrite("usb to rs232");
-	
-}
-
 
 // togl pid for in endpoint
-void interrupt_ep_send()
+void interrupt_ep_send(void)
 {
 	if(togl3==1) {
 		togl3=0;
@@ -288,7 +269,7 @@ void interrupt_ep_send()
 }
 
 // togl pid for in endpoint
-void rs232_send()
+void rs232_send(void)
 {
 	if(togl1==1) {
 		togl1=0;
@@ -299,39 +280,40 @@ void rs232_send()
 	}
 }
 
+void USBtoRS232(char * buf, int length)
+{
+  say(buf,length);
+}
+
 
 /*************** main function  **************/
 
 int main(void)
 {
 	// init fifos
-	fifo_init (toRS232FIFO, toRS232Buf, 100);
-	fifo_init (toUSBFIFO, toUSBBuf, 100);
 	
-	USBNCallbackFIFORX1(&USBtoRS232);
+	//USBNCallbackFIFORX1(&USBtoRS232);
 	//USBNCallbackFIFOTX2Ready(&USBtoRS232);
 
 	sei();			// activate global interrupts
-	//UARTInit(0x80, 0x25, 1, 0, 8);		// only for debugging
 
+	USBNCallbackFIFORX1(&USBtoRS232);
 	// setup usbstack with your descriptors
 	USBNInit(usbrs232,usbrs232Conf);
 
 	_USBNAddStringDescriptor(""); //pseudo lang
 	_USBNAddStringDescriptor("USBprog EmbeddedProjects");
-	_USBNAddStringDescriptor("USBprog commonJTAG v.0.1");
+	_USBNAddStringDescriptor("usbprogRS232");
 	_USBNCreateStringField();
 
 
 	USBNInitMC();		// start usb controller
 	USBNStart();		// start device stack
 
-	while(1){
-if(flag) {
-UARTInit(line_coding.dwDTERrate[0], line_coding.dwDTERrate[1], line_coding.bCharFormat, line_coding.bParityType, line_coding.bDataBits);
-flag = 0;
-}
-#if 0
+	while(1) {
+    //say("hallo\n");
+    _delay_ms(100);
+	  #if 0
 		// wenn cpu zeit vorhanden fifos weiterverteilen
 		// usb -> rs232
 	
@@ -344,9 +326,3 @@ flag = 0;
 
 	}
 }
-
-
-
-
-
-

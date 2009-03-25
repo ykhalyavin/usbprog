@@ -21,6 +21,7 @@
 #include <string.h>
 #include "usbn960x.h"
 
+#include "../../usbn2mc.h"
 
 EPInfo	EP0rx;
 EPInfo	EP0tx;
@@ -68,32 +69,30 @@ void _USBNNackEvent(void)
 }
 
 
-
-
 void _USBNReceiveEvent(void)
 {
   unsigned char event;
-  void (*ptr)();
+  void (*ptr)(char *, int);
   char buf[64];
-  char *bufp=&buf[0];
   event = USBNRead(RXEV);
   int i=0;
   
   if(event & RX_FIFO0) _USBNReceiveFIFO0();
   // dynamic function call
-  else if(event & RX_FIFO1) 
+  else if(event & RX_FIFO1)
   {
-    USBNRead(RXS1);
+    unsigned char rxs1 = USBNRead(RXS1);
+    int len = rxs1 & 15;
 
-    *bufp = USBNRead(RXD1);
-    for(i;i<63;i++) 
-      *(++bufp)=USBNBurstRead(); 
+    buf[i] = USBNRead(RXD1);
+    for(i = 1; i < 64; i++)
+      buf[i] = USBNBurstRead();
     
     ptr = RX1Callback;
-    (*ptr)(&buf);
+    (*ptr)(buf, len);
     
-    USBNWrite(RXC1,FLUSH);   
-    USBNWrite(RXC1,RX_EN);    
+    USBNWrite(RXC1,FLUSH);
+    USBNWrite(RXC1,RX_EN);
     return;
   }
   else {}
@@ -515,8 +514,8 @@ void _USBNClearFeature(void)
 
 void _USBNGetDescriptor(DeviceRequest *req)
 {
-  unsigned char index =  req->wValue;
-  unsigned char type = req->wValue >> 8;
+  unsigned char index = req->wValue;
+  unsigned char type  = req->wValue >> 8;
 
   EP0tx.Index = 0;
   EP0tx.DataPid = 1;
