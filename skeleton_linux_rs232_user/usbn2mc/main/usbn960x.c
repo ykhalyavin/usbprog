@@ -72,7 +72,9 @@ void _USBNNackEvent(void)
   event = USBNRead(NAKEV);
   //USBNWrite(RXC1,FLUSH);	//re-enable the receiver  
   //USBNWrite(RXC1,RX_EN);	//re-enable the receiver  
+#if DEBUG
   USBNDebug("nack event\r\n");
+#endif
  /* 
   if (EP0tx.Size > EP0tx.usbnfifo)	  //multi-pkt status stage? 
   {
@@ -97,7 +99,9 @@ void _USBNReceiveEvent(void)
   char tmp;
   int i=0;
   
+#if DEBUG
   USBNDebug("rx event\r\n");
+#endif
   if(event & RX_FIFO0) _USBNReceiveFIFO0();
   
   // dynamic function call
@@ -157,7 +161,9 @@ void _USBNTransmitEvent(void)
   unsigned char event;
   void (*ptr)();
   event = USBNRead(TXEV);
+#if DEBUG
   USBNDebug("tx event\r\n");
+#endif
   if(event & TX_FIFO0) _USBNTransmitFIFO0();
   // dynamic function call
   
@@ -186,7 +192,9 @@ void _USBNAlternateEvent(void)
 {
   unsigned char event;
   event = USBNRead(ALTEV);
+#if DEBUG
   USBNDebug("alt event\r\n");
+#endif
 
   if(event & ALT_RESET)
   {
@@ -196,7 +204,9 @@ void _USBNAlternateEvent(void)
     USBNWrite(TXC0,FLUSH);
     USBNWrite(RXC0,RX_EN);                    // allow reception
     USBNWrite(NFSR,OPR_ST);                   // NFS = NodeOperational
+#if DEBUG
   	USBNDebug("reset\r\n");
+#endif
   }
   if(event & ALT_SD3)
   {
@@ -219,7 +229,9 @@ void _USBNAlternateEvent(void)
   }
   if(event & ALT_EOP)
   {
+#if DEBUG
   	USBNDebug("eop\r\n");
+#endif
   }
 
 }
@@ -448,7 +460,9 @@ void _USBNTransmitFIFO0(void)
     else                                              
     // this probably means we issued a stall handshake
     {
+#if DEBUG
       USBNDebug("stall handshake ");
+#endif
       //USBNFunctionInfo.GetDesc=0;          // exit multi-packet mode
       USBNWrite(RXC0,RX_EN);               // re-enable the receiver
     }
@@ -457,7 +471,9 @@ void _USBNTransmitFIFO0(void)
   // transmission, or we got here somehow we shouldn't have
   else
   { 
+#if DEBUG
     USBNDebug("tx0 error\n");
+#endif
   }
   // we do this stuff for all tx_0 events
 }
