@@ -82,7 +82,7 @@ void USBNInterrupt(void)
  
   maev = USBNRead(MAEV);
 
-  if(maev & RX_EV)  _USBNReceiveEvent();
+  if(maev & RX_EV)      _USBNReceiveEvent();
   else if(maev & TX_EV) _USBNTransmitEvent();
   else if(maev & ALT)   _USBNAlternateEvent();
   else if(maev & NAK)   _USBNNackEvent();

@@ -1,10 +1,8 @@
-void UARTInit(unsigned int baud0, unsigned int baud1, char stopbits, char parity, char databits);
-void UARTPutChar(unsigned char sign);
-unsigned char UARTGetChar(void);
-void UARTWrite(char* msg);
+#include <stdint.h>
 
-unsigned char AsciiToHex(unsigned char high,unsigned char low);
+void uart_init(uint32_t baudrate, char stopbits, char parity, char databits);
+void uart_putchar(unsigned char sign);
+char uart_getchar(void);
+void uart_puts(char *s);
+char AsciiToHex(char high,char low);
 void SendHex(unsigned char hex);
-
-
-
