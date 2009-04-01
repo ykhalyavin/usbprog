@@ -171,11 +171,8 @@ ISR(USART_UDRE_vect)
 /* uart interrupt - receive complete */
 SIGNAL (SIG_UART_RECV)
 {
-  //PORTA ^= (1 << PA4);
-  //char recv;
-
-  //recv = UDR; //Zeichen vom Register holen
-  fifo_put(&toUSBFIFO, UDR);
+  char recv = UDR; //Zeichen vom Register holen
+  fifo_put(&toUSBFIFO, recv);
 }
 
 
@@ -197,7 +194,6 @@ void RS232_to_USB(void)
     else if(i > 8) 
       i = 8;
 
-    USBNWrite(TXC2,FLUSH);
 
     for(j = 0; j < i; j++)
     {
@@ -207,9 +203,11 @@ void RS232_to_USB(void)
       }
     }
 
+    USBNWrite(TXC2,FLUSH);
     for(j = 0; j < i; j++)
+    {
       USBNWrite(TXD2, buf[j]);
-
+    }
     rs232_send();
   }
 }
@@ -341,7 +339,7 @@ int main(void)
   fifo_init(&toUSBFIFO,   toUSBBuf,   100);
 
   //baudrate stopbit parity databits
-  uart_init(38400, 1, 0, 8);
+  uart_init(57600UL, 1, 0, 8);
 
   USBNCallbackFIFORX1(&USBtoRS232);
   // setup usbstack with your descriptors
@@ -371,6 +369,6 @@ int main(void)
   while(1)
   {
     RS232_to_USB();
-//    _delay_us(50);
+    _delay_us(10);
   }
 }
