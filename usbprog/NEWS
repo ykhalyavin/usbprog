@@ -1,6 +1,7 @@
 0.1.9
 -----
   * Print error when downloading fails with a non 400 status code.
+  * Fix GUI on MacOS X (contributed by Nabil Sayegh)
 
 0.1.8
 -----

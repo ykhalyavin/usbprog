@@ -20,6 +20,9 @@
 
 #include "usbprogApp.h"
 #include "usbprogFrm.h"
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 
 using std::cerr;
 using std::endl;
@@ -72,6 +75,13 @@ bool usbprogFrmApp::OnInit()
     usbprogFrm* frame = new usbprogFrm(NULL);
     frame->Show(true);
     SetTopWindow(frame);
+
+#ifdef __APPLE__
+    ProcessSerialNumber PSN;
+    GetCurrentProcess(&PSN);
+    TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
+#endif
+
     return true;
 }
 

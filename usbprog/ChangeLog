@@ -1,3 +1,7 @@
+2009-04-04  Bernhard Walle <bernhard.walle@gmx.de>
+
+	* Fix GUI on MacOS X (contributed by Nabil Sayegh)
+
 2009-03-17  Bernhard Walle <bernhard.walle@gmx.de>
 
 	* Change some autoconf/automake/libtool stuff.
