@@ -77,9 +77,11 @@ bool usbprogFrmApp::OnInit()
     SetTopWindow(frame);
 
 #ifdef __APPLE__
+    // this is necessary because of
+    // http://wiki.wxwidgets.org/WxMac_Issues#My_app_can.27t_be_brought_to_the_front.21
     ProcessSerialNumber PSN;
     GetCurrentProcess(&PSN);
-    TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
+    TransformProcessType(&PSN, kProcessTransformToForegroundApplication);
 #endif
 
     return true;
