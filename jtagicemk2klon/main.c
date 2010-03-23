@@ -342,6 +342,7 @@ UARTWrite("\r\n");
 		if(cmdlength>0){
 		  CommandAnswer(cmdlength);
 		}
+
 		// recalculate size
 //		jtagice.size = jtagice.size -54;
 /*
@@ -392,7 +393,8 @@ int main(void) {
 
   jtag_init();
 
-  DDRA = (1 << DDA4);
+  DDRA = (1 << DDA4) | (1 << DDA3);
+  PORTA &= ~(1<<PA3);
   PORTA &= ~(1<<PA4); // this is the LED
 
   USBNDeviceVendorID(0x03eb);	//atmel ids
