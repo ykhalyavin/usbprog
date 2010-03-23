@@ -105,19 +105,29 @@ void wr_hfuse_avr(unsigned char hfuse)
 	avr_sequence(0x37,0x00,tmp);
 	avr_sequence(0x37,0x00,tmp);
 	avr_sequence(0x37,0x00,tmp);
+	do /* Poll for Fuse Write Complete */
+	{
+		avr_sequence(0x33,0x00,tmp);
+	}
+	while(!(tmp[1] & 0x02));
 }
 
 void wr_lfuse_avr(unsigned char lfuse)
 {
 	unsigned char tmp[2];
 	avr_prog_cmd();
-	avr_sequence(0x23,0x40,tmp);
-	avr_sequence(0x13,lfuse,tmp);
-	avr_sequence(0x33,0x00,tmp);
+	avr_sequence(0x23,0x40,tmp); /* Enter Fuse Write */
+	avr_sequence(0x13,lfuse,tmp); /* Load Data Low Byte */
+	avr_sequence(0x33,0x00,tmp);  /* Write Fuse Low Byte */
 	avr_sequence(0x31,0x00,tmp);
 	avr_sequence(0x33,0x00,tmp);
 	avr_sequence(0x33,0x00,tmp);
 	avr_sequence(0x33,0x00,tmp);
+	do /* Poll for Fuse Write Complete */
+	{
+		avr_sequence(0x33,0x00,tmp);
+	}
+	while(!(tmp[1] & 0x02));
 }
 
 void wr_efuse_avr(unsigned char efuse)
@@ -131,6 +141,11 @@ void wr_efuse_avr(unsigned char efuse)
 	avr_sequence(0x3B,0x00,tmp);
 	avr_sequence(0x3B,0x00,tmp);
 	avr_sequence(0x37,0x00,tmp);
+	do /* Poll for Fuse Write Complete */
+	{
+		avr_sequence(0x33,0x00,tmp);
+	}
+	while(!(tmp[1] & 0x02));
 }
 
 void wr_lock_avr(unsigned char lock)
