@@ -107,10 +107,36 @@ int avr_jtag_instr(unsigned char instr, int delay)
 void avr_sequence(char tdi2, char tdi1, unsigned char * tdo)
 {
 	unsigned char jtagbuf[2];
-	jtag_goto_state(SHIFT_DR);
+	jtag_goto_state(SHIFT_DR); // 10 us
 	jtagbuf[0]=tdi1;  //  select fuse
 	jtagbuf[1]=tdi2;
-	jtag_write_and_read(15,jtagbuf,tdo);
-	jtag_goto_state(RUN_TEST_IDLE);
+/*PORTA |= (1<<PA3);*/
+	jtag_write_and_read(15,jtagbuf,tdo); // 100 us
+/*PORTA &= ~(1<<PA3);*/
+	jtag_goto_state(RUN_TEST_IDLE); // 10 us
+}
+
+void avr_sequence1(char tdi2, char tdi1, unsigned char * tdo)
+{
+	unsigned char jtagbuf[2];
+PORTA |= (1<<PA3);
+	jtag_goto_state(SHIFT_DR); // 10 us
+PORTA &= ~(1<<PA3);
+	jtagbuf[0]=tdi1;  //  select fuse
+	jtagbuf[1]=tdi2;
+	jtag_write_sequence(jtagbuf); // 100 us
+	jtag_goto_state2(RUN_TEST_IDLE); // 10 us
+}
+
+void avr_sequence2(char tdi2, char tdi1, unsigned char * tdo)
+{
+	unsigned char jtagbuf[2];
+	jtag_goto_state(SHIFT_DR); // 10 us
+	jtagbuf[0]=tdi1;  //  select fuse
+	jtagbuf[1]=tdi2;
+/*PORTA |= (1<<PA3);*/
+	jtag_write_and_read_sequence(jtagbuf,tdo); // 100 us
+/*PORTA &= ~(1<<PA3);*/
+	jtag_goto_state2(RUN_TEST_IDLE); // 10 us
 }
 

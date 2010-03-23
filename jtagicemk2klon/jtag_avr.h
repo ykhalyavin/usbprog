@@ -34,6 +34,8 @@ int avr_jtag_instr(unsigned char instr, int delay);
 
 
 void avr_sequence(char tdi2, char tdi1, unsigned char * tdo);
+void avr_sequence1(char tdi2, char tdi1, unsigned char * tdo);
+void avr_sequence2(char tdi2, char tdi1, unsigned char * tdo);
 
 /*
  * The debugger is communicating with the CPU core through the use of

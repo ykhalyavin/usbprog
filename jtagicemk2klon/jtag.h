@@ -55,7 +55,13 @@
 #define JTAG_CLEAR_TDI()                     CLEARBIT( JTAG_PORT_WRITE, TDI )
 
 // a jtag clock
-#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");JTAG_SET_TCK(); }
+/* From ATmega164 datasheet (p 312, 26.10):
+   During programming the clock frequency of the TCK Input must be less than the maximum fre-
+   quency of the chip.
+   Programmer clocked at 8MHz, sbi = cbi = 2 clock, so we clock to jtag at 8 / (2 + 2) = 2MHz
+   */
+#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); JTAG_SET_TCK(); }
+//#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");JTAG_SET_TCK(); }
 
 
 // JTAG State Machine
@@ -95,14 +101,18 @@ int jtag_reset(void);
 
 // goto a state
 void jtag_goto_state(uint8_t state);
+void jtag_goto_state1(uint8_t state);
+void jtag_goto_state2(uint8_t state);
 
 // write to target tdi
 uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf);
 
 // read from target tdo
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf);
+void jtag_write_sequence(uint8_t * buf);
 
 // write and read after every clock edge
+void jtag_write_and_read_sequence(uint8_t * buf, uint8_t * readbuf);
 uint8_t jtag_write_and_read(  uint8_t numberofbits,
                               unsigned char * buf,
 	                            unsigned char * readbuf);

@@ -20,6 +20,7 @@
 #include "bit.h"
 #include "uart.h"
 
+uint8_t z[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
 
 volatile TAP_STATE tapstate;
 
@@ -115,6 +116,91 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 	return receivedbits;
 }
 
+void jtag_write_and_read_sequence(uint8_t * buf, uint8_t *readbuf)
+{
+    uint8_t i, x, y;
+    /*unsigned short m;*/
+    readbuf[0] = readbuf[1] = 0;
+	JTAG_CLEAR_TMS();				// last one with tms
+    for (i = 0; i < 2; i++) {
+        x = i == 0? 8: 7;
+        for (y = 0; y < x; y++) {
+            if (i == 1 && y == 6) {
+                JTAG_SET_TMS(); // last one with tms
+                tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
+            }
+            if (buf[i] & z[y])
+                JTAG_SET_TDI();
+            else
+                JTAG_CLEAR_TDI();
+            JTAG_CLK();
+
+            if(JTAG_IS_TDO_SET())
+                readbuf[i] |= z[y];
+        }
+    }
+#if 0
+    for (i = 0; i < 2; i++) {
+        x = i == 0? 0x80: 0x40;
+        for (m = 1; m <= x; m<<=1) {
+            if (i == 1 && m == 0x40) {
+                JTAG_SET_TMS(); // last one with tms
+                tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
+            }
+            if (buf[i] & m)
+                JTAG_SET_TDI();
+            else
+                JTAG_CLEAR_TDI();
+            JTAG_CLK();
+
+            if(JTAG_IS_TDO_SET())
+                readbuf[i] |= m;
+        }
+    }
+#endif
+}
+void jtag_write_sequence(uint8_t * buf)
+{
+    uint8_t i;
+	JTAG_CLEAR_TMS();				// last one with tms
+#if 0
+    for (m = 1; m <= 0x80; m<<=1) {
+        if (buf[0] & m)
+            JTAG_SET_TDI();
+        else
+            JTAG_CLEAR_TDI();
+        JTAG_CLK();
+    }
+    for (m = 1; m <= 0x20; m<<=1) {
+        if (buf[1] & m)
+            JTAG_SET_TDI();
+        else
+            JTAG_CLEAR_TDI();
+        JTAG_CLK();
+    }
+#endif
+    for (i = 0; i < 8; i++) {
+        if (buf[0] & z[i])
+            JTAG_SET_TDI();
+        else
+            JTAG_CLEAR_TDI();
+        JTAG_CLK();
+    }
+    for (i = 0; i < 6; i++) {
+        if (buf[1] & z[i])
+            JTAG_SET_TDI();
+        else
+            JTAG_CLEAR_TDI();
+        JTAG_CLK();
+    }
+    JTAG_SET_TMS(); // last one with tms
+    tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
+    if (buf[1] & 0x40)
+        JTAG_SET_TDI();
+    else
+        JTAG_CLEAR_TDI();
+    JTAG_CLK();
+}
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 {
 	int sendbits=0;
@@ -197,6 +283,51 @@ uint8_t jtag_write_and_read(	uint8_t numberofbits,
 	return bits;
 }
 
+void jtag_goto_state1(TAP_STATE state)
+{
+  /* If 'state' is invalid, simply ignore it */
+  if( state > UPDATE_IR ) return;
+  while( tapstate != state ) {
+      switch( tapstate ) {
+          case RUN_TEST_IDLE:
+              JTAG_SET_TMS();
+              JTAG_CLK();
+              tapstate = SELECT_DR_SCAN;
+              break;
+
+          case SELECT_DR_SCAN:
+              JTAG_CLEAR_TMS();
+              JTAG_CLK();
+              tapstate = CAPTURE_DR;
+              break;
+
+          case CAPTURE_DR:
+              JTAG_CLEAR_TMS();
+              JTAG_CLK();
+              tapstate = SHIFT_DR;
+              break;
+
+          default:
+              return;
+      }
+  }
+}
+
+void jtag_goto_state2(TAP_STATE state)
+{
+
+/*case EXIT1_DR:*/
+    JTAG_SET_TMS();
+    JTAG_CLK();
+    /*tapstate = UPDATE_DR;*/
+/*break;*/
+
+/*case UPDATE_DR:*/
+    JTAG_CLEAR_TMS();
+    JTAG_CLK();
+    tapstate = RUN_TEST_IDLE;
+/*break;*/
+}
 
 void jtag_goto_state(TAP_STATE state)
 {
