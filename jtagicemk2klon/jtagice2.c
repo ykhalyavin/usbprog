@@ -203,6 +203,40 @@ int cmd_get_parameter(char *msg, char * answer)
 
 	switch(msg[9])
 	{
+	case HARDWARE_VERSION:
+		answer[3] = 0x03;	//length of Body
+
+		answer[8] = RSP_PARAMETER;
+		answer[9] = (MY_HARDWARE_VERSION >> 8) & 0xff ;
+		answer[10] = MY_HARDWARE_VERSION & 0xff;
+
+		crc16_append(answer,(unsigned long)11);
+		return 13;
+
+	break;
+	case OCD_JTAG_CLOCK:
+		answer[3] = 0x03;	//length of Body
+
+		answer[8] = RSP_PARAMETER;
+		answer[9] = 0;
+		answer[10] = 0;
+
+		crc16_append(answer,(unsigned long)11);
+		return 13;
+
+	break;
+	case SOFTWARE_VERSION:
+		answer[3] = 0x03;	//length of Body
+
+		answer[8] = RSP_PARAMETER;
+		answer[9] = MY_SOFTWARE_VERSION & 0xff;
+		answer[10] = (MY_SOFTWARE_VERSION >> 8) & 0xff;
+
+		crc16_append(answer,(unsigned long)11);
+		return 13;
+
+	break;
+
 	case OCD_VTARGET:
 		answer[3] = 0x03;	//length of Body
 

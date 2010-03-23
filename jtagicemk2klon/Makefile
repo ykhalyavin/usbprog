@@ -114,7 +114,10 @@ CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 CFLAGS += -DF_OSC=$(F_OSC)
 
-
+# Define hardware version here
+CFLAGS += -DMY_HARDWARE_VERSION=0x301
+# Define firmware version here
+CFLAGS += -DMY_SOFTWARE_VERSION=0x002
 
 # Assembler flags.
 #  -Wa,...:   tell GCC to pass this to the assembler.
@@ -447,6 +450,6 @@ reset:
 binform:
 	$(OBJCOPY) -O binary main.elf -R .eeprom main.bin
 
-loader:
+loader: build binform
 	usbprog -o device 0 upload main.bin
 
