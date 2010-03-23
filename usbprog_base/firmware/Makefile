@@ -434,6 +434,21 @@ clean_list :
 build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
+read-fuses:
+	avrdude -p m32 -Ulfuse:r:-:h -qq
+	avrdude -p m32 -Uhfuse:r:-:h -qq
+
+upload-fuses:
+	@echo "\nUpload FUSES: switch usbasp to LOW SPEED and press Enter..."
+	@perl -le '<>'
+	avrdude -qq -p m32  -Ulfuse:w:0xa0:m
+	avrdude -qq -p m32  -Uhfuse:w:0xd8:m
+
+upload: upload-fuses
+	@echo "\nSwitch usbasp to FULL SPEED and press Enter..."
+	@perl -le '<>'
+	avrdude -qq -p m32  -Uflash:w:usbprog_base.hex
+
 download:
 	avrdude -p m32 -V -c avrispv2 -P usb -B 10 -U flash:w:main.hex -e
 	#avrdude -p m32 -c avrispv2 -P usb -B 10 -U lfuse:w:0xe0:m
