@@ -43,6 +43,7 @@ uint16_t global_pc;
 int cmd_get_sign_on(char *msg, char * answer)
 {
 	jtag_reset();
+	jtagice.datatogl = 0;
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
