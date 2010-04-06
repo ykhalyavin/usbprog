@@ -18,6 +18,7 @@
 
 #include "jtag.h"
 #include "bit.h"
+#include "jtagice2.h"
 #include "uart.h"
 
 uint8_t z[] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
@@ -116,19 +117,54 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf)
 	return receivedbits;
 }
 
+
+/* 
+ * NOTE: This function hard-optimized for working into
+ * "funcions avr_sequence1, avr_sequence2" context. And IT NOT UNIVERSAL.
+ * Function send 15 bits to jtag from "buf" and put bits from TDO to
+ * "readbuf", when TAP state is SHIFT_DR. But you can call it from
+ * SHIFT_IR TAP state, when you need send and read 15 bits. It ~3 times faster
+ * than jtag_write_and_read, but not universal. I apply it in "time critical"
+ * operations such as read flash/eeprom, write flash/eeprom. For example:
+ * with functions jtag_write + jtag_write_and_read write/read programming
+ * cycle on my AT90CAN64 take about 60 sec., and with jtag_write_sequence +
+ * jtag_write_and_read_sequence it take about 20 sec.
+ *
+ */
+
 void jtag_write_and_read_sequence(uint8_t * buf, uint8_t *readbuf)
 {
     uint8_t i, x, y;
     /*unsigned short m;*/
+
+#if 0
+    /* 
+     * NOTE!!! Uncomment if you want to use this funcion in SHIFT_IR TAP
+     * state, REPLACE jtagchain.units_after -> after,
+     * jtagchain.units_before -> before.
+     *
+     */
+
+    uint8_t before, after;
+
+    /* units/bits before/after target (JTAG chain) depends on TAP state */
+    before = tapstate == SHIFT_IR? jtagchain.bits_before: jtagchain.units_before;
+    after = tapstate == SHIFT_IR? jtagchain.bits_after: jtagchain.units_after;
+
+#endif
+
     readbuf[0] = readbuf[1] = 0;
 	JTAG_CLEAR_TMS();				// last one with tms
+
+    for (i = 0; i < jtagchain.units_after; i++) {
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
     for (i = 0; i < 2; i++) {
         x = i == 0? 8: 7;
         for (y = 0; y < x; y++) {
-            if (i == 1 && y == 6) {
+            if (jtagchain.units_before == 0 && i == 1 && y == 6)
                 JTAG_SET_TMS(); // last one with tms
-                tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
-            }
             if (buf[i] & z[y])
                 JTAG_SET_TDI();
             else
@@ -139,46 +175,56 @@ void jtag_write_and_read_sequence(uint8_t * buf, uint8_t *readbuf)
                 readbuf[i] |= z[y];
         }
     }
-#if 0
-    for (i = 0; i < 2; i++) {
-        x = i == 0? 0x80: 0x40;
-        for (m = 1; m <= x; m<<=1) {
-            if (i == 1 && m == 0x40) {
-                JTAG_SET_TMS(); // last one with tms
-                tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
-            }
-            if (buf[i] & m)
-                JTAG_SET_TDI();
-            else
-                JTAG_CLEAR_TDI();
-            JTAG_CLK();
-
-            if(JTAG_IS_TDO_SET())
-                readbuf[i] |= m;
-        }
+    for (i = 0; i < jtagchain.units_before; i++) {
+        if (i == jtagchain.units_before - 1)
+            JTAG_SET_TMS();				// last one with tms
+        JTAG_SET_TDI();
+        JTAG_CLK();
     }
-#endif
+    tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
 }
+
+
+/* 
+ * NOTE: This function hard-optimized for working into
+ * "funcions avr_sequence1, avr_sequence2" context. And IT NOT UNIVERSAL.
+ * Function send 15 bits to jtag from "buf", when TAP state is SHIFT_DR.
+ * But you can call it from SHIFT_IR TAP state, when you need send 15 bits.
+ * It ~3 times faster than jtag_write, but not universal. I apply it in
+ * "time critical" operations such as read flash/eeprom, write flash/eeprom.
+ * For example: with functions jtag_write + jtag_write_and_read write/read
+ * programming cycle on my AT90CAN64 take about 60 sec., and with
+ * jtag_write_sequence + jtag_write_and_read_sequence it take about 20 sec.
+ *
+ */
+
 void jtag_write_sequence(uint8_t * buf)
 {
     uint8_t i;
-	JTAG_CLEAR_TMS();				// last one with tms
+
 #if 0
-    for (m = 1; m <= 0x80; m<<=1) {
-        if (buf[0] & m)
-            JTAG_SET_TDI();
-        else
-            JTAG_CLEAR_TDI();
-        JTAG_CLK();
-    }
-    for (m = 1; m <= 0x20; m<<=1) {
-        if (buf[1] & m)
-            JTAG_SET_TDI();
-        else
-            JTAG_CLEAR_TDI();
-        JTAG_CLK();
-    }
+    /* 
+     * NOTE!!! Uncomment if you want to use this funcion in SHIFT_IR TAP
+     * state, REPLACE jtagchain.units_after -> after,
+     * jtagchain.units_before -> before.
+     *
+     */
+
+    uint8_t before, after;
+
+    /* units/bits before/after target (JTAG chain) depends on TAP state */
+    before = tapstate == SHIFT_IR? jtagchain.bits_before: jtagchain.units_before;
+    after = tapstate == SHIFT_IR? jtagchain.bits_after: jtagchain.units_after;
+
 #endif
+
+	JTAG_CLEAR_TMS();				// last one with tms
+
+    for (i = 0; i < jtagchain.units_after; i++) {
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
+
     for (i = 0; i < 8; i++) {
         if (buf[0] & z[i])
             JTAG_SET_TDI();
@@ -193,40 +239,49 @@ void jtag_write_sequence(uint8_t * buf)
             JTAG_CLEAR_TDI();
         JTAG_CLK();
     }
-    JTAG_SET_TMS(); // last one with tms
-    tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
+    if (jtagchain.units_before == 0)
+        JTAG_SET_TMS(); // last one with tms
+   
     if (buf[1] & 0x40)
         JTAG_SET_TDI();
     else
         JTAG_CLEAR_TDI();
     JTAG_CLK();
+
+    for (i = 0; i < jtagchain.units_before; i++) {
+        if (i == jtagchain.units_before - 1)
+            JTAG_SET_TMS();				// last one with tms
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
+    tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
 }
+
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 {
 	int sendbits=0;
-
+    uint8_t i = 0;
+    uint8_t before, after;
+    
 	// if numbers is not vaild
 	if(numberofbits<=0)
 		return -1;
 
+    /* units/bits before/after target (JTAG chain) depends on TAP state */
+    before = tapstate == SHIFT_IR? jtagchain.bits_before: jtagchain.units_before;
+    after = tapstate == SHIFT_IR? jtagchain.bits_after: jtagchain.units_after;
+
 	JTAG_CLEAR_TMS();				// last one with tms
 
-	//numberofbits--;
+    for (i = 0; i < after; i++) {
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
+
 	while(numberofbits--)
 	{
-		if(numberofbits==0)
-		{
-	 		JTAG_SET_TMS();				// last one with tms
-			if(tapstate==SHIFT_IR)
-			{
-				tapstate = EXIT1_IR;
-			}
-			else
-			{
-				tapstate = EXIT1_DR;
-			}
-		}
-
+        if(before == 0 && numberofbits == 0)
+             JTAG_SET_TMS();				// last one with tms
 		if(buf[sendbits/8] >> (sendbits & 7) & 1)
 		{
 			JTAG_SET_TDI();
@@ -239,32 +294,42 @@ uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf)
 		sendbits++;
 		JTAG_CLK();
 	}
+    for (i = 0; i < before; i++) {
+        if (i == before - 1)
+            JTAG_SET_TMS();				// last one with tms
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
+    tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
 	return sendbits;
 }
-
-
 
 uint8_t jtag_write_and_read(	uint8_t numberofbits,
 															unsigned char * buf,
 															unsigned char * readbuf)
 {
 	int bits=0;
-
+    uint8_t i = 0;
+    uint8_t before, after;
+    
 	// if numbers is not vaild
 	if(numberofbits<=0)
 		return -1;
 
+    /* units/bits before/after target (JTAG chain) depends on TAP state */
+    before = tapstate == SHIFT_IR? jtagchain.bits_before: jtagchain.units_before;
+    after = tapstate == SHIFT_IR? jtagchain.bits_after: jtagchain.units_after;
+
 	JTAG_CLEAR_TMS();				// last one with tms
 
+    for (i = 0; i < after; i++) {
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
+
   while(numberofbits--) {
-		if(numberofbits==0){
-	 		JTAG_SET_TMS();				// last one with tms
-			if(tapstate==SHIFT_IR){
-				tapstate = EXIT1_IR;
-			} else {
-				tapstate = EXIT1_DR;
-			}
-		}
+        if(before == 0 && numberofbits == 0)
+             JTAG_SET_TMS();				// last one with tms
 		if(buf[bits/8] >> (bits & 7) & 1)
 			JTAG_SET_TDI();
 		else
@@ -280,7 +345,37 @@ uint8_t jtag_write_and_read(	uint8_t numberofbits,
 
 	  bits++;
 	}
+    for (i = 0; i < before; i++) {
+        if (i == before - 1)
+            JTAG_SET_TMS();				// last one with tms
+        JTAG_SET_TDI();
+        JTAG_CLK();
+    }
+    tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
 	return bits;
+}
+
+uint8_t jtag_bit (uint8_t tms, uint8_t tdi, uint8_t read_tdo)
+{
+    uint8_t tdo = 0;
+    if (tms) {
+        JTAG_SET_TMS();
+        tapstate = tapstate == SHIFT_IR? EXIT1_IR: EXIT1_DR;
+    }
+    else
+        JTAG_CLEAR_TMS();
+    if (tdi)
+        JTAG_SET_TDI();
+    else
+        JTAG_CLEAR_TDI();
+
+    JTAG_CLK();
+
+    if (read_tdo) {
+        if (JTAG_IS_TDO_SET())
+            tdo = 1;
+    }
+    return tdo;
 }
 
 void jtag_goto_state1(TAP_STATE state)

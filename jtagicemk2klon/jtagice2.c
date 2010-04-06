@@ -31,19 +31,20 @@
 #include "jtag_avr_defines.h"
 #include "../usbn2mc/fifo.h"
 
+#include <string.h>
 // represent acutal state of state machine
 //static JTAGICE_STATE jtagicestate;
 
 // actuall message
 volatile struct message_t msg;
 struct deviceDescriptor_t deviceDescriptor;
+struct jtagchain_t jtagchain;
 
 uint16_t global_pc;
 
 int cmd_get_sign_on(char *msg, char * answer)
 {
 	jtag_reset();
-	jtagice.datatogl = 0;
 	answer[0] = MESSAGE_START;
 	answer[1] = jtagice.seq1;
 	answer[2] = jtagice.seq2;
@@ -171,6 +172,7 @@ int cmd_set_parameter(char *msg, char * answer)
 		break;
 
 		case DAISY_CHAIN_INFO:
+			memcpy (&jtagchain, &msg[10], sizeof(struct jtagchain_t));
 			return rsp_ok(answer);
 		break;
 		case OCD_JTAG_CLOCK:
@@ -560,6 +562,12 @@ int cmd_read_memory(char * msg, char * answer)
 	int msglen=0;
 	unsigned long len,startaddr;	// length
 
+	/* Avrdude: after chip erase it call cmd_reset, cmd_read_memory without
+	   calling cmd_enter_progmode, and it read memory work incorrect (with jtag
+	   chains only )*/
+	uint8_t answ[15];
+	if (jtagice.emulator_state == STOPPED)
+		cmd_enter_progmode((char*)&answ[0],(char*)&answ[0]);
 	// byte 2,3,4 of length = default value
 	answer[4] = 0;
 	answer[5] = 0;
@@ -677,15 +685,18 @@ int cmd_read_memory(char * msg, char * answer)
 
 			switch(msg[14]){
 			  case 0:
+			  case 0x90:
 			    msglen = 2;
 			    answer[3] = 2;
 			  break;
 			  case 1:
+			  case 0x91:
 			    msglen = 2;
 			    answer[3] = 2;
 			    answer[9] = answer[10];
 			  break;
 			  case 2:
+			  case 0x92:
 			    msglen = 2;
 			    answer[3] = 2;
 			    answer[9] = answer[11];

@@ -60,8 +60,8 @@
    quency of the chip.
    Programmer clocked at 8MHz, sbi = cbi = 2 clock, so we clock to jtag at 8 / (2 + 2) = 2MHz
    */
-#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); JTAG_SET_TCK(); }
-//#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");JTAG_SET_TCK(); }
+//#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); JTAG_SET_TCK(); }
+#define JTAG_CLK()                      { JTAG_CLEAR_TCK(); asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");JTAG_SET_TCK(); }
 
 
 // JTAG State Machine
@@ -110,6 +110,8 @@ uint8_t jtag_read(uint8_t numberofbits, unsigned char * buf);
 // read from target tdo
 uint8_t jtag_write(uint8_t numberofbits, unsigned char * buf);
 void jtag_write_sequence(uint8_t * buf);
+
+uint8_t jtag_bit (uint8_t tms, uint8_t tdi, uint8_t read_tdo);
 
 // write and read after every clock edge
 void jtag_write_and_read_sequence(uint8_t * buf, uint8_t * readbuf);

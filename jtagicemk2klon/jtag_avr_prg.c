@@ -255,7 +255,11 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 #endif
 
 	avr_prog_cmd();					//Prog Enable
+#ifdef SPEEDUP_MODE
 	avr_sequence1(0x23, 0x10, tmp);
+#else
+	avr_sequence(0x23, 0x10, tmp);
+#endif
 
 	for(int i = 0; i < byteCount; i += 2, adress++)
 	{
@@ -264,33 +268,57 @@ void wr_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 		SendHex((adress >> 8) & 0xFF);
 		SendHex(adress & 0xFF);
 #endif
+#ifdef SPEEDUP_MODE
 		avr_sequence1(0x07, (adress >> 8) & 0xFF, tmp);
 		avr_sequence1(0x03, adress & 0xFF, tmp);
 
 		avr_sequence1(0x13, data[i], tmp);
 		avr_sequence1(0x17, data[i + 1], tmp);
+#else
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+
+		avr_sequence(0x13, data[i], tmp);
+		avr_sequence(0x17, data[i + 1], tmp);
+#endif
 #ifdef DEBUG_VERBOSE
 		UARTWrite(":");
 		SendHex(data[i]);
 		SendHex(data[i + 1]);
 		UARTWrite("\n\r");
 #endif
+#ifdef SPEEDUP_MODE
 		avr_sequence1(0x37, 0x00, tmp);
 		avr_sequence1(0x77, 0x00, tmp);
 		avr_sequence1(0x37, 0x00, tmp);
+#else
+		avr_sequence(0x37, 0x00, tmp);
+		avr_sequence(0x77, 0x00, tmp);
+		avr_sequence(0x37, 0x00, tmp);
+#endif
 	}
 
 #ifdef DEBUG_VERBOSE
 	UARTWrite("Flash succesfully\n\r");
 #endif
+#ifdef SPEEDUP_MODE
 	avr_sequence1(0x37, 0x00, tmp);
 	avr_sequence1(0x35, 0x00, tmp);
 	avr_sequence1(0x37, 0x00, tmp);
 	avr_sequence1(0x37, 0x00, tmp);
-
+#else
+	avr_sequence(0x37, 0x00, tmp);
+	avr_sequence(0x35, 0x00, tmp);
+	avr_sequence(0x37, 0x00, tmp);
+	avr_sequence(0x37, 0x00, tmp);
+#endif
 	do
 	{
+#ifdef SPEEDUP_MODE
 		avr_sequence2(0x37, 0x00, tmp);
+#else
+		avr_sequence(0x37, 0x00, tmp);
+#endif
 	}
 	while(!(tmp[1] & 0x02));
 }
@@ -328,7 +356,11 @@ void rd_eeprom_page(uint16_t byteCount, unsigned int adress, unsigned char *data
 {
 	unsigned char tmp[2];
 	avr_prog_cmd();
+#ifdef SPEEDUP_MODE
 	avr_sequence1(0x23, 0x03, tmp);
+#else
+	avr_sequence(0x23, 0x03, tmp);
+#endif
 #ifdef DEBUG_VERBOSE
 	UARTWrite("EEPROM_Page:");
 	SendHex((char)(adress>>8));
@@ -338,12 +370,21 @@ void rd_eeprom_page(uint16_t byteCount, unsigned int adress, unsigned char *data
 
 	for(uint16_t i = 0; i < byteCount; i++, adress++)
 	{
+#ifdef SPEEDUP_MODE
 		avr_sequence1(0x07, (adress >> 8) & 0xFF, tmp);
 		avr_sequence1(0x03, adress & 0xFF, tmp);
 
 		avr_sequence1(0x33, adress & 0xFF, tmp);
 		avr_sequence1(0x32, 0x00, tmp);
 		avr_sequence2(0x33, 0x00, &data[i]);
+#else
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+
+		avr_sequence(0x33, adress & 0xFF, tmp);
+		avr_sequence(0x32, 0x00, tmp);
+		avr_sequence(0x33, 0x00, &data[i]);
+#endif
 #ifdef DEBUG_VERBOSE
 		UARTWrite(" ");
 		SendHex(data[i]);
@@ -360,7 +401,11 @@ void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 	adress >>= 1;
 
 	avr_prog_cmd();
+#ifdef SPEEDUP_MODE
 	avr_sequence1(0x23, 0x02, tmp);
+#else
+	avr_sequence(0x23, 0x02, tmp);
+#endif
 	for(int i = 0; i < byteCount; i += 2, adress++)
 	{
 #ifdef DEBUG_VERBOSE
@@ -370,11 +415,19 @@ void rd_flash_page(unsigned int byteCount, unsigned long adress, unsigned char *
 		UARTWrite("\r\n");
 #endif
 /*PORTA |= (1<<PA3);*/
+#ifdef SPEEDUP_MODE
 		avr_sequence1(0x07, (adress >> 8) & 0xFF, tmp);
 		avr_sequence1(0x03, adress & 0xFF, tmp);
 		avr_sequence1(0x32, 0x00, tmp);
 		avr_sequence2(0x36, 0x00, &data[i]);
 		avr_sequence2(0x37, 0x00, &data[i + 1]);
+#else
+		avr_sequence(0x07, (adress >> 8) & 0xFF, tmp);
+		avr_sequence(0x03, adress & 0xFF, tmp);
+		avr_sequence(0x32, 0x00, tmp);
+		avr_sequence(0x36, 0x00, &data[i]);
+		avr_sequence(0x37, 0x00, &data[i + 1]);
+#endif
 /*PORTA &= ~(1<<PA3);*/
 	}
 }

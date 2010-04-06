@@ -31,6 +31,7 @@ void avr_prog_enable(void);
 void avr_prog_disable(void);
 void avr_prog_cmd(void);
 int avr_jtag_instr(unsigned char instr, int delay);
+uint8_t jtag_bit (uint8_t tms, uint8_t tdi, uint8_t read_tdo);
 
 
 void avr_sequence(char tdi2, char tdi1, unsigned char * tdo);

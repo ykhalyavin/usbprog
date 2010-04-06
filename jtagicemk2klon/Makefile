@@ -113,6 +113,7 @@ CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 CFLAGS += -DF_OSC=$(F_OSC)
+CFLAGS += -DSPEEDUP_MODE
 
 # Define hardware version here
 CFLAGS += -DMY_HARDWARE_VERSION=0x301

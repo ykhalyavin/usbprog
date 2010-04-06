@@ -260,7 +260,11 @@ struct deviceDescriptor_t
 };
 
 
+struct jtagchain_t {
+	unsigned char units_before;
+	unsigned char units_after;
+	unsigned char bits_before;
+	unsigned char bits_after;
+} ;
 
-
-
-
+extern struct jtagchain_t jtagchain;

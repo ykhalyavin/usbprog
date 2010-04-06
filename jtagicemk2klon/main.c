@@ -247,12 +247,17 @@ void USBReceive(char *inbuf)
 
 void JTAGICE_ProcessCommand(unsigned char *localbuf) {
 	int cmdlength=0;
-UARTWrite("Com: ");
-SendHex(buf[8]);
-UARTWrite("\r\n");
+	static unsigned char cmd_prev = 0;
+#if DEBUG_ON
+    UARTWrite("Com: ");
+    SendHex(buf[8]);
+    UARTWrite("\r\n");
+#endif
 	switch(localbuf[8]) {
 
 			case CMND_GET_SIGN_ON:
+				if (cmd_prev != CMND_SET_DEVICE_DESCRIPTOR) // TODO Debug
+					jtagice.datatogl = 0;
 				cmdlength = cmd_get_sign_on((char*)localbuf,(char *)answer);
 			break;
 
@@ -342,7 +347,7 @@ UARTWrite("\r\n");
 		if(cmdlength>0){
 		  CommandAnswer(cmdlength);
 		}
-
+		cmd_prev = localbuf[8];
 		// recalculate size
 //		jtagice.size = jtagice.size -54;
 /*
